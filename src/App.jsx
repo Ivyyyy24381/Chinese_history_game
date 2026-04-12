@@ -18,6 +18,7 @@ const CHARACTERS = [
     description:
       "\u5510\u4ee3\u6700\u4f1f\u5927\u7684\u73b0\u5b9e\u4e3b\u4e49\u8bd7\u4eba\uff0c\u4e0e\u674e\u767d\u5e76\u79f0\u300c\u674e\u675c\u300d",
     avatar: "\u{1F58A}",
+    portrait: "/assets/characters/dufu/portrait.png",
     color: "#4A90A4",
   },
   {
@@ -28,6 +29,7 @@ const CHARACTERS = [
     dynasty: "\u5510",
     description: "\u5373\u5c06\u63a8\u51fa...",
     avatar: "\u{1F377}",
+    portrait: null,
     color: "#C0392B",
     locked: true,
   },
@@ -39,6 +41,7 @@ const CHARACTERS = [
     dynasty: "\u5b8b",
     description: "\u5373\u5c06\u63a8\u51fa...",
     avatar: "\u{1F4DC}",
+    portrait: null,
     color: "#8E44AD",
     locked: true,
   },

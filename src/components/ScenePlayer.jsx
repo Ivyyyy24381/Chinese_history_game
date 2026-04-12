@@ -170,7 +170,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
           </div>
         )}
 
-        {/* NPC markers */}
+        {/* NPC markers with portraits */}
         {currentPhase.npcs.map((npc) => {
           const talked = talkedNpcs.has(npc.id);
           return (
@@ -180,16 +180,27 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                 ...styles.npcMarker,
                 left: npc.position.x + "%",
                 top: npc.position.y + "%",
-                opacity: talked ? 0.5 : 1,
+                opacity: talked ? 0.6 : 1,
               }}
               onClick={() => handleNpcClick(npc)}
             >
-              <div style={{
-                ...styles.npcDot,
-                backgroundColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
-              }}>
-                {talked ? "\u2713" : "?"}
-              </div>
+              {npc.portrait ? (
+                <div style={{
+                  ...styles.npcPortraitWrap,
+                  borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
+                }}>
+                  <img src={npc.portrait} alt={npc.name} style={styles.npcPortraitImg} />
+                  {!talked && <div style={styles.npcBubble}>{"?"}</div>}
+                  {talked && <div style={styles.npcCheckMark}>{"\u2713"}</div>}
+                </div>
+              ) : (
+                <div style={{
+                  ...styles.npcDot,
+                  backgroundColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
+                }}>
+                  {talked ? "\u2713" : "?"}
+                </div>
+              )}
               <span style={styles.npcName}>{npc.name}</span>
             </div>
           );
@@ -217,18 +228,28 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
           </button>
         )}
 
-        {/* Active NPC dialogue */}
+        {/* Active NPC dialogue with portrait — click anywhere to advance/close */}
         {activeNpc && (
           <div style={styles.dialogueOverlay} onClick={handleDialogueNext}>
-            <div style={styles.dialogueBox} onClick={(e) => e.stopPropagation()}>
-              <div style={styles.dialogueSpeaker}>
-                {activeNpc.dialogues[dialogueIndex].speakerName || activeNpc.name}
+            <div style={styles.dialogueBox}>
+              <div style={styles.dialogueInner}>
+                {(() => {
+                  const line = activeNpc.dialogues[dialogueIndex];
+                  const isSelf = line.speaker === "dufu" || line.speaker === "self";
+                  const portrait = isSelf ? "/assets/characters/dufu/portrait.png" : activeNpc.portrait;
+                  return portrait ? <img src={portrait} alt="" style={styles.dialoguePortrait} /> : null;
+                })()}
+                <div style={styles.dialogueContent}>
+                  <div style={styles.dialogueSpeaker}>
+                    {activeNpc.dialogues[dialogueIndex].speakerName || activeNpc.name}
+                  </div>
+                  <div style={styles.dialogueText}>
+                    {activeNpc.dialogues[dialogueIndex].text}
+                  </div>
+                </div>
               </div>
-              <div style={styles.dialogueText}>
-                {activeNpc.dialogues[dialogueIndex].text}
-              </div>
-              <div style={styles.dialogueContinue} onClick={handleDialogueNext}>
-                {dialogueIndex < activeNpc.dialogues.length - 1 ? "\u25BC \u7EE7\u7EED" : "\u2713 \u5173\u95ED"}
+              <div style={styles.dialogueContinue}>
+                {dialogueIndex < activeNpc.dialogues.length - 1 ? "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED" : "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED"}
               </div>
             </div>
           </div>
@@ -454,6 +475,28 @@ const styles = {
     backgroundColor: "rgba(0,0,0,0.6)", padding: "2px 8px",
     borderRadius: 4, whiteSpace: "nowrap",
   },
+  npcPortraitWrap: {
+    width: 140, height: 140, overflow: "hidden",
+    position: "relative",
+    transition: "all 0.3s",
+  },
+  npcPortraitImg: {
+    width: "100%", height: "100%", objectFit: "contain",
+  },
+  npcBubble: {
+    position: "absolute", top: -4, right: -4,
+    width: 20, height: 20, borderRadius: "50%",
+    backgroundColor: "#E74C3C", color: "#FFF",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 11, fontWeight: "bold",
+  },
+  npcCheckMark: {
+    position: "absolute", top: -4, right: -4,
+    width: 20, height: 20, borderRadius: "50%",
+    backgroundColor: "#2ECC71", color: "#FFF",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 11, fontWeight: "bold",
+  },
   // Trigger zone
   triggerZone: {
     position: "absolute", transform: "translate(-50%, -50%)",
@@ -489,6 +532,14 @@ const styles = {
     padding: "20px 28px", minHeight: 140,
     borderTop: "2px solid #8B7355",
   },
+  dialogueInner: {
+    display: "flex", alignItems: "flex-start", gap: 16,
+  },
+  dialoguePortrait: {
+    width: 72, height: 72, objectFit: "contain",
+    flexShrink: 0,
+  },
+  dialogueContent: { flex: 1 },
   dialogueSpeaker: {
     color: "#D4A574", fontSize: 14, fontWeight: "bold",
     letterSpacing: 2, marginBottom: 8,

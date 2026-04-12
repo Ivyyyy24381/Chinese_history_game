@@ -28,16 +28,20 @@ export default function CharacterSelect({ characters, onSelect }) {
             }}
             onClick={() => handleSelect(char)}
           >
-            <div style={{ ...styles.charAvatar, backgroundColor: char.color }}>
-              {char.avatar}
-            </div>
+            {char.portrait ? (
+              <img src={char.portrait} alt={char.name} style={styles.charPortrait} />
+            ) : (
+              <div style={{ ...styles.charAvatar, backgroundColor: char.color }}>
+                {char.avatar}
+              </div>
+            )}
             <h2 style={styles.charName}>{char.name}</h2>
             <p style={styles.charTitle}>{char.title}</p>
             <p style={styles.charYears}>{char.years}</p>
             <p style={styles.charDesc}>{char.description}</p>
             {char.locked && (
               <div style={styles.lockOverlay}>
-                {"\ud83d\udd10 \u5f85\u6b8b\u5f00\u653e"}
+                {"\ud83d\udd10 \u7b49\u5f85\u5f00\u653e"}
               </div>
             )}
           </div>
@@ -87,6 +91,13 @@ const styles = {
     textAlign: "center",
     position: "relative",
     backdropFilter: "blur(10px)",
+  },
+  charPortrait: {
+    width: 120,
+    height: 120,
+    objectFit: "contain",
+    margin: "0 auto 12px",
+    display: "block",
   },
   charAvatar: {
     width: 80,

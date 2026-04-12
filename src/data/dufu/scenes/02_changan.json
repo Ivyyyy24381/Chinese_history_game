@@ -7,8 +7,8 @@
     {
       "id": "explore_outside",
       "type": "explore",
-      "background": "/assets/scenes/02_changan/palace_outside.png",
-      "title": "\u7687\u5bab\u5916",
+      "background": "/assets/scenes/02_changan/changan_street.png",
+      "title": "\u957f\u5b89\u8857\u5934",
       "narrative": "\u5929\u5b9d\u4e94\u5e74\uff08746\u5e74\uff09\uff0c\u7687\u5e1d\u4e0b\u8bcd\u7279\u529e\u5236\u4e3e\uff0c\u300c\u901a\u4e00\u827a\u8005\u300d\u7686\u53ef\u6765\u957f\u5b89\u5e94\u8003\u3002\u675c\u752b\u6ee1\u6000\u5e0c\u671b\u6765\u5230\u4e86\u7687\u5bab\u5916\u3002",
       "instruction": "\u70b9\u51fb\u5468\u56f4\u7684\u4eba\u7269\u4e0e\u4ed6\u4eec\u4ea4\u8c08\uff0c\u4e86\u89e3\u8fd9\u6b21\u7279\u522b\u7684\u79d1\u4e3e\u3002",
       "npcs": [
@@ -16,7 +16,7 @@
           "id": "merchant_a",
           "name": "\u5546\u8d29\u7532",
           "portrait": "/assets/characters/npcs/merchant_a.png",
-          "position": { "x": 15, "y": 55 },
+          "position": { "x": 22, "y": 72 },
           "dialogues": [
             {
               "speaker": "merchant_a",
@@ -36,7 +36,7 @@
           "id": "waiter",
           "name": "\u9152\u5e97\u4f19\u8ba1",
           "portrait": "/assets/characters/npcs/waiter.png",
-          "position": { "x": 40, "y": 50 },
+          "position": { "x": 38, "y": 65 },
           "dialogues": [
             {
               "speaker": "waiter",
@@ -50,7 +50,7 @@
           "id": "scholar_a",
           "name": "\u58eb\u4eba\u7532",
           "portrait": "/assets/characters/npcs/scholar_a.png",
-          "position": { "x": 65, "y": 45 },
+          "position": { "x": 62, "y": 65 },
           "dialogues": [
             {
               "speaker": "scholar_a",
@@ -64,7 +64,7 @@
           "id": "scholar_b",
           "name": "\u58eb\u4eba\u4e59",
           "portrait": "/assets/characters/npcs/scholar_b.png",
-          "position": { "x": 82, "y": 52 },
+          "position": { "x": 78, "y": 72 },
           "dialogues": [
             {
               "speaker": "scholar_b",
@@ -78,7 +78,7 @@
           "id": "merchant_c",
           "name": "\u5546\u8d29\u4e19",
           "portrait": "/assets/characters/npcs/merchant_c.png",
-          "position": { "x": 50, "y": 60 },
+          "position": { "x": 50, "y": 78 },
           "dialogues": [
             {
               "speaker": "merchant_c",
@@ -100,7 +100,7 @@
     {
       "id": "exam",
       "type": "exam",
-      "background": "/assets/scenes/02_changan/palace_inside.png",
+      "background": "/assets/scenes/02_changan/exam_hall.png",
       "title": "\u5236\u4e3e\u8003\u8bd5",
       "narrative": "\u675c\u752b\u6b63\u4e86\u6b63\u8863\u51a0\uff0c\u8d70\u8fdb\u4e86\u5e84\u4e25\u7684\u8003\u573a\u3002\u8003\u5b98\u5df2\u5728\u5802\u4e0a\u7b49\u5019\u3002",
       "examiner": {
@@ -192,7 +192,7 @@
           "id": "citizen_1",
           "name": "\u8001\u8005",
           "portrait": "/assets/characters/npcs/elder.png",
-          "position": { "x": 20, "y": 50 },
+          "position": { "x": 22, "y": 72 },
           "isClue": true,
           "dialogues": [
             {
@@ -207,7 +207,7 @@
           "id": "citizen_2",
           "name": "\u8d76\u8003\u4e66\u751f",
           "portrait": "/assets/characters/npcs/student.png",
-          "position": { "x": 45, "y": 55 },
+          "position": { "x": 40, "y": 65 },
           "isClue": true,
           "dialogues": [
             {
@@ -222,7 +222,7 @@
           "id": "citizen_3",
           "name": "\u9152\u5e97\u638c\u67dc",
           "portrait": "/assets/characters/npcs/innkeeper.png",
-          "position": { "x": 70, "y": 48 },
+          "position": { "x": 62, "y": 65 },
           "isClue": true,
           "dialogues": [
             {
@@ -237,7 +237,7 @@
           "id": "citizen_4",
           "name": "\u670b\u53cb",
           "portrait": "/assets/characters/npcs/friend.png",
-          "position": { "x": 30, "y": 60 },
+          "position": { "x": 78, "y": 72 },
           "isClue": false,
           "dialogues": [
             {
