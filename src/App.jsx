@@ -5,6 +5,7 @@ import Timeline from "./components/Timeline";
 import ScoreBar from "./components/ScoreBar";
 import EventPanel from "./components/EventPanel";
 import QuizPanel from "./components/QuizPanel";
+import ScenePlayer from "./components/ScenePlayer";
 
 // Static character data
 const CHARACTERS = [
@@ -51,6 +52,9 @@ export default function App() {
   const [progress, setProgress] = useState(0);
   const [showEvent, setShowEvent] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [globalScore, setGlobalScore] = useState(0);
+  const [showScene, setShowScene] = useState(false);
+  const [sceneData, setSceneData] = useState(null);
 
   // Load timeline data when character is selected
   useEffect(() => {
@@ -79,6 +83,29 @@ export default function App() {
 
   const handleQuizComplete = (passed) => {
     if (passed && progress === currentIndex) {
+      setProgress(currentIndex + 1);
+    }
+  };
+
+  const handleExplore = async (stage) => {
+    try {
+      const sceneModule = await import(`./data/dufu/scenes/${stage.sceneFile}`);
+      const data = sceneModule.default;
+      if (data.type === "interactive" && data.phases) {
+        setSceneData(data);
+        setShowScene(true);
+      } else {
+        setShowEvent(true);
+      }
+    } catch {
+      setShowEvent(true);
+    }
+  };
+
+  const handleSceneComplete = () => {
+    setShowScene(false);
+    setSceneData(null);
+    if (progress === currentIndex) {
       setProgress(currentIndex + 1);
     }
   };
@@ -132,7 +159,7 @@ export default function App() {
               ...styles.exploreBtn,
               backgroundColor: currentStage.color,
             }}
-            onClick={() => setShowEvent(true)}
+            onClick={() => handleExplore(currentStage)}
           >
             {"\u{1F4D6} \u63a2\u7d22\u6b64\u65f6\u671f"}
           </button>
@@ -169,6 +196,14 @@ export default function App() {
           stage={currentStage}
           onComplete={handleQuizComplete}
           onClose={() => setShowQuiz(false)}
+        />
+      )}
+      {showScene && sceneData && (
+        <ScenePlayer
+          sceneData={sceneData}
+          globalScore={globalScore}
+          onScoreChange={setGlobalScore}
+          onComplete={handleSceneComplete}
         />
       )}
     </div>
