@@ -1,0 +1,40 @@
+{
+  "id": "03_anshi",
+  "title": "\u56fd\u7834\u5c71\u6cb3\u5728",
+  "background": "/assets/scenes/03_anshi/bg.png",
+  "narrative": "\u516c\u5143755\u5e74\uff0c\u5b89\u7984\u5c71\u5728\u8303\u9633\u8d77\u5175\u53db\u5510\u3002\u957f\u5b89\u5931\u9677\uff0c\u7384\u5b97\u897f\u9003\u3002\u675c\u752b\u628a\u5bb6\u4eba\u5b89\u987f\u5728\u9104\u5dde\uff0c\u53ea\u8eab\u5192\u9669\u7a7f\u8d8a\u53db\u519b\u5c01\u9501\u7ebf\uff0c\u5954\u8d74\u51e4\u7fd4\u6295\u5954\u8083\u5b97\u3002",
+  "poem": {
+    "title": "\u6625\u671b",
+    "content": "\u56fd\u7834\u5c71\u6cb3\u5728\uff0c\u57ce\u6625\u8349\u6728\u6df1\u3002\n\u611f\u65f6\u82b1\u6e85\u6cea\uff0c\u6068\u522b\u9e1f\u60ca\u5fc3\u3002\n\u70fd\u706b\u8fde\u4e09\u6708\uff0c\u5bb6\u4e66\u62b5\u4e07\u91d1\u3002\n\u767d\u5934\u6414\u66f4\u77ed\uff0c\u6d51\u6b32\u4e0d\u80dc\u7c2a\u3002"
+  },
+  "dialogues": [
+    {
+      "speaker": "narrator",
+      "speakerName": "",
+      "portrait": "",
+      "text": "\u516c\u5143755\u5e74\u5341\u4e00\u6708\uff0c\u5b89\u7984\u5c71\u5728\u8303\u9633\u8d77\u5175\uff0c\u5929\u4e0b\u5927\u4e71\u3002",
+      "position": "center"
+    },
+    {
+      "speaker": "dufu",
+      "speakerName": "\u675c\u752b",
+      "portrait": "/assets/characters/dufu/portrait.png",
+      "text": "\u56fd\u7834\u5c71\u6cb3\u5728\uff0c\u57ce\u6625\u8349\u6728\u6df1\u2026\u2026\u8fd9\u957f\u5b89\u57ce\uff0c\u5df2\u975e\u6614\u65e5\u6a21\u6837\u3002",
+      "position": "left"
+    },
+    {
+      "speaker": "refugee",
+      "speakerName": "\u96be\u6c11",
+      "portrait": "/assets/characters/npcs/refugee.png",
+      "text": "\u5148\u751f\uff0c\u524d\u65b9\u53db\u519b\u91cd\u91cd\uff0c\u60a8\u8fd8\u8981\u5f80\u51e4\u7fd4\u53bb\uff1f\u592a\u5371\u9669\u4e86\uff01",
+      "position": "right"
+    },
+    {
+      "speaker": "dufu",
+      "speakerName": "\u675c\u752b",
+      "portrait": "/assets/characters/dufu/portrait.png",
+      "text": "\u8083\u5b97\u5728\u51e4\u7fd4\u5373\u4f4d\uff0c\u6211\u867d\u4e00\u4ecb\u5e03\u8863\uff0c\u4e5f\u8981\u62a5\u6548\u56fd\u5bb6\uff01",
+      "position": "left"
+    }
+  ]
+}

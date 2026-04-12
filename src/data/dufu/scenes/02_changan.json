@@ -1,0 +1,40 @@
+{
+  "id": "02_changan",
+  "title": "\u957f\u5b89\u5341\u5e74",
+  "background": "/assets/scenes/02_changan/bg.png",
+  "narrative": "\u516c\u5143735\u5e74\uff0c24\u5c81\u7684\u675c\u752b\u6ee1\u6000\u58ee\u5fd7\u8d74\u957f\u5b89\u53c2\u52a0\u79d1\u4e3e\uff0c\u5374\u906d\u9047\u6743\u76f8\u674e\u6797\u752b\u64cd\u7eb5\u7684\u300c\u91ce\u65e0\u9057\u8d24\u300d\u95f9\u5267\uff0c\u540d\u843d\u5b59\u5c71\u3002",
+  "poem": {
+    "title": "\u5949\u8d60\u97e6\u5de6\u4e1e\u4e08\u4e8c\u5341\u4e8c\u97f5\uff08\u8282\u9009\uff09",
+    "content": "\u7ee8\u7ee4\u4e0d\u997f\u6b7b\uff0c\u5112\u51a0\u591a\u8bef\u8eab\u3002\n\u4e08\u4eba\u8bd5\u9759\u542c\uff0c\u8d31\u5b50\u8bf7\u5177\u9648\u3002\n\u752b\u6614\u5c11\u5e74\u65e5\uff0c\u65e9\u5145\u89c2\u56fd\u5bbe\u3002\n\u8bfb\u4e66\u7834\u4e07\u5377\uff0c\u4e0b\u7b14\u5982\u6709\u795e\u3002"
+  },
+  "dialogues": [
+    {
+      "speaker": "dufu",
+      "speakerName": "\u675c\u752b",
+      "portrait": "/assets/characters/dufu/portrait.png",
+      "text": "\u8fd9\u957f\u5b89\u57ce\u7684\u7e41\u534e\uff0c\u5374\u4e0d\u77e5\u6697\u85cf\u591a\u5c11\u8f9b\u9178\u2026\u2026",
+      "position": "left"
+    },
+    {
+      "speaker": "merchant",
+      "speakerName": "\u5c0f\u5546\u8d29",
+      "portrait": "/assets/characters/npcs/merchant.png",
+      "text": "\u5ba2\u5b98\uff0c\u6765\u7897\u80e1\u8fa3\u6c64\uff1f\u770b\u60a8\u9762\u8272\u4e0d\u4f73\u554a\u3002",
+      "position": "right"
+    },
+    {
+      "speaker": "dufu",
+      "speakerName": "\u675c\u752b",
+      "portrait": "/assets/characters/dufu/portrait.png",
+      "text": "\u591a\u8c22\u597d\u610f\u3002\u6211\u5728\u8fd9\u957f\u5b89\u57ce\u5df2\u56f0\u5b88\u6570\u5e74\uff0c\u79d1\u4e3e\u65e0\u671b\uff0c\u751f\u8ba1\u8270\u96be\u3002",
+      "position": "left"
+    },
+    {
+      "speaker": "merchant",
+      "speakerName": "\u5c0f\u5546\u8d29",
+      "portrait": "/assets/characters/npcs/merchant.png",
+      "text": "\u553e\uff0c\u8fd9\u5e74\u5934\u8c01\u4e0d\u96be\u5462\u3002\u542c\u8bf4\u90a3\u674e\u6797\u752b\u628a\u79d1\u4e3e\u90fd\u7ed9\u5c01\u4e86\uff0c\u8bf4\u4ec0\u4e48\u300c\u91ce\u65e0\u9057\u8d24\u300d\u2026\u2026",
+      "position": "right"
+    }
+  ]
+}
