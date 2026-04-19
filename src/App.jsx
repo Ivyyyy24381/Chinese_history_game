@@ -6,6 +6,7 @@ import ScoreBar from "./components/ScoreBar";
 import EventPanel from "./components/EventPanel";
 import QuizPanel from "./components/QuizPanel";
 import ScenePlayer from "./components/ScenePlayer";
+import SceneEditor from "./components/SceneEditor";
 
 // Static character data
 const CHARACTERS = [
@@ -112,6 +113,11 @@ export default function App() {
       setProgress(currentIndex + 1);
     }
   };
+
+  // Editor mode via ?editor=true
+  if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("editor") === "true") {
+    return <SceneEditor />;
+  }
 
   if (screen === "select") {
     return <CharacterSelect characters={CHARACTERS} onSelect={handleCharacterSelect} />;

@@ -17,6 +17,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   const [examShowResult, setExamShowResult] = useState(false);
   const [examFillInput, setExamFillInput] = useState("");
   const [examFinished, setExamFinished] = useState(false);
+  const [fillDropped, setFillDropped] = useState(null);
   // Transition state
   const [transitionDone, setTransitionDone] = useState(false);
   // Choice state
@@ -99,6 +100,19 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
       setExamSelected(null);
       setExamShowResult(false);
       setExamFillInput("");
+      setFillDropped(null);
+    }
+  };
+
+  // Fill drag-and-drop handler
+  const handleFillDrop = (word, answer) => {
+    if (examShowResult) return;
+    setFillDropped(word);
+    setExamFillInput(word);
+    setExamShowResult(true);
+    if (word === answer) {
+      setExamScore((s) => s + 1);
+      onScoreChange(globalScore + 1);
     }
   };
 
@@ -126,14 +140,21 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
               <p style={styles.transitionText}>{currentPhase.transitionText}</p>
               <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
             </div>
+          ) : !showConclusion ? (
+            <div style={styles.scrollContainer} onClick={() => setShowConclusion(true)}>
+              <div style={styles.scrollWrap}>
+                <img src="/assets/scenes/02_changan/scroll.png" alt="" style={styles.scrollImg} />
+                <div style={styles.scrollTextArea}>
+                  <h2 style={styles.scrollTitle}>{"\u5236\u4E3E\u653E\u699C"}</h2>
+                  {currentPhase.announcement && (
+                    <p style={styles.scrollResult}>{currentPhase.announcement.text}</p>
+                  )}
+                </div>
+              </div>
+              <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
+            </div>
           ) : (
             <div style={styles.announcementPanel}>
-              {currentPhase.announcement && (
-                <div style={styles.decree}>
-                  <div style={styles.decreeSeal}>{"\u7687"}</div>
-                  <p style={styles.decreeText}>{currentPhase.announcement.text}</p>
-                </div>
-              )}
               {currentPhase.dufu_reaction && (
                 <div style={styles.reactionBox}>
                   <img src={currentPhase.dufu_reaction.portrait} alt="" style={styles.reactionPortrait} />
@@ -153,105 +174,127 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   // --- EXPLORE PHASE ---
   if (currentPhase.type === "explore") {
     return (
-      <div style={bgStyle}>
-        {/* Phase title & instruction */}
-        <div style={styles.phaseHeader}>
-          <h2 style={styles.phaseTitle}>{currentPhase.title}</h2>
-          {currentPhase.narrative && <p style={styles.phaseNarrative}>{currentPhase.narrative}</p>}
-        </div>
+      <div style={styles.sceneOuter}>
+        {/* 16:9 locked area for background + NPCs */}
+        <div style={styles.sceneStage}>
+          <div style={{
+            ...styles.sceneStageInner,
+            backgroundImage: currentPhase.background ? `url(${currentPhase.background})` : "none",
+          }}>
+            {/* Phase title & instruction */}
+            <div style={styles.phaseHeader}>
+              <h2 style={styles.phaseTitle}>{currentPhase.title}</h2>
+              {currentPhase.narrative && <p style={styles.phaseNarrative}>{currentPhase.narrative}</p>}
+            </div>
 
-        {currentPhase.instruction && (
-          <div style={styles.instructionBar}>
-            <span style={styles.instructionIcon}>{"\u{1F4AC}"}</span>
-            <span>{currentPhase.instruction}</span>
-            <span style={styles.talkCount}>
-              {"\u5DF2\u4EA4\u8C08: "}{talkedNpcs.size}/{currentPhase.npcs.length}
-            </span>
-          </div>
-        )}
+            {currentPhase.instruction && (
+              <div style={styles.instructionBar}>
+                <span style={styles.instructionIcon}>{"\u{1F4AC}"}</span>
+                <span>{currentPhase.instruction}</span>
+                <span style={styles.talkCount}>
+                  {"\u5DF2\u4EA4\u8C08: "}{talkedNpcs.size}/{currentPhase.npcs.length}
+                </span>
+              </div>
+            )}
 
-        {/* NPC markers with portraits */}
-        {currentPhase.npcs.map((npc) => {
-          const talked = talkedNpcs.has(npc.id);
-          return (
-            <div
-              key={npc.id}
-              style={{
-                ...styles.npcMarker,
-                left: npc.position.x + "%",
-                top: npc.position.y + "%",
-                opacity: talked ? 0.6 : 1,
-              }}
-              onClick={() => handleNpcClick(npc)}
-            >
-              {npc.portrait ? (
-                <div style={{
-                  ...styles.npcPortraitWrap,
-                  borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
-                }}>
-                  <img src={npc.portrait} alt={npc.name} style={styles.npcPortraitImg} />
+            {/* NPC markers with portraits */}
+            {currentPhase.npcs.map((npc) => {
+              const talked = talkedNpcs.has(npc.id);
+              return (
+                <div
+                  key={npc.id}
+                  style={{
+                    ...styles.npcMarker,
+                    left: npc.position.x + "%",
+                    top: npc.position.y + "%",
+                    opacity: talked ? 0.6 : 1,
+                  }}
+                  onClick={() => handleNpcClick(npc)}
+                >
                   {!talked && <div style={styles.npcBubble}>{"?"}</div>}
                   {talked && <div style={styles.npcCheckMark}>{"\u2713"}</div>}
+                  {npc.portrait ? (
+                    <div style={{
+                      ...styles.npcPortraitWrap,
+                      width: 140 * (npc.scale || 1),
+                      height: 140 * (npc.scale || 1),
+                      borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
+                      transform: npc.flip ? "scaleX(-1)" : "none",
+                    }}>
+                      <img src={npc.portrait} alt={npc.name} style={styles.npcPortraitImg} />
+                    </div>
+                  ) : (
+                    <div style={{
+                      ...styles.npcTextLabel,
+                      borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#D4A574",
+                      backgroundColor: talked ? "rgba(149,165,166,0.15)" : "rgba(212,165,116,0.2)",
+                    }}>
+                      <span style={styles.npcTextLabelName}>{npc.name}</span>
+                      {!talked && <span style={styles.npcTextLabelHint}>{"点击查看"}</span>}
+                    </div>
+                  )}
+                  {npc.portrait && <span style={styles.npcName}>{npc.name}</span>}
                 </div>
-              ) : (
-                <div style={{
-                  ...styles.npcDot,
-                  backgroundColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
-                }}>
-                  {talked ? "\u2713" : "?"}
-                </div>
-              )}
-              <span style={styles.npcName}>{npc.name}</span>
-            </div>
-          );
-        })}
+              );
+            })}
 
-        {/* Enter trigger zone */}
-        {canProceedExplore && currentPhase.nextTrigger && (
-          <div
-            style={{
-              ...styles.triggerZone,
-              left: currentPhase.nextTrigger.area.x + "%",
-              top: currentPhase.nextTrigger.area.y + "%",
-            }}
-            onClick={goToNextPhase}
-          >
-            <div style={styles.triggerPulse} />
-            <span style={styles.triggerLabel}>{currentPhase.nextTrigger.label}</span>
+            {/* Enter trigger zone */}
+            {canProceedExplore && currentPhase.nextTrigger && (
+              <div
+                style={{
+                  ...styles.triggerZone,
+                  left: currentPhase.nextTrigger.area.x + "%",
+                  top: currentPhase.nextTrigger.area.y + "%",
+                }}
+                onClick={goToNextPhase}
+              >
+                <div style={styles.triggerPulse} />
+                <span style={styles.triggerLabel}>{currentPhase.nextTrigger.label}</span>
+              </div>
+            )}
+
+            {/* If no trigger, show button when enough talks done */}
+            {canProceedExplore && !currentPhase.nextTrigger && (
+              <button style={styles.floatingProceed} onClick={goToNextPhase}>
+                {"\u7EE7\u7EED \u2192"}
+              </button>
+            )}
           </div>
-        )}
+        </div>
 
-        {/* If no trigger, show button when enough talks done */}
-        {canProceedExplore && !currentPhase.nextTrigger && (
-          <button style={styles.floatingProceed} onClick={goToNextPhase}>
-            {"\u7EE7\u7EED \u2192"}
-          </button>
-        )}
-
-        {/* Active NPC dialogue with portrait — click anywhere to advance/close */}
+        {/* Active NPC dialogue — large portrait left, text right */}
         {activeNpc && (
           <div style={styles.dialogueOverlay} onClick={handleDialogueNext}>
-            <div style={styles.dialogueBox}>
-              <div style={styles.dialogueInner}>
-                {(() => {
-                  const line = activeNpc.dialogues[dialogueIndex];
-                  const isSelf = line.speaker === "dufu" || line.speaker === "self";
-                  const portrait = isSelf ? "/assets/characters/dufu/portrait.png" : activeNpc.portrait;
-                  return portrait ? <img src={portrait} alt="" style={styles.dialoguePortrait} /> : null;
-                })()}
-                <div style={styles.dialogueContent}>
-                  <div style={styles.dialogueSpeaker}>
-                    {activeNpc.dialogues[dialogueIndex].speakerName || activeNpc.name}
+            {(() => {
+              const line = activeNpc.dialogues[dialogueIndex];
+              const isSelf = line.speaker === "dufu" || line.speaker === "self";
+              const portrait = isSelf ? "/assets/characters/dufu/portrait.png" : activeNpc.portrait;
+              return (
+                <>
+                  {/* Full-width dialogue background bar at bottom */}
+                  <div style={styles.dialogueBar}>
+                    {/* Portrait overlapping the bar from the left */}
+                    {portrait && (
+                      <div style={styles.dialoguePortraitArea}>
+                        <img src={portrait} alt="" style={styles.dialoguePortraitLarge} />
+                      </div>
+                    )}
+                    {/* Text content */}
+                    <div style={styles.dialogueTextPanel}>
+                      <div style={styles.dialogueSpeaker}>
+                        {line.speakerName || activeNpc.name}
+                      </div>
+                      <div style={styles.dialogueText}>
+                        {line.text}
+                      </div>
+                      <div style={styles.dialogueContinue}>
+                        {dialogueIndex < activeNpc.dialogues.length - 1 ? "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED" : "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED"}
+                      </div>
+                    </div>
                   </div>
-                  <div style={styles.dialogueText}>
-                    {activeNpc.dialogues[dialogueIndex].text}
-                  </div>
-                </div>
-              </div>
-              <div style={styles.dialogueContinue}>
-                {dialogueIndex < activeNpc.dialogues.length - 1 ? "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED" : "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED"}
-              </div>
-            </div>
+                </>
+              );
+            })()}
           </div>
         )}
       </div>
@@ -284,15 +327,22 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
       );
     }
 
+    const examinerPortrait = currentPhase.examiner?.portrait;
     return (
       <div style={bgStyle}>
-        <div style={styles.examOverlay}>
-          <div style={styles.examPanel}>
-            {currentPhase.examiner && (
-              <div style={styles.examinerBar}>
-                <span style={styles.examinerName}>{currentPhase.examiner.name}</span>
+        <div style={styles.examWithPortrait}>
+          {/* Examiner portrait on the left — always visible */}
+          <div style={styles.examPortraitArea}>
+            {examinerPortrait ? (
+              <img src={examinerPortrait} alt={currentPhase.examiner?.name || ""} style={styles.examPortraitImg} />
+            ) : (
+              <div style={{ width: "100%", height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#888", fontSize: 14 }}>
+                {"（无考官立绘）"}
               </div>
             )}
+          </div>
+          {/* Exam panel on the right */}
+          <div style={styles.examPanelRight}>
             <div style={styles.examProgress}>
               {"\u7B2C "}{examIndex + 1}{" \u9898 / \u5171 "}{currentPhase.questions.length}{" \u9898"}
             </div>
@@ -318,25 +368,60 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
               </div>
             )}
 
-            {q.type === "poem_fill" && (
-              <div style={styles.fillRow}>
-                <input
-                  type="text"
-                  value={examFillInput}
-                  onChange={(e) => setExamFillInput(e.target.value)}
-                  placeholder={"\u8BF7\u8F93\u5165\u7B54\u6848..."}
-                  style={{
-                    ...styles.fillInput,
-                    borderColor: examShowResult ? (examFillInput.trim() === q.answer ? "#28A745" : "#DC3545") : "#CCC",
-                  }}
-                  disabled={examShowResult}
-                  onKeyDown={(e) => e.key === "Enter" && handleExamFill()}
-                />
-                {!examShowResult && (
-                  <button style={styles.fillSubmit} onClick={handleExamFill}>{"\u786E\u8BA4"}</button>
-                )}
-              </div>
-            )}
+            {q.type === "poem_fill" && (() => {
+              const parts = q.question.split("___");
+              const allWords = [q.answer, ...(q.distractors || [])];
+              const shuffled = [...allWords].sort((a, b) => {
+                const ha = a.split("").reduce((s, c) => s + c.charCodeAt(0), examIndex * 7);
+                const hb = b.split("").reduce((s, c) => s + c.charCodeAt(0), examIndex * 7);
+                return ha - hb;
+              });
+              const isCorrect = fillDropped === q.answer;
+              return (
+                <div>
+                  <div style={styles.fillPassage}>
+                    {parts[0]}
+                    <span
+                      style={{
+                        ...styles.fillDropZone,
+                        borderColor: examShowResult ? (isCorrect ? "#28A745" : "#DC3545") : "#8B7355",
+                        backgroundColor: examShowResult ? (isCorrect ? "#D4EDDA" : "#F8D7DA") : "rgba(139,115,85,0.15)",
+                        color: examShowResult ? (isCorrect ? "#155724" : "#721C24") : "#8B7355",
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const word = e.dataTransfer.getData("text/plain");
+                        handleFillDrop(word, q.answer);
+                      }}
+                    >
+                      {fillDropped || "\u2003\u2003\u2003"}
+                    </span>
+                    {parts[1] || ""}
+                  </div>
+                  {!examShowResult && (
+                    <div style={styles.fillChips}>
+                      {shuffled.map((word, i) => (
+                        <div
+                          key={i}
+                          draggable
+                          onDragStart={(e) => e.dataTransfer.setData("text/plain", word)}
+                          onClick={() => handleFillDrop(word, q.answer)}
+                          style={styles.fillChip}
+                        >
+                          {word}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {examShowResult && !isCorrect && (
+                    <div style={{ fontSize: 14, color: "#28A745", marginTop: 8 }}>
+                      {"\u6B63\u786E\u7B54\u6848: " + q.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {examShowResult && q.explanation && (
               <div style={styles.explanationBox}>
@@ -425,6 +510,131 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
     );
   }
 
+  // --- POEM COMPOSE PHASE ---
+  if (currentPhase.type === "poem_compose") {
+    return (
+      <div style={bgStyle}>
+        <div style={styles.choiceOverlay}>
+          <div style={styles.choicePanel}>
+            <h2 style={{ margin: "0 0 12px", fontSize: 20 }}>{"\u{1F4DC} \u8BD7\u6B4C\u521B\u4F5C"}</h2>
+            {currentPhase.poemContext && <p style={styles.choiceNarrative}>{currentPhase.poemContext}</p>}
+            <p style={{ color: "#999", fontSize: 13, marginBottom: 16 }}>{"\uFF08\u6B64\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u73A9\u5BB6\u5C06\u4ECE\u5019\u9009\u8BCD\u53E5\u4E2D\u62FC\u51FA\u8BD7\u53E5\uFF09"}</p>
+            {currentPhase.poemAnswer && (
+              <div style={styles.conclusionPoem}>
+                <pre style={styles.poemContent}>{currentPhase.poemAnswer}</pre>
+              </div>
+            )}
+            <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- MAP TRAVEL PHASE ---
+  if (currentPhase.type === "map_travel") {
+    return (
+      <div style={bgStyle}>
+        <div style={styles.phaseHeader}>
+          <h2 style={styles.phaseTitle}>{currentPhase.title || "\u5730\u56FE\u884C\u65C5"}</h2>
+          {currentPhase.travelNarrative && <p style={styles.phaseNarrative}>{currentPhase.travelNarrative}</p>}
+        </div>
+        {(currentPhase.destinations || []).map((dest, i) => (
+          <div
+            key={i}
+            style={{ ...styles.triggerZone, left: (dest.x || 50) + "%", top: (dest.y || 50) + "%" }}
+            onClick={goToNextPhase}
+          >
+            <div style={styles.triggerPulse} />
+            <span style={styles.triggerLabel}>{dest.name || "\u76EE\u7684\u5730"}</span>
+          </div>
+        ))}
+        <div style={{ position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)", color: "#FFF", backgroundColor: "rgba(0,0,0,0.6)", padding: "8px 16px", borderRadius: 8, fontSize: 13 }}>
+          {"\uFF08\u5730\u56FE\u884C\u65C5\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u70B9\u51FB\u76EE\u7684\u5730\u7EE7\u7EED\uFF09"}
+        </div>
+      </div>
+    );
+  }
+
+  // --- DIALOGUE BRANCH PHASE ---
+  if (currentPhase.type === "dialogue_branch") {
+    return (
+      <div style={bgStyle}>
+        <div style={styles.choiceOverlay}>
+          <div style={styles.choicePanel}>
+            <h2 style={{ margin: "0 0 12px", fontSize: 20 }}>{"\u{1F4AC} \u5BF9\u8BDD: " + (currentPhase.branchCharacter || "")}</h2>
+            {currentPhase.narrative && <p style={styles.choiceNarrative}>{currentPhase.narrative}</p>}
+            <p style={{ color: "#999", fontSize: 13, marginBottom: 16 }}>{"\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09"}</p>
+            {(currentPhase.dialogueTree || []).map((node, i) => (
+              <div key={i} style={{ ...styles.explanationBox, marginBottom: 8 }}>
+                <strong>{node.speaker || "\u65C1\u767D"}: </strong>{node.text}
+                {node.choices && node.choices.length > 0 && (
+                  <div style={{ marginTop: 4, paddingLeft: 12 }}>
+                    {node.choices.map((c, ci) => (
+                      <div key={ci} style={{ color: "#2980B9", fontSize: 13 }}>{"\u2192 " + c.text}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+            <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- NARRATION PHASE ---
+  if (currentPhase.type === "narration") {
+    const slides = currentPhase.narrationSlides || [];
+    return (
+      <div style={bgStyle}>
+        <div style={styles.transitionOverlay}>
+          <div style={{ maxWidth: 600, width: "90%", maxHeight: "85vh", overflowY: "auto" }}>
+            {slides.length === 0 ? (
+              <p style={{ color: "#AAA", textAlign: "center" }}>{"\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09"}</p>
+            ) : slides.map((slide, i) => (
+              <div key={i} style={{ marginBottom: 24, textAlign: "center" }}>
+                {slide.image && <img src={slide.image} alt="" style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }} />}
+                {slide.speaker && <div style={{ color: "#D4A574", fontSize: 14, fontWeight: "bold", marginBottom: 4 }}>{slide.speaker}</div>}
+                <p style={{ color: "#F5E6D3", fontSize: 16, lineHeight: 1.8, margin: 0 }}>{slide.text}</p>
+              </div>
+            ))}
+            <button style={{ ...styles.proceedBtn, marginTop: 20 }} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- MINIGAME PHASE ---
+  if (currentPhase.type === "minigame") {
+    const items = currentPhase.minigameItems || [];
+    const typeLabel = { memory: "\u8BB0\u5FC6\u7FFB\u724C", matching: "\u8FDE\u7EBF\u9898", sorting: "\u6392\u5E8F", puzzle: "\u62FC\u56FE" };
+    return (
+      <div style={bgStyle}>
+        <div style={styles.choiceOverlay}>
+          <div style={styles.choicePanel}>
+            <h2 style={{ margin: "0 0 12px", fontSize: 20 }}>{"\u{1F3AE} " + (typeLabel[currentPhase.minigameType] || "\u5C0F\u6E38\u620F")}</h2>
+            {currentPhase.minigameInstruction && <p style={styles.choiceNarrative}>{currentPhase.minigameInstruction}</p>}
+            <p style={{ color: "#999", fontSize: 13, marginBottom: 16 }}>{"\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09"}</p>
+            {items.length > 0 && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+                {items.map((item, i) => (
+                  <div key={i} style={{ ...styles.explanationBox, margin: 0, textAlign: "center" }}>
+                    <div style={{ fontWeight: "bold" }}>{item.left}</div>
+                    <div style={{ color: "#888", fontSize: 12 }}>{"\u2194 " + item.right}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 }
 
@@ -439,11 +649,33 @@ const styles = {
     fontFamily: "'Noto Serif SC', 'Songti SC', serif",
     display: "flex", flexDirection: "column",
   },
+  // Locked aspect-ratio wrapper for explore phase
+  sceneOuter: {
+    position: "fixed", inset: 0, zIndex: 200,
+    backgroundColor: "#000",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+  },
+  sceneStage: {
+    width: "100%", height: "100%",
+    display: "flex", alignItems: "center", justifyContent: "center",
+  },
+  sceneStageInner: {
+    position: "relative",
+    width: "min(100vw, calc(100vh * 16 / 9))",
+    height: "min(100vh, calc(100vw * 9 / 16))",
+    aspectRatio: "16 / 9",
+    backgroundSize: "cover", backgroundPosition: "center",
+    backgroundColor: "#2C3E50",
+    overflow: "hidden",
+  },
   // Phase header
   phaseHeader: {
     padding: "16px 24px",
     background: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)",
     color: "#FFF",
+    position: "relative",
+    zIndex: 20,
   },
   phaseTitle: { margin: "0 0 4px", fontSize: 22, letterSpacing: 4 },
   phaseNarrative: { margin: 0, fontSize: 13, opacity: 0.85, lineHeight: 1.6 },
@@ -470,6 +702,21 @@ const styles = {
     boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
     transition: "all 0.3s",
   },
+  npcTextLabel: {
+    padding: "8px 16px", borderRadius: 8,
+    border: "2px solid",
+    display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+    backdropFilter: "blur(4px)",
+    boxShadow: "0 2px 12px rgba(0,0,0,0.4)",
+    transition: "all 0.3s",
+  },
+  npcTextLabelName: {
+    fontSize: 15, fontWeight: "bold", color: "#FFF",
+    textShadow: "1px 1px 3px rgba(0,0,0,0.8)",
+  },
+  npcTextLabelHint: {
+    fontSize: 10, color: "rgba(255,255,255,0.7)",
+  },
   npcName: {
     marginTop: 4, fontSize: 12, color: "#FFF",
     backgroundColor: "rgba(0,0,0,0.6)", padding: "2px 8px",
@@ -484,18 +731,20 @@ const styles = {
     width: "100%", height: "100%", objectFit: "contain",
   },
   npcBubble: {
-    position: "absolute", top: -4, right: -4,
-    width: 20, height: 20, borderRadius: "50%",
-    backgroundColor: "#E74C3C", color: "#FFF",
+    width: 28, height: 28, borderRadius: "50%",
+    backgroundColor: "rgba(231,76,60,0.85)", color: "#FFF",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: 11, fontWeight: "bold",
+    fontSize: 14, fontWeight: "bold",
+    pointerEvents: "none",
+    marginBottom: 4,
   },
   npcCheckMark: {
-    position: "absolute", top: -4, right: -4,
-    width: 20, height: 20, borderRadius: "50%",
-    backgroundColor: "#2ECC71", color: "#FFF",
+    width: 28, height: 28, borderRadius: "50%",
+    backgroundColor: "rgba(46,204,113,0.85)", color: "#FFF",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: 11, fontWeight: "bold",
+    fontSize: 14, fontWeight: "bold",
+    pointerEvents: "none",
+    marginBottom: 4,
   },
   // Trigger zone
   triggerZone: {
@@ -524,32 +773,44 @@ const styles = {
   // Dialogue overlay
   dialogueOverlay: {
     position: "fixed", inset: 0, zIndex: 300,
-    display: "flex", flexDirection: "column", justifyContent: "flex-end",
+    display: "flex", alignItems: "flex-end",
     backgroundColor: "rgba(0,0,0,0.4)", cursor: "pointer",
   },
-  dialogueBox: {
+  dialogueBar: {
+    position: "relative",
+    width: "100%",
     backgroundColor: "rgba(30,20,10,0.95)",
-    padding: "20px 28px", minHeight: 140,
     borderTop: "2px solid #8B7355",
+    display: "flex", alignItems: "flex-end",
+    minHeight: 160,
   },
-  dialogueInner: {
-    display: "flex", alignItems: "flex-start", gap: 16,
-  },
-  dialoguePortrait: {
-    width: 72, height: 72, objectFit: "contain",
+  dialoguePortraitArea: {
+    width: "25vw", minWidth: 180, maxWidth: 360,
     flexShrink: 0,
+    display: "flex", alignItems: "flex-end", justifyContent: "center",
+    marginTop: "-45vh",
+    paddingLeft: 8,
   },
-  dialogueContent: { flex: 1 },
+  dialoguePortraitLarge: {
+    width: "100%", height: "auto", maxHeight: "65vh",
+    objectFit: "contain",
+    filter: "drop-shadow(4px 4px 12px rgba(0,0,0,0.6))",
+  },
+  dialogueTextPanel: {
+    flex: 1,
+    padding: "24px 32px",
+    minHeight: 120,
+  },
   dialogueSpeaker: {
-    color: "#D4A574", fontSize: 14, fontWeight: "bold",
-    letterSpacing: 2, marginBottom: 8,
+    color: "#D4A574", fontSize: 16, fontWeight: "bold",
+    letterSpacing: 3, marginBottom: 12,
   },
   dialogueText: {
-    color: "#F5E6D3", fontSize: 15, lineHeight: 1.8,
+    color: "#F5E6D3", fontSize: 17, lineHeight: 2,
   },
   dialogueContinue: {
-    textAlign: "right", color: "#A89968", fontSize: 12,
-    marginTop: 12, cursor: "pointer",
+    textAlign: "right", color: "#A89968", fontSize: 13,
+    marginTop: 16, cursor: "pointer",
   },
   // Transition
   transitionOverlay: {
@@ -563,7 +824,56 @@ const styles = {
     color: "#F4D03F", fontSize: 32, letterSpacing: 8,
     marginBottom: 16,
   },
-  clickHint: { color: "#AAA", fontSize: 14 },
+  clickHint: { color: "#AAA", fontSize: 14, marginTop: 12 },
+  // Examiner intro
+  examIntroCard: {
+    display: "flex", flexDirection: "column", alignItems: "center",
+    backgroundColor: "rgba(30,20,10,0.95)", borderRadius: 12,
+    padding: "32px 40px", maxWidth: 500, width: "90%",
+    cursor: "pointer", border: "2px solid #8B7355",
+  },
+  examIntroPortrait: {
+    width: 200, height: 200, objectFit: "contain",
+    marginBottom: 20,
+    filter: "drop-shadow(2px 2px 8px rgba(0,0,0,0.5))",
+  },
+  examIntroContent: { textAlign: "center" },
+  examIntroName: {
+    color: "#D4A574", fontSize: 22, fontWeight: "bold",
+    letterSpacing: 4, marginBottom: 12,
+  },
+  examIntroText: {
+    color: "#F5E6D3", fontSize: 16, lineHeight: 2,
+    margin: "0 0 8px",
+  },
+  // Scroll bulletin board
+  scrollContainer: {
+    display: "flex", flexDirection: "column", alignItems: "center",
+    cursor: "pointer",
+  },
+  scrollWrap: {
+    position: "relative", width: 500, maxWidth: "90vw",
+  },
+  scrollImg: {
+    width: "100%", height: "auto", display: "block",
+  },
+  scrollTextArea: {
+    position: "absolute",
+    top: "18%", left: "18%", right: "18%", bottom: "22%",
+    display: "flex", flexDirection: "column",
+    alignItems: "center", justifyContent: "center",
+    textAlign: "center",
+  },
+  scrollTitle: {
+    fontSize: 28, color: "#3B2510", letterSpacing: 8,
+    fontWeight: "bold", margin: "0 0 20px",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+  },
+  scrollResult: {
+    fontSize: 36, color: "#8B0000", fontWeight: "bold",
+    letterSpacing: 12, margin: 0,
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+  },
   // Announcement
   announcementPanel: {
     maxWidth: 500, width: "90%", textAlign: "center",
@@ -597,6 +907,32 @@ const styles = {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.6)", padding: 20,
   },
+  examWithPortrait: {
+    flex: 1, display: "flex", flexDirection: "row",
+    alignItems: "center", justifyContent: "center",
+    width: "100%",
+    position: "relative",
+  },
+  examPortraitArea: {
+    position: "absolute", left: 0, bottom: 0,
+    width: "22vw", minWidth: 160, maxWidth: 340,
+    display: "flex", alignItems: "flex-end", justifyContent: "center",
+    paddingLeft: 12,
+    zIndex: 2,
+  },
+  examPortraitImg: {
+    width: "100%", height: "auto", maxHeight: "80vh",
+    objectFit: "contain",
+    filter: "drop-shadow(4px 4px 16px rgba(0,0,0,0.7))",
+  },
+  examPanelRight: {
+    backgroundColor: "rgba(255,255,255,0.95)", borderRadius: 12,
+    padding: "24px 32px",
+    maxHeight: "80vh", overflowY: "auto",
+    width: "55vw", maxWidth: 680, minWidth: 360,
+    boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+    zIndex: 1,
+  },
   examPanel: {
     backgroundColor: "#FFF", borderRadius: 12, padding: 28,
     maxWidth: 600, width: "90%", maxHeight: "85vh", overflowY: "auto",
@@ -623,6 +959,30 @@ const styles = {
   fillSubmit: {
     padding: "10px 18px", backgroundColor: "#8B7355", color: "#FFF",
     border: "none", borderRadius: 6, cursor: "pointer", fontWeight: "bold",
+  },
+  fillPassage: {
+    fontSize: 16, lineHeight: 2.2, color: "#333",
+    marginBottom: 16, whiteSpace: "pre-wrap",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+  },
+  fillDropZone: {
+    display: "inline-block", minWidth: 60, padding: "4px 12px",
+    border: "2px dashed", borderRadius: 6,
+    textAlign: "center", fontSize: 16, fontWeight: "bold",
+    transition: "all 0.2s", verticalAlign: "middle",
+  },
+  fillChips: {
+    display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16,
+    justifyContent: "center",
+  },
+  fillChip: {
+    padding: "8px 18px", backgroundColor: "#FDF8F0",
+    border: "2px solid #D4A574", borderRadius: 8,
+    fontSize: 16, fontWeight: "bold", color: "#5D4E37",
+    cursor: "grab", userSelect: "none",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    transition: "all 0.2s",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   },
   explanationBox: {
     backgroundColor: "#F0F8FF", border: "1px solid #B0D4FF",
