@@ -2,17 +2,37 @@
 
 通过游戏方式学习中国历史人物的生平故事。选择不同角色，沿着时间轴探索他们走过的地点，体验视觉小说式对话，阅读历史叙事与经典诗篇，并通过问答挑战检验所学。
 
+## 环境要求
+
+- [Node.js](https://nodejs.org/) >= 18（推荐 20+）
+- npm（随 Node.js 一起安装）
+- Git
+
 ## 快速开始
 
 ```bash
+# 1. 克隆仓库
+git clone https://github.com/Ivyyyy24381/Chinese_history_game.git
 cd Chinese_history_game
+
+# 2. 安装依赖
 npm install
+
+# 3. 启动开发服务器
 npm run dev
 ```
 
 浏览器打开 `http://localhost:5173` 即可开始游戏。
 
-构建生产版本：`npm run build`
+打开 `http://localhost:5173/?editor=true` 进入场景编辑器。
+
+构建生产版本：
+
+```bash
+npm run build
+```
+
+构建产物在 `dist/` 目录下，可以直接部署到任意静态托管服务（GitHub Pages、Vercel、Netlify 等）。
 
 ## 项目结构
 
