@@ -132,40 +132,45 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
 
   // --- TRANSITION PHASE ---
   if (currentPhase.type === "transition") {
+    const hasAnnouncement = !!currentPhase.announcement;
+    const hasReaction = !!currentPhase.dufu_reaction;
+    const handleTransitionClick = () => {
+      if (!hasAnnouncement && !hasReaction) {
+        goToNextPhase();
+      } else {
+        setTransitionDone(true);
+      }
+    };
     return (
       <div style={bgStyle}>
         <div style={styles.transitionOverlay}>
           {!transitionDone ? (
-            <div style={styles.transitionCard} onClick={() => setTransitionDone(true)}>
+            <div style={styles.transitionCard} onClick={handleTransitionClick}>
               <p style={styles.transitionText}>{currentPhase.transitionText}</p>
               <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
             </div>
-          ) : !showConclusion ? (
-            <div style={styles.scrollContainer} onClick={() => setShowConclusion(true)}>
+          ) : !showConclusion && hasAnnouncement ? (
+            <div style={styles.scrollContainer} onClick={() => hasReaction ? setShowConclusion(true) : goToNextPhase()}>
               <div style={styles.scrollWrap}>
                 <img src="/assets/scenes/02_changan/scroll.png" alt="" style={styles.scrollImg} />
                 <div style={styles.scrollTextArea}>
                   <h2 style={styles.scrollTitle}>{"\u5236\u4E3E\u653E\u699C"}</h2>
-                  {currentPhase.announcement && (
-                    <p style={styles.scrollResult}>{currentPhase.announcement.text}</p>
-                  )}
+                  <p style={styles.scrollResult}>{currentPhase.announcement.text}</p>
                 </div>
               </div>
               <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
             </div>
-          ) : (
+          ) : hasReaction ? (
             <div style={styles.announcementPanel}>
-              {currentPhase.dufu_reaction && (
-                <div style={styles.reactionBox}>
-                  <img src={currentPhase.dufu_reaction.portrait} alt="" style={styles.reactionPortrait} />
-                  <p style={styles.reactionText}>{currentPhase.dufu_reaction.text}</p>
-                </div>
-              )}
+              <div style={styles.reactionBox}>
+                <img src={currentPhase.dufu_reaction.portrait} alt="" style={styles.reactionPortrait} />
+                <p style={styles.reactionText}>{currentPhase.dufu_reaction.text}</p>
+              </div>
               <button style={styles.proceedBtn} onClick={goToNextPhase}>
                 {"\u7EE7\u7EED \u2192"}
               </button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     );
@@ -268,7 +273,20 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
             {(() => {
               const line = activeNpc.dialogues[dialogueIndex];
               const isSelf = line.speaker === "dufu" || line.speaker === "self";
-              const portrait = isSelf ? "/assets/characters/dufu/portrait.png" : activeNpc.portrait;
+              const speakerPortraitMap = {
+                scholar_a: "/assets/characters/npcs/scholar_a.png",
+                scholar_b: "/assets/characters/npcs/scholar_b.png",
+                merchant_a: "/assets/characters/npcs/merchant_a.png",
+                merchant_b: "/assets/characters/npcs/merchant_b.png",
+                merchant_c: "/assets/characters/npcs/merchant_c.png",
+                waiter: "/assets/characters/npcs/waiter.png",
+                innkeeper: "/assets/characters/npcs/innkeeper.png",
+                LinFu_Li: "/assets/characters/npcs/LinFu_Li.png",
+              };
+              let portrait;
+              if (isSelf) portrait = "/assets/characters/dufu/portrait.png";
+              else if (line.speaker === "narrator" || line.speaker === "portrait") portrait = "";
+              else portrait = speakerPortraitMap[line.speaker] || activeNpc.portrait;
               return (
                 <>
                   {/* Full-width dialogue background bar at bottom */}

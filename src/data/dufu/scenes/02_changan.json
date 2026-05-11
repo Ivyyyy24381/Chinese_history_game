@@ -283,14 +283,6 @@
       "title": "揭榜",
       "transitionText": "一个月后……",
       "narrative": "",
-      "announcement": {
-        "text": "未上榜",
-        "style": "imperial_decree"
-      },
-      "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
-        "text": "什么！\n可惜啊，还是差了一点。\n等一下，似乎有什么不对。"
-      },
       "nextPhase": "investigate"
     },
     {
@@ -364,15 +356,36 @@
             "y": 29
           },
           "scale": 1.6,
+          "isClue": true,
           "dialogues": [
             {
-              "speaker": "npc2",
-              "speakerName": "路人甲",
+              "speaker": "narrator",
+              "speakerName": "榜单",
+              "text": "未上榜"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "什么！"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "可惜啊，还是差了一点。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "等一下，似乎有什么不对。"
+            },
+            {
+              "speaker": "scholar_a",
+              "speakerName": "学者甲",
               "text": "薛据、张涉？他们不都已经是当朝命官了？"
             },
             {
-              "speaker": "npc1",
-              "speakerName": "路人乙",
+              "speaker": "scholar_b",
+              "speakerName": "学者乙",
               "text": "倒是不妨碍他们参加制举。"
             }
           ]
