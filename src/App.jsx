@@ -155,6 +155,7 @@ export default function App() {
           currentStage={currentStage}
           stages={stages}
           onLocationClick={handleLocationClick}
+          progress={progress}
         />
         <div style={{ ...styles.floatingInfo, borderLeftColor: currentStage.color }}>
           <h3 style={{ margin: "0 0 4px", color: currentStage.color }}>

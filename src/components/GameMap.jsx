@@ -1,4 +1,10 @@
-export default function GameMap({ currentStage, stages, onLocationClick }) {
+/**
+ * Map with pin-style location markers.
+ * - Current stage: full color + glow + pulsing ring, larger pin
+ * - Past (unlocked) stages: full color, smaller pin, checkmark badge
+ * - Future stages: desaturated, lower opacity
+ */
+export default function GameMap({ currentStage, stages, onLocationClick, progress = 0 }) {
   return (
     <div style={styles.mapContainer}>
       <div
@@ -7,32 +13,96 @@ export default function GameMap({ currentStage, stages, onLocationClick }) {
           backgroundImage: `url('/assets/maps/tang_dynasty.png')`,
         }}
       >
-        {stages.map((stage) => (
-          <button
-            key={stage.id}
-            style={{
-              ...styles.locationMarker,
-              left: `${stage.location.mapX}%`,
-              top: `${stage.location.mapY}%`,
-              backgroundColor: stage.color,
-              opacity: stage.id === currentStage.id ? 1 : 0.7,
-              transform:
-                stage.id === currentStage.id
-                  ? "scale(1.2)"
-                  : "scale(1)",
-              boxShadow:
-                stage.id === currentStage.id
-                  ? `0 0 20px ${stage.color}`
-                  : "0 2px 8px rgba(0,0,0,0.2)",
-            }}
-            onClick={() => onLocationClick(stage.id)}
-            title={stage.location.name}
-          >
-            {stage.location.name}
-          </button>
-        ))}
+        {stages.map((stage, idx) => {
+          const isCurrent = stage.id === currentStage.id;
+          const isUnlocked = idx <= progress;
+          const isPast = idx < progress;
+          const pinColor = isUnlocked ? stage.color : "#9A9A9A";
+          const pinSize = isCurrent ? 44 : 32;
+
+          return (
+            <button
+              key={stage.id}
+              style={{
+                ...styles.pinWrap,
+                left: `${stage.location.mapX}%`,
+                top: `${stage.location.mapY}%`,
+                zIndex: isCurrent ? 5 : 2,
+              }}
+              onClick={() => onLocationClick(stage.id)}
+              title={stage.location.name}
+            >
+              {isCurrent && (
+                <span
+                  style={{
+                    ...styles.pulseRing,
+                    backgroundColor: stage.color,
+                  }}
+                />
+              )}
+              <Pin
+                color={pinColor}
+                size={pinSize}
+                glow={isCurrent}
+                badge={isPast ? "✓" : null}
+              />
+              <span
+                style={{
+                  ...styles.pinLabel,
+                  color: isCurrent ? stage.color : "#333",
+                  fontWeight: isCurrent ? "bold" : 500,
+                  backgroundColor: isCurrent
+                    ? "rgba(255,255,255,0.95)"
+                    : "rgba(255,255,255,0.8)",
+                  opacity: isUnlocked ? 1 : 0.7,
+                }}
+              >
+                {stage.location.name}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
+  );
+}
+
+function Pin({ color, size, glow, badge }) {
+  const w = size;
+  const h = (size * 4) / 3;
+  return (
+    <svg
+      width={w}
+      height={h}
+      viewBox="0 0 24 32"
+      style={{
+        display: "block",
+        filter: glow
+          ? `drop-shadow(0 0 6px ${color}) drop-shadow(0 2px 3px rgba(0,0,0,0.4))`
+          : "drop-shadow(0 2px 3px rgba(0,0,0,0.35))",
+        transition: "all 0.3s ease",
+      }}
+    >
+      <path
+        d="M12 0.8 C5.8 0.8 0.8 5.8 0.8 12 c0 8.3 9.5 18.4 10.7 19.6 c0.3 0.3 0.7 0.3 1 0 C13.7 30.4 23.2 20.3 23.2 12 c0-6.2-5-11.2-11.2-11.2 z"
+        fill={color}
+        stroke="white"
+        strokeWidth="1.4"
+      />
+      <circle cx="12" cy="12" r="4.5" fill="white" />
+      {badge && (
+        <text
+          x="12"
+          y="15"
+          textAnchor="middle"
+          fontSize="7"
+          fontWeight="bold"
+          fill={color}
+        >
+          {badge}
+        </text>
+      )}
+    </svg>
   );
 }
 
@@ -56,23 +126,51 @@ const styles = {
     position: "relative",
     borderRadius: 8,
   },
-  locationMarker: {
+  pinWrap: {
     position: "absolute",
-    transform: "translate(-50%, -50%)",
-    width: 60,
-    height: 60,
-    borderRadius: "50%",
-    border: "2px solid white",
-    color: "white",
-    fontSize: 12,
-    fontWeight: "bold",
+    transform: "translate(-50%, -100%)",
+    background: "none",
+    border: "none",
+    padding: 0,
     cursor: "pointer",
-    transition: "all 0.3s ease",
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    padding: 4,
-    boxSizing: "border-box",
+    transition: "transform 0.25s ease",
+  },
+  pulseRing: {
+    position: "absolute",
+    top: 0,
+    left: "50%",
+    transform: "translate(-50%, 0)",
+    width: 30,
+    height: 30,
+    borderRadius: "50%",
+    opacity: 0.35,
+    animation: "mapPinPulse 1.6s ease-out infinite",
+    pointerEvents: "none",
+  },
+  pinLabel: {
+    marginTop: 2,
+    fontSize: 12,
+    padding: "1px 8px",
+    borderRadius: 10,
+    whiteSpace: "nowrap",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    transition: "all 0.25s ease",
   },
 };
+
+// Inject keyframes for pin pulse (once)
+if (typeof document !== "undefined" && !document.getElementById("map-pin-pulse-keyframes")) {
+  const style = document.createElement("style");
+  style.id = "map-pin-pulse-keyframes";
+  style.textContent = `
+    @keyframes mapPinPulse {
+      0% { transform: translate(-50%, 0) scale(0.6); opacity: 0.5; }
+      100% { transform: translate(-50%, 0) scale(2.2); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+}

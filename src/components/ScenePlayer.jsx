@@ -202,9 +202,14 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
               </div>
             )}
 
-            {/* NPC markers with portraits */}
+            {/* NPC markers with portraits \u2014 sized in viewport units that follow
+                the 16:9 stage (width = min(100vw, 100vh*16/9)). Using
+                min(Xvw, X*16/9 vh) keeps NPCs at a constant fraction of
+                the stage regardless of window size. */}
             {currentPhase.npcs.map((npc) => {
               const talked = talkedNpcs.has(npc.id);
+              const basePct = 12 * (npc.scale || 1);
+              const npcSize = `min(${basePct}vw, ${(basePct * 16) / 9}vh)`;
               return (
                 <div
                   key={npc.id}
@@ -221,8 +226,8 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                   {npc.portrait ? (
                     <div style={{
                       ...styles.npcPortraitWrap,
-                      width: 140 * (npc.scale || 1),
-                      height: 140 * (npc.scale || 1),
+                      width: npcSize,
+                      height: npcSize,
                       borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
                       transform: npc.flip ? "scaleX(-1)" : "none",
                     }}>
