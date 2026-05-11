@@ -1,15 +1,15 @@
 {
-  "id": "02_changan",
+  "id": "747_exam",
   "title": "制举科考",
-  "year": "746",
+  "year": "747",
   "type": "interactive",
   "phases": [
     {
       "id": "explore_outside",
       "type": "explore",
-      "background": "/assets/scenes/02_changan/changan_street_2.png",
+      "background": "/assets/events/747_exam/backgrounds/changan_street_2.png",
       "title": "长安街头",
-      "narrative": "天宝五年（746年），皇帝下诏特办制举，「通一艺者」皆可来长安应考。杜甫满怀希望来到了长安。",
+      "narrative": "天宝六载（747年），皇帝下诏特办制举，「通一艺者」皆可来长安应考。杜甫满怀希望来到了长安。",
       "instruction": "点击周围的人物与他们交谈，了解这次特别的科举。",
       "npcs": [
         {
@@ -144,7 +144,7 @@
     {
       "id": "exam_intro",
       "type": "explore",
-      "background": "/assets/scenes/02_changan/exam_hall.png",
+      "background": "/assets/events/747_exam/backgrounds/exam_hall.png",
       "title": "进入考场",
       "narrative": "杜甫正了正衣冠，走进了庄严的考场。",
       "instruction": "点击李林甫了解考试安排。",
@@ -173,7 +173,7 @@
     {
       "id": "exam",
       "type": "exam",
-      "background": "/assets/scenes/02_changan/exam_hall.png",
+      "background": "/assets/events/747_exam/backgrounds/exam_hall.png",
       "title": "制举考试",
       "narrative": "",
       "examiner": {
@@ -279,7 +279,7 @@
     {
       "id": "results",
       "type": "transition",
-      "background": "/assets/scenes/02_changan/result_release.png",
+      "background": "/assets/events/747_exam/backgrounds/result_release.png",
       "title": "揭榜",
       "transitionText": "一个月后……",
       "narrative": "",
@@ -288,7 +288,7 @@
     {
       "id": "investigate",
       "type": "explore",
-      "background": "/assets/scenes/02_changan/result_release.png",
+      "background": "/assets/events/747_exam/backgrounds/result_release.png",
       "title": "长安市",
       "narrative": "杜甫决定在长安城中打听消息，弄清楚这次科举的真相。",
       "instruction": "和市民交谈，收集线索，弄清科举的真相。",
@@ -418,7 +418,7 @@
     {
       "id": "choice",
       "type": "forced_choice",
-      "background": "/assets/scenes/02_changan/changan_street.png",
+      "background": "/assets/events/747_exam/backgrounds/changan_street.png",
       "title": "得出结论",
       "narrative": "杜甫陈思良久，综合所有线索，对这次科举的结果有了自己的判断……",
       "question": "你认为这次科举落第的真正原因是什么？",

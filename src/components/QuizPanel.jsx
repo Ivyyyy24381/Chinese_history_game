@@ -10,10 +10,10 @@ export default function QuizPanel({ stage, onComplete, onClose }) {
   const [isFinished, setIsFinished] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Load quiz data
+  // Load quiz data (event-based path)
   useEffect(() => {
     if (loading) {
-      import(`../data/dufu/quizzes/${stage.quizFile}`)
+      import(`../data/dufu/events/${stage.id}/quiz.json`)
         .then((module) => {
           setQuizData(module.default);
           setLoading(false);
@@ -22,7 +22,7 @@ export default function QuizPanel({ stage, onComplete, onClose }) {
           setLoading(false);
         });
     }
-  }, [stage.quizFile, loading]);
+  }, [stage.id, loading]);
 
   if (loading || !quizData) {
     return null;

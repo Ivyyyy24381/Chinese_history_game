@@ -121,9 +121,9 @@ export default function App() {
   };
 
   const handleExplore = async () => {
-    if (!currentEvent || !currentEvent.sceneFile) return;
+    if (!currentEvent || !currentEvent.hasScene) return;
     try {
-      const sceneModule = await import(`./data/dufu/scenes/${currentEvent.sceneFile}`);
+      const sceneModule = await import(`./data/dufu/events/${currentEvent.id}/event.json`);
       const data = sceneModule.default;
       if (data.type === "interactive" && data.phases) {
         setSceneData(data);
@@ -205,11 +205,13 @@ export default function App() {
             style={{
               ...styles.exploreBtn,
               backgroundColor: currentStage.color,
-              opacity: currentEvent.sceneFile ? 1 : 0.6,
+              opacity: currentEvent.hasScene ? 1 : 0.6,
+              cursor: currentEvent.hasScene ? "pointer" : "not-allowed",
             }}
             onClick={handleExplore}
+            disabled={!currentEvent.hasScene}
           >
-            {currentEvent.sceneFile ? "📖 探索此事件" : "📖 暂无场景"}
+            {currentEvent.hasScene ? "📖 探索此事件" : "📖 暂无场景"}
           </button>
         </div>
       </div>

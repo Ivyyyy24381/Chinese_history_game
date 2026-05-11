@@ -6,10 +6,10 @@ export default function EventPanel({ stage, onStartQuiz, onClose }) {
   const [showDialogue, setShowDialogue] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Load scene data when stage changes
+  // Load scene data when stage changes (event-based path)
   if (!sceneData && loading) {
     setLoading(false);
-    import(`../data/dufu/scenes/${stage.sceneFile}`)
+    import(`../data/dufu/events/${stage.id}/event.json`)
       .then((module) => {
         setSceneData(module.default);
         setShowDialogue(true);
