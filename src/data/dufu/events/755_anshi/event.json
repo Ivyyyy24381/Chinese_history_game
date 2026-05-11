@@ -2,8 +2,205 @@
   "id": "755_anshi",
   "title": "安史之乱爆发",
   "year": "755",
-  "type": "stub",
-  "status": "todo",
-  "notes": "天宝十四载（755）冬，安禄山起兵反唐。次年长安陷落，玄宗西奔蜀地。杜甫携家避乱，曾被叛军所俘困于长安。盛世骤崩，杜甫在此期间写下《春望》《哀王孙》等。",
-  "phases": []
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "fanyang_rumor",
+      "type": "explore",
+      "background": "/assets/events/755_anshi/backgrounds/changan_winter.png",
+      "title": "长安·烽烟传来",
+      "narrative": "天宝十四载（755）十一月，长安。一封塘报从北方驿道飞驰而来。",
+      "instruction": "点击周围的人物，听听他们怎么说『安禄山反了』。",
+      "npcs": [
+        {
+          "id": "messenger",
+          "name": "驿卒",
+          "portrait": "/assets/characters/npcs/messenger.png",
+          "position": { "x": 50, "y": 52 },
+          "scale": 1.5,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "messenger", "speakerName": "驿卒（喘）", "text": "范阳——范阳起兵了！安禄山反了！" },
+            { "speaker": "messenger", "speakerName": "驿卒", "text": "沿途州县望风披靡，没人挡得住！" }
+          ]
+        },
+        {
+          "id": "commoner_a",
+          "name": "百姓甲",
+          "portrait": "/assets/characters/npcs/merchant_a.png",
+          "position": { "x": 20, "y": 65 },
+          "scale": 1.1,
+          "dialogues": [
+            { "speaker": "commoner_a", "speakerName": "百姓甲", "text": "胡说！圣人正在华清池，安将军是义子，怎会造反？" },
+            { "speaker": "commoner_a", "speakerName": "百姓甲", "text": "你莫不是吃了酒乱报？" }
+          ]
+        },
+        {
+          "id": "commoner_b",
+          "name": "百姓乙",
+          "portrait": "/assets/characters/npcs/merchant_b.png",
+          "position": { "x": 35, "y": 72 },
+          "scale": 1.2,
+          "dialogues": [
+            { "speaker": "commoner_b", "speakerName": "百姓乙", "text": "驿卒怎敢妄言……" },
+            { "speaker": "commoner_b", "speakerName": "百姓乙", "text": "可若是真的——天下要乱了。" }
+          ]
+        },
+        {
+          "id": "official",
+          "name": "路过官员",
+          "portrait": "/assets/characters/npcs/official.png",
+          "position": { "x": 67, "y": 58 },
+          "scale": 1.3,
+          "flip": true,
+          "dialogues": [
+            { "speaker": "official", "speakerName": "官员（疾走）", "text": "速去告知宰相！" },
+            { "speaker": "official", "speakerName": "官员", "text": "不可声张！不可声张！" }
+          ]
+        },
+        {
+          "id": "poster",
+          "name": "街头告示",
+          "portrait": "",
+          "position": { "x": 84, "y": 38 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "告示", "text": "「谋反逆者，凡有所言皆斩。」" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "这盛世……" }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "changan_falls"
+    },
+    {
+      "id": "changan_falls",
+      "type": "transition",
+      "background": "/assets/events/755_anshi/backgrounds/changan_burning.png",
+      "title": "长安陷落",
+      "transitionText": "天宝十五载六月。\n潼关失守。\n玄宗连夜出奔蜀地。\n长安无主。",
+      "announcement": {
+        "text": "「车驾西幸蜀郡，朕将与万民共艰。」——御诏",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "我把家人安顿在鄜州，自己却走不出长安。"
+      },
+      "nextPhase": "besieged"
+    },
+    {
+      "id": "besieged",
+      "type": "explore",
+      "background": "/assets/events/755_anshi/backgrounds/changan_ruin.png",
+      "title": "沦陷的长安",
+      "narrative": "叛军入城。残垣，乱兵。城中再无禁卫。",
+      "instruction": "在沦陷的长安城里走动，记住你看到的一切。",
+      "npcs": [
+        {
+          "id": "refugee_woman",
+          "name": "难民妇人",
+          "portrait": "/assets/characters/npcs/refugee_woman.png",
+          "position": { "x": 25, "y": 65 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "refugee_woman", "speakerName": "难民妇人", "text": "我们的儿子——被叛军抓走了！" },
+            { "speaker": "refugee_woman", "speakerName": "难民妇人", "text": "他才十六岁，他才十六岁啊！" }
+          ]
+        },
+        {
+          "id": "refugee_old",
+          "name": "难民老汉",
+          "portrait": "/assets/characters/npcs/refugee_old.png",
+          "position": { "x": 50, "y": 70 },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "refugee_old", "speakerName": "难民老汉", "text": "天子也跑了，我们能往哪里去？" },
+            { "speaker": "refugee_old", "speakerName": "难民老汉", "text": "……活一天算一天罢。" }
+          ]
+        },
+        {
+          "id": "rebel_officer",
+          "name": "叛军军官",
+          "portrait": "/assets/characters/npcs/rebel_officer.png",
+          "position": { "x": 75, "y": 55 },
+          "scale": 1.5,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "rebel_officer", "speakerName": "叛军军官", "text": "凡留城者，皆为叛贼之民！" },
+            { "speaker": "rebel_officer", "speakerName": "叛军军官", "text": "敢出城者，斩。" }
+          ]
+        },
+        {
+          "id": "wall_inscription",
+          "name": "城墙刻字",
+          "portrait": "",
+          "position": { "x": 90, "y": 35 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "旁白", "text": "不知何人刻在墙根：「国破山河在，城春草木深。」" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "……这是我心里的话。" }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "chunwang"
+    },
+    {
+      "id": "chunwang",
+      "type": "poem_compose",
+      "background": "/assets/events/755_anshi/backgrounds/changan_wall.png",
+      "title": "《春望》",
+      "poemContext": "杜甫站在长安城头，远望残破宫城。心中诗句一句一句涌出——把候选词填到正确的位置。",
+      "puzzle": "国破___，城春___。\n感时___，恨别___。\n烽火___，家书___。\n白头___，浑欲___。",
+      "blanks": ["山河在", "草木深", "花溅泪", "鸟惊心", "连三月", "抵万金", "搔更短", "不胜簪"],
+      "distractors": ["千万里", "归去来", "无人识"],
+      "poemTitle": "春望"
+    },
+    {
+      "id": "decision",
+      "type": "forced_choice",
+      "background": "/assets/events/755_anshi/backgrounds/changan_wall.png",
+      "title": "决意北上",
+      "narrative": "长安已不可留。杜甫面前有三条路。",
+      "question": "下一步去哪里？",
+      "options": [
+        {
+          "id": "stay",
+          "text": "留在长安等家信",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "家书抵万金……再等等。\n（但只会越来越危险。）"
+          }
+        },
+        {
+          "id": "north",
+          "text": "冒死出城寻肃宗",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "我虽一介布衣，也当报国！"
+          }
+        },
+        {
+          "id": "submit",
+          "text": "投靠叛军求活",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "不可。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "至德二载（757）四月，杜甫从长安城西金光门出，奔赴凤翔。\n他记下了这一段——日后写成《春望》。"
+      }
+    }
+  ]
 }

@@ -2,8 +2,219 @@
   "id": "744_libai",
   "title": "遇李白",
   "year": "744",
-  "type": "stub",
-  "status": "todo",
-  "notes": "天宝三载（744），杜甫在洛阳与李白相遇。同年秋，二人同高适游梁宋。'醉眠秋共被，携手日同行。'",
-  "phases": []
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "luoyang_jiusi",
+      "type": "explore",
+      "background": "/assets/events/744_libai/backgrounds/luoyang_jiusi.png",
+      "title": "洛阳酒肆·听闻李白",
+      "narrative": "天宝三载（744），春。洛阳市井疯传一个名字——李白。",
+      "instruction": "在酒肆里转一圈，听人怎么说李白。",
+      "npcs": [
+        {
+          "id": "drinker_a",
+          "name": "酒客甲",
+          "portrait": "/assets/characters/npcs/drinker_a.png",
+          "position": { "x": 25, "y": 62 },
+          "scale": 1.2,
+          "dialogues": [
+            { "speaker": "drinker_a", "speakerName": "酒客甲", "text": "听说了吗？李太白被赐金放还，从长安出来了！" },
+            { "speaker": "drinker_a", "speakerName": "酒客甲", "text": "赐金放还——好听是好听，说白了就是被打发走了。" }
+          ]
+        },
+        {
+          "id": "drinker_b",
+          "name": "酒客乙",
+          "portrait": "/assets/characters/npcs/drinker_b.png",
+          "position": { "x": 55, "y": 66 },
+          "scale": 1.3,
+          "flip": true,
+          "dialogues": [
+            { "speaker": "drinker_b", "speakerName": "酒客乙", "text": "就是那个「天子呼来不上船，自称臣是酒中仙」的李白？" },
+            { "speaker": "drinker_b", "speakerName": "酒客乙", "text": "啧。这种人，敢死。" }
+          ]
+        },
+        {
+          "id": "huji",
+          "name": "胡姬",
+          "portrait": "/assets/characters/npcs/huji.png",
+          "position": { "x": 75, "y": 55 },
+          "scale": 1.2,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "huji", "speakerName": "胡姬", "text": "这位郎君要点什么？西市新到的葡萄酒？" },
+            { "speaker": "huji", "speakerName": "胡姬", "text": "李太白？前日才来过。喝完三斗就走了，留了一首诗压账。" },
+            { "speaker": "narrator", "speakerName": "李白题壁", "text": "「兰陵美酒郁金香，玉碗盛来琥珀光……」" }
+          ]
+        },
+        {
+          "id": "dufu_inner",
+          "name": "杜甫·自语",
+          "portrait": "",
+          "position": { "x": 45, "y": 35 },
+          "isClue": true,
+          "bubbleMode": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫（自语）", "text": "李太白……我读他的诗，已读了十年。" },
+            { "speaker": "dufu", "speakerName": "杜甫（自语）", "text": "若能见他一面……" }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "street_meet"
+    },
+    {
+      "id": "street_meet",
+      "type": "forced_choice",
+      "background": "/assets/events/744_libai/backgrounds/luoyang_street.png",
+      "title": "街头相遇",
+      "narrative": "转过街角，一个身披白裘、腰悬长剑的中年人正在驴上仰头大笑。",
+      "question": "你怎么搭话？",
+      "options": [
+        {
+          "id": "respectful",
+          "text": "「在下巩县杜甫，字子美。久仰太白先生大名。」",
+          "correct": true,
+          "response": {
+            "speaker": "libai",
+            "speakerName": "李白",
+            "text": "哈！子美？你的『骑驴十三载』我也读过。"
+          }
+        },
+        {
+          "id": "wild",
+          "text": "「太白先生！可愿与小弟共饮一杯？」",
+          "correct": true,
+          "response": {
+            "speaker": "libai",
+            "speakerName": "李白",
+            "text": "妙！同道中人，何须客套？"
+          }
+        },
+        {
+          "id": "silent",
+          "text": "默默走开",
+          "correct": false,
+          "response": {
+            "speaker": "narrator",
+            "speakerName": "旁白",
+            "text": "擦肩而过的那一刻，杜甫心里千言万语，却一句也说不出。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "两人一见如故。这是天宝三载春，洛阳。从此李杜并称。"
+      }
+    },
+    {
+      "id": "liangsong_tour",
+      "type": "explore",
+      "background": "/assets/events/744_libai/backgrounds/liangsong_field.png",
+      "title": "梁宋同游",
+      "narrative": "秋。三人相约同游梁宋。李白要去寻仙问道，高适来找老友，杜甫只想留住这段时光。",
+      "instruction": "在田野和酒席间走动，听他们说话。",
+      "npcs": [
+        {
+          "id": "libai_drunk",
+          "name": "李白",
+          "portrait": "/assets/characters/npcs/libai.png",
+          "position": { "x": 38, "y": 56 },
+          "scale": 1.6,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "libai", "speakerName": "李白（醉）", "text": "醉眠秋共被，携手日同行——好一个洒脱！" },
+            { "speaker": "libai", "speakerName": "李白", "text": "子美你太拘谨了。脱了这层皮，谁不是天上的人？" },
+            { "speaker": "libai", "speakerName": "李白", "text": "我此去齐鲁，要见一位道士，求一道箓。" }
+          ]
+        },
+        {
+          "id": "gaoshi",
+          "name": "高适",
+          "portrait": "/assets/characters/npcs/gaoshi.png",
+          "position": { "x": 65, "y": 60 },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "gaoshi", "speakerName": "高适", "text": "太白兄越发癫了。" },
+            { "speaker": "gaoshi", "speakerName": "高适", "text": "子美，你和他不一样。你心里有民。" },
+            { "speaker": "gaoshi", "speakerName": "高适", "text": "我打算去边塞投军。文章救不了天下。" }
+          ]
+        },
+        {
+          "id": "tomb",
+          "name": "古坟",
+          "portrait": "",
+          "position": { "x": 82, "y": 75 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "旁白", "text": "三人来到一座荒丘前。无碑无名。" },
+            { "speaker": "libai", "speakerName": "李白", "text": "不知是哪朝的王侯。" },
+            { "speaker": "gaoshi", "speakerName": "高适", "text": "连名字都不留。" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "……" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "farewell"
+    },
+    {
+      "id": "farewell",
+      "type": "forced_choice",
+      "background": "/assets/events/744_libai/backgrounds/liangsong_field.png",
+      "title": "临别",
+      "narrative": "李白要往齐鲁去访道。高适已先一步南下。只剩杜甫送他。\n李白：「莫作小儿女态。诗在，便不算别。」",
+      "question": "你怎样送别？",
+      "options": [
+        {
+          "id": "poem",
+          "text": "赠他一首诗",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "秋来相顾尚飘蓬，未就丹砂愧葛洪……\n（这首《赠李白》他写完后，李白只回了一句『杜陵有布衣，老大意转拙』。）"
+          }
+        },
+        {
+          "id": "stay",
+          "text": "邀他长留洛阳",
+          "correct": true,
+          "response": {
+            "speaker": "libai",
+            "speakerName": "李白",
+            "text": "（仰头大笑）他不属于一座城。"
+          }
+        },
+        {
+          "id": "silent_farewell",
+          "text": "默默告别",
+          "correct": true,
+          "response": {
+            "speaker": "narrator",
+            "speakerName": "旁白",
+            "text": "他走得潇洒，我亦不必哭。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "此一别，两人再未相见。但杜甫一生写了十余首怀李白的诗。",
+        "poem": {
+          "title": "《赠李白》（节选）",
+          "content": "秋来相顾尚飘蓬，未就丹砂愧葛洪。\n痛饮狂歌空度日，飞扬跋扈为谁雄。"
+        }
+      }
+    },
+    {
+      "id": "leave_luoyang",
+      "type": "transition",
+      "background": "/assets/events/744_libai/backgrounds/luoyang_alone.png",
+      "title": "一年之后",
+      "transitionText": "天宝四载（745）秋。\n杜甫西入长安。\n从此一去十年。",
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "我也该走了。长安……"
+      }
+    }
+  ]
 }

@@ -2,8 +2,277 @@
   "id": "759_qinzhou",
   "title": "弃官西行",
   "year": "759",
-  "type": "stub",
-  "status": "todo",
-  "notes": "乾元二年（759），杜甫任华州司功参军，目睹民生凋敝。秋，弃官携家西赴秦州、同谷，再入剑南。途中作《三吏》《三别》《秦州杂诗》等。理想彻底破灭，转向沉郁顿挫的现实主义。",
-  "phases": []
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "huazhou_yamen",
+      "type": "explore",
+      "background": "/assets/events/759_qinzhou/backgrounds/huazhou_yamen.png",
+      "title": "华州官衙",
+      "narrative": "乾元二年（759）夏，华州大旱。杜甫任华州司功参军——一个管祭祀、礼仪、学校的小官。",
+      "instruction": "在县衙里办你的事——但很快你会发现办不下去。",
+      "npcs": [
+        {
+          "id": "clerk",
+          "name": "小吏",
+          "portrait": "/assets/characters/npcs/clerk.png",
+          "position": { "x": 25, "y": 64 },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "clerk", "speakerName": "小吏", "text": "大人，前方又来征兵的文书。" },
+            { "speaker": "clerk", "speakerName": "小吏", "text": "邺城兵败，朝廷要在关辅再征丁壮。" },
+            { "speaker": "clerk", "speakerName": "小吏", "text": "这次连老人都要拉走。" }
+          ]
+        },
+        {
+          "id": "colleague",
+          "name": "同僚",
+          "portrait": "/assets/characters/npcs/official.png",
+          "position": { "x": 55, "y": 60 },
+          "scale": 1.2,
+          "dialogues": [
+            { "speaker": "colleague", "speakerName": "同僚", "text": "杜参军，又在写诗？" },
+            { "speaker": "colleague", "speakerName": "同僚", "text": "写诗不能当饭吃。" }
+          ]
+        },
+        {
+          "id": "paperwork",
+          "name": "公文",
+          "portrait": "",
+          "position": { "x": 75, "y": 70 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "文书", "text": "文书上密密麻麻：「征丁名册」「催粮单」「失踪农户报」。" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "不写诗，便要发狂。" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "shihao_village"
+    },
+    {
+      "id": "shihao_village",
+      "type": "explore",
+      "background": "/assets/events/759_qinzhou/backgrounds/shihao_night.png",
+      "title": "石壕村·夜",
+      "narrative": "暮投石壕村，有吏夜捉人。\n夜里有动静。",
+      "instruction": "点击窗外看个清楚——按顺序，看到结束。",
+      "npcs": [
+        {
+          "id": "window_view",
+          "name": "窗口",
+          "portrait": "",
+          "position": { "x": 50, "y": 35 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "旁白", "text": "窗外人影晃动。一个老翁翻墙逃走，一个老妇出门相迎。" }
+          ]
+        },
+        {
+          "id": "officer_night",
+          "name": "官吏",
+          "portrait": "/assets/characters/npcs/officer_night.png",
+          "position": { "x": 30, "y": 60 },
+          "scale": 1.5,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "officer_night", "speakerName": "官吏", "text": "家中尚有男丁否？！" },
+            { "speaker": "officer_night", "speakerName": "官吏", "text": "再敢藏匿，全家处斩！" }
+          ]
+        },
+        {
+          "id": "old_woman",
+          "name": "老妇",
+          "portrait": "/assets/characters/npcs/old_woman.png",
+          "position": { "x": 60, "y": 65 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "old_woman", "speakerName": "老妇", "text": "三男邺城戍。" },
+            { "speaker": "old_woman", "speakerName": "老妇", "text": "一男附书至，二男新战死。" },
+            { "speaker": "old_woman", "speakerName": "老妇", "text": "存者且偷生，死者长已矣……" },
+            { "speaker": "old_woman", "speakerName": "老妇", "text": "室中更无人，惟有乳下孙。" },
+            { "speaker": "old_woman", "speakerName": "老妇", "text": "老身虽衰，请从吏夜归。急应河阳役，犹得备晨炊。" }
+          ]
+        },
+        {
+          "id": "dufu_silent",
+          "name": "杜甫·窗后",
+          "portrait": "",
+          "position": { "x": 50, "y": 45 },
+          "isClue": true,
+          "bubbleMode": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "……" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "我连一句话，都说不出口。" }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "sanbie"
+    },
+    {
+      "id": "sanbie",
+      "type": "explore",
+      "background": "/assets/events/759_qinzhou/backgrounds/yellow_road.png",
+      "title": "三别·一路上",
+      "narrative": "华州一路上，杜甫遇到的不止石壕村。",
+      "instruction": "和路上的三个人都说说话。",
+      "npcs": [
+        {
+          "id": "xinhun",
+          "name": "新婚女子",
+          "portrait": "/assets/characters/npcs/xinhun.png",
+          "position": { "x": 20, "y": 65 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "xinhun", "speakerName": "新婚女子", "text": "君今往死地，沉痛迫中肠。" },
+            { "speaker": "xinhun", "speakerName": "新婚女子", "text": "嫁女与征夫，不如弃路旁。" },
+            { "speaker": "narrator", "speakerName": "旁白", "text": "（《新婚别》）" }
+          ]
+        },
+        {
+          "id": "wujia",
+          "name": "无家的兵",
+          "portrait": "/assets/characters/npcs/wujia.png",
+          "position": { "x": 50, "y": 60 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "wujia", "speakerName": "无家的兵", "text": "家乡既荡尽，远近理亦齐。" },
+            { "speaker": "wujia", "speakerName": "无家的兵", "text": "人生无家别，何以为蒸黎？" },
+            { "speaker": "narrator", "speakerName": "旁白", "text": "（《无家别》）" }
+          ]
+        },
+        {
+          "id": "chuilao",
+          "name": "垂老老兵",
+          "portrait": "/assets/characters/npcs/chuilao.png",
+          "position": { "x": 80, "y": 65 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "chuilao", "speakerName": "垂老老兵", "text": "老妻卧路啼，岁暮衣裳单。" },
+            { "speaker": "chuilao", "speakerName": "垂老老兵", "text": "孰知是死别，且复伤其寒。" },
+            { "speaker": "narrator", "speakerName": "旁白", "text": "（《垂老别》）" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "resign_choice"
+    },
+    {
+      "id": "resign_choice",
+      "type": "forced_choice",
+      "background": "/assets/events/759_qinzhou/backgrounds/huazhou_yamen.png",
+      "title": "弃官",
+      "narrative": "杜甫回到华州，案上堆满征兵文书。一支笔。一张白纸。",
+      "question": "这官，做还是不做？",
+      "options": [
+        {
+          "id": "stay_in_office",
+          "text": "继续做官",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "官小，救不得他们。但官在，至少能减一户。\n（但每一份文书都在拉走人。）"
+          }
+        },
+        {
+          "id": "resign",
+          "text": "弃官西行",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "这官，做不下去了。\n（提笔写下辞呈，绶带与官印一并交回。）"
+          }
+        },
+        {
+          "id": "remonstrate",
+          "text": "上书直谏",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "书上去，石沉大海。我已上过一次。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "乾元二年秋，杜甫弃华州司功参军之职，携家西赴秦州。\n这是他一生中第一次（也是最后一次）自己离开仕途。"
+      }
+    },
+    {
+      "id": "qinzhou_road",
+      "type": "map_travel",
+      "background": "/assets/maps/tang_dynasty.png",
+      "title": "秦州古道",
+      "travelNarrative": "携家西行。每一站走一遍。",
+      "instruction": "点击每一个停点，听一听途中的故事。",
+      "requireAll": true,
+      "waypoints": [
+        {
+          "id": "huazhou",
+          "name": "华州",
+          "x": 48, "y": 53,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "辞了官，反而轻松了。" }
+          ]
+        },
+        {
+          "id": "qinzhou",
+          "name": "秦州",
+          "x": 42, "y": 56,
+          "isKey": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "以为能在此安顿。结果亲戚也已断了往来。" }
+          ]
+        },
+        {
+          "id": "tonggu",
+          "name": "同谷",
+          "x": 42, "y": 60,
+          "isKey": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "同谷七歌——「有客有客字子美，白头乱发垂过耳。」" }
+          ]
+        },
+        {
+          "id": "road_son",
+          "name": "途中",
+          "x": 46, "y": 62,
+          "dialogues": [
+            { "speaker": "son", "speakerName": "儿子", "text": "爹爹，我们要去哪里？" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "去一个能让你们吃饱饭的地方。" },
+            { "speaker": "wife", "speakerName": "妻", "text": "这就够了。" }
+          ]
+        },
+        {
+          "id": "chengdu_gate",
+          "name": "成都",
+          "x": 50, "y": 64,
+          "isKey": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "旁白", "text": "乾元二年冬末，杜甫一家踏进成都。" }
+          ]
+        }
+      ],
+      "nextPhase": "ending"
+    },
+    {
+      "id": "ending",
+      "type": "transition",
+      "background": "/assets/events/759_qinzhou/backgrounds/chengdu_winter.png",
+      "title": "此后漂泊",
+      "transitionText": "秋去冬来。\n一家人风餐露宿，\n终于走到了浣花溪畔。",
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "这里，能不能停下？"
+      }
+    }
+  ]
 }
