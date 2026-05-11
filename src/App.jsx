@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import CharacterSelect from "./components/CharacterSelect";
 import GameMap from "./components/GameMap";
 import Timeline from "./components/Timeline";
@@ -12,36 +12,35 @@ import SceneEditor from "./components/SceneEditor";
 const CHARACTERS = [
   {
     id: "dufu",
-    name: "\u675c\u752b",
-    title: "\u8bd7\u5723",
-    years: "712\u2014770",
-    dynasty: "\u5510",
-    description:
-      "\u5510\u4ee3\u6700\u4f1f\u5927\u7684\u73b0\u5b9e\u4e3b\u4e49\u8bd7\u4eba\uff0c\u4e0e\u674e\u767d\u5e76\u79f0\u300c\u674e\u675c\u300d",
-    avatar: "\u{1F58A}",
+    name: "杜甫",
+    title: "诗圣",
+    years: "712—770",
+    dynasty: "唐",
+    description: "唐代最伟大的现实主义诗人，与李白并称「李杜」",
+    avatar: "🖊",
     portrait: "/assets/characters/dufu/portrait.png",
     color: "#4A90A4",
   },
   {
     id: "libai",
-    name: "\u674e\u767d",
-    title: "\u8bd7\u4ed9",
-    years: "701\u2014762",
-    dynasty: "\u5510",
-    description: "\u5373\u5c06\u63a8\u51fa...",
-    avatar: "\u{1F377}",
+    name: "李白",
+    title: "诗仙",
+    years: "701—762",
+    dynasty: "唐",
+    description: "即将推出...",
+    avatar: "🍷",
     portrait: null,
     color: "#C0392B",
     locked: true,
   },
   {
     id: "sushi",
-    name: "\u82cf\u8f7c",
-    title: "\u4e1c\u5761\u5c45\u58eb",
-    years: "1037\u20141101",
-    dynasty: "\u5b8b",
-    description: "\u5373\u5c06\u63a8\u51fa...",
-    avatar: "\u{1F4DC}",
+    name: "苏轼",
+    title: "东坡居士",
+    years: "1037—1101",
+    dynasty: "宋",
+    description: "即将推出...",
+    avatar: "📜",
     portrait: null,
     color: "#8E44AD",
     locked: true,
@@ -52,20 +51,28 @@ export default function App() {
   const [screen, setScreen] = useState("select");
   const [character, setCharacter] = useState(null);
   const [timelineData, setTimelineData] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
+  // Current year is the source of truth for slider position.
+  const [currentYear, setCurrentYear] = useState(null);
+  // Highest year the player has unlocked (set when an event scene is completed).
+  const [progressYear, setProgressYear] = useState(null);
   const [showEvent, setShowEvent] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [globalScore, setGlobalScore] = useState(0);
   const [showScene, setShowScene] = useState(false);
   const [sceneData, setSceneData] = useState(null);
+  const [pendingEvent, setPendingEvent] = useState(null);
 
   // Load timeline data when character is selected
   useEffect(() => {
     if (character && !timelineData) {
       import("./data/dufu/timeline.json")
         .then((module) => {
-          setTimelineData(module.default);
+          const data = module.default;
+          setTimelineData(data);
+          const firstEvent = data.stages[0]?.events?.[0];
+          const firstYear = firstEvent?.year ?? data.stages[0].yearStart;
+          setCurrentYear(firstYear);
+          setProgressYear(firstYear);
         })
         .catch(() => {
           console.error("Failed to load timeline data");
@@ -73,35 +80,60 @@ export default function App() {
     }
   }, [character, timelineData]);
 
+  // Flatten events from all stages with stage references attached.
+  const allEvents = useMemo(() => {
+    if (!timelineData) return [];
+    return timelineData.stages.flatMap((stage) =>
+      (stage.events || []).map((ev) => ({ ...ev, stageId: stage.id, stageColor: stage.color, stagePeriod: stage.period }))
+    );
+  }, [timelineData]);
+
+  // Derive current stage and current event from currentYear.
+  const currentStage = useMemo(() => {
+    if (!timelineData || currentYear == null) return null;
+    return (
+      timelineData.stages.find((s) => currentYear >= s.yearStart && currentYear <= s.yearEnd) ||
+      timelineData.stages[timelineData.stages.length - 1]
+    );
+  }, [timelineData, currentYear]);
+
+  const currentEvent = useMemo(() => {
+    if (!allEvents.length || currentYear == null) return null;
+    // Pick the event with the closest year to currentYear (prefer the most recent <= currentYear).
+    const ats = allEvents.filter((e) => e.year <= currentYear);
+    if (ats.length) return ats[ats.length - 1];
+    return allEvents[0];
+  }, [allEvents, currentYear]);
+
   const handleCharacterSelect = (char) => {
     setCharacter(char);
     setScreen("game");
   };
 
-  const handleLocationClick = (stageId) => {
-    const idx = timelineData.stages.findIndex((s) => s.id === stageId);
-    if (idx !== -1) {
-      setCurrentIndex(idx);
-    }
+  const handleEventClick = (event) => {
+    setCurrentYear(event.year);
   };
 
   const handleQuizComplete = (passed) => {
-    if (passed && progress === currentIndex) {
-      setProgress(currentIndex + 1);
+    if (passed && currentEvent && (progressYear == null || currentEvent.year > progressYear)) {
+      setProgressYear(currentEvent.year);
     }
   };
 
-  const handleExplore = async (stage) => {
+  const handleExplore = async () => {
+    if (!currentEvent || !currentEvent.sceneFile) return;
     try {
-      const sceneModule = await import(`./data/dufu/scenes/${stage.sceneFile}`);
+      const sceneModule = await import(`./data/dufu/scenes/${currentEvent.sceneFile}`);
       const data = sceneModule.default;
       if (data.type === "interactive" && data.phases) {
         setSceneData(data);
         setShowScene(true);
       } else {
+        setPendingEvent(currentEvent);
         setShowEvent(true);
       }
     } catch {
+      setPendingEvent(currentEvent);
       setShowEvent(true);
     }
   };
@@ -109,8 +141,8 @@ export default function App() {
   const handleSceneComplete = () => {
     setShowScene(false);
     setSceneData(null);
-    if (progress === currentIndex) {
-      setProgress(currentIndex + 1);
+    if (currentEvent && (progressYear == null || currentEvent.year > progressYear)) {
+      setProgressYear(currentEvent.year);
     }
   };
 
@@ -123,7 +155,7 @@ export default function App() {
     return <CharacterSelect characters={CHARACTERS} onSelect={handleCharacterSelect} />;
   }
 
-  if (!timelineData) {
+  if (!timelineData || currentYear == null || !currentStage || !currentEvent) {
     return (
       <div
         style={{
@@ -135,51 +167,60 @@ export default function App() {
           fontSize: 18,
         }}
       >
-        {"\u52a0\u8f7d\u4e2d..."}
+        {"加载中..."}
       </div>
     );
   }
 
   const stages = timelineData.stages;
-  const currentStage = stages[currentIndex];
+  const totalEvents = allEvents.length;
+  const reachedEvents = allEvents.filter((e) => e.year <= (progressYear ?? -Infinity)).length;
 
   return (
     <div style={styles.gameContainer}>
       <ScoreBar
         character={timelineData.character}
-        progress={progress}
-        totalStages={stages.length}
+        progress={reachedEvents}
+        totalStages={totalEvents}
       />
       <div style={styles.mapContainer}>
         <GameMap
-          currentStage={currentStage}
-          stages={stages}
-          onLocationClick={handleLocationClick}
-          progress={progress}
+          allEvents={allEvents}
+          currentYear={currentYear}
+          currentEventId={currentEvent.id}
+          progressYear={progressYear}
+          onEventClick={handleEventClick}
         />
         <div style={{ ...styles.floatingInfo, borderLeftColor: currentStage.color }}>
           <h3 style={{ margin: "0 0 4px", color: currentStage.color }}>
-            {currentStage.period}
+            {currentEvent.name}
           </h3>
-          <p style={{ margin: 0, fontSize: 13, color: "#666" }}>
-            {currentStage.summary}
+          <div style={styles.eventMeta}>
+            {`${currentEvent.year} 年 · ${currentStage.period}`}
+          </div>
+          <p style={{ margin: "8px 0 0", fontSize: 13, color: "#666" }}>
+            {currentEvent.summary || currentStage.summary}
           </p>
           <button
             style={{
               ...styles.exploreBtn,
               backgroundColor: currentStage.color,
+              opacity: currentEvent.sceneFile ? 1 : 0.6,
             }}
-            onClick={() => handleExplore(currentStage)}
+            onClick={handleExplore}
           >
-            {"\u{1F4D6} \u63a2\u7d22\u6b64\u65f6\u671f"}
+            {currentEvent.sceneFile ? "📖 探索此事件" : "📖 暂无场景"}
           </button>
         </div>
       </div>
       <Timeline
         stages={stages}
-        currentIndex={currentIndex}
-        onSelect={setCurrentIndex}
-        progress={progress}
+        events={allEvents}
+        currentYear={currentYear}
+        currentEventId={currentEvent.id}
+        progressYear={progressYear}
+        onYearChange={setCurrentYear}
+        onEventSelect={(ev) => setCurrentYear(ev.year)}
       />
       <button
         style={styles.backBtn}
@@ -187,23 +228,28 @@ export default function App() {
           setScreen("select");
           setCharacter(null);
           setTimelineData(null);
+          setCurrentYear(null);
+          setProgressYear(null);
         }}
       >
-        {"\u2190 \u8fd4\u56de\u9009\u62e9"}
+        {"← 返回选择"}
       </button>
       {showEvent && !showQuiz && (
         <EventPanel
-          stage={currentStage}
+          stage={{ ...currentStage, ...currentEvent, location: currentEvent.location }}
           onStartQuiz={() => {
             setShowEvent(false);
             setShowQuiz(true);
           }}
-          onClose={() => setShowEvent(false)}
+          onClose={() => {
+            setShowEvent(false);
+            setPendingEvent(null);
+          }}
         />
       )}
       {showQuiz && (
         <QuizPanel
-          stage={currentStage}
+          stage={{ ...currentStage, ...currentEvent, quizFile: currentEvent.quizFile }}
           onComplete={handleQuizComplete}
           onClose={() => setShowQuiz(false)}
         />
@@ -245,9 +291,14 @@ const styles = {
     backgroundColor: "#FFF",
     borderRadius: 8,
     padding: 16,
-    width: 220,
+    width: 240,
     borderLeft: "4px solid",
     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+  },
+  eventMeta: {
+    fontSize: 11,
+    color: "#999",
+    letterSpacing: 1,
   },
   exploreBtn: {
     marginTop: 12,

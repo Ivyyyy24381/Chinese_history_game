@@ -1,11 +1,19 @@
 import { useRef, useState, useEffect } from "react";
 
 /**
- * Continuous draggable timeline slider, spanning the character's lifespan.
- * Stages are tick marks; dragging the thumb selects the period whose
- * year range contains the current year value.
+ * Continuous draggable timeline slider spanning the character's lifespan.
+ * The slider value is a YEAR. Event ticks are drawn at each event's year;
+ * stages are drawn as colored background segments behind the track.
  */
-export default function Timeline({ stages, currentIndex, onSelect, progress }) {
+export default function Timeline({
+  stages,
+  events,
+  currentYear,
+  currentEventId,
+  progressYear,
+  onYearChange,
+  onEventSelect,
+}) {
   const yearStart = stages[0].yearStart;
   const yearEnd = stages[stages.length - 1].yearEnd;
   const totalSpan = yearEnd - yearStart;
@@ -14,30 +22,25 @@ export default function Timeline({ stages, currentIndex, onSelect, progress }) {
   const [dragging, setDragging] = useState(false);
   const [hoverYear, setHoverYear] = useState(null);
 
-  const current = stages[currentIndex];
-  const currentMidYear = (current.yearStart + current.yearEnd) / 2;
-  const thumbPct = ((currentMidYear - yearStart) / totalSpan) * 100;
+  // Stage containing the current year (for accent color / label).
+  const currentStage =
+    stages.find((s) => currentYear >= s.yearStart && currentYear <= s.yearEnd) ||
+    stages[stages.length - 1];
 
-  const stageAtYear = (year) => {
-    for (let i = 0; i < stages.length; i++) {
-      if (year <= stages[i].yearEnd) return i;
-    }
-    return stages.length - 1;
-  };
+  const thumbPct = ((currentYear - yearStart) / totalSpan) * 100;
 
   const yearAtClientX = (clientX) => {
     if (!trackRef.current) return yearStart;
     const rect = trackRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const pct = Math.max(0, Math.min(1, x / rect.width));
-    return yearStart + pct * totalSpan;
+    return Math.round(yearStart + pct * totalSpan);
   };
 
   const handlePointerAt = (clientX) => {
     const year = yearAtClientX(clientX);
     setHoverYear(year);
-    const idx = stageAtYear(year);
-    if (idx !== currentIndex) onSelect(idx);
+    if (year !== currentYear) onYearChange(year);
   };
 
   useEffect(() => {
@@ -61,7 +64,7 @@ export default function Timeline({ stages, currentIndex, onSelect, progress }) {
       window.removeEventListener("touchend", onUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dragging, currentIndex]);
+  }, [dragging, currentYear]);
 
   const onTrackDown = (e) => {
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
@@ -69,28 +72,31 @@ export default function Timeline({ stages, currentIndex, onSelect, progress }) {
     handlePointerAt(cx);
   };
 
+  // Find current event for label
+  const currentEvent = (events || []).find((e) => e.id === currentEventId);
+
   return (
     <div style={styles.timelineContainer}>
       <div style={styles.headerRow}>
-        <span style={{ ...styles.yearDisplay, color: current.color }}>
-          {`${Math.round(currentMidYear)} 年`}
+        <span style={{ ...styles.yearDisplay, color: currentStage.color }}>
+          {`${currentYear} 年`}
         </span>
         <span style={styles.currentBadge}>
-          <span style={{ ...styles.currentDot, backgroundColor: current.color }} />
-          {current.period}
+          <span style={{ ...styles.currentDot, backgroundColor: currentStage.color }} />
+          {currentEvent ? `${currentEvent.name} · ${currentStage.period}` : currentStage.period}
           <span style={styles.lifespan}>{`（${yearStart}–${yearEnd}）`}</span>
         </span>
       </div>
 
       <div style={styles.trackArea}>
-        {hoverYear !== null && (
+        {hoverYear !== null && hoverYear !== currentYear && (
           <div
             style={{
               ...styles.hoverBubble,
               left: `${((hoverYear - yearStart) / totalSpan) * 100}%`,
             }}
           >
-            {Math.round(hoverYear)}
+            {hoverYear}
           </div>
         )}
 
@@ -100,51 +106,65 @@ export default function Timeline({ stages, currentIndex, onSelect, progress }) {
           onMouseDown={onTrackDown}
           onTouchStart={onTrackDown}
         >
-          <div style={styles.trackLine} />
-          <div
-            style={{
-              ...styles.trackFill,
-              width: `${thumbPct}%`,
-              backgroundColor: current.color,
-            }}
-          />
-
-          {stages.map((stage, idx) => {
-            const isUnlocked = idx <= progress;
-            const isCurrent = idx === currentIndex;
-            const pct = ((stage.yearStart - yearStart) / totalSpan) * 100;
+          {/* Stage segments (colored background bands) */}
+          {stages.map((stage) => {
+            const left = ((stage.yearStart - yearStart) / totalSpan) * 100;
+            const width = ((stage.yearEnd - stage.yearStart) / totalSpan) * 100;
             return (
               <div
                 key={stage.id}
-                style={{ ...styles.markerWrap, left: `${pct}%` }}
+                style={{
+                  ...styles.stageSegment,
+                  left: `${left}%`,
+                  width: `${width}%`,
+                  backgroundColor: stage.color,
+                  opacity: stage.id === currentStage.id ? 0.7 : 0.3,
+                }}
+              />
+            );
+          })}
+
+          {/* Event ticks */}
+          {(events || []).map((event) => {
+            const isCurrent = event.id === currentEventId;
+            const isReached = progressYear != null && event.year <= progressYear;
+            const pct = ((event.year - yearStart) / totalSpan) * 100;
+            return (
+              <div
+                key={event.id}
+                style={{ ...styles.eventTickWrap, left: `${pct}%` }}
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSelect(idx);
+                  onEventSelect && onEventSelect(event);
                 }}
+                title={`${event.year} 年 · ${event.name}`}
               >
                 <div
                   style={{
-                    ...styles.markerDot,
-                    backgroundColor: isUnlocked ? stage.color : "#BFB7A5",
+                    ...styles.eventDot,
+                    backgroundColor: event.stageColor,
                     transform: isCurrent
-                      ? "translate(-50%, -50%) scale(1.5)"
+                      ? "translate(-50%, -50%) scale(1.6)"
                       : "translate(-50%, -50%) scale(1)",
                     boxShadow: isCurrent
-                      ? `0 0 12px ${stage.color}, 0 0 4px ${stage.color}`
-                      : "0 1px 3px rgba(0,0,0,0.2)",
+                      ? `0 0 12px ${event.stageColor}, 0 0 4px ${event.stageColor}`
+                      : isReached
+                        ? `0 0 4px ${event.stageColor}`
+                        : "0 1px 3px rgba(0,0,0,0.2)",
+                    opacity: isReached || isCurrent ? 1 : 0.6,
                   }}
                 />
                 <div
                   style={{
-                    ...styles.markerLabel,
-                    color: isCurrent ? stage.color : "#555",
+                    ...styles.eventLabel,
+                    color: isCurrent ? event.stageColor : "#555",
                     fontWeight: isCurrent ? "bold" : "normal",
                   }}
                 >
-                  <div style={styles.markerYear}>{stage.yearStart}</div>
-                  <div style={styles.markerPeriod}>{stage.period}</div>
+                  <div style={styles.eventYear}>{event.year}</div>
+                  <div style={styles.eventName}>{event.name}</div>
                 </div>
               </div>
             );
@@ -154,8 +174,8 @@ export default function Timeline({ stages, currentIndex, onSelect, progress }) {
             style={{
               ...styles.thumb,
               left: `${thumbPct}%`,
-              backgroundColor: current.color,
-              borderColor: current.color,
+              backgroundColor: currentStage.color,
+              borderColor: currentStage.color,
             }}
             onMouseDown={(e) => {
               e.stopPropagation();
@@ -217,7 +237,7 @@ const styles = {
   },
   trackArea: {
     position: "relative",
-    padding: "26px 12px 36px",
+    padding: "26px 12px 40px",
   },
   hoverBubble: {
     position: "absolute",
@@ -233,30 +253,24 @@ const styles = {
   },
   track: {
     position: "relative",
-    height: 4,
+    height: 6,
     cursor: "pointer",
+    borderRadius: 3,
+    backgroundColor: "#F0E8D6",
   },
-  trackLine: {
-    position: "absolute",
-    inset: 0,
-    backgroundColor: "#E0D6C2",
-    borderRadius: 2,
-  },
-  trackFill: {
+  stageSegment: {
     position: "absolute",
     top: 0,
-    left: 0,
     height: "100%",
-    borderRadius: 2,
-    transition: "width 0.25s ease, background-color 0.25s ease",
+    transition: "opacity 0.25s ease",
   },
-  markerWrap: {
+  eventTickWrap: {
     position: "absolute",
     top: "50%",
     cursor: "pointer",
     zIndex: 3,
   },
-  markerDot: {
+  eventDot: {
     position: "absolute",
     top: 0,
     left: 0,
@@ -264,9 +278,9 @@ const styles = {
     height: 12,
     borderRadius: "50%",
     border: "2px solid #FFF",
-    transition: "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
+    transition: "transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease",
   },
-  markerLabel: {
+  eventLabel: {
     position: "absolute",
     top: 14,
     left: 0,
@@ -277,12 +291,12 @@ const styles = {
     lineHeight: 1.3,
     transition: "color 0.25s ease",
   },
-  markerYear: {
+  eventYear: {
     fontSize: 10,
     color: "inherit",
     opacity: 0.7,
   },
-  markerPeriod: {
+  eventName: {
     fontSize: 11,
     color: "inherit",
     marginTop: 1,

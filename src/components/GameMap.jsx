@@ -1,10 +1,20 @@
 /**
- * Map with pin-style location markers.
- * - Current stage: full color + glow + pulsing ring, larger pin
- * - Past (unlocked) stages: full color, smaller pin, checkmark badge
- * - Future stages: desaturated, lower opacity
+ * Map with event-level pin markers.
+ * Only events with year <= currentYear are shown — future events stay hidden
+ * until the player drags the timeline forward.
+ *
+ * - Current event:  full color, glow, pulsing ring, larger pin
+ * - Past events:    full color, smaller pin, ✓ inside the pin
  */
-export default function GameMap({ currentStage, stages, onLocationClick, progress = 0 }) {
+export default function GameMap({
+  allEvents,
+  currentYear,
+  currentEventId,
+  progressYear,
+  onEventClick,
+}) {
+  const visibleEvents = (allEvents || []).filter((e) => e.year <= currentYear);
+
   return (
     <div style={styles.mapContainer}>
       <div
@@ -13,30 +23,29 @@ export default function GameMap({ currentStage, stages, onLocationClick, progres
           backgroundImage: `url('/assets/maps/tang_dynasty.png')`,
         }}
       >
-        {stages.map((stage, idx) => {
-          const isCurrent = stage.id === currentStage.id;
-          const isUnlocked = idx <= progress;
-          const isPast = idx < progress;
-          const pinColor = isUnlocked ? stage.color : "#9A9A9A";
-          const pinSize = isCurrent ? 44 : 32;
+        {visibleEvents.map((event) => {
+          const isCurrent = event.id === currentEventId;
+          const isPast = !isCurrent && progressYear != null && event.year <= progressYear;
+          const pinColor = event.stageColor || "#4A90A4";
+          const pinSize = isCurrent ? 44 : 30;
 
           return (
             <button
-              key={stage.id}
+              key={event.id}
               style={{
                 ...styles.pinWrap,
-                left: `${stage.location.mapX}%`,
-                top: `${stage.location.mapY}%`,
+                left: `${event.location.mapX}%`,
+                top: `${event.location.mapY}%`,
                 zIndex: isCurrent ? 5 : 2,
               }}
-              onClick={() => onLocationClick(stage.id)}
-              title={stage.location.name}
+              onClick={() => onEventClick(event)}
+              title={`${event.year} 年 · ${event.name}`}
             >
               {isCurrent && (
                 <span
                   style={{
                     ...styles.pulseRing,
-                    backgroundColor: stage.color,
+                    backgroundColor: pinColor,
                   }}
                 />
               )}
@@ -49,15 +58,15 @@ export default function GameMap({ currentStage, stages, onLocationClick, progres
               <span
                 style={{
                   ...styles.pinLabel,
-                  color: isCurrent ? stage.color : "#333",
+                  color: isCurrent ? pinColor : "#333",
                   fontWeight: isCurrent ? "bold" : 500,
                   backgroundColor: isCurrent
                     ? "rgba(255,255,255,0.95)"
                     : "rgba(255,255,255,0.8)",
-                  opacity: isUnlocked ? 1 : 0.7,
                 }}
               >
-                {stage.location.name}
+                <span style={styles.pinYear}>{event.year}</span>
+                <span style={styles.pinName}>{event.name}</span>
               </span>
             </button>
           );
@@ -152,13 +161,23 @@ const styles = {
   },
   pinLabel: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: 11,
     padding: "1px 8px",
     borderRadius: 10,
     whiteSpace: "nowrap",
     boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
     fontFamily: "'Noto Serif SC', 'Songti SC', serif",
     transition: "all 0.25s ease",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+  },
+  pinYear: {
+    fontSize: 10,
+    opacity: 0.75,
+  },
+  pinName: {
+    fontSize: 12,
   },
 };
 

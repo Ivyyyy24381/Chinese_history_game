@@ -1,115 +1,136 @@
 {
   "character": {
     "id": "dufu",
-    "name": "\u675c\u752b",
-    "title": "\u8bd7\u5723",
-    "years": "712\u2014770",
-    "dynasty": "\u5510",
-    "description": "\u5510\u4ee3\u6700\u4f1f\u5927\u7684\u73b0\u5b9e\u4e3b\u4e49\u8bd7\u4eba\uff0c\u4e0e\u674e\u767d\u5e76\u79f0\u300c\u674e\u675c\u300d",
+    "name": "杜甫",
+    "title": "诗圣",
+    "years": "712—770",
+    "dynasty": "唐",
+    "description": "唐代最伟大的现实主义诗人，与李白并称「李杜」",
     "portrait": "/assets/characters/dufu/portrait.png"
   },
   "stages": [
     {
       "id": "01_youth",
-      "period": "\u5c11\u5e74\u6e38\u5386",
-      "year": "712\u2014735",
+      "period": "少年游历",
       "yearStart": 712,
       "yearEnd": 735,
       "color": "#27AE60",
-      "location": {
-        "id": "luoyang",
-        "name": "\u6d1b\u9633",
-        "mapX": 63.5,
-        "mapY": 53
-      },
-      "summary": "\u675c\u752b\u51fa\u751f\u4e8e\u6cb3\u5357\u5de9\u53bf\uff0c\u5c11\u5e74\u65f6\u4ee3\u5728\u6d1b\u9633\u3001\u9f50\u9c81\u4e00\u5e26\u6e38\u5386\u3002",
-      "sceneFile": "01_youth.json",
-      "quizFile": "01_youth.json"
+      "summary": "杜甫出生于河南巩县，少年时代在洛阳、齐鲁一带游历。",
+      "events": [
+        {
+          "id": "youth_730",
+          "year": 730,
+          "name": "齐鲁游历",
+          "summary": "杜甫游历齐鲁，写下《望岳》。",
+          "location": { "name": "洛阳", "mapX": 63.5, "mapY": 53 },
+          "sceneFile": "01_youth.json",
+          "quizFile": "01_youth.json"
+        }
+      ]
     },
     {
       "id": "02_changan",
-      "period": "\u56f0\u5b88\u957f\u5b89",
-      "year": "735\u2014755",
+      "period": "困守长安",
       "yearStart": 735,
       "yearEnd": 755,
       "color": "#F39C12",
-      "location": {
-        "id": "changan",
-        "name": "\u957f\u5b89",
-        "mapX": 56,
-        "mapY": 54
-      },
-      "summary": "\u675c\u752b\u8d74\u957f\u5b89\u53c2\u52a0\u79d1\u4e3e\u843d\u7b2c\uff0c\u56f0\u5b88\u5341\u5e74\uff0c\u4e0e\u674e\u767d\u76f8\u9047\u3002",
-      "sceneFile": "02_changan.json",
-      "quizFile": "02_changan.json"
+      "summary": "杜甫赴长安求仕，困守十年。",
+      "events": [
+        {
+          "id": "exam_746",
+          "year": 746,
+          "name": "制举科考",
+          "summary": "玄宗特办制举，李林甫「野无遗贤」骗局，无人及第。",
+          "location": { "name": "长安", "mapX": 56, "mapY": 54 },
+          "sceneFile": "02_changan.json",
+          "quizFile": "02_changan.json"
+        },
+        {
+          "id": "lifu_751",
+          "year": 751,
+          "name": "进献三大礼赋",
+          "summary": "杜甫向玄宗献《朝献太清宫赋》《朝享太庙赋》《有事于南郊赋》，获召试文章。",
+          "location": { "name": "长安", "mapX": 56, "mapY": 54 },
+          "sceneFile": null,
+          "quizFile": null
+        }
+      ]
     },
     {
       "id": "03_anshi",
-      "period": "\u5b89\u53f2\u4e4b\u4e71",
-      "year": "755\u2014759",
+      "period": "安史之乱",
       "yearStart": 755,
       "yearEnd": 759,
       "color": "#E74C3C",
-      "location": {
-        "id": "fengxiang",
-        "name": "\u51e4\u7fd4",
-        "mapX": 53,
-        "mapY": 54
-      },
-      "summary": "\u5b89\u7984\u5c71\u8d77\u5175\u53db\u4e71\uff0c\u675c\u752b\u5192\u6b7b\u5954\u8d74\u51e4\u7fd4\u6295\u5954\u8083\u5b97\u3002",
-      "sceneFile": "03_anshi.json",
-      "quizFile": "03_anshi.json"
+      "summary": "安禄山起兵叛乱，杜甫冒死奔赴凤翔投奔肃宗。",
+      "events": [
+        {
+          "id": "fengxiang_757",
+          "year": 757,
+          "name": "奔赴凤翔",
+          "summary": "杜甫从沦陷的长安逃出，奔赴凤翔投奔肃宗，授左拾遗。",
+          "location": { "name": "凤翔", "mapX": 53, "mapY": 54 },
+          "sceneFile": "03_anshi.json",
+          "quizFile": "03_anshi.json"
+        }
+      ]
     },
     {
       "id": "04_chengdu",
-      "period": "\u6210\u90fd\u8349\u5802",
-      "year": "759\u2014765",
+      "period": "成都草堂",
       "yearStart": 759,
       "yearEnd": 765,
       "color": "#2ECC71",
-      "location": {
-        "id": "chengdu",
-        "name": "\u6210\u90fd",
-        "mapX": 50,
-        "mapY": 64
-      },
-      "summary": "\u675c\u752b\u5728\u6210\u90fd\u6d63\u82b1\u6eaa\u7554\u7b51\u8349\u5802\uff0c\u5ea6\u8fc7\u4e86\u4e00\u6bb5\u5b89\u5b9a\u65f6\u5149\u3002",
-      "sceneFile": "04_chengdu.json",
-      "quizFile": "04_chengdu.json"
+      "summary": "杜甫在成都浣花溪畔筑草堂，度过了一段安定时光。",
+      "events": [
+        {
+          "id": "caotang_760",
+          "year": 760,
+          "name": "草堂初成",
+          "summary": "杜甫在浣花溪畔筑草堂，得严武等人接济。",
+          "location": { "name": "成都", "mapX": 50, "mapY": 64 },
+          "sceneFile": "04_chengdu.json",
+          "quizFile": "04_chengdu.json"
+        }
+      ]
     },
     {
       "id": "05_kuizhou",
-      "period": "\u5914\u5dde\u5c81\u6708",
-      "year": "765\u2014768",
+      "period": "夔州岁月",
       "yearStart": 765,
       "yearEnd": 768,
       "color": "#9B59B6",
-      "location": {
-        "id": "kuizhou",
-        "name": "\u5914\u5dde",
-        "mapX": 55,
-        "mapY": 62
-      },
-      "summary": "\u675c\u752b\u6cbf\u957f\u6c5f\u4e1c\u4e0b\uff0c\u5728\u5914\u5dde\u505c\u7559\u8fd1\u4e24\u5e74\uff0c\u8bd7\u6b4c\u521b\u4f5c\u8fbe\u5230\u5dc5\u5cf0\u3002",
-      "sceneFile": "05_kuizhou.json",
-      "quizFile": "05_kuizhou.json"
+      "summary": "杜甫沿长江东下，在夔州停留近两年，诗歌创作达到巅峰。",
+      "events": [
+        {
+          "id": "kuizhou_766",
+          "year": 766,
+          "name": "夔州寓居",
+          "summary": "杜甫在夔州停留近两年，作《秋兴八首》《登高》等。",
+          "location": { "name": "夔州", "mapX": 55, "mapY": 62 },
+          "sceneFile": "05_kuizhou.json",
+          "quizFile": "05_kuizhou.json"
+        }
+      ]
     },
     {
       "id": "06_final",
-      "period": "\u6f02\u6cca\u7ec8\u8001",
-      "year": "768\u2014770",
+      "period": "漂泊终老",
       "yearStart": 768,
       "yearEnd": 770,
       "color": "#7F8C8D",
-      "location": {
-        "id": "tanzhou",
-        "name": "\u6f6d\u5dde",
-        "mapX": 62,
-        "mapY": 68
-      },
-      "summary": "\u675c\u752b\u7ecf\u5cb3\u9633\u3001\u6f6d\u5dde\uff0c\u6700\u7ec8\u5728\u5c0f\u8239\u4e0a\u75c5\u901d\uff0c\u4eab\u5e7459\u5c81\u3002",
-      "sceneFile": "06_final.json",
-      "quizFile": "06_final.json"
+      "summary": "杜甫经岳阳、潭州，最终在小船上病逝，享年59岁。",
+      "events": [
+        {
+          "id": "tanzhou_770",
+          "year": 770,
+          "name": "湘江终老",
+          "summary": "杜甫漂泊于潭州、岳阳间，在小船上病逝。",
+          "location": { "name": "潭州", "mapX": 62, "mapY": 68 },
+          "sceneFile": "06_final.json",
+          "quizFile": "06_final.json"
+        }
+      ]
     }
   ]
 }
