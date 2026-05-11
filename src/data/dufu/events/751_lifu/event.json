@@ -7,7 +7,7 @@
     {
       "id": "street_ceremony_eve",
       "type": "explore",
-      "background": "/assets/events/751_lifu/backgrounds/changan_ceremony.png",
+      "background": "/assets/events/747_exam/backgrounds/changan_street.png",
       "title": "长安街头·大礼前夕",
       "narrative": "天宝十载（751年），玄宗将行三大礼——朝献太清宫、朝享太庙、有事于南郊。长安万民同庆，张灯结彩。",
       "instruction": "和路人交谈，了解这场盛典与「献赋」的机会。",
@@ -86,7 +86,7 @@
     {
       "id": "residence",
       "type": "explore",
-      "background": "/assets/events/751_lifu/backgrounds/dufu_residence.png",
+      "background": "/assets/events/751_lifu/backgrounds/dufu_home.png",
       "title": "杜甫居所·夜",
       "narrative": "夜深，油灯如豆。桌上散落着写废的稿纸与空酒壶。",
       "instruction": "点击桌案、纸团与杜甫，了解他的处境。",
@@ -133,7 +133,7 @@
     {
       "id": "writing_choice",
       "type": "forced_choice",
-      "background": "/assets/events/751_lifu/backgrounds/dufu_residence.png",
+      "background": "/assets/events/751_lifu/backgrounds/dufu_home.png",
       "title": "落笔之际",
       "narrative": "灯下，杜甫提起笔，又顿住——这篇《朝献太清宫赋》，该如何写？",
       "question": "你将如何完成这篇献赋？",
@@ -176,7 +176,7 @@
     {
       "id": "palace_gate",
       "type": "explore",
-      "background": "/assets/events/751_lifu/backgrounds/palace_gate.png",
+      "background": "/assets/events/751_lifu/backgrounds/yanen_gate.png",
       "title": "宫门·献赋",
       "narrative": "宫门外，士子云集，皆为延恩匦而来。",
       "instruction": "和宫门外的士子交谈，看看献赋的情形。",
