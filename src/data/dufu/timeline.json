@@ -42,7 +42,7 @@
             "mapX": 63.5,
             "mapY": 53
           },
-          "hasScene": false,
+          "hasScene": true,
           "hasQuiz": false
         }
       ]
@@ -104,7 +104,7 @@
             "mapX": 56,
             "mapY": 54
           },
-          "hasScene": false,
+          "hasScene": true,
           "hasQuiz": false
         },
         {
@@ -132,7 +132,7 @@
             "mapX": 49,
             "mapY": 53
           },
-          "hasScene": false,
+          "hasScene": true,
           "hasQuiz": false
         }
       ]

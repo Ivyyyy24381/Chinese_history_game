@@ -1,33 +1,212 @@
 {
-  "id": "04_chengdu",
-  "title": "\u6d63\u82b1\u6eaa\u7554",
-  "background": "/assets/scenes/04_chengdu/bg.png",
-  "narrative": "\u516c\u5143759\u5e74\uff0c\u675c\u752b\u8f97\u8f6c\u6765\u5230\u6210\u90fd\uff0c\u5728\u6d63\u82b1\u6eaa\u7554\u5efa\u8d77\u4e86\u4e00\u5ea7\u8349\u5802\u3002\u597d\u53cb\u4e25\u6b66\u591a\u6b21\u63a5\u6d4e\u4ed6\u3002\u8fd9\u662f\u675c\u752b\u4e00\u751f\u4e2d\u6700\u5b89\u5b9a\u7684\u65f6\u671f\u3002",
-  "poem": {
-    "title": "\u8305\u5c4b\u4e3a\u79cb\u98ce\u6240\u7834\u6b4c\uff08\u8282\u9009\uff09",
-    "content": "\u516b\u6708\u79cb\u9ad8\u98ce\u6012\u53f7\uff0c\u5377\u6211\u5c4b\u4e0a\u4e09\u91cd\u8305\u3002\n\u2026\u2026\n\u5b89\u5f97\u5e7f\u53a6\u5343\u4e07\u95f4\uff0c\u5927\u5e87\u5929\u4e0b\u5bd2\u58eb\u4ff1\u6b22\u989c\uff01\n\u543e\u5e90\u72ec\u7834\u53d7\u51bb\u6b7b\u4ea6\u8db3\uff01"
-  },
-  "dialogues": [
+  "id": "760_caotang",
+  "title": "草堂时期",
+  "year": "760",
+  "type": "interactive",
+  "phases": [
     {
-      "speaker": "dufu",
-      "speakerName": "\u675c\u752b",
-      "portrait": "/assets/characters/dufu/portrait.png",
-      "text": "\u8fd9\u6d63\u82b1\u6eaa\u7554\uff0c\u5c71\u6e05\u6c34\u79c0\uff0c\u7ec8\u4e8e\u53ef\u4ee5\u5b89\u5b9a\u4e0b\u6765\u4e86\u3002",
-      "position": "left"
+      "id": "huanhuaxi",
+      "type": "explore",
+      "background": "/assets/events/760_caotang/backgrounds/huanhuaxi.png",
+      "title": "浣花溪畔",
+      "narrative": "乾元三年春（760）。成都西郊浣花溪畔。",
+      "instruction": "在溪边走一走，决定把草堂建在哪里。",
+      "npcs": [
+        {
+          "id": "bamboo_grove",
+          "name": "竹林",
+          "portrait": "",
+          "position": { "x": 20, "y": 60 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "竹叶清风，可栖。" }
+          ]
+        },
+        {
+          "id": "stream",
+          "name": "溪水",
+          "portrait": "",
+          "position": { "x": 50, "y": 70 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "水足，可灌园。" }
+          ]
+        },
+        {
+          "id": "old_tree",
+          "name": "老树",
+          "portrait": "",
+          "position": { "x": 75, "y": 55 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "百年楠木——荫下可读书。" }
+          ]
+        },
+        {
+          "id": "yanwu",
+          "name": "严武",
+          "portrait": "/assets/characters/npcs/yanwu.png",
+          "position": { "x": 40, "y": 50 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "yanwu", "speakerName": "严武", "text": "子美兄，我已让人送来材料。" },
+            { "speaker": "yanwu", "speakerName": "严武", "text": "这草堂虽简陋，但足以避风雨。" },
+            { "speaker": "yanwu", "speakerName": "严武", "text": "需要什么，随时来节度使府。" }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "build"
     },
     {
-      "speaker": "yanwu",
-      "speakerName": "\u4e25\u6b66",
-      "portrait": "/assets/characters/npcs/yanwu.png",
-      "text": "\u5b50\u7f8e\u5144\uff0c\u6211\u5df2\u8ba9\u4eba\u9001\u6765\u6750\u6599\uff0c\u8fd9\u8349\u5802\u867d\u7b80\u964b\uff0c\u4f46\u8db3\u4ee5\u907f\u98ce\u96e8\u3002",
-      "position": "right"
+      "id": "build",
+      "type": "explore",
+      "background": "/assets/events/760_caotang/backgrounds/caotang_building.png",
+      "title": "起屋",
+      "narrative": "春末，草堂初成。",
+      "instruction": "依次点击四个建筑要素，把家安顿下来。",
+      "npcs": [
+        {
+          "id": "roof",
+          "name": "屋顶（茅）",
+          "portrait": "",
+          "position": { "x": 30, "y": 35 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "茅卷三重，足以蔽日。" }
+          ]
+        },
+        {
+          "id": "fence",
+          "name": "篱笆",
+          "portrait": "",
+          "position": { "x": 70, "y": 65 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "桤林碍日吟风叶，笼竹和烟滴露梢。" }
+          ]
+        },
+        {
+          "id": "herb_garden",
+          "name": "药圃",
+          "portrait": "",
+          "position": { "x": 25, "y": 70 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "种药今多归散吏。" }
+          ]
+        },
+        {
+          "id": "pond",
+          "name": "池塘",
+          "portrait": "",
+          "position": { "x": 60, "y": 75 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "澄江平少岸，幽树晚多花。" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "这浣花溪畔，山清水秀，终于可以安定下来了。" }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "daily_life"
     },
     {
-      "speaker": "dufu",
-      "speakerName": "\u675c\u752b",
-      "portrait": "/assets/characters/dufu/portrait.png",
-      "text": "\u591a\u8c22\u4e25\u5144\u63a5\u6d4e\u3002\u53ea\u662f\u2026\u2026\u6211\u867d\u6709\u4e86\u5bb9\u8eab\u4e4b\u6240\uff0c\u5929\u4e0b\u5bd2\u58eb\u53c8\u5f53\u5982\u4f55\uff1f",
-      "position": "left"
+      "id": "daily_life",
+      "type": "explore",
+      "background": "/assets/events/760_caotang/backgrounds/caotang_yard.png",
+      "title": "草堂的客人",
+      "narrative": "草堂落成，故人陆续到访。",
+      "instruction": "和两位客人聊聊。",
+      "npcs": [
+        {
+          "id": "yanwu_visit",
+          "name": "严武再访",
+          "portrait": "/assets/characters/npcs/yanwu.png",
+          "position": { "x": 25, "y": 60 },
+          "scale": 1.4,
+          "dialogues": [
+            { "speaker": "yanwu_visit", "speakerName": "严武", "text": "这几日朝廷召我入京，下次见不知何时。" },
+            { "speaker": "yanwu_visit", "speakerName": "严武", "text": "子美保重——若我不在成都，恐怕……" }
+          ]
+        },
+        {
+          "id": "gaoshi_visit",
+          "name": "高适",
+          "portrait": "/assets/characters/npcs/gaoshi.png",
+          "position": { "x": 50, "y": 60 },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "gaoshi_visit", "speakerName": "高适", "text": "子美，多年不见。当年梁宋之游，恍如昨日。" },
+            { "speaker": "gaoshi_visit", "speakerName": "高适", "text": "太白……前年已死于当涂。" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "……" }
+          ]
+        },
+        {
+          "id": "farmer",
+          "name": "邻翁",
+          "portrait": "/assets/characters/npcs/farmer.png",
+          "position": { "x": 75, "y": 65 },
+          "scale": 1.2,
+          "dialogues": [
+            { "speaker": "farmer", "speakerName": "邻翁", "text": "先生今日又有客？我送了些新麦。" },
+            { "speaker": "farmer", "speakerName": "邻翁", "text": "南邻的崔老头说先生的诗在长安都传开了。" }
+          ]
+        },
+        {
+          "id": "boy",
+          "name": "邻家小儿",
+          "portrait": "/assets/characters/npcs/boy.png",
+          "position": { "x": 35, "y": 75 },
+          "scale": 0.9,
+          "dialogues": [
+            { "speaker": "boy", "speakerName": "邻家小儿", "text": "杜公！我们今日又来抢茅！" },
+            { "speaker": "narrator", "speakerName": "旁白", "text": "（笑闹间跑开。）" }
+          ]
+        }
+      ],
+      "requiredTalks": 2,
+      "nextPhase": "storm"
+    },
+    {
+      "id": "storm",
+      "type": "transition",
+      "background": "/assets/events/760_caotang/backgrounds/caotang_storm.png",
+      "title": "秋风",
+      "transitionText": "八月秋高风怒号，\n卷我屋上三重茅。\n茅飞渡江洒江郊，\n高者挂罥长林梢。",
+      "announcement": {
+        "text": "「南村群童欺我老无力，忍能对面为盗贼。」",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "归来倚杖自叹息。"
+      },
+      "nextPhase": "maowu_compose"
+    },
+    {
+      "id": "maowu_compose",
+      "type": "poem_compose",
+      "background": "/assets/events/760_caotang/backgrounds/caotang_rain.png",
+      "title": "《茅屋为秋风所破歌》末段",
+      "poemContext": "冷雨入床。布衾多年冷似铁。心中却升起一个念头——把候选词填到正确的位置。",
+      "puzzle": "安得___，大庇天下___！\n风雨___！\n呜呼！何时眼前突兀见此屋，吾庐___！",
+      "blanks": ["广厦千万间", "寒士俱欢颜", "不动安如山", "独破受冻死亦足"],
+      "distractors": ["金堂玉马间", "故人尽白头", "稳渡江湖船"],
+      "poemTitle": "茅屋为秋风所破歌（末段）"
+    },
+    {
+      "id": "leave_caotang",
+      "type": "transition",
+      "background": "/assets/events/760_caotang/backgrounds/caotang_empty.png",
+      "title": "离开草堂",
+      "transitionText": "广德二年（764），严武再镇蜀，杜甫一度任工部员外郎。\n永泰元年（765）严武病逝。\n杜甫失去依靠，乘船东下。",
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "这一住，已是五年。"
+      }
     }
   ]
 }

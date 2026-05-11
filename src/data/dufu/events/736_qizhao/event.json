@@ -1,33 +1,129 @@
 {
-  "id": "01_youth",
-  "title": "\u5c11\u5e74\u58ee\u6e38",
-  "background": "/assets/scenes/01_youth/bg.png",
-  "narrative": "\u516c\u5143712\u5e74\uff0c\u675c\u752b\u51fa\u751f\u4e8e\u6cb3\u5357\u5de9\u53bf\u4e00\u4e2a\u4e66\u9999\u95e8\u7b2c\u3002\u7956\u7236\u675c\u5ba1\u8a00\u662f\u521d\u5510\u8457\u540d\u8bd7\u4eba\u3002\u5c11\u5e74\u675c\u752b\u610f\u6c14\u98ce\u53d1\uff0c20\u5c81\u5f00\u59cb\u6f2b\u6e38\u5434\u8d8a\u9f50\u9c81\uff0c\u767b\u4e34\u6cf0\u5c71\uff0c\u5199\u4e0b\u5343\u53e4\u540d\u7bc7\u3002",
-  "poem": {
-    "title": "\u671b\u5cb3",
-    "content": "\u5cb1\u5b97\u592b\u5982\u4f55\uff1f\u9f50\u9c81\u9752\u672a\u4e86\u3002\n\u9020\u5316\u949f\u795e\u79c0\uff0c\u9634\u9633\u5272\u660f\u6653\u3002\n\u8361\u80f8\u751f\u66fe\u4e91\uff0c\u51b3\u7726\u5165\u5f52\u9e1f\u3002\n\u4f1a\u5f53\u51cc\u7edd\u9876\uff0c\u4e00\u89c8\u4f17\u5c71\u5c0f\u3002"
-  },
-  "dialogues": [
+  "id": "736_qizhao",
+  "title": "初次落第·壮游",
+  "year": "736",
+  "type": "interactive",
+  "phases": [
     {
-      "speaker": "dufu",
-      "speakerName": "\u675c\u752b",
-      "portrait": "/assets/characters/dufu/portrait.png",
-      "text": "\u7956\u7236\u5e38\u8bf4\uff0c\u8bfb\u4e07\u5377\u4e66\uff0c\u884c\u4e07\u91cc\u8def\u3002\u4eca\u65e5\u6211\u7ec8\u4e8e\u8e0f\u4e0a\u4e86\u6e38\u5386\u4e4b\u8def\uff01",
-      "position": "left"
+      "id": "gongli_study",
+      "type": "explore",
+      "background": "/assets/events/736_qizhao/backgrounds/gonglixian_study.png",
+      "title": "巩县家中",
+      "narrative": "公元712年，杜甫出生于河南巩县。祖父杜审言是初唐著名诗人。少年杜甫立志『读万卷书，行万里路』。",
+      "instruction": "点击家中物件，了解少年杜甫的志向。",
+      "npcs": [
+        {
+          "id": "desk_books",
+          "name": "祖父诗集",
+          "portrait": "",
+          "position": { "x": 35, "y": 62 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "旁白", "text": "案上摆着祖父杜审言的诗稿——「独有宦游人，偏惊物候新。」" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "祖父之诗，气象阔大。我亦当如是。" }
+          ]
+        },
+        {
+          "id": "grandfather_painting",
+          "name": "祖父画像",
+          "portrait": "",
+          "position": { "x": 60, "y": 30 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "祖父常说：读万卷书，行万里路。" }
+          ]
+        },
+        {
+          "id": "mother",
+          "name": "母亲",
+          "portrait": "/assets/characters/npcs/mother.png",
+          "position": { "x": 20, "y": 65 },
+          "scale": 1.1,
+          "dialogues": [
+            { "speaker": "mother", "speakerName": "母亲", "text": "子美，又在看书？听说今年又有进士科。" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "孩儿想先出门看看天下。" },
+            { "speaker": "mother", "speakerName": "母亲", "text": "……你这孩子，像你祖父。" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "failed_exam"
     },
     {
-      "speaker": "narrator",
-      "speakerName": "",
-      "portrait": "",
-      "text": "\u5c11\u5e74\u675c\u752b\u610f\u6c14\u98ce\u53d1\uff0c\u4ece\u6d1b\u9633\u51fa\u53d1\uff0c\u8e0f\u4e0a\u4e86\u6f2b\u6e38\u5434\u8d8a\u9f50\u9c81\u7684\u58ee\u6e38\u4e4b\u65c5\u3002",
-      "position": "center"
+      "id": "failed_exam",
+      "type": "transition",
+      "background": "/assets/events/736_qizhao/backgrounds/luoyang_gongyuan.png",
+      "title": "洛阳贡院·落第",
+      "transitionText": "开元二十三年（735），杜甫赴洛阳应进士试……",
+      "announcement": {
+        "text": "榜单：杜甫——未中。",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "不中便不中。天地之大，岂止一榜？"
+      },
+      "nextPhase": "grand_tour"
     },
     {
-      "speaker": "dufu",
-      "speakerName": "\u675c\u752b",
-      "portrait": "/assets/characters/dufu/portrait.png",
-      "text": "\u597d\u4e00\u5ea7\u6cf0\u5c71\uff01\u5cb1\u5b97\u592b\u5982\u4f55\uff1f\u9f50\u9c81\u9752\u672a\u4e86\u2026\u2026\u6211\u5fc5\u5c06\u767b\u4e0a\u8fd9\u7edd\u9876\uff01",
-      "position": "left"
+      "id": "grand_tour",
+      "type": "map_travel",
+      "background": "/assets/maps/tang_dynasty.png",
+      "title": "齐赵壮游",
+      "travelNarrative": "落第后，杜甫从洛阳出发，开始为期数年的齐赵之游。",
+      "instruction": "点击每一站，听他在路上的话。",
+      "requireAll": true,
+      "waypoints": [
+        {
+          "id": "yanzhou",
+          "name": "兖州",
+          "x": 64, "y": 50,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "父亲在此为司马，先来探望。" }
+          ]
+        },
+        {
+          "id": "taishan_foot",
+          "name": "泰山下",
+          "x": 66, "y": 48,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "岱宗夫如何？齐鲁青未了……" }
+          ]
+        },
+        {
+          "id": "taishan_top",
+          "name": "泰山绝顶",
+          "x": 67, "y": 46,
+          "isKey": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "会当凌绝顶，一览众山小！" },
+            { "speaker": "narrator", "speakerName": "旁白", "text": "（此刻杜甫写下了《望岳》。）" }
+          ]
+        }
+      ],
+      "nextPhase": "wangyue_compose"
+    },
+    {
+      "id": "wangyue_compose",
+      "type": "poem_compose",
+      "background": "/assets/events/736_qizhao/backgrounds/taishan_summit.png",
+      "title": "《望岳》",
+      "poemContext": "登临绝顶。心中诗句呼之欲出——请把候选词放回正确的空格。",
+      "puzzle": "岱宗夫如何？___青未了。\n造化___神秀，___割昏晓。\n荡胸___曾云，决眦入归鸟。\n会当___，一览___。",
+      "blanks": ["齐鲁", "钟", "阴阳", "生", "凌绝顶", "众山小"],
+      "distractors": ["江汉", "见", "雷电"],
+      "poemTitle": "望岳"
+    },
+    {
+      "id": "tour_end",
+      "type": "transition",
+      "background": "/assets/events/736_qizhao/backgrounds/yellow_river.png",
+      "title": "壮游归来",
+      "transitionText": "五年之间，\n杜甫走遍齐赵吴越，\n结交豪杰，自比稷契。",
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "李太白……他的诗，我读了十年。听说他也要来洛阳。"
+      }
     }
   ]
 }

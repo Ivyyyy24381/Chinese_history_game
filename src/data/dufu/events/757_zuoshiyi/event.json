@@ -1,40 +1,244 @@
 {
-  "id": "03_anshi",
-  "title": "\u56fd\u7834\u5c71\u6cb3\u5728",
-  "background": "/assets/scenes/03_anshi/bg.png",
-  "narrative": "\u516c\u5143755\u5e74\uff0c\u5b89\u7984\u5c71\u5728\u8303\u9633\u8d77\u5175\u53db\u5510\u3002\u957f\u5b89\u5931\u9677\uff0c\u7384\u5b97\u897f\u9003\u3002\u675c\u752b\u628a\u5bb6\u4eba\u5b89\u987f\u5728\u9104\u5dde\uff0c\u53ea\u8eab\u5192\u9669\u7a7f\u8d8a\u53db\u519b\u5c01\u9501\u7ebf\uff0c\u5954\u8d74\u51e4\u7fd4\u6295\u5954\u8083\u5b97\u3002",
-  "poem": {
-    "title": "\u6625\u671b",
-    "content": "\u56fd\u7834\u5c71\u6cb3\u5728\uff0c\u57ce\u6625\u8349\u6728\u6df1\u3002\n\u611f\u65f6\u82b1\u6e85\u6cea\uff0c\u6068\u522b\u9e1f\u60ca\u5fc3\u3002\n\u70fd\u706b\u8fde\u4e09\u6708\uff0c\u5bb6\u4e66\u62b5\u4e07\u91d1\u3002\n\u767d\u5934\u6414\u66f4\u77ed\uff0c\u6d51\u6b32\u4e0d\u80dc\u7c2a\u3002"
-  },
-  "dialogues": [
+  "id": "757_zuoshiyi",
+  "title": "任左拾遗",
+  "year": "757",
+  "type": "interactive",
+  "phases": [
     {
-      "speaker": "narrator",
-      "speakerName": "",
-      "portrait": "",
-      "text": "\u516c\u5143755\u5e74\u5341\u4e00\u6708\uff0c\u5b89\u7984\u5c71\u5728\u8303\u9633\u8d77\u5175\uff0c\u5929\u4e0b\u5927\u4e71\u3002",
-      "position": "center"
+      "id": "escape_road",
+      "type": "map_travel",
+      "background": "/assets/maps/tang_dynasty.png",
+      "title": "奔赴凤翔",
+      "travelNarrative": "至德二载（757）四月。杜甫衣衫褴褛地从长安西金光门出，穿越叛军封锁线。",
+      "instruction": "点击每一站，看杜甫如何走完这段险路。",
+      "requireAll": true,
+      "waypoints": [
+        {
+          "id": "jinguangmen",
+          "name": "金光门",
+          "x": 55, "y": 54,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "天黑前必须出金光门。" }
+          ]
+        },
+        {
+          "id": "meet_refugee",
+          "name": "途中",
+          "x": 53, "y": 55,
+          "isKey": true,
+          "dialogues": [
+            { "speaker": "refugee", "speakerName": "难民", "text": "先生，前方叛军重重，您还要往凤翔去？太危险了！" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "肃宗在凤翔即位，我虽一介布衣，也要报效国家！" }
+          ]
+        },
+        {
+          "id": "wei_river",
+          "name": "渭水",
+          "x": 52, "y": 54,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "渡水。鞋已破。" }
+          ]
+        },
+        {
+          "id": "fengxiang_gate",
+          "name": "凤翔",
+          "x": 50, "y": 54,
+          "isKey": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "旁白", "text": "至德二载四月，杜甫衣衫褴褛地走进凤翔。" }
+          ]
+        }
+      ],
+      "nextPhase": "audience"
     },
     {
-      "speaker": "dufu",
-      "speakerName": "\u675c\u752b",
-      "portrait": "/assets/characters/dufu/portrait.png",
-      "text": "\u56fd\u7834\u5c71\u6cb3\u5728\uff0c\u57ce\u6625\u8349\u6728\u6df1\u2026\u2026\u8fd9\u957f\u5b89\u57ce\uff0c\u5df2\u975e\u6614\u65e5\u6a21\u6837\u3002",
-      "position": "left"
+      "id": "audience",
+      "type": "transition",
+      "background": "/assets/events/757_zuoshiyi/backgrounds/fengxiang_hall.png",
+      "title": "拜见肃宗",
+      "transitionText": "肃宗见杜甫『麻鞋见天子，衣袖露两肘』，感其忠，授左拾遗。",
+      "announcement": {
+        "text": "「除杜甫为左拾遗。」——肃宗诏",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "臣……必尽言责。"
+      },
+      "nextPhase": "fangguan_case"
     },
     {
-      "speaker": "refugee",
-      "speakerName": "\u96be\u6c11",
-      "portrait": "/assets/characters/npcs/refugee.png",
-      "text": "\u5148\u751f\uff0c\u524d\u65b9\u53db\u519b\u91cd\u91cd\uff0c\u60a8\u8fd8\u8981\u5f80\u51e4\u7fd4\u53bb\uff1f\u592a\u5371\u9669\u4e86\uff01",
-      "position": "right"
+      "id": "fangguan_case",
+      "type": "explore",
+      "background": "/assets/events/757_zuoshiyi/backgrounds/fengxiang_office.png",
+      "title": "房琯案",
+      "narrative": "上任不到一月，宰相房琯因陈陶斜兵败被罢相。一封弹劾的奏疏已上。",
+      "instruction": "了解房琯案的来龙去脉，再决定要不要救他。",
+      "npcs": [
+        {
+          "id": "colleague_advice",
+          "name": "同僚",
+          "portrait": "/assets/characters/npcs/official.png",
+          "position": { "x": 25, "y": 62 },
+          "scale": 1.2,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "colleague_advice", "speakerName": "同僚", "text": "房相败得太惨了。两千车牛，全军覆没。" },
+            { "speaker": "colleague_advice", "speakerName": "同僚", "text": "但败兵之将不可重罚——这是惯例。" }
+          ]
+        },
+        {
+          "id": "accuser",
+          "name": "御史",
+          "portrait": "/assets/characters/npcs/accuser.png",
+          "position": { "x": 60, "y": 56 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "accuser", "speakerName": "御史", "text": "房琯轻敌冒进，丧师辱国，必当重处。" },
+            { "speaker": "accuser", "speakerName": "御史", "text": "圣人正在气头上。谁敢求情，谁就是同党。" }
+          ]
+        },
+        {
+          "id": "memorial",
+          "name": "弹劾奏疏",
+          "portrait": "",
+          "position": { "x": 85, "y": 70 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "奏疏", "text": "「房琯庸缪，丧师万千。请正典刑，以谢天下。」" }
+          ]
+        },
+        {
+          "id": "friend",
+          "name": "朋友",
+          "portrait": "/assets/characters/npcs/gaoshi.png",
+          "position": { "x": 40, "y": 70 },
+          "scale": 1.2,
+          "dialogues": [
+            { "speaker": "friend", "speakerName": "朋友", "text": "子美，你才上任。这事别管。" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "shusu_choice"
     },
     {
-      "speaker": "dufu",
-      "speakerName": "\u675c\u752b",
-      "portrait": "/assets/characters/dufu/portrait.png",
-      "text": "\u8083\u5b97\u5728\u51e4\u7fd4\u5373\u4f4d\uff0c\u6211\u867d\u4e00\u4ecb\u5e03\u8863\uff0c\u4e5f\u8981\u62a5\u6548\u56fd\u5bb6\uff01",
-      "position": "left"
+      "id": "shusu_choice",
+      "type": "forced_choice",
+      "background": "/assets/events/757_zuoshiyi/backgrounds/fengxiang_office.png",
+      "title": "上疏",
+      "narrative": "案头铺开一张白纸。",
+      "question": "你要不要上疏救房琯？",
+      "options": [
+        {
+          "id": "save",
+          "text": "上疏救房琯",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "拾遗者，正为此时。"
+          }
+        },
+        {
+          "id": "silent",
+          "text": "沉默以保自身",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "……我不能。\n（但这官，便不是拾遗了。）"
+          }
+        },
+        {
+          "id": "join_accuser",
+          "text": "顺势附和弹劾",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "（笔顿）不可。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "奏疏上达。"
+      }
+    },
+    {
+      "id": "imperial_wrath",
+      "type": "transition",
+      "background": "/assets/events/757_zuoshiyi/backgrounds/fengxiang_hall.png",
+      "title": "圣怒",
+      "transitionText": "奏疏上达。\n肃宗大怒。",
+      "announcement": {
+        "text": "「杜甫党比，付三司推问。」——肃宗诏\n（张镐力救：『甫若抵罪，绝言者路。』乃免。）",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "臣，不敢自辩。但臣所言，皆为社稷。"
+      },
+      "nextPhase": "home_visit"
+    },
+    {
+      "id": "home_visit",
+      "type": "explore",
+      "background": "/assets/events/757_zuoshiyi/backgrounds/fuzhou_thatched.png",
+      "title": "鄜州·探家",
+      "narrative": "肃宗放杜甫归鄜州探家。一年未见妻儿。",
+      "instruction": "见见家里的人。",
+      "npcs": [
+        {
+          "id": "wife",
+          "name": "妻子",
+          "portrait": "/assets/characters/npcs/wife.png",
+          "position": { "x": 35, "y": 60 },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "wife", "speakerName": "妻子", "text": "（泪流满面，一句话说不出）" },
+            { "speaker": "wife", "speakerName": "妻子", "text": "我们以为……再也见不到了。" }
+          ]
+        },
+        {
+          "id": "son",
+          "name": "儿子宗武",
+          "portrait": "/assets/characters/npcs/son.png",
+          "position": { "x": 60, "y": 65 },
+          "scale": 1.1,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "son", "speakerName": "儿子", "text": "爹爹？……爹爹是谁？" },
+            { "speaker": "narrator", "speakerName": "旁白", "text": "孩子已不认得他。" }
+          ]
+        },
+        {
+          "id": "daughter",
+          "name": "小女",
+          "portrait": "/assets/characters/npcs/daughter.png",
+          "position": { "x": 50, "y": 75 },
+          "scale": 1.0,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "旁白", "text": "（小女抱着杜甫的腿不放）" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "return_changan"
+    },
+    {
+      "id": "return_changan",
+      "type": "transition",
+      "background": "/assets/events/757_zuoshiyi/backgrounds/changan_recovered.png",
+      "title": "复职长安",
+      "transitionText": "至德二载九月，唐军收复长安。\n十一月，杜甫随驾还京。",
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "这官，做下去……"
+      }
     }
   ]
 }
