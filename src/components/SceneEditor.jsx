@@ -6,11 +6,14 @@ import { useState, useRef, useCallback, useEffect } from "react";
  * Access via ?editor=true in URL
  */
 
-// Auto-discover all background images from public/assets/scenes/
-const bgGlob = import.meta.glob("/public/assets/scenes/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
+// Auto-discover all background images from public/assets/events/ + legacy locations
+const bgGlob = import.meta.glob(
+  "/public/assets/events/**/*.{png,jpg,jpeg,webp}",
+  { eager: true, query: "?url", import: "default" }
+);
 const BACKGROUNDS = Object.keys(bgGlob).map((k) => k.replace("/public", ""));
 
-// Auto-discover all character portraits
+// Auto-discover all character portraits (shared NPCs live under /assets/characters/npcs/)
 const charGlob = import.meta.glob("/public/assets/characters/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
 const NPC_PORTRAITS = Object.keys(charGlob).map((k) => {
   const file = k.replace("/public", "");
@@ -18,14 +21,15 @@ const NPC_PORTRAITS = Object.keys(charGlob).map((k) => {
   return { id: name, name, file };
 });
 
-// Auto-discover scene JSON files
-const sceneGlob = import.meta.glob("/src/data/dufu/scenes/*.json");
+// Auto-discover event scenes from new folder structure: events/<id>/event.json
+const sceneGlob = import.meta.glob("/src/data/dufu/events/*/event.json");
 const SCENE_FILES = Object.keys(sceneGlob).map((k) => {
-  const filename = k.split("/").pop();
-  return { label: filename.replace(".json", ""), file: filename, loader: sceneGlob[k] };
+  // k like "/src/data/dufu/events/747_exam/event.json"
+  const eventId = k.split("/").slice(-2, -1)[0];
+  return { label: eventId, file: eventId, loader: sceneGlob[k], eventId };
 });
 
-export default function SceneEditor() {
+export default function SceneEditor({ initialEventId, onExit }) {
   const [bg, setBg] = useState(BACKGROUNDS[0]);
   const [npcs, setNpcs] = useState([]);
   const [selectedNpc, setSelectedNpc] = useState(null);
@@ -123,6 +127,14 @@ export default function SceneEditor() {
       console.error("Failed to load scene:", err);
     }
   };
+
+  // Auto-load when an initial event is passed in from the timeline editor.
+  useEffect(() => {
+    if (initialEventId && !currentSceneFile) {
+      loadSceneFile(initialEventId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialEventId]);
 
   const loadPhase = (data, idx) => {
     const phases = data.phases || [];
@@ -578,24 +590,24 @@ export default function SceneEditor() {
     return JSON.stringify(phase, null, 2);
   };
 
-  // Save directly to file
+  // Save directly to file \u2014 writes to events/<eventId>/event.json
   const [saveStatus, setSaveStatus] = useState("");
   const saveToFile = async () => {
     saveCurrentPhaseToScene();
-    const filename = currentSceneFile || "new_scene.json";
+    const eventId = currentSceneFile || (sceneData && sceneData.id) || "new_event";
     // Wait a tick for state to settle
     await new Promise((r) => setTimeout(r, 50));
     const content = JSON.stringify(sceneData, null, 2);
     try {
-      const res = await fetch("/api/save-scene", {
+      const res = await fetch("/api/save-event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename, content }),
+        body: JSON.stringify({ eventId, content }),
       });
       const data = await res.json();
       if (data.ok) {
-        setSaveStatus("\u2705 \u5DF2\u4FDD\u5B58");
-        setTimeout(() => setSaveStatus(""), 2000);
+        setSaveStatus("\u2705 \u5DF2\u4FDD\u5B58 \u2192 " + data.path.split("/").slice(-3).join("/"));
+        setTimeout(() => setSaveStatus(""), 3000);
       } else {
         setSaveStatus("\u274C " + data.error);
       }
@@ -682,9 +694,15 @@ export default function SceneEditor() {
             {"\u2715 \u5220\u9664\u5F53\u524D\u9636\u6BB5"}
           </button>
         )}
-        <button style={styles.btnBack} onClick={() => { window.location.search = ""; }}>
-          {"\u2190 \u8FD4\u56DE\u6E38\u620F"}
-        </button>
+        {onExit ? (
+          <button style={styles.btnBack} onClick={onExit}>
+            {"\u2190 \u8FD4\u56DE\u65F6\u95F4\u7EBF"}
+          </button>
+        ) : (
+          <button style={styles.btnBack} onClick={() => { window.location.search = ""; }}>
+            {"\u2190 \u8FD4\u56DE\u6E38\u620F"}
+          </button>
+        )}
       </div>
 
       {/* Top toolbar row 2: editing tools */}

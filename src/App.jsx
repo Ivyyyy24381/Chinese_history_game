@@ -7,6 +7,7 @@ import EventPanel from "./components/EventPanel";
 import QuizPanel from "./components/QuizPanel";
 import ScenePlayer from "./components/ScenePlayer";
 import SceneEditor from "./components/SceneEditor";
+import TimelineEditor from "./components/TimelineEditor";
 
 // Static character data
 const CHARACTERS = [
@@ -146,9 +147,9 @@ export default function App() {
     }
   };
 
-  // Editor mode via ?editor=true
+  // Editor mode via ?editor=true (entry: timeline editor; drill into scene editor per event)
   if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("editor") === "true") {
-    return <SceneEditor />;
+    return <EditorShell />;
   }
 
   if (screen === "select") {
@@ -266,6 +267,23 @@ export default function App() {
       )}
     </div>
   );
+}
+
+/**
+ * EditorShell — entry point for ?editor=true.
+ * Starts on the timeline editor; lets the user drill into per-event scene editor.
+ */
+function EditorShell() {
+  const [editingEventId, setEditingEventId] = useState(null);
+  if (editingEventId) {
+    return (
+      <SceneEditor
+        initialEventId={editingEventId}
+        onExit={() => setEditingEventId(null)}
+      />
+    );
+  }
+  return <TimelineEditor onEditEvent={setEditingEventId} />;
 }
 
 const styles = {
