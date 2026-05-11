@@ -72,12 +72,13 @@ export default function Timeline({ stages, currentIndex, onSelect, progress }) {
   return (
     <div style={styles.timelineContainer}>
       <div style={styles.headerRow}>
-        <span style={styles.lifespan}>
-          {`${yearStart} — ${yearEnd}`}
+        <span style={{ ...styles.yearDisplay, color: current.color }}>
+          {`${Math.round(currentMidYear)} 年`}
         </span>
         <span style={styles.currentBadge}>
           <span style={{ ...styles.currentDot, backgroundColor: current.color }} />
-          {`${Math.round(currentMidYear)} · ${current.period}`}
+          {current.period}
+          <span style={styles.lifespan}>{`（${yearStart}–${yearEnd}）`}</span>
         </span>
       </div>
 
@@ -181,12 +182,25 @@ const styles = {
   headerRow: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "baseline",
     marginBottom: 6,
     fontSize: 12,
     color: "#888",
   },
-  lifespan: { letterSpacing: 1 },
+  yearDisplay: {
+    fontSize: 22,
+    fontWeight: "bold",
+    letterSpacing: 2,
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    transition: "color 0.25s ease",
+  },
+  lifespan: {
+    color: "#999",
+    fontSize: 11,
+    marginLeft: 6,
+    fontWeight: "normal",
+    letterSpacing: 0,
+  },
   currentBadge: {
     display: "inline-flex",
     alignItems: "center",
