@@ -465,6 +465,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
 
   // --- FORCED CHOICE PHASE ---
   if (currentPhase.type === "forced_choice") {
+    const isLastPhase = phaseIndex >= phases.length - 1;
     if (showConclusion) {
       return (
         <div style={bgStyle}>
@@ -477,8 +478,8 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                   <pre style={styles.poemContent}>{currentPhase.conclusion.poem.content}</pre>
                 </div>
               )}
-              <button style={styles.proceedBtn} onClick={onComplete}>
-                {"\u5B8C\u6210\u672C\u573A\u666F \u2192"}
+              <button style={styles.proceedBtn} onClick={goToNextPhase}>
+                {isLastPhase ? "\u5B8C\u6210\u672C\u573A\u666F \u2192" : "\u7EE7\u7EED \u2192"}
               </button>
             </div>
           </div>

@@ -64,7 +64,7 @@
           "state": "开始向权力妥协",
           "summary": "杜甫向玄宗献《朝献太清宫赋》《朝享太庙赋》《有事于南郊赋》，获召试文章。",
           "location": { "name": "长安", "mapX": 56, "mapY": 54 },
-          "hasScene": false,
+          "hasScene": true,
           "hasQuiz": false
         }
       ]

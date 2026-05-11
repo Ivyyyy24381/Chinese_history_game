@@ -1,9 +1,292 @@
 {
   "id": "751_lifu",
-  "title": "进三大礼赋",
+  "title": "进献三大礼赋",
   "year": "751",
-  "type": "stub",
-  "status": "todo",
-  "notes": "天宝十载（751），杜甫向玄宗献《朝献太清宫赋》《朝享太庙赋》《有事于南郊赋》三大礼赋。玄宗奇之，召试文章，命待制集贤院。然而最终因李林甫主试，仍未授官。",
-  "phases": []
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "street_ceremony_eve",
+      "type": "explore",
+      "background": "/assets/events/751_lifu/backgrounds/changan_ceremony.png",
+      "title": "长安街头·大礼前夕",
+      "narrative": "天宝十载（751年），玄宗将行三大礼——朝献太清宫、朝享太庙、有事于南郊。长安万民同庆，张灯结彩。",
+      "instruction": "和路人交谈，了解这场盛典与「献赋」的机会。",
+      "npcs": [
+        {
+          "id": "merchant_a",
+          "name": "商贩甲",
+          "portrait": "/assets/characters/npcs/merchant_a.png",
+          "position": { "x": 18, "y": 60 },
+          "scale": 1.0,
+          "dialogues": [
+            { "speaker": "merchant_a", "speakerName": "商贩甲", "text": "听闻圣人将行三大礼，满朝官员都忙疯了。" }
+          ]
+        },
+        {
+          "id": "merchant_b",
+          "name": "商贩乙",
+          "portrait": "/assets/characters/npcs/merchant_b.png",
+          "position": { "x": 32, "y": 73 },
+          "scale": 1.3,
+          "dialogues": [
+            { "speaker": "merchant_b", "speakerName": "商贩乙", "text": "朝献太清宫、朝享太庙，还要祭天南郊。" },
+            { "speaker": "merchant_b", "speakerName": "商贩乙", "text": "这等盛典，十几年都难得一见。" }
+          ]
+        },
+        {
+          "id": "waiter",
+          "name": "酒店伙计",
+          "portrait": "/assets/characters/npcs/waiter.png",
+          "position": { "x": 72, "y": 56 },
+          "scale": 0.9,
+          "flip": true,
+          "dialogues": [
+            { "speaker": "waiter", "speakerName": "酒店伙计", "text": "近日长安纸价都涨了。" },
+            { "speaker": "waiter", "speakerName": "酒店伙计", "text": "那些读书人啊，都在连夜写赋。" }
+          ]
+        },
+        {
+          "id": "scholar_a",
+          "name": "士人甲",
+          "portrait": "/assets/characters/npcs/scholar_a.png",
+          "position": { "x": 48, "y": 56 },
+          "scale": 1.3,
+          "dialogues": [
+            { "speaker": "scholar_a", "speakerName": "士人甲", "text": "若文章能入圣人之眼，未必不能一步登天。" }
+          ]
+        },
+        {
+          "id": "scholar_b",
+          "name": "士人乙",
+          "portrait": "/assets/characters/npcs/scholar_b.png",
+          "position": { "x": 58, "y": 70 },
+          "scale": 1.5,
+          "dialogues": [
+            { "speaker": "scholar_b", "speakerName": "士人乙", "text": "只是献赋这种事——" },
+            { "speaker": "scholar_b", "speakerName": "士人乙", "text": "献的是文章，还是颂圣之辞？" }
+          ]
+        },
+        {
+          "id": "elder",
+          "name": "喝酒老人",
+          "portrait": "/assets/characters/npcs/elder.png",
+          "position": { "x": 86, "y": 72 },
+          "scale": 1.5,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "elder", "speakerName": "喝酒老人", "text": "长安城里，从不缺会写文章的人。" },
+            { "speaker": "elder", "speakerName": "喝酒老人", "text": "缺的是……" },
+            { "speaker": "elder", "speakerName": "喝酒老人", "text": "能让皇帝看见的人。" }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "residence"
+    },
+    {
+      "id": "residence",
+      "type": "explore",
+      "background": "/assets/events/751_lifu/backgrounds/dufu_residence.png",
+      "title": "杜甫居所·夜",
+      "narrative": "夜深，油灯如豆。桌上散落着写废的稿纸与空酒壶。",
+      "instruction": "点击桌案、纸团与杜甫，了解他的处境。",
+      "npcs": [
+        {
+          "id": "desk",
+          "name": "桌案",
+          "portrait": "",
+          "position": { "x": 30, "y": 60 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "桌案", "text": "案上墨迹未干，纸面写着——" },
+            { "speaker": "narrator", "speakerName": "桌案", "text": "《朝献太清宫赋》" }
+          ]
+        },
+        {
+          "id": "paper_ball",
+          "name": "纸团",
+          "portrait": "",
+          "position": { "x": 65, "y": 68 },
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "narrator", "speakerName": "纸团", "text": "拾起一团揉皱的废稿——" },
+            { "speaker": "narrator", "speakerName": "废稿", "text": "（满纸皆是涂改与删抹）" }
+          ]
+        },
+        {
+          "id": "dufu_self",
+          "name": "杜甫",
+          "portrait": "/assets/characters/dufu/portrait.png",
+          "position": { "x": 50, "y": 42 },
+          "scale": 1.4,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "我本不愿作颂圣文章。" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "……" },
+            { "speaker": "dufu", "speakerName": "杜甫", "text": "可若不如此，又如何让天下听见我的声音？" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "writing_choice"
+    },
+    {
+      "id": "writing_choice",
+      "type": "forced_choice",
+      "background": "/assets/events/751_lifu/backgrounds/dufu_residence.png",
+      "title": "落笔之际",
+      "narrative": "灯下，杜甫提起笔，又顿住——这篇《朝献太清宫赋》，该如何写？",
+      "question": "你将如何完成这篇献赋？",
+      "options": [
+        {
+          "id": "polish",
+          "text": "润饰辞藻",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "辞采愈工，心却愈寒。"
+          }
+        },
+        {
+          "id": "flatter",
+          "text": "加入更多歌功颂德之语",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "（沉默）……"
+          }
+        },
+        {
+          "id": "truth",
+          "text": "保留自己的真实想法",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "这样的文章，圣人真的会看吗？"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "三大礼赋终成。杜甫将文章郑重地投入了延恩匦。"
+      }
+    },
+    {
+      "id": "palace_gate",
+      "type": "explore",
+      "background": "/assets/events/751_lifu/backgrounds/palace_gate.png",
+      "title": "宫门·献赋",
+      "narrative": "宫门外，士子云集，皆为延恩匦而来。",
+      "instruction": "和宫门外的士子交谈，看看献赋的情形。",
+      "npcs": [
+        {
+          "id": "student_1",
+          "name": "士子",
+          "portrait": "/assets/characters/npcs/student.png",
+          "position": { "x": 28, "y": 70 },
+          "scale": 1.2,
+          "dialogues": [
+            { "speaker": "student_1", "speakerName": "士子", "text": "听说延恩匦今日开启。" }
+          ]
+        },
+        {
+          "id": "student_2",
+          "name": "另一士子",
+          "portrait": "/assets/characters/npcs/scholar_a.png",
+          "position": { "x": 52, "y": 72 },
+          "scale": 1.3,
+          "flip": true,
+          "dialogues": [
+            { "speaker": "student_2", "speakerName": "另一士子", "text": "若能被圣人看中，此生便不同了。" }
+          ]
+        },
+        {
+          "id": "LinFu_Li",
+          "name": "李林甫",
+          "portrait": "/assets/characters/npcs/LinFu_Li.png",
+          "position": { "x": 78, "y": 55 },
+          "scale": 1.7,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "LinFu_Li", "speakerName": "李林甫", "text": "上欲广求天下文章之士。" },
+            { "speaker": "LinFu_Li", "speakerName": "李林甫", "text": "若有真才，朝廷自不会埋没。" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "jixianyuan"
+    },
+    {
+      "id": "jixianyuan",
+      "type": "transition",
+      "background": "/assets/events/751_lifu/backgrounds/jixianyuan.png",
+      "title": "集贤院",
+      "transitionText": "数日后……",
+      "narrative": "",
+      "announcement": {
+        "text": "玄宗奇之，命待制集贤院，试文章。",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "终于……"
+      },
+      "nextPhase": "night_return"
+    },
+    {
+      "id": "night_return",
+      "type": "explore",
+      "background": "/assets/events/751_lifu/backgrounds/changan_night.png",
+      "title": "长安夜",
+      "narrative": "时间过去。没有后文。长安城中，人们仍在议论。",
+      "instruction": "走在夜里的长安街上，听听人们怎么说。",
+      "npcs": [
+        {
+          "id": "waiter_night",
+          "name": "酒店伙计",
+          "portrait": "/assets/characters/npcs/waiter.png",
+          "position": { "x": 22, "y": 60 },
+          "scale": 0.9,
+          "dialogues": [
+            { "speaker": "waiter", "speakerName": "酒店伙计", "text": "听闻杜甫被留集贤院了。" }
+          ]
+        },
+        {
+          "id": "merchant_a_night",
+          "name": "商贩甲",
+          "portrait": "/assets/characters/npcs/merchant_a.png",
+          "position": { "x": 50, "y": 65 },
+          "scale": 1.0,
+          "dialogues": [
+            { "speaker": "merchant_a", "speakerName": "商贩甲", "text": "那岂不是快做官了？" }
+          ]
+        },
+        {
+          "id": "elder_night",
+          "name": "喝酒老人",
+          "portrait": "/assets/characters/npcs/elder.png",
+          "position": { "x": 78, "y": 70 },
+          "scale": 1.5,
+          "isClue": true,
+          "dialogues": [
+            { "speaker": "elder", "speakerName": "喝酒老人", "text": "（轻笑）" },
+            { "speaker": "elder", "speakerName": "喝酒老人", "text": "待制？" },
+            { "speaker": "elder", "speakerName": "喝酒老人", "text": "不过是——让他继续等罢了。" }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "ending"
+    },
+    {
+      "id": "ending",
+      "type": "transition",
+      "background": "/assets/events/751_lifu/backgrounds/changan_night.png",
+      "title": "夜归",
+      "transitionText": "夜晚。\n杜甫站在长安街头。\n远处宫城灯火辉煌。",
+      "narrative": ""
+    }
+  ]
 }
