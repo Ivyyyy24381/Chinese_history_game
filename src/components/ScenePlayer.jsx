@@ -24,6 +24,13 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   const [choiceResponse, setChoiceResponse] = useState(null);
   const [choiceCorrect, setChoiceCorrect] = useState(false);
   const [showConclusion, setShowConclusion] = useState(false);
+  // Poem compose state (multi-blank drag-fill)
+  const [composedBlanks, setComposedBlanks] = useState([]);
+  const [composedSubmitted, setComposedSubmitted] = useState(false);
+  // Map travel state
+  const [visitedWaypoints, setVisitedWaypoints] = useState(new Set());
+  const [activeWaypoint, setActiveWaypoint] = useState(null);
+  const [waypointDialogueIdx, setWaypointDialogueIdx] = useState(0);
 
   const phases = sceneData.phases;
   const currentPhase = phases[phaseIndex];
@@ -45,6 +52,11 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
       setChoiceResponse(null);
       setChoiceCorrect(false);
       setShowConclusion(false);
+      setComposedBlanks([]);
+      setComposedSubmitted(false);
+      setVisitedWaypoints(new Set());
+      setActiveWaypoint(null);
+      setWaypointDialogueIdx(0);
     } else {
       onComplete();
     }
@@ -269,11 +281,38 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                 {"\u7EE7\u7EED \u2192"}
               </button>
             )}
+
+            {/* Bubble dialogue layer \u2014 sits inside the stage so coordinates
+                match the NPC positioning system. Only used when activeNpc has
+                bubbleMode (NPC is painted directly into the background). */}
+            {activeNpc && (activeNpc.bubbleMode === true || activeNpc.dialogues[dialogueIndex]?.bubble === true) && (() => {
+              const line = activeNpc.dialogues[dialogueIndex];
+              const isLast = dialogueIndex >= activeNpc.dialogues.length - 1;
+              return (
+                <div
+                  style={{
+                    ...styles.speechBubbleWrap,
+                    left: activeNpc.position.x + "%",
+                    top: activeNpc.position.y + "%",
+                  }}
+                  onClick={(e) => { e.stopPropagation(); handleDialogueNext(); }}
+                >
+                  <div style={styles.speechBubble}>
+                    {(line.speakerName || activeNpc.name) && (
+                      <div style={styles.bubbleSpeaker}>{line.speakerName || activeNpc.name}</div>
+                    )}
+                    <div style={styles.bubbleText}>{line.text}</div>
+                    <div style={styles.bubbleContinue}>{isLast ? "\u2713" : "\u25BC"}</div>
+                  </div>
+                  <div style={styles.bubbleTail} />
+                </div>
+              );
+            })()}
           </div>
         </div>
 
-        {/* Active NPC dialogue — large portrait left, text right */}
-        {activeNpc && (
+        {/* Active NPC dialogue — large portrait left, text right (skipped in bubble mode) */}
+        {activeNpc && !(activeNpc.bubbleMode === true || activeNpc.dialogues[dialogueIndex]?.bubble === true) && (
           <div style={styles.dialogueOverlay} onClick={handleDialogueNext}>
             {(() => {
               const line = activeNpc.dialogues[dialogueIndex];
@@ -292,6 +331,30 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
               if (isSelf) portrait = "/assets/characters/dufu/portrait.png";
               else if (line.speaker === "narrator" || line.speaker === "portrait") portrait = "";
               else portrait = speakerPortraitMap[line.speaker] || activeNpc.portrait;
+              const isLast = dialogueIndex >= activeNpc.dialogues.length - 1;
+              // Bubble mode: NPC drawn into the background image, render speech
+              // bubble pinned to NPC.position (the head area) instead of bottom bar.
+              if (activeNpc.bubbleMode === true || line.bubble === true) {
+                return (
+                  <div
+                    style={{
+                      ...styles.speechBubbleWrap,
+                      left: activeNpc.position.x + "%",
+                      top: activeNpc.position.y + "%",
+                    }}
+                    onClick={(e) => { e.stopPropagation(); handleDialogueNext(); }}
+                  >
+                    <div style={styles.speechBubble}>
+                      {(line.speakerName || activeNpc.name) && (
+                        <div style={styles.bubbleSpeaker}>{line.speakerName || activeNpc.name}</div>
+                      )}
+                      <div style={styles.bubbleText}>{line.text}</div>
+                      <div style={styles.bubbleContinue}>{isLast ? "✓" : "▼"}</div>
+                    </div>
+                    <div style={styles.bubbleTail} />
+                  </div>
+                );
+              }
               return (
                 <>
                   {/* Full-width dialogue background bar at bottom */}
@@ -311,7 +374,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                         {line.text}
                       </div>
                       <div style={styles.dialogueContinue}>
-                        {dialogueIndex < activeNpc.dialogues.length - 1 ? "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED" : "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED"}
+                        {isLast ? "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED" : "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED"}
                       </div>
                     </div>
                   </div>
@@ -536,19 +599,133 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
 
   // --- POEM COMPOSE PHASE ---
   if (currentPhase.type === "poem_compose") {
+    const blanks = currentPhase.blanks || [];
+    const distractors = currentPhase.distractors || [];
+    const puzzle = currentPhase.puzzle || (currentPhase.lines ? currentPhase.lines.join("\n") : "");
+    const allTokens = [...blanks, ...distractors];
+    // Deterministic shuffle so token order doesn't jitter every render.
+    const shuffledTokens = [...allTokens].sort((a, b) => {
+      const ha = a.split("").reduce((s, c) => s + c.charCodeAt(0), 17);
+      const hb = b.split("").reduce((s, c) => s + c.charCodeAt(0), 17);
+      return ha - hb;
+    });
+    // Find unfilled token (one each), tokens already placed in blanks shouldn't appear in chip pool.
+    const placedSet = new Set(composedBlanks.filter(Boolean));
+    const remainingTokens = shuffledTokens.filter((t) => !placedSet.has(t));
+
+    const setBlank = (idx, word) => {
+      if (composedSubmitted) return;
+      const next = [...composedBlanks];
+      // Remove the word from any other blank (so we don't duplicate)
+      for (let i = 0; i < next.length; i++) if (next[i] === word) next[i] = null;
+      next[idx] = word;
+      setComposedBlanks(next);
+    };
+    const clearBlank = (idx) => {
+      if (composedSubmitted) return;
+      const next = [...composedBlanks];
+      next[idx] = null;
+      setComposedBlanks(next);
+    };
+    const allFilled = blanks.length > 0 && blanks.every((_, i) => composedBlanks[i]);
+    const correctCount = blanks.reduce((n, ans, i) => n + (composedBlanks[i] === ans ? 1 : 0), 0);
+
+    // Build puzzle display: split by ___ and intersperse drop zones.
+    const parts = puzzle.split("___");
+
     return (
       <div style={bgStyle}>
         <div style={styles.choiceOverlay}>
-          <div style={styles.choicePanel}>
-            <h2 style={{ margin: "0 0 12px", fontSize: 20 }}>{"\u{1F4DC} \u8BD7\u6B4C\u521B\u4F5C"}</h2>
+          <div style={{ ...styles.choicePanel, maxWidth: 700 }}>
+            <h2 style={{ margin: "0 0 12px", fontSize: 20 }}>{"\u{1F4DC} " + (currentPhase.title || "\u8BD7\u6B4C\u521B\u4F5C")}</h2>
             {currentPhase.poemContext && <p style={styles.choiceNarrative}>{currentPhase.poemContext}</p>}
-            <p style={{ color: "#999", fontSize: 13, marginBottom: 16 }}>{"\uFF08\u6B64\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u73A9\u5BB6\u5C06\u4ECE\u5019\u9009\u8BCD\u53E5\u4E2D\u62FC\u51FA\u8BD7\u53E5\uFF09"}</p>
-            {currentPhase.poemAnswer && (
-              <div style={styles.conclusionPoem}>
-                <pre style={styles.poemContent}>{currentPhase.poemAnswer}</pre>
-              </div>
+
+            <div style={styles.fillPassage}>
+              {parts.map((seg, i) => (
+                <span key={i}>
+                  {seg.split("\n").map((ln, j, arr) => (
+                    <span key={j}>{ln}{j < arr.length - 1 && <br />}</span>
+                  ))}
+                  {i < parts.length - 1 && (
+                    <span
+                      style={{
+                        ...styles.fillDropZone,
+                        borderColor: composedSubmitted
+                          ? (composedBlanks[i] === blanks[i] ? "#28A745" : "#DC3545")
+                          : "#8B7355",
+                        backgroundColor: composedSubmitted
+                          ? (composedBlanks[i] === blanks[i] ? "#D4EDDA" : "#F8D7DA")
+                          : "rgba(139,115,85,0.15)",
+                        cursor: composedSubmitted ? "default" : "pointer",
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const word = e.dataTransfer.getData("text/plain");
+                        if (word) setBlank(i, word);
+                      }}
+                      onClick={() => composedBlanks[i] && clearBlank(i)}
+                    >
+                      {composedBlanks[i] || "\u2003\u2003\u2003"}
+                    </span>
+                  )}
+                </span>
+              ))}
+            </div>
+
+            {!composedSubmitted && (
+              <>
+                <div style={styles.fillChips}>
+                  {remainingTokens.map((word) => (
+                    <div
+                      key={word}
+                      draggable
+                      onDragStart={(e) => e.dataTransfer.setData("text/plain", word)}
+                      onClick={() => {
+                        const firstEmpty = composedBlanks.findIndex((v, i) => !v && i < blanks.length);
+                        const idx = firstEmpty >= 0 ? firstEmpty : 0;
+                        setBlank(idx, word);
+                      }}
+                      style={styles.fillChip}
+                    >
+                      {word}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  style={{ ...styles.proceedBtn, opacity: allFilled ? 1 : 0.5, cursor: allFilled ? "pointer" : "not-allowed" }}
+                  disabled={!allFilled}
+                  onClick={() => {
+                    setComposedSubmitted(true);
+                    onScoreChange(globalScore + correctCount);
+                  }}
+                >
+                  {"\u63D0\u4EA4 \u2192"}
+                </button>
+              </>
             )}
-            <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+
+            {composedSubmitted && (
+              <>
+                <div style={{ ...styles.explanationBox, backgroundColor: "#F0F8FF" }}>
+                  {"\u7B54\u5BF9 "}<strong>{correctCount}</strong>{" / "}{blanks.length}{" \u9898"}
+                  {blanks.map((ans, i) => composedBlanks[i] !== ans && (
+                    <div key={i} style={{ fontSize: 13, color: "#28A745", marginTop: 4 }}>
+                      {"\u7B2C " + (i + 1) + " \u7A7A\u6B63\u786E\u7B54\u6848\uFF1A" + ans}
+                    </div>
+                  ))}
+                </div>
+                {currentPhase.poemTitle && (
+                  <div style={styles.conclusionPoem}>
+                    <h4 style={styles.poemTitle}>{"\u{1F4DC} " + currentPhase.poemTitle}</h4>
+                    <pre style={styles.poemContent}>{
+                      parts.map((seg, i) => seg + (i < parts.length - 1 ? blanks[i] : "")).join("")
+                    }</pre>
+                  </div>
+                )}
+                <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -557,25 +734,106 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
 
   // --- MAP TRAVEL PHASE ---
   if (currentPhase.type === "map_travel") {
+    const waypoints = currentPhase.waypoints || currentPhase.destinations || [];
+    const requireAll = currentPhase.requireAll !== false; // default true
+    const allVisited = waypoints.every((w) => visitedWaypoints.has(w.id || w.name));
+    const handleWaypointClick = (wp) => {
+      const wid = wp.id || wp.name;
+      if (wp.dialogues && wp.dialogues.length > 0) {
+        setActiveWaypoint(wp);
+        setWaypointDialogueIdx(0);
+      } else {
+        const next = new Set(visitedWaypoints);
+        next.add(wid);
+        setVisitedWaypoints(next);
+      }
+    };
+    const advanceWaypointDialogue = () => {
+      if (!activeWaypoint) return;
+      const dlgs = activeWaypoint.dialogues || [];
+      if (waypointDialogueIdx < dlgs.length - 1) {
+        setWaypointDialogueIdx(waypointDialogueIdx + 1);
+      } else {
+        const wid = activeWaypoint.id || activeWaypoint.name;
+        const next = new Set(visitedWaypoints);
+        next.add(wid);
+        setVisitedWaypoints(next);
+        setActiveWaypoint(null);
+        setWaypointDialogueIdx(0);
+      }
+    };
+
     return (
-      <div style={bgStyle}>
-        <div style={styles.phaseHeader}>
-          <h2 style={styles.phaseTitle}>{currentPhase.title || "\u5730\u56FE\u884C\u65C5"}</h2>
-          {currentPhase.travelNarrative && <p style={styles.phaseNarrative}>{currentPhase.travelNarrative}</p>}
-        </div>
-        {(currentPhase.destinations || []).map((dest, i) => (
-          <div
-            key={i}
-            style={{ ...styles.triggerZone, left: (dest.x || 50) + "%", top: (dest.y || 50) + "%" }}
-            onClick={goToNextPhase}
-          >
-            <div style={styles.triggerPulse} />
-            <span style={styles.triggerLabel}>{dest.name || "\u76EE\u7684\u5730"}</span>
+      <div style={styles.sceneOuter}>
+        <div style={styles.sceneStage}>
+          <div style={{
+            ...styles.sceneStageInner,
+            backgroundImage: currentPhase.background ? `url(${currentPhase.background})` : "none",
+          }}>
+            <div style={styles.phaseHeader}>
+              <h2 style={styles.phaseTitle}>{currentPhase.title || "\u5730\u56FE\u884C\u65C5"}</h2>
+              {currentPhase.travelNarrative && <p style={styles.phaseNarrative}>{currentPhase.travelNarrative}</p>}
+            </div>
+
+            {currentPhase.instruction && (
+              <div style={styles.instructionBar}>
+                <span style={styles.instructionIcon}>{"\u{1F5FA}"}</span>
+                <span>{currentPhase.instruction}</span>
+                <span style={styles.talkCount}>{"\u5DF2\u5230\u8BBF: " + visitedWaypoints.size + "/" + waypoints.length}</span>
+              </div>
+            )}
+
+            {waypoints.map((wp) => {
+              const wid = wp.id || wp.name;
+              const visited = visitedWaypoints.has(wid);
+              return (
+                <div
+                  key={wid}
+                  style={{ ...styles.triggerZone, left: (wp.x || 50) + "%", top: (wp.y || 50) + "%", opacity: visited ? 0.55 : 1 }}
+                  onClick={() => handleWaypointClick(wp)}
+                >
+                  <div style={{
+                    ...styles.triggerPulse,
+                    backgroundColor: visited ? "rgba(149,165,166,0.4)" : (wp.isKey ? "rgba(231,76,60,0.4)" : "rgba(46,204,113,0.4)"),
+                    borderColor: visited ? "#95A5A6" : (wp.isKey ? "#E74C3C" : "#2ECC71"),
+                    animation: visited ? "none" : "pulse 1.5s ease-in-out infinite",
+                  }} />
+                  <span style={{
+                    ...styles.triggerLabel,
+                    backgroundColor: visited ? "rgba(149,165,166,0.85)" : (wp.isKey ? "rgba(231,76,60,0.85)" : "rgba(46,204,113,0.85)"),
+                  }}>{(visited ? "\u2713 " : "") + (wp.name || "\u76EE\u7684\u5730")}</span>
+                </div>
+              );
+            })}
+
+            {(!requireAll || allVisited) && (
+              <button style={styles.floatingProceed} onClick={goToNextPhase}>
+                {"\u7EE7\u7EED \u2192"}
+              </button>
+            )}
           </div>
-        ))}
-        <div style={{ position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)", color: "#FFF", backgroundColor: "rgba(0,0,0,0.6)", padding: "8px 16px", borderRadius: 8, fontSize: 13 }}>
-          {"\uFF08\u5730\u56FE\u884C\u65C5\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u70B9\u51FB\u76EE\u7684\u5730\u7EE7\u7EED\uFF09"}
         </div>
+
+        {/* Waypoint dialogue (uses bubble at waypoint position) */}
+        {activeWaypoint && (() => {
+          const line = (activeWaypoint.dialogues || [])[waypointDialogueIdx] || { text: "" };
+          const isLast = waypointDialogueIdx >= (activeWaypoint.dialogues || []).length - 1;
+          return (
+            <div style={styles.dialogueOverlay} onClick={advanceWaypointDialogue}>
+              <div style={styles.dialogueBar}>
+                <div style={styles.dialogueTextPanel}>
+                  <div style={styles.dialogueSpeaker}>
+                    {line.speakerName || activeWaypoint.name}
+                  </div>
+                  <div style={styles.dialogueText}>{line.text}</div>
+                  <div style={styles.dialogueContinue}>
+                    {isLast ? "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED" : "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     );
   }
@@ -835,6 +1093,55 @@ const styles = {
   dialogueContinue: {
     textAlign: "right", color: "#A89968", fontSize: 13,
     marginTop: 16, cursor: "pointer",
+  },
+  // Speech bubble (bubble mode — NPC drawn into background)
+  speechBubbleWrap: {
+    position: "absolute",
+    transform: "translate(-50%, calc(-100% - 24px))",
+    zIndex: 50,
+    cursor: "pointer",
+    pointerEvents: "auto",
+    animation: "bubblePop 0.25s ease-out",
+  },
+  speechBubble: {
+    backgroundColor: "rgba(255,253,247,0.96)",
+    border: "2px solid #5D4E37",
+    borderRadius: 18,
+    padding: "12px 18px",
+    minWidth: 180,
+    maxWidth: 320,
+    boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+  },
+  bubbleSpeaker: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#8B6914",
+    letterSpacing: 2,
+    marginBottom: 4,
+  },
+  bubbleText: {
+    fontSize: 15,
+    lineHeight: 1.6,
+    color: "#3B2510",
+    whiteSpace: "pre-wrap",
+  },
+  bubbleContinue: {
+    textAlign: "right",
+    fontSize: 12,
+    color: "#A89968",
+    marginTop: 6,
+  },
+  bubbleTail: {
+    position: "absolute",
+    bottom: -10,
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: 0,
+    height: 0,
+    borderLeft: "10px solid transparent",
+    borderRight: "10px solid transparent",
+    borderTop: "12px solid #5D4E37",
   },
   // Transition
   transitionOverlay: {
