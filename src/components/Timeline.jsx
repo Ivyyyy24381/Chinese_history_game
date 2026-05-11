@@ -124,11 +124,12 @@ export default function Timeline({
             );
           })}
 
-          {/* Event ticks */}
-          {(events || []).map((event) => {
+          {/* Event ticks — labels alternate above/below to avoid overlap */}
+          {(events || []).map((event, idx) => {
             const isCurrent = event.id === currentEventId;
             const isReached = progressYear != null && event.year <= progressYear;
             const pct = ((event.year - yearStart) / totalSpan) * 100;
+            const above = idx % 2 === 0; // 0,2,4... above; 1,3,5... below
             return (
               <div
                 key={event.id}
@@ -156,9 +157,20 @@ export default function Timeline({
                     opacity: isReached || isCurrent ? 1 : 0.6,
                   }}
                 />
+                {/* Connector line between dot and label */}
+                <div
+                  style={{
+                    ...styles.eventConnector,
+                    top: above ? -14 : 6,
+                    height: 12,
+                    backgroundColor: event.stageColor,
+                    opacity: isCurrent ? 0.9 : 0.45,
+                  }}
+                />
                 <div
                   style={{
                     ...styles.eventLabel,
+                    ...(above ? styles.eventLabelAbove : styles.eventLabelBelow),
                     color: isCurrent ? event.stageColor : "#555",
                     fontWeight: isCurrent ? "bold" : "normal",
                   }}
@@ -237,7 +249,7 @@ const styles = {
   },
   trackArea: {
     position: "relative",
-    padding: "26px 12px 40px",
+    padding: "56px 12px 56px",
   },
   hoverBubble: {
     position: "absolute",
@@ -282,7 +294,6 @@ const styles = {
   },
   eventLabel: {
     position: "absolute",
-    top: 14,
     left: 0,
     transform: "translateX(-50%)",
     textAlign: "center",
@@ -290,6 +301,19 @@ const styles = {
     fontSize: 11,
     lineHeight: 1.3,
     transition: "color 0.25s ease",
+  },
+  eventLabelAbove: {
+    bottom: 22,
+  },
+  eventLabelBelow: {
+    top: 22,
+  },
+  eventConnector: {
+    position: "absolute",
+    left: 0,
+    transform: "translateX(-50%)",
+    width: 1.5,
+    transition: "opacity 0.25s ease, background-color 0.25s ease",
   },
   eventYear: {
     fontSize: 10,
