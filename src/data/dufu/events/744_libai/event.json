@@ -16,52 +16,99 @@
           "id": "drinker_a",
           "name": "酒客甲",
           "portrait": "/assets/characters/npcs/drinker_a.png",
-          "position": { "x": 25, "y": 62 },
-          "scale": 1.2,
+          "position": {
+            "x": 46,
+            "y": 85
+          },
+          "scale": 2.5,
           "dialogues": [
-            { "speaker": "drinker_a", "speakerName": "酒客甲", "text": "听说了吗？李太白被赐金放还，从长安出来了！" },
-            { "speaker": "drinker_a", "speakerName": "酒客甲", "text": "赐金放还——好听是好听，说白了就是被打发走了。" }
+            {
+              "speaker": "drinker_a",
+              "speakerName": "酒客甲",
+              "text": "听说了吗？李太白被赐金放还，从长安出来了！"
+            },
+            {
+              "speaker": "drinker_a",
+              "speakerName": "酒客甲",
+              "text": "赐金放还——好听是好听，说白了就是被打发走了。"
+            }
           ]
         },
         {
           "id": "drinker_b",
           "name": "酒客乙",
           "portrait": "/assets/characters/npcs/drinker_b.png",
-          "position": { "x": 55, "y": 66 },
-          "scale": 1.3,
+          "position": {
+            "x": 58,
+            "y": 60
+          },
+          "scale": 2.3,
           "flip": true,
           "dialogues": [
-            { "speaker": "drinker_b", "speakerName": "酒客乙", "text": "就是那个「天子呼来不上船，自称臣是酒中仙」的李白？" },
-            { "speaker": "drinker_b", "speakerName": "酒客乙", "text": "啧。这种人，敢死。" }
+            {
+              "speaker": "drinker_b",
+              "speakerName": "酒客乙",
+              "text": "就是那个「天子呼来不上船，自称臣是酒中仙」的李白？"
+            },
+            {
+              "speaker": "drinker_b",
+              "speakerName": "酒客乙",
+              "text": "啧。这种人，敢死。"
+            }
           ]
         },
         {
           "id": "huji",
           "name": "胡姬",
           "portrait": "/assets/characters/npcs/huji.png",
-          "position": { "x": 75, "y": 55 },
-          "scale": 1.2,
+          "position": {
+            "x": 85,
+            "y": 67
+          },
+          "scale": 2.3,
           "isClue": true,
           "dialogues": [
-            { "speaker": "huji", "speakerName": "胡姬", "text": "这位郎君要点什么？西市新到的葡萄酒？" },
-            { "speaker": "huji", "speakerName": "胡姬", "text": "李太白？前日才来过。喝完三斗就走了，留了一首诗压账。" },
-            { "speaker": "narrator", "speakerName": "李白题壁", "text": "「兰陵美酒郁金香，玉碗盛来琥珀光……」" }
+            {
+              "speaker": "huji",
+              "speakerName": "胡姬",
+              "text": "这位郎君要点什么？西市新到的葡萄酒？"
+            },
+            {
+              "speaker": "huji",
+              "speakerName": "胡姬",
+              "text": "李太白？前日才来过。喝完三斗就走了，留了一首诗压账。"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "李白题壁",
+              "text": "「兰陵美酒郁金香，玉碗盛来琥珀光……」"
+            }
           ]
         },
         {
           "id": "dufu_inner",
           "name": "杜甫·自语",
           "portrait": "",
-          "position": { "x": 45, "y": 35 },
+          "position": {
+            "x": 45,
+            "y": 35
+          },
           "isClue": true,
-          "bubbleMode": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫（自语）", "text": "李太白……我读他的诗，已读了十年。" },
-            { "speaker": "dufu", "speakerName": "杜甫（自语）", "text": "若能见他一面……" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫（自语）",
+              "text": "李太白……我读他的诗，已读了十年。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫（自语）",
+              "text": "若能见他一面……"
+            }
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "street_meet"
     },
     {
@@ -119,39 +166,88 @@
           "id": "libai_drunk",
           "name": "李白",
           "portrait": "/assets/characters/npcs/libai.png",
-          "position": { "x": 38, "y": 56 },
+          "position": {
+            "x": 38,
+            "y": 56
+          },
           "scale": 1.6,
           "isClue": true,
           "dialogues": [
-            { "speaker": "libai", "speakerName": "李白（醉）", "text": "醉眠秋共被，携手日同行——好一个洒脱！" },
-            { "speaker": "libai", "speakerName": "李白", "text": "子美你太拘谨了。脱了这层皮，谁不是天上的人？" },
-            { "speaker": "libai", "speakerName": "李白", "text": "我此去齐鲁，要见一位道士，求一道箓。" }
+            {
+              "speaker": "libai",
+              "speakerName": "李白（醉）",
+              "text": "醉眠秋共被，携手日同行——好一个洒脱！"
+            },
+            {
+              "speaker": "libai",
+              "speakerName": "李白",
+              "text": "子美你太拘谨了。脱了这层皮，谁不是天上的人？"
+            },
+            {
+              "speaker": "libai",
+              "speakerName": "李白",
+              "text": "我此去齐鲁，要见一位道士，求一道箓。"
+            }
           ]
         },
         {
           "id": "gaoshi",
           "name": "高适",
           "portrait": "/assets/characters/npcs/gaoshi.png",
-          "position": { "x": 65, "y": 60 },
+          "position": {
+            "x": 65,
+            "y": 60
+          },
           "scale": 1.3,
           "isClue": true,
           "dialogues": [
-            { "speaker": "gaoshi", "speakerName": "高适", "text": "太白兄越发癫了。" },
-            { "speaker": "gaoshi", "speakerName": "高适", "text": "子美，你和他不一样。你心里有民。" },
-            { "speaker": "gaoshi", "speakerName": "高适", "text": "我打算去边塞投军。文章救不了天下。" }
+            {
+              "speaker": "gaoshi",
+              "speakerName": "高适",
+              "text": "太白兄越发癫了。"
+            },
+            {
+              "speaker": "gaoshi",
+              "speakerName": "高适",
+              "text": "子美，你和他不一样。你心里有民。"
+            },
+            {
+              "speaker": "gaoshi",
+              "speakerName": "高适",
+              "text": "我打算去边塞投军。文章救不了天下。"
+            }
           ]
         },
         {
           "id": "tomb",
           "name": "古坟",
           "portrait": "",
-          "position": { "x": 82, "y": 75 },
+          "position": {
+            "x": 82,
+            "y": 75
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "三人来到一座荒丘前。无碑无名。" },
-            { "speaker": "libai", "speakerName": "李白", "text": "不知是哪朝的王侯。" },
-            { "speaker": "gaoshi", "speakerName": "高适", "text": "连名字都不留。" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "……" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "三人来到一座荒丘前。无碑无名。"
+            },
+            {
+              "speaker": "libai",
+              "speakerName": "李白",
+              "text": "不知是哪朝的王侯。"
+            },
+            {
+              "speaker": "gaoshi",
+              "speakerName": "高适",
+              "text": "连名字都不留。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "……"
+            }
           ]
         }
       ],

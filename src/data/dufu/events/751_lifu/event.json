@@ -17,9 +17,10 @@
           "name": "商贩甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
           "position": {
-            "x": 30,
-            "y": 76
+            "x": 18,
+            "y": 86
           },
+          "scale": 1.8,
           "dialogues": [
             {
               "speaker": "merchant_a",
@@ -33,10 +34,10 @@
           "name": "商贩乙",
           "portrait": "/assets/characters/npcs/merchant_b.png",
           "position": {
-            "x": 18,
-            "y": 58
+            "x": 48,
+            "y": 74
           },
-          "scale": 0.7,
+          "scale": 1.3,
           "flip": true,
           "dialogues": [
             {
@@ -56,9 +57,10 @@
           "name": "酒店伙计",
           "portrait": "/assets/characters/npcs/waiter.png",
           "position": {
-            "x": 69,
-            "y": 53
+            "x": 75,
+            "y": 75
           },
+          "scale": 1.3,
           "flip": true,
           "dialogues": [
             {
@@ -78,8 +80,8 @@
           "name": "士人甲",
           "portrait": "/assets/characters/npcs/scholar_a.png",
           "position": {
-            "x": 45,
-            "y": 77
+            "x": 60,
+            "y": 73
           },
           "scale": 1.3,
           "dialogues": [
@@ -95,8 +97,8 @@
           "name": "士人乙",
           "portrait": "/assets/characters/npcs/scholar_b.png",
           "position": {
-            "x": 38,
-            "y": 74
+            "x": 34,
+            "y": 76
           },
           "scale": 1.5,
           "dialogues": [
@@ -117,10 +119,10 @@
           "name": "喝酒老人",
           "portrait": "/assets/characters/npcs/elder.png",
           "position": {
-            "x": 86,
-            "y": 74
+            "x": 84,
+            "y": 77
           },
-          "scale": 1.5,
+          "scale": 1.3,
           "isClue": true,
           "dialogues": [
             {

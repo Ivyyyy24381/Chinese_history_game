@@ -1,5 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 
+// ---- Portrait resolution -----------------------------------------------------
+// Convention: every NPC PNG lives at /assets/characters/npcs/<speaker_id>.png.
+// No hardcoded map needed — just derive the path from the speaker id.
+function npcPortraitPath(speakerId) {
+  return `/assets/characters/npcs/${speakerId}.png`;
+}
+
+// Du Fu has multiple poses across life stages, organized as
+//   /assets/characters/dufu/<stage>/<pose>.png
+// e.g. dufu/drift/grief.png, dufu/youth/standing.png. A phase in event.json may
+// set `dufu_pose: "drift/grief"` to override the default portrait. A line in a
+// dialogue can also set `dufu_pose: "..."` for one-off overrides.
+function dufuPortraitPath(pose) {
+  if (!pose) return "/assets/characters/dufu/portrait.png";
+  return `/assets/characters/dufu/${pose}.png`;
+}
+
 /**
  * ScenePlayer - Interactive scene engine
  * Supports phase types: explore, exam, transition, forced_choice
@@ -317,20 +334,12 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
             {(() => {
               const line = activeNpc.dialogues[dialogueIndex];
               const isSelf = line.speaker === "dufu" || line.speaker === "self";
-              const speakerPortraitMap = {
-                scholar_a: "/assets/characters/npcs/scholar_a.png",
-                scholar_b: "/assets/characters/npcs/scholar_b.png",
-                merchant_a: "/assets/characters/npcs/merchant_a.png",
-                merchant_b: "/assets/characters/npcs/merchant_b.png",
-                merchant_c: "/assets/characters/npcs/merchant_c.png",
-                waiter: "/assets/characters/npcs/waiter.png",
-                innkeeper: "/assets/characters/npcs/innkeeper.png",
-                LinFu_Li: "/assets/characters/npcs/LinFu_Li.png",
-              };
+              // Du Fu pose: per-line override > per-phase default > legacy portrait.
+              const dufuPose = line.dufu_pose || currentPhase.dufu_pose;
               let portrait;
-              if (isSelf) portrait = "/assets/characters/dufu/portrait.png";
+              if (isSelf) portrait = dufuPortraitPath(dufuPose);
               else if (line.speaker === "narrator" || line.speaker === "portrait") portrait = "";
-              else portrait = speakerPortraitMap[line.speaker] || activeNpc.portrait;
+              else portrait = npcPortraitPath(line.speaker) || activeNpc.portrait;
               const isLast = dialogueIndex >= activeNpc.dialogues.length - 1;
               // Bubble mode: NPC drawn into the background image, render speech
               // bubble pinned to NPC.position (the head area) instead of bottom bar.

@@ -16,33 +16,66 @@
           "id": "desk_books",
           "name": "祖父诗集",
           "portrait": "",
-          "position": { "x": 35, "y": 62 },
+          "position": {
+            "x": 35,
+            "y": 62
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "案上摆着祖父杜审言的诗稿——「独有宦游人，偏惊物候新。」" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "祖父之诗，气象阔大。我亦当如是。" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "案上摆着祖父杜审言的诗稿——「独有宦游人，偏惊物候新。」"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "祖父之诗，气象阔大。我亦当如是。"
+            }
           ]
         },
         {
           "id": "grandfather_painting",
           "name": "祖父画像",
           "portrait": "",
-          "position": { "x": 60, "y": 30 },
+          "position": {
+            "x": 39,
+            "y": 29
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "祖父常说：读万卷书，行万里路。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "祖父常说：读万卷书，行万里路。"
+            }
           ]
         },
         {
           "id": "mother",
           "name": "母亲",
           "portrait": "/assets/characters/npcs/mother.png",
-          "position": { "x": 20, "y": 65 },
-          "scale": 1.1,
+          "position": {
+            "x": 68,
+            "y": 56
+          },
+          "scale": 3,
           "dialogues": [
-            { "speaker": "mother", "speakerName": "母亲", "text": "子美，又在看书？听说今年又有进士科。" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "孩儿想先出门看看天下。" },
-            { "speaker": "mother", "speakerName": "母亲", "text": "……你这孩子，像你祖父。" }
+            {
+              "speaker": "mother",
+              "speakerName": "母亲",
+              "text": "子美，又在看书？听说今年又有进士科。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "孩儿想先出门看看天下。"
+            },
+            {
+              "speaker": "mother",
+              "speakerName": "母亲",
+              "text": "……你这孩子，像你祖父。"
+            }
           ]
         }
       ],
@@ -77,27 +110,46 @@
         {
           "id": "yanzhou",
           "name": "兖州",
-          "x": 64, "y": 50,
+          "x": 64,
+          "y": 50,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "父亲在此为司马，先来探望。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "父亲在此为司马，先来探望。"
+            }
           ]
         },
         {
           "id": "taishan_foot",
           "name": "泰山下",
-          "x": 66, "y": 48,
+          "x": 66,
+          "y": 48,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "岱宗夫如何？齐鲁青未了……" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "岱宗夫如何？齐鲁青未了……"
+            }
           ]
         },
         {
           "id": "taishan_top",
           "name": "泰山绝顶",
-          "x": 67, "y": 46,
+          "x": 67,
+          "y": 46,
           "isKey": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "会当凌绝顶，一览众山小！" },
-            { "speaker": "narrator", "speakerName": "旁白", "text": "（此刻杜甫写下了《望岳》。）" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "会当凌绝顶，一览众山小！"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（此刻杜甫写下了《望岳》。）"
+            }
           ]
         }
       ],
@@ -110,8 +162,19 @@
       "title": "《望岳》",
       "poemContext": "登临绝顶。心中诗句呼之欲出——请把候选词放回正确的空格。",
       "puzzle": "岱宗夫如何？___青未了。\n造化___神秀，___割昏晓。\n荡胸___曾云，决眦入归鸟。\n会当___，一览___。",
-      "blanks": ["齐鲁", "钟", "阴阳", "生", "凌绝顶", "众山小"],
-      "distractors": ["江汉", "见", "雷电"],
+      "blanks": [
+        "齐鲁",
+        "钟",
+        "阴阳",
+        "生",
+        "凌绝顶",
+        "众山小"
+      ],
+      "distractors": [
+        "江汉",
+        "见",
+        "雷电"
+      ],
       "poemTitle": "望岳"
     },
     {

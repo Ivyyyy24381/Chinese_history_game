@@ -33,19 +33,59 @@ import urllib.request
 import uuid
 from pathlib import Path
 
-# ---- Style suffix appended to every prompt for visual consistency ------------
-DEFAULT_STYLE_ZH = (
-    "中国唐代水墨水彩画风, 半写实, 柔和笔触配工笔细节, "
-    "唐代服饰与建筑严格考证, 电影感构图, 温暖暮色调, 柔光, "
+# ---- Unified style: Tang Dynasty 工笔重彩 (gongbi heavy color) ---------------
+# Single base style for ALL asset types — characters, backgrounds, props — so the
+# whole game looks like one painter did it. Per-type composition modifiers are
+# layered on top via TYPE_MODIFIER below.
+BASE_STYLE_ZH = (
+    "中国唐代工笔重彩画风, gongbi heavy-color Tang Dynasty painting, "
+    "细线勾勒工整严谨, 矿物颜料平涂叠染, 朱砂石青石绿赭黄主色, "
+    "唐代服饰建筑器物严格考证, 半写实, 优雅典丽, "
     "无文字水印, 无现代元素, 高质量, 8k"
+)
+TYPE_MODIFIER = {
+    "bg":   "电影感构图, 16:9 横构图, 前景中部留白, 温暖典雅暮色调, 柔光",
+    "npc":  "人物立绘居中, 半写实人物面部, 解剖准确",
+    "dufu": "人物立绘居中, 半写实人物面部, 解剖准确",
+    # Note: prop does NOT use BASE_STYLE_ZH (see PROP_FULL_STYLE_ZH below).
+    # The "工笔重彩" wording in BASE_STYLE makes the model paint figures onto
+    # objects (turning a wine jar into a decorated vase). At CFG=1 (Z-Image
+    # Turbo / Flux schnell) negative prompts are ignored, so we MUST fix it on
+    # the positive side by giving props a completely separate style string.
+    "prop": None,
+}
+PROP_FULL_STYLE_ZH = (
+    # FLAT 2D gongbi illustration OF the artifact (not a 3D photo of an object
+    # with paintings on it). Reference: 博古图 (Bogu — Chinese antiquities
+    # painting tradition: flat line-drawing + flat color washes of single objects).
+    "中国传统博古图风格, Chinese Bogu antiquities painting style, "
+    "工笔白描淡彩平面插画, gongbi flat line-drawing with light color wash, "
+    "flat 2D illustration of a single Tang Dynasty artifact, "
+    "黑色细线勾勒轮廓, fine black ink line outlines, "
+    "矿物颜料平涂, flat mineral pigment fill, no shading no gradient, "
+    "no perspective no 3D rendering, no photo realism, "
+    "single object centered, plain off-white paper background, "
+    "无任何人物, 无场景, 无装饰花纹, 无文字水印, 无现代元素"
 )
 DEFAULT_NEG = (
     "text, watermark, signature, modern, anachronism, chibi, anime style, "
-    "harsh contrast, oversaturation, blurry, low quality, deformed, extra fingers"
+    "harsh contrast, oversaturation, blurry, low quality, deformed, extra fingers, "
+    "ink wash sketch, loose brushwork"  # we want gongbi precision, not loose ink-wash
 )
-TRANSPARENT_TAIL = (
+# Extra negatives applied only to props to suppress decorative-painting interpretation.
+PROP_EXTRA_NEG = (
+    ", figures painted on object, scenes painted on object, decorative patterns, "
+    "people on the object, multiple objects, ornate decoration, painted vase, "
+    "ceramic with figures, sancai pottery decoration"
+)
+# Transparent-bg tails differ for characters vs. props (different anatomy hints).
+CHAR_TRANSPARENT_TAIL = (
     ", 透明背景, transparent background, isolated character on alpha, no scenery, "
-    "half-body portrait centered"
+    "full-body portrait centered, feet visible, standing pose, full figure from head to toe"
+)
+PROP_TRANSPARENT_TAIL = (
+    ", 透明背景, transparent background, isolated single object on alpha, "
+    "no scenery, no shadow, centered single object"
 )
 
 
@@ -98,6 +138,14 @@ def find_all_by_class(workflow: dict, class_type: str) -> list[str]:
     return [nid for nid, node in workflow.items() if node.get("class_type") == class_type]
 
 
+def _node_id_key(nid: str):
+    """Sort key handling simple ('5') and subgraph ('104:90') node IDs."""
+    try:
+        return tuple(int(p) for p in str(nid).split(":"))
+    except ValueError:
+        return (float("inf"), str(nid))
+
+
 def patch_workflow(
     workflow: dict,
     positive: str,
@@ -126,7 +174,7 @@ def patch_workflow(
     clip_nodes = find_all_by_class(wf, "CLIPTextEncode")
     if len(clip_nodes) == 0:
         raise RuntimeError("No CLIPTextEncode nodes found in workflow")
-    sorted_clip = sorted(clip_nodes, key=lambda x: int(x))
+    sorted_clip = sorted(clip_nodes, key=_node_id_key)
     # Convention: positive prompt is the first CLIPTextEncode by node-id order.
     pos_id = sorted_clip[0]
     wf[pos_id]["inputs"]["text"] = positive
@@ -180,7 +228,7 @@ def run(args):
         rows = [r for r in rows if args.filter in r["output_path"]]
 
     client_id = str(uuid.uuid4())
-    style = args.style or DEFAULT_STYLE_ZH
+    style_override = args.style  # None unless user passed --style
     negative = args.negative or DEFAULT_NEG
 
     print(f"[batch] {len(rows)} rows to generate")
@@ -199,9 +247,24 @@ def run(args):
             continue
 
         prompt = row["prompt"].strip()
+        rtype = row["type"]
+        is_prop = rtype == "prop"
+        # Build style: unified base + per-type modifier (or full --style override).
+        # Props use a completely separate style (no gongbi wording) — see
+        # PROP_FULL_STYLE_ZH for why.
+        if style_override:
+            row_style = style_override
+        elif is_prop:
+            row_style = PROP_FULL_STYLE_ZH
+        else:
+            modifier = TYPE_MODIFIER.get(rtype, "")
+            row_style = f"{BASE_STYLE_ZH}, {modifier}" if modifier else BASE_STYLE_ZH
+        tail = PROP_TRANSPARENT_TAIL if is_prop else CHAR_TRANSPARENT_TAIL
         if row.get("transparent", "").lower() == "true":
-            prompt = prompt + TRANSPARENT_TAIL
-        full_positive = f"{prompt}, {style}"
+            prompt = prompt + tail
+        full_positive = f"{prompt}, {row_style}"
+        # Props need stronger negatives to prevent figures/decoration on the object
+        row_negative = negative + PROP_EXTRA_NEG if is_prop else negative
 
         width = int(row["width"])
         height = int(row["height"])
@@ -214,7 +277,7 @@ def run(args):
         patched = patch_workflow(
             workflow_template,
             positive=full_positive,
-            negative=negative,
+            negative=row_negative,
             width=width,
             height=height,
             seed=seed,
@@ -269,7 +332,7 @@ def main():
     p.add_argument("--workflow", default="scripts/comfy_workflow.json",
                    help="Path to ComfyUI workflow JSON in API format (export via 'Save (API Format)')")
     p.add_argument("--host", default="127.0.0.1:8188", help="ComfyUI host:port")
-    p.add_argument("--only", choices=["npc", "bg"], help="Filter by type")
+    p.add_argument("--only", choices=["npc", "bg", "prop", "dufu"], help="Filter by type")
     p.add_argument("--filter", help="Substring filter on output_path (e.g. '736')")
     p.add_argument("--skip-existing", action="store_true",
                    help="Skip rows whose output file already exists")

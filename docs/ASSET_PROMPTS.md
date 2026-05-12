@@ -9,16 +9,18 @@
 
 ## 通用风格指南（每张图都先粘到 prompt 前面）
 
+> **统一画风：唐代工笔重彩**（gongbi heavy color）—— 真实唐代绘画的主流，参考《簪花仕女图》《虢国夫人游春图》。所有 112 张图（背景 + NPC + 杜甫多姿势 + 道具）共用同一个底层 prompt，保证整套美术风格一致。
+
 **画风（中文 prompt 推荐）**
 
 ```
-中国唐代水墨设定画风，半写实，柔和水彩晕染叠加细线工笔，唐代服饰与建筑严格考证，构图电影感，温暖典雅的暮色调，柔光，无人物（或人物按描述），构图中央有大片空白便于放置交互点，避免现代元素，避免文字水印，16:9 横构图
+中国唐代工笔重彩画风，细线勾勒工整严谨，矿物颜料平涂叠染，朱砂石青石绿赭黄主色，唐代服饰建筑器物严格考证，半写实，优雅典丽，无文字水印，无现代元素
 ```
 
 **画风（英文 prompt 推荐 — 适合 MJ / SDXL）**
 
 ```
-Tang Dynasty Chinese ink-wash + watercolor wash painting, semi-realistic, soft brushwork with fine line detail, historically accurate Tang costumes and architecture, cinematic composition, warm dusk palette with gentle light, soft mist, leave generous empty space in mid-foreground for interactive elements, no modern elements, no text or watermark, 16:9 horizontal
+Tang Dynasty Chinese gongbi heavy-color painting, meticulous fine-line outline, mineral pigments flat-color layered washes, vermilion azurite malachite ochre palette, historically accurate Tang costumes architecture and artifacts, semi-realistic, elegant and refined, no modern elements, no text or watermark
 ```
 
 **反面 prompt（negative，所有图都加）**
@@ -222,7 +224,82 @@ no text, no watermark, no signature, no modern buildings, no anachronisms, no ch
 
 ---
 
-## 四、补图（已存在的就不用重做）
+## 三、道具（共 18 张，1024×1024 透明）
+
+> 全部**正方形透明 PNG**，用于场景中"浮现弹窗"或拾取道具。风格走**工笔静物特写**：单一物件居中，干净浅色背景便于抠图，唐代器物严格考证。生成完用 `rembg --model isnet-general-use` 抠图最干净。
+
+| 文件 | 道具 | Prompt（中） |
+|---|---|---|
+| `props/book_wenxuan.png` | 《文选》竹简 | 唐代《文选》竹简书卷，几片竹简用红绳串接半摊开，深褐色竹片墨字隐约 |
+| `props/paper_failed.png` | 落第答卷纸团 | 被揉皱的唐代落第答卷纸团，泛黄宣纸残留墨字隐约，皱褶分明 |
+| `props/wine_jar.png` | 陶酒坛 | 唐代陶酒坛，圆腹深褐色釉，坛口红绳系封泥，质朴敦实 |
+| `props/wine_cup.png` | 漆木耳杯 | 唐代黑漆木耳杯，椭圆双耳，内髹朱漆盛半杯酒 |
+| `props/sword.png` | 道家长剑 | 唐代道家长剑，剑身银光，黑漆鲨鱼皮剑鞘，黄铜剑首与剑格，腰带配红色穗子 |
+| `props/scroll_imperial.png` | 圣旨诏书 | 唐代圣旨诏书卷轴，深黄绫面带云纹，两端朱漆轴头，半展开露空白绫面（不写文字），红绳系扎 |
+| `props/brush_inkstone.png` | 文房组合 | 唐代文房组合，左侧竹管狼毫毛笔，右侧端石砚台带余墨，旁一锭松烟墨 |
+| `props/dafu_scroll.png` | 三大礼赋手稿 | 唐代手稿长卷，半展开宣纸密布工整楷书墨字（字迹模糊不写实），红绳系扎 |
+| `props/military_dispatch.png` | 军报皮筒 | 唐代军报传递皮筒，深褐色皮筒带红色封口，军报羽毛标记插于筒口 |
+| `props/petition.png` | 奏疏 | 唐代奏疏文书，白色宣纸折叠展开，密布楷书墨字（字迹模糊不写实），朱印一方在文末 |
+| `props/helmet_broken.png` | 破损官帽 | 破损的唐代乌纱幞头官帽，黑色软纱开裂，帽体歪斜，蒙尘有褪色痕迹 |
+| `props/spear.png` | 陌刀长矛 | 唐代陌刀长矛，黑漆木杆，银色矛头锋利带血迹斑驳，杆尾红色穗 |
+| `props/letter_jiashu.png` | 家书 | 唐代家书一封，粗麻纸折叠未拆，红色火漆印封口，纸面有竹纤维质感 |
+| `props/thatched_roof_piece.png` | 飞茅草 | 几束飞舞的茅草，枯黄色干茅断面散开如风中飘飞，有动感 |
+| `props/wine_cup_empty.png` | 空酒杯 | 唐代黑漆木耳杯空置，内髹朱漆，杯口残留干涸酒渍，横卧或微倾，孤寂感 |
+| `props/walking_stick.png` | 老人拐杖 | 唐代老人手杖，深褐色弯曲老树枝制成，顶端磨光被手握得包浆 |
+| `props/boat_oar.png` | 船桨 | 唐代木船桨，深色硬木打造，桨叶宽扁，杆身有水渍痕迹 |
+| `props/medicine_bowl.png` | 药碗 | 唐代陶碗盛深褐色汤药，碗沿热气氤氲，碗旁散落几片药材 |
+
+---
+
+## 四、杜甫多姿势立绘（共 14 张）
+
+> 杜甫贯穿 10 个事件，单一立绘会僵。按**五个人生阶段**生成不同姿势/表情/服饰，让每个场景能调用最合适的版本。
+> 路径全部在 `public/assets/characters/dufu/<阶段>/<姿势>.png`，事件里调用 `character: "dufu/drift/grief"` 等。
+>
+> **统一外貌锚点**（所有 14 张都要保留）：瘦削方正脸庞，剑眉，眼神深邃，鼻梁挺直。仅靠年龄/须发/服饰区分阶段。
+
+### 1. 青年（712-744，20-32 岁，2 张）
+
+| 文件 | 场景 | Prompt（中） |
+|---|---|---|
+| `dufu/youth/standing.png` | 736 壮游默认 | 唐代青年文士杜甫约二十五岁，全身立绘，瘦削方正脸庞剑眉眼神深邃带憧憬，长发束起戴布巾，白色襕衫腰束革带，手负于身后远望，意气风发 |
+| `dufu/youth/drinking.png` | 744 与李白对饮 | 唐代青年文士杜甫约三十岁，半身立绘，剑眉眼神微醺微笑，浅青襕衫领口微敞，右手举酒杯近唇，洒脱欢愉 |
+
+### 2. 求仕（747-755，35-43 岁，3 张）
+
+| 文件 | 场景 | Prompt（中） |
+|---|---|---|
+| `dufu/scholar/standing.png` | 747/751 默认 | 唐代中年文士杜甫约三十六岁，全身立绘，蓄短须，眉宇间带忧思，深青襕衫戴软脚幞头，腰束革带，手抱书卷于胸前端正持卷 |
+| `dufu/scholar/writing.png` | 751 写赋夜 | 唐代中年文士杜甫约三十九岁，半身坐姿，蓄短须，眉头微锁专注，案前提笔欲书，夜灯柔光照面 |
+| `dufu/scholar/dejected.png` | 747 落榜 | 唐代中年文士杜甫约三十六岁，半身立绘，蓄短须，眼角下垂神情失意，双手垂于身前，头微低，落寞 |
+
+### 3. 官员（757，45 岁，2 张）
+
+| 文件 | 场景 | Prompt（中） |
+|---|---|---|
+| `dufu/official/standing.png` | 任左拾遗默认 | 唐代官员杜甫约四十五岁，全身立绘，蓄整齐短须，神情端正紧绷，身穿绿色八品官袍配玉带，戴乌纱幞头，腰束革带，手持笏板 |
+| `dufu/official/kneeling.png` | 弹劾房琯前奏 | 唐代官员杜甫约四十五岁，半身跪奏姿，蓄短须，神情坚定凝重，绿色八品官袍配玉带，戴乌纱幞头，双手捧笏板举至胸前 |
+
+### 4. 漂泊（759-765，47-53 岁，5 张，戏份最多）
+
+| 文件 | 场景 | Prompt（中） |
+|---|---|---|
+| `dufu/drift/walking.png` | 759 弃官西行 | 唐代漂泊文士杜甫约四十八岁，全身立绘，行走姿，憔悴瘦削脸庞须发花白，神情疲惫，旧灰麻布袍系草绳，左手拄木杖，背包袱，沧桑步履 |
+| `dufu/drift/holding_child.png` | 760-765 与女儿 | 唐代中年文士杜甫约五十岁，半身立绘，须发花白，神情温柔怜爱，旧灰麻布袍，左臂怀抱约四岁小女，温暖父爱 |
+| `dufu/drift/writing.png` | 760 草堂写诗 | 唐代中年文士杜甫约四十九岁，半身坐姿，须发花白，神情专注沉静，旧灰麻布袍，案前提笔写诗，茅屋柔暖光线 |
+| `dufu/drift/grief.png` | 755-759 战乱悲恸 | 唐代中年文士杜甫约四十七岁，半身立绘，憔悴脸庞须发凌乱，神情悲恸，左手掩面，右手垂下握紧布卷，泪痕在脸颊 |
+| `dufu/drift/drinking_alone.png` | 765 登高独饮 | 唐代中年文士杜甫约五十三岁，半身立绘，憔悴瘦削须发花白，神情孤寂，右手举空酒杯凝视，眉头深锁，孤独萧索 |
+
+### 5. 病老（765-770，56-58 岁，2 张）
+
+| 文件 | 场景 | Prompt（中） |
+|---|---|---|
+| `dufu/old/sitting.png` | 765 夔州登高 | 唐代老年诗人杜甫约五十六岁，全身坐姿，扶杖坐于江边石上，瘦骨嶙峋须发全白，神情苍凉远眺，破旧深褐麻袍，双脚露草鞋，身侧木杖 |
+| `dufu/old/dying.png` | 770 耒阳病死舟中 | 唐代老年诗人杜甫约五十八岁，半身病榻倚靠姿，干瘦须发全白，病容憔悴眼神空远，破旧深褐袍，身披旧布衾，手中半握诗稿，船舱微弱灯光 |
+
+---
+
+## 五、补图（已存在的就不用重做）
 
 | 已有的 / 不用做 | 路径 |
 |---|---|
@@ -232,7 +309,7 @@ no text, no watermark, no signature, no modern buildings, no anachronisms, no ch
 
 ---
 
-## 四、生成顺序建议
+## 六、生成顺序建议
 
 1. **先做主立绘**（gaoshi / libai / yanwu / wife / mother）—— 这几个出场多。
 2. **再做战乱组**（refugee_woman / refugee_old / rebel_officer / messenger / old_woman / officer_night）—— 风格统一最重要。
@@ -242,7 +319,7 @@ no text, no watermark, no signature, no modern buildings, no anachronisms, no ch
 
 ---
 
-## 五、Prompt 模板（直接复制使用）
+## 七、Prompt 模板（直接复制使用）
 
 **MJ 模板**（替换 `<场景描述>`）：
 
