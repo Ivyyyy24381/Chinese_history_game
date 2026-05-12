@@ -7,7 +7,7 @@
     {
       "id": "street_ceremony_eve",
       "type": "explore",
-      "background": "/assets/events/747_exam/backgrounds/changan_street.png",
+      "background": "/assets/events/751_lifu/backgrounds/changan_ceremony.png",
       "title": "长安街头·大礼前夕",
       "narrative": "天宝十载（751年），玄宗将行三大礼——朝献太清宫、朝享太庙、有事于南郊。长安万民同庆，张灯结彩。",
       "instruction": "和路人交谈，了解这场盛典与「献赋」的机会。",
@@ -16,71 +16,132 @@
           "id": "merchant_a",
           "name": "商贩甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
-          "position": { "x": 18, "y": 60 },
-          "scale": 1.0,
+          "position": {
+            "x": 30,
+            "y": 76
+          },
           "dialogues": [
-            { "speaker": "merchant_a", "speakerName": "商贩甲", "text": "听闻圣人将行三大礼，满朝官员都忙疯了。" }
+            {
+              "speaker": "merchant_a",
+              "speakerName": "商贩甲",
+              "text": "听闻圣人将行三大礼，满朝官员都忙疯了。"
+            }
           ]
         },
         {
           "id": "merchant_b",
           "name": "商贩乙",
           "portrait": "/assets/characters/npcs/merchant_b.png",
-          "position": { "x": 32, "y": 73 },
-          "scale": 1.3,
+          "position": {
+            "x": 18,
+            "y": 58
+          },
+          "scale": 0.7,
+          "flip": true,
           "dialogues": [
-            { "speaker": "merchant_b", "speakerName": "商贩乙", "text": "朝献太清宫、朝享太庙，还要祭天南郊。" },
-            { "speaker": "merchant_b", "speakerName": "商贩乙", "text": "这等盛典，十几年都难得一见。" }
+            {
+              "speaker": "merchant_b",
+              "speakerName": "商贩乙",
+              "text": "朝献太清宫、朝享太庙，还要祭天南郊。"
+            },
+            {
+              "speaker": "merchant_b",
+              "speakerName": "商贩乙",
+              "text": "这等盛典，十几年都难得一见。"
+            }
           ]
         },
         {
           "id": "waiter",
           "name": "酒店伙计",
           "portrait": "/assets/characters/npcs/waiter.png",
-          "position": { "x": 72, "y": 56 },
-          "scale": 0.9,
+          "position": {
+            "x": 69,
+            "y": 53
+          },
           "flip": true,
           "dialogues": [
-            { "speaker": "waiter", "speakerName": "酒店伙计", "text": "近日长安纸价都涨了。" },
-            { "speaker": "waiter", "speakerName": "酒店伙计", "text": "那些读书人啊，都在连夜写赋。" }
+            {
+              "speaker": "waiter",
+              "speakerName": "酒店伙计",
+              "text": "近日长安纸价都涨了。"
+            },
+            {
+              "speaker": "waiter",
+              "speakerName": "酒店伙计",
+              "text": "那些读书人啊，都在连夜写赋。"
+            }
           ]
         },
         {
           "id": "scholar_a",
           "name": "士人甲",
           "portrait": "/assets/characters/npcs/scholar_a.png",
-          "position": { "x": 48, "y": 56 },
+          "position": {
+            "x": 45,
+            "y": 77
+          },
           "scale": 1.3,
           "dialogues": [
-            { "speaker": "scholar_a", "speakerName": "士人甲", "text": "若文章能入圣人之眼，未必不能一步登天。" }
+            {
+              "speaker": "scholar_a",
+              "speakerName": "士人甲",
+              "text": "若文章能入圣人之眼，未必不能一步登天。"
+            }
           ]
         },
         {
           "id": "scholar_b",
           "name": "士人乙",
           "portrait": "/assets/characters/npcs/scholar_b.png",
-          "position": { "x": 58, "y": 70 },
+          "position": {
+            "x": 38,
+            "y": 74
+          },
           "scale": 1.5,
           "dialogues": [
-            { "speaker": "scholar_b", "speakerName": "士人乙", "text": "只是献赋这种事——" },
-            { "speaker": "scholar_b", "speakerName": "士人乙", "text": "献的是文章，还是颂圣之辞？" }
+            {
+              "speaker": "scholar_b",
+              "speakerName": "士人乙",
+              "text": "只是献赋这种事——"
+            },
+            {
+              "speaker": "scholar_b",
+              "speakerName": "士人乙",
+              "text": "献的是文章，还是颂圣之辞？"
+            }
           ]
         },
         {
           "id": "elder",
           "name": "喝酒老人",
           "portrait": "/assets/characters/npcs/elder.png",
-          "position": { "x": 86, "y": 72 },
+          "position": {
+            "x": 86,
+            "y": 74
+          },
           "scale": 1.5,
           "isClue": true,
           "dialogues": [
-            { "speaker": "elder", "speakerName": "喝酒老人", "text": "长安城里，从不缺会写文章的人。" },
-            { "speaker": "elder", "speakerName": "喝酒老人", "text": "缺的是……" },
-            { "speaker": "elder", "speakerName": "喝酒老人", "text": "能让皇帝看见的人。" }
+            {
+              "speaker": "elder",
+              "speakerName": "喝酒老人",
+              "text": "长安城里，从不缺会写文章的人。"
+            },
+            {
+              "speaker": "elder",
+              "speakerName": "喝酒老人",
+              "text": "缺的是……"
+            },
+            {
+              "speaker": "elder",
+              "speakerName": "喝酒老人",
+              "text": "能让皇帝看见的人。"
+            }
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "residence"
     },
     {
@@ -95,35 +156,72 @@
           "id": "desk",
           "name": "桌案",
           "portrait": "",
-          "position": { "x": 30, "y": 60 },
+          "position": {
+            "x": 52,
+            "y": 59
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "桌案", "text": "案上墨迹未干，纸面写着——" },
-            { "speaker": "narrator", "speakerName": "桌案", "text": "《朝献太清宫赋》" }
+            {
+              "speaker": "narrator",
+              "speakerName": "桌案",
+              "text": "案上墨迹未干，纸面写着——"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "桌案",
+              "text": "《朝献太清宫赋》"
+            }
           ]
         },
         {
           "id": "paper_ball",
           "name": "纸团",
           "portrait": "",
-          "position": { "x": 65, "y": 68 },
+          "position": {
+            "x": 86,
+            "y": 82
+          },
+          "scale": 0.3,
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "纸团", "text": "拾起一团揉皱的废稿——" },
-            { "speaker": "narrator", "speakerName": "废稿", "text": "（满纸皆是涂改与删抹）" }
+            {
+              "speaker": "narrator",
+              "speakerName": "纸团",
+              "text": "拾起一团揉皱的废稿——"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "废稿",
+              "text": "（满纸皆是涂改与删抹）"
+            }
           ]
         },
         {
-          "id": "dufu_self",
+          "id": "label_1778532955294",
           "name": "杜甫",
-          "portrait": "/assets/characters/dufu/portrait.png",
-          "position": { "x": 50, "y": 42 },
-          "scale": 1.4,
+          "portrait": "",
+          "position": {
+            "x": 75,
+            "y": 31
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "我本不愿作颂圣文章。" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "……" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "可若不如此，又如何让天下听见我的声音？" }
+            {
+              "speaker": "portrait",
+              "speakerName": "杜甫",
+              "text": "我本不愿作颂圣文章。"
+            },
+            {
+              "speaker": "portrait",
+              "speakerName": "杜甫",
+              "text": "......"
+            },
+            {
+              "speaker": "portrait",
+              "speakerName": "杜甫",
+              "text": "可若不如此，又如何让天下听见我的声音？"
+            }
           ]
         }
       ],
@@ -185,33 +283,58 @@
           "id": "student_1",
           "name": "士子",
           "portrait": "/assets/characters/npcs/student.png",
-          "position": { "x": 28, "y": 70 },
+          "position": {
+            "x": 29,
+            "y": 72
+          },
           "scale": 1.2,
           "dialogues": [
-            { "speaker": "student_1", "speakerName": "士子", "text": "听说延恩匦今日开启。" }
+            {
+              "speaker": "student_1",
+              "speakerName": "士子",
+              "text": "听说延恩匦今日开启。"
+            }
           ]
         },
         {
           "id": "student_2",
           "name": "另一士子",
           "portrait": "/assets/characters/npcs/scholar_a.png",
-          "position": { "x": 52, "y": 72 },
+          "position": {
+            "x": 53,
+            "y": 75
+          },
           "scale": 1.3,
           "flip": true,
           "dialogues": [
-            { "speaker": "student_2", "speakerName": "另一士子", "text": "若能被圣人看中，此生便不同了。" }
+            {
+              "speaker": "student_2",
+              "speakerName": "另一士子",
+              "text": "若能被圣人看中，此生便不同了。"
+            }
           ]
         },
         {
           "id": "LinFu_Li",
           "name": "李林甫",
           "portrait": "/assets/characters/npcs/LinFu_Li.png",
-          "position": { "x": 78, "y": 55 },
+          "position": {
+            "x": 86,
+            "y": 72
+          },
           "scale": 1.7,
           "isClue": true,
           "dialogues": [
-            { "speaker": "LinFu_Li", "speakerName": "李林甫", "text": "上欲广求天下文章之士。" },
-            { "speaker": "LinFu_Li", "speakerName": "李林甫", "text": "若有真才，朝廷自不会埋没。" }
+            {
+              "speaker": "LinFu_Li",
+              "speakerName": "李林甫",
+              "text": "上欲广求天下文章之士。"
+            },
+            {
+              "speaker": "LinFu_Li",
+              "speakerName": "李林甫",
+              "text": "若有真才，朝廷自不会埋没。"
+            }
           ]
         }
       ],
@@ -247,33 +370,61 @@
           "id": "waiter_night",
           "name": "酒店伙计",
           "portrait": "/assets/characters/npcs/waiter.png",
-          "position": { "x": 22, "y": 60 },
+          "position": {
+            "x": 22,
+            "y": 60
+          },
           "scale": 0.9,
           "dialogues": [
-            { "speaker": "waiter", "speakerName": "酒店伙计", "text": "听闻杜甫被留集贤院了。" }
+            {
+              "speaker": "waiter",
+              "speakerName": "酒店伙计",
+              "text": "听闻杜甫被留集贤院了。"
+            }
           ]
         },
         {
           "id": "merchant_a_night",
           "name": "商贩甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
-          "position": { "x": 50, "y": 65 },
-          "scale": 1.0,
+          "position": {
+            "x": 50,
+            "y": 65
+          },
           "dialogues": [
-            { "speaker": "merchant_a", "speakerName": "商贩甲", "text": "那岂不是快做官了？" }
+            {
+              "speaker": "merchant_a",
+              "speakerName": "商贩甲",
+              "text": "那岂不是快做官了？"
+            }
           ]
         },
         {
           "id": "elder_night",
           "name": "喝酒老人",
           "portrait": "/assets/characters/npcs/elder.png",
-          "position": { "x": 78, "y": 70 },
+          "position": {
+            "x": 78,
+            "y": 70
+          },
           "scale": 1.5,
           "isClue": true,
           "dialogues": [
-            { "speaker": "elder", "speakerName": "喝酒老人", "text": "（轻笑）" },
-            { "speaker": "elder", "speakerName": "喝酒老人", "text": "待制？" },
-            { "speaker": "elder", "speakerName": "喝酒老人", "text": "不过是——让他继续等罢了。" }
+            {
+              "speaker": "elder",
+              "speakerName": "喝酒老人",
+              "text": "（轻笑）"
+            },
+            {
+              "speaker": "elder",
+              "speakerName": "喝酒老人",
+              "text": "待制？"
+            },
+            {
+              "speaker": "elder",
+              "speakerName": "喝酒老人",
+              "text": "不过是——让他继续等罢了。"
+            }
           ]
         }
       ],
