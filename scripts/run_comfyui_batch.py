@@ -109,25 +109,32 @@ def patch_workflow(
 ) -> dict:
     """Mutate a copy of the workflow with our per-row settings.
 
-    Assumes a fairly standard txt2img workflow:
-      - 2x CLIPTextEncode nodes (positive + negative). We pick them by ordering:
-        first occurrence = positive, second = negative. If your workflow has
-        them labeled differently, edit the picker below.
-      - 1x EmptyLatentImage (size).
-      - 1x KSampler (seed).
+    Supports two workflow styles:
+      - Standard SDXL/SD1.5: 2+ CLIPTextEncode nodes (positive + negative).
+        First by node-id = positive, second = negative.
+      - Z-Image Turbo / Flux schnell (CFG=1): single CLIPTextEncode (positive
+        only). Negative is unused — the model ignores it at CFG=1, so we just
+        skip setting it.
+
+    Other expected nodes:
+      - 1x EmptyLatentImage / EmptySD3LatentImage (size).
+      - 1x KSampler / KSamplerAdvanced (seed).
       - 1x SaveImage (filename_prefix).
     """
     wf = json.loads(json.dumps(workflow))  # deep copy
 
     clip_nodes = find_all_by_class(wf, "CLIPTextEncode")
-    if len(clip_nodes) < 2:
-        raise RuntimeError(
-            f"Expected ≥2 CLIPTextEncode nodes in workflow, found {len(clip_nodes)}"
-        )
+    if len(clip_nodes) == 0:
+        raise RuntimeError("No CLIPTextEncode nodes found in workflow")
+    sorted_clip = sorted(clip_nodes, key=lambda x: int(x))
     # Convention: positive prompt is the first CLIPTextEncode by node-id order.
-    pos_id, neg_id = sorted(clip_nodes, key=lambda x: int(x))[:2]
+    pos_id = sorted_clip[0]
     wf[pos_id]["inputs"]["text"] = positive
-    wf[neg_id]["inputs"]["text"] = negative
+    if len(sorted_clip) >= 2:
+        neg_id = sorted_clip[1]
+        wf[neg_id]["inputs"]["text"] = negative
+    else:
+        print(f"  [info] single CLIPTextEncode workflow (Turbo/schnell) — negative prompt ignored")
 
     latent_id = find_node_by_class(wf, "EmptyLatentImage") or find_node_by_class(
         wf, "EmptySD3LatentImage"
