@@ -293,6 +293,19 @@ export default function SceneEditor({ initialEventId, onExit }) {
       if (phaseType === "narration") {
         phase.narrationSlides = narrationSlides;
       }
+      if (phaseType === "click_points") {
+        phase.instruction = phaseInstruction;
+        phase.image = clickPointImage || bg;
+        phase.unlockThreshold = unlockThreshold;
+        phase.progressivePoem = progressivePoem;
+        phase.points = clickPoints.map((p) => ({
+          id: p.id,
+          label: p.label,
+          position: { x: p.x, y: p.y },
+          size: p.size,
+          text: p.text,
+        }));
+      }
       if (phaseType === "minigame") {
         phase.minigameType = minigameType;
         phase.minigameItems = minigameItems;
@@ -388,6 +401,11 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setTriggerZones((prev) =>
       prev.map((t) =>
         t.id === dragging ? { ...t, x: clampX, y: clampY } : t
+      )
+    );
+    setClickPoints((prev) =>
+      prev.map((p) =>
+        p.uid === dragging ? { ...p, x: clampX, y: clampY } : p
       )
     );
   }, [dragging, didDrag, dragStartPos]);
@@ -489,6 +507,13 @@ export default function SceneEditor({ initialEventId, onExit }) {
   const [minigameItems, setMinigameItems] = useState([]);
   const [minigameInstruction, setMinigameInstruction] = useState("");
 
+  // === Click-points state (春望-style 找茬 phase) ===
+  const [clickPoints, setClickPoints] = useState([]);
+  const [selectedClickPoint, setSelectedClickPoint] = useState(null);
+  const [clickPointImage, setClickPointImage] = useState("");
+  const [progressivePoem, setProgressivePoem] = useState([]);
+  const [unlockThreshold, setUnlockThreshold] = useState(3);
+
   // Extend loadPhase to load all phase types
   const loadPhaseExtended = (phase) => {
     // Exam
@@ -520,6 +545,20 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setMinigameType(phase.minigameType || "memory");
     setMinigameItems(phase.minigameItems || []);
     setMinigameInstruction(phase.minigameInstruction || "");
+    // Click points
+    setClickPoints((phase.points || []).map((p, i) => ({
+      uid: (p.id || "pt") + "_" + i,
+      id: p.id || ("pt_" + i),
+      label: p.label || "",
+      x: p.position?.x ?? 50,
+      y: p.position?.y ?? 50,
+      size: p.size ?? 64,
+      text: p.text || "",
+    })));
+    setSelectedClickPoint(null);
+    setClickPointImage(phase.image || phase.background || "");
+    setProgressivePoem(phase.progressivePoem || []);
+    setUnlockThreshold(phase.unlockThreshold ?? 3);
   };
 
   // Export JSON — builds full phase based on type
@@ -581,6 +620,19 @@ export default function SceneEditor({ initialEventId, onExit }) {
     }
     if (phaseType === "narration") {
       phase.narrationSlides = narrationSlides;
+    }
+    if (phaseType === "click_points") {
+      phase.instruction = phaseInstruction;
+      phase.image = clickPointImage || bg;
+      phase.unlockThreshold = unlockThreshold;
+      phase.progressivePoem = progressivePoem;
+      phase.points = clickPoints.map((p) => ({
+        id: p.id,
+        label: p.label,
+        position: { x: p.x, y: p.y },
+        size: p.size,
+        text: p.text,
+      }));
     }
     if (phaseType === "minigame") {
       phase.minigameType = minigameType;
@@ -731,7 +783,8 @@ export default function SceneEditor({ initialEventId, onExit }) {
             <option value="map_travel">map_travel (\u5730\u56FE\u884C\u65C5)</option>
             <option value="dialogue_branch">dialogue_branch (\u5BF9\u8BDD\u5206\u652F)</option>
             <option value="narration">narration (\u53D9\u4E8B\u6F14\u51FA)</option>
-            <option value="minigame">minigame (\u5C0F\u6E38\u620F)</option>
+            <option value="click_points">{"\u{1F441} 找茬 (click_points)"}</option>
+                <option value="minigame">minigame (\u5C0F\u6E38\u620F)</option>
           </select>
         </div>
         <div style={styles.toolbarGroup}>
@@ -832,6 +885,44 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 <div style={styles.npcCoords}>({npc.x}, {npc.y})</div>
               </div>
             ))}
+            {/* Click points on canvas (春望-style 找茬 markers) */}
+            {phaseType === "click_points" && clickPoints.map((cp) => {
+              const isSel = selectedClickPoint === cp.uid;
+              return (
+                <div
+                  key={cp.uid}
+                  style={{
+                    position: "absolute",
+                    left: cp.x + "%",
+                    top: cp.y + "%",
+                    transform: "translate(-50%, -50%)",
+                    width: cp.size,
+                    height: cp.size,
+                    borderRadius: "50%",
+                    border: isSel ? "4px solid #F4D03F" : "3px dashed rgba(231,76,60,0.85)",
+                    boxShadow: isSel ? "0 0 16px rgba(244,208,63,0.7)" : "0 0 8px rgba(231,76,60,0.4)",
+                    backgroundColor: "rgba(231,76,60,0.08)",
+                    cursor: dragging === cp.uid ? "grabbing" : "grab",
+                    zIndex: 18,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "#FFF", fontSize: 10, fontWeight: "bold",
+                    textShadow: "0 1px 2px #000",
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    setSelectedClickPoint(cp.uid);
+                    setSelectedNpc(null);
+                    setDragging(cp.uid);
+                    setDragStartPos({ x: e.clientX, y: e.clientY });
+                    setDidDrag(false);
+                  }}
+                  onClick={(e) => { e.stopPropagation(); setSelectedClickPoint(cp.uid); setSelectedNpc(null); }}
+                  title={cp.label}
+                >
+                  {cp.label || cp.id}
+                </div>
+              );
+            })}
             {/* Trigger zones on canvas */}
             {triggerZones.map((tz) => (
               <div
@@ -1057,6 +1148,115 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 <p>{"\u62D6\u62FD\u8C03\u6574\u4F4D\u7F6E"}</p>
               </div>
             )
+          )}
+
+          {/* ---- CLICK_POINTS: 找茬 editor ---- */}
+          {phaseType === "click_points" && (
+            <div style={{ marginBottom: 16 }}>
+              <h3 style={styles.editorSectionTitle}>{"\u{1F441} 找茬触发点"}</h3>
+              <div style={styles.fieldGroup}>
+                <label style={styles.fieldLabel}>{"图片 URL"}</label>
+                <input
+                  style={styles.fieldInput}
+                  value={clickPointImage}
+                  onChange={(e) => setClickPointImage(e.target.value)}
+                  placeholder={"/assets/events/.../scene.png"}
+                />
+              </div>
+              <div style={styles.fieldGroup}>
+                <label style={styles.fieldLabel}>{"诗句阈值（点击多少次后浮出诗句）"}</label>
+                <input
+                  type="number" min="1" max="10"
+                  style={styles.fieldInput}
+                  value={unlockThreshold}
+                  onChange={(e) => setUnlockThreshold(parseInt(e.target.value, 10) || 1)}
+                />
+              </div>
+              <h4 style={{ ...styles.dialogueTitle, marginTop: 12 }}>
+                {"触发点列表 ("}{clickPoints.length}{")"}
+              </h4>
+              {clickPoints.map((cp) => {
+                const isSel = selectedClickPoint === cp.uid;
+                const update = (field, value) =>
+                  setClickPoints((prev) => prev.map((x) => (x.uid === cp.uid ? { ...x, [field]: value } : x)));
+                return (
+                  <div
+                    key={cp.uid}
+                    style={{
+                      ...styles.dialogueItem,
+                      borderColor: isSel ? "#F4D03F" : "transparent",
+                      borderWidth: 2, borderStyle: "solid", borderRadius: 6, padding: 8,
+                    }}
+                    onClick={() => setSelectedClickPoint(cp.uid)}
+                  >
+                    <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 6 }}>
+                      <input
+                        style={{ ...styles.fieldInput, flex: 1, fontSize: 12 }}
+                        value={cp.label}
+                        onChange={(e) => update("label", e.target.value)}
+                        placeholder={"标签"}
+                      />
+                      <span style={{ fontSize: 10, color: "#AAB7C4" }}>({cp.x}, {cp.y})</span>
+                      <button
+                        style={styles.btnRemoveDialogue}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setClickPoints((prev) => prev.filter((x) => x.uid !== cp.uid));
+                          if (isSel) setSelectedClickPoint(null);
+                        }}
+                      >{"\u2715"}</button>
+                    </div>
+                    <div style={{ ...styles.detailRow, marginBottom: 6 }}>
+                      <label style={styles.fieldLabel}>{"大小: "}{cp.size}{"px"}</label>
+                      <input
+                        type="range" min="24" max="200" step="2"
+                        value={cp.size}
+                        onChange={(e) => update("size", parseInt(e.target.value, 10))}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+                    <textarea
+                      style={{ ...styles.dialogueText, fontSize: 12 }}
+                      value={cp.text}
+                      onChange={(e) => update("text", e.target.value)}
+                      placeholder={"点击后弹出的诗句独白"}
+                      rows={2}
+                    />
+                  </div>
+                );
+              })}
+              <button
+                style={styles.btnAddDialogue}
+                onClick={() => {
+                  const newId = "pt_" + Date.now();
+                  setClickPoints((prev) => [...prev, {
+                    uid: newId + "_uid", id: newId, label: "新点",
+                    x: 50, y: 50, size: 64, text: "",
+                  }]);
+                  setSelectedClickPoint(newId + "_uid");
+                }}
+              >{"+ 添加触发点"}</button>
+              <h4 style={{ ...styles.dialogueTitle, marginTop: 12 }}>{"渐进式诗句"}</h4>
+              {progressivePoem.map((ln, i) => (
+                <div key={i} style={{ display: "flex", gap: 6, marginBottom: 4 }}>
+                  <input
+                    style={{ ...styles.fieldInput, flex: 1, fontSize: 12 }}
+                    value={ln}
+                    onChange={(e) => {
+                      const next = [...progressivePoem]; next[i] = e.target.value; setProgressivePoem(next);
+                    }}
+                  />
+                  <button
+                    style={styles.btnRemoveDialogue}
+                    onClick={() => setProgressivePoem((prev) => prev.filter((_, j) => j !== i))}
+                  >{"\u2715"}</button>
+                </div>
+              ))}
+              <button
+                style={styles.btnAddDialogue}
+                onClick={() => setProgressivePoem((prev) => [...prev, ""])}
+              >{"+ 添加一句"}</button>
+            </div>
           )}
 
           {/* ---- EXAM: question editor ---- */}

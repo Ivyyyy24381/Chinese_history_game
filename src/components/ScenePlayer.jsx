@@ -1184,7 +1184,7 @@ function ClickPointsPhase({ phase, onComplete }) {
                   left: pt.position.x + "%",
                   top: pt.position.y + "%",
                   transform: "translate(-50%, -50%)",
-                  width: 64, height: 64, borderRadius: "50%",
+                  width: pt.size ?? 64, height: pt.size ?? 64, borderRadius: "50%",
                   border: isClicked ? "4px solid #E74C3C" : "none",
                   backgroundColor: "transparent",
                   cursor: isClicked ? "pointer" : "crosshair",
