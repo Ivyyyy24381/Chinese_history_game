@@ -17,8 +17,8 @@
           "name": "商贩甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
           "position": {
-            "x": 18,
-            "y": 86
+            "x": 19,
+            "y": 84
           },
           "scale": 1.8,
           "dialogues": [
@@ -34,10 +34,10 @@
           "name": "商贩乙",
           "portrait": "/assets/characters/npcs/merchant_b.png",
           "position": {
-            "x": 48,
-            "y": 74
+            "x": 79,
+            "y": 79
           },
-          "scale": 1.3,
+          "scale": 2,
           "flip": true,
           "dialogues": [
             {
@@ -57,10 +57,10 @@
           "name": "酒店伙计",
           "portrait": "/assets/characters/npcs/waiter.png",
           "position": {
-            "x": 75,
-            "y": 75
+            "x": 45,
+            "y": 64
           },
-          "scale": 1.3,
+          "scale": 1.1,
           "flip": true,
           "dialogues": [
             {
@@ -80,7 +80,7 @@
           "name": "士人甲",
           "portrait": "/assets/characters/npcs/scholar_a.png",
           "position": {
-            "x": 60,
+            "x": 63,
             "y": 73
           },
           "scale": 1.3,
@@ -97,8 +97,8 @@
           "name": "士人乙",
           "portrait": "/assets/characters/npcs/scholar_b.png",
           "position": {
-            "x": 34,
-            "y": 76
+            "x": 54,
+            "y": 73
           },
           "scale": 1.5,
           "dialogues": [
@@ -119,10 +119,11 @@
           "name": "喝酒老人",
           "portrait": "/assets/characters/npcs/elder.png",
           "position": {
-            "x": 84,
-            "y": 77
+            "x": 31,
+            "y": 79
           },
-          "scale": 1.3,
+          "scale": 1.6,
+          "flip": true,
           "isClue": true,
           "dialogues": [
             {
@@ -157,7 +158,7 @@
         {
           "id": "desk",
           "name": "桌案",
-          "portrait": "",
+          "portrait": "/assets/items/scroll_blank.png",
           "position": {
             "x": 52,
             "y": 59
@@ -179,7 +180,7 @@
         {
           "id": "paper_ball",
           "name": "纸团",
-          "portrait": "",
+          "portrait": "/assets/items/paper_ball.png",
           "position": {
             "x": 86,
             "y": 82
@@ -354,10 +355,10 @@
           "name": "酒店伙计",
           "portrait": "/assets/characters/npcs/waiter.png",
           "position": {
-            "x": 22,
-            "y": 60
+            "x": 35,
+            "y": 85
           },
-          "scale": 0.9,
+          "scale": 0.7,
           "dialogues": [
             {
               "speaker": "waiter",
@@ -371,9 +372,10 @@
           "name": "商贩甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
           "position": {
-            "x": 50,
-            "y": 65
+            "x": 56,
+            "y": 69
           },
+          "scale": 0.5,
           "dialogues": [
             {
               "speaker": "merchant_a",
@@ -387,10 +389,10 @@
           "name": "喝酒老人",
           "portrait": "/assets/characters/npcs/elder.png",
           "position": {
-            "x": 78,
-            "y": 70
+            "x": 75,
+            "y": 83
           },
-          "scale": 1.5,
+          "scale": 0.7,
           "isClue": true,
           "dialogues": [
             {

@@ -1,0 +1,9 @@
+请把以下图片文件放到本目录：
+
+  scroll_blank.png      ←  你上传的「卷轴/scroll」图（适合任何展开卷轴类物件，
+                            如 委任状、桌案上的诗稿等）
+  paper_ball.png        ←  你上传的「纸团/crumpled paper」图
+                            （适合 751 杜甫居所·夜 的「废稿纸团」）
+  scroll_small.png      ←  你上传的小卷轴图（备用，可用于一般古籍物件）
+
+放好后刷新即可。游戏中已引用这些路径——见 src/data/dufu/events/*/event.json。

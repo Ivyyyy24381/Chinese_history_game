@@ -1,10 +1,15 @@
 /**
  * Map with event-level pin markers.
- * Only events with year <= currentYear are shown — future events stay hidden
- * until the player drags the timeline forward.
  *
- * - Current event:  full color, glow, pulsing ring, larger pin
- * - Past events:    full color, smaller pin, ✓ inside the pin
+ * - All events are visible from the start (dimmed if before `progressYear`,
+ *   bright once unlocked, fully bright + glow when current).
+ * - An SVG trajectory line connects events in chronological order. Solid for
+ *   unlocked segments, dashed for future segments.
+ *
+ * Pin states:
+ *   - Current event:   full color, glow, pulsing ring, larger pin
+ *   - Past events:     full color, smaller pin, ✓ inside the pin
+ *   - Future events:   muted color, smaller pin, no badge
  */
 export default function GameMap({
   allEvents,
@@ -13,7 +18,18 @@ export default function GameMap({
   progressYear,
   onEventClick,
 }) {
-  const visibleEvents = (allEvents || []).filter((e) => e.year <= currentYear);
+  const events = (allEvents || []).slice().sort((a, b) => a.year - b.year);
+
+  // Build SVG polyline points in % space. We use 0..100 viewBox so coords
+  // can stay in mapX/mapY percentages directly.
+  const points = events
+    .filter((e) => e.location && typeof e.location.mapX === "number")
+    .map((e) => ({
+      x: e.location.mapX,
+      y: e.location.mapY,
+      year: e.year,
+      unlocked: progressYear != null && e.year <= progressYear,
+    }));
 
   return (
     <div style={styles.mapContainer}>
@@ -23,11 +39,41 @@ export default function GameMap({
           backgroundImage: `url('/assets/maps/tang_dynasty.png')`,
         }}
       >
-        {visibleEvents.map((event) => {
+        {/* Trajectory overlay (SVG, 0..100 viewBox in %) */}
+        <svg
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={styles.trajectorySvg}
+        >
+          {points.length >= 2 &&
+            points.slice(0, -1).map((p, i) => {
+              const q = points[i + 1];
+              const bothUnlocked = p.unlocked && q.unlocked;
+              return (
+                <line
+                  key={i}
+                  x1={p.x}
+                  y1={p.y}
+                  x2={q.x}
+                  y2={q.y}
+                  stroke={bothUnlocked ? "#C0392B" : "#888"}
+                  strokeWidth={bothUnlocked ? 0.4 : 0.25}
+                  strokeDasharray={bothUnlocked ? "none" : "0.8 0.8"}
+                  opacity={bothUnlocked ? 0.85 : 0.45}
+                  vectorEffect="non-scaling-stroke"
+                />
+              );
+            })}
+        </svg>
+
+        {events.map((event) => {
           const isCurrent = event.id === currentEventId;
-          const isPast = !isCurrent && progressYear != null && event.year <= progressYear;
+          const isPast =
+            !isCurrent && progressYear != null && event.year <= progressYear;
+          const isFuture =
+            progressYear != null && event.year > progressYear && !isCurrent;
           const pinColor = event.stageColor || "#4A90A4";
-          const pinSize = isCurrent ? 44 : 30;
+          const pinSize = isCurrent ? 44 : 26;
 
           return (
             <button
@@ -36,7 +82,9 @@ export default function GameMap({
                 ...styles.pinWrap,
                 left: `${event.location.mapX}%`,
                 top: `${event.location.mapY}%`,
-                zIndex: isCurrent ? 5 : 2,
+                zIndex: isCurrent ? 5 : isPast ? 3 : 2,
+                opacity: isFuture ? 0.55 : 1,
+                filter: isFuture ? "saturate(0.5)" : "none",
               }}
               onClick={() => onEventClick(event)}
               title={`${event.year} 年 · ${event.name}`}
@@ -62,7 +110,10 @@ export default function GameMap({
                   fontWeight: isCurrent ? "bold" : 500,
                   backgroundColor: isCurrent
                     ? "rgba(255,255,255,0.95)"
-                    : "rgba(255,255,255,0.8)",
+                    : isFuture
+                    ? "rgba(255,255,255,0.55)"
+                    : "rgba(255,255,255,0.85)",
+                  fontStyle: isFuture ? "italic" : "normal",
                 }}
               >
                 <span style={styles.pinYear}>{event.year}</span>
@@ -126,12 +177,7 @@ const styles = {
     minHeight: 400,
   },
   mapBackground: {
-    // Match the actual image ratio (1752 × 1245) so percentage-based pin
-    // coordinates land on the right map features instead of empty letterbox.
     aspectRatio: "1752 / 1245",
-    // Constrain by available viewport so the map doesn't dominate the screen.
-    // Whichever of width/height hits its limit first wins; the other follows
-    // via aspectRatio.
     maxWidth: "min(720px, 90%)",
     maxHeight: "calc(100vh - 280px)",
     width: "100%",
@@ -140,6 +186,15 @@ const styles = {
     backgroundPosition: "center",
     position: "relative",
     borderRadius: 8,
+  },
+  trajectorySvg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none",
+    zIndex: 1,
   },
   pinWrap: {
     position: "absolute",

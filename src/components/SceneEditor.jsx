@@ -158,6 +158,10 @@ export default function SceneEditor({ initialEventId, onExit }) {
           y: n.position?.y ?? 50,
           scale: n.scale ?? 1,
           flip: n.flip ?? false,
+          rotate: n.rotate ?? 0,
+          tiltX: n.tiltX ?? 0,
+          tiltY: n.tiltY ?? 0,
+          perspective: n.perspective ?? 0,
           isClue: n.isClue || false,
           dialogues: n.dialogues || [{ speaker: n.id, speakerName: n.name, text: "" }],
         }))
@@ -229,6 +233,10 @@ export default function SceneEditor({ initialEventId, onExit }) {
           position: { x: n.x, y: n.y },
           ...(n.scale !== 1 ? { scale: n.scale } : {}),
           ...(n.flip ? { flip: true } : {}),
+          ...(n.rotate ? { rotate: n.rotate } : {}),
+          ...(n.tiltX ? { tiltX: n.tiltX } : {}),
+          ...(n.tiltY ? { tiltY: n.tiltY } : {}),
+          ...(n.perspective ? { perspective: n.perspective } : {}),
           ...(n.isClue ? { isClue: true } : {}),
           dialogues: n.dialogues,
         }));
@@ -624,6 +632,10 @@ export default function SceneEditor({ initialEventId, onExit }) {
         position: { x: n.x, y: n.y },
         ...(n.scale !== 1 ? { scale: n.scale } : {}),
         ...(n.flip ? { flip: true } : {}),
+        ...(n.rotate ? { rotate: n.rotate } : {}),
+        ...(n.tiltX ? { tiltX: n.tiltX } : {}),
+        ...(n.tiltY ? { tiltY: n.tiltY } : {}),
+        ...(n.perspective ? { perspective: n.perspective } : {}),
         ...(n.isClue ? { isClue: true } : {}),
         dialogues: n.dialogues,
       }));
@@ -932,7 +944,14 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 {npc.portrait ? (
                   <img src={npc.portrait} alt={npc.name} style={{
                     ...styles.npcImg,
-                    transform: `scale(${npc.scale || 1})${npc.flip ? " scaleX(-1)" : ""}`,
+                    perspective: npc.perspective ? (npc.perspective + "px") : undefined,
+                    transform: [
+                      `scale(${npc.scale || 1})`,
+                      npc.tiltX ? `rotateX(${npc.tiltX}deg)` : "",
+                      npc.tiltY ? `rotateY(${npc.tiltY}deg)` : "",
+                      npc.rotate ? `rotate(${npc.rotate}deg)` : "",
+                      npc.flip ? "scaleX(-1)" : "",
+                    ].filter(Boolean).join(" "),
                   }} />
                 ) : (
                   <div style={styles.textLabelOnScene}>
@@ -1176,6 +1195,30 @@ export default function SceneEditor({ initialEventId, onExit }) {
                       onChange={(e) => updateNpcField(selected.id, "flip", e.target.checked)} />
                     {" \u6C34\u5E73\u7FFB\u8F6C (flip)"}
                   </label>
+                </div>
+                <div style={styles.detailRow}>
+                  <label style={styles.fieldLabel}>{"\u65CB\u8F6C (rotate): " + (selected.rotate || 0) + "\u00B0"}</label>
+                  <input type="range" min="-180" max="180" step="1" value={selected.rotate || 0}
+                    onChange={(e) => updateNpcField(selected.id, "rotate", parseInt(e.target.value, 10))}
+                    style={{ width: "100%" }} />
+                </div>
+                <div style={styles.detailRow}>
+                  <label style={styles.fieldLabel}>{"X \u8F74\u503E\u659C (tiltX): " + (selected.tiltX || 0) + "\u00B0"}</label>
+                  <input type="range" min="-60" max="60" step="1" value={selected.tiltX || 0}
+                    onChange={(e) => updateNpcField(selected.id, "tiltX", parseInt(e.target.value, 10))}
+                    style={{ width: "100%" }} />
+                </div>
+                <div style={styles.detailRow}>
+                  <label style={styles.fieldLabel}>{"Y \u8F74\u503E\u659C (tiltY): " + (selected.tiltY || 0) + "\u00B0"}</label>
+                  <input type="range" min="-60" max="60" step="1" value={selected.tiltY || 0}
+                    onChange={(e) => updateNpcField(selected.id, "tiltY", parseInt(e.target.value, 10))}
+                    style={{ width: "100%" }} />
+                </div>
+                <div style={styles.detailRow}>
+                  <label style={styles.fieldLabel}>{"3D \u900F\u89C6\u6DF1\u5EA6 (perspective): " + (selected.perspective || 0) + "px"}</label>
+                  <input type="range" min="0" max="1500" step="50" value={selected.perspective || 0}
+                    onChange={(e) => updateNpcField(selected.id, "perspective", parseInt(e.target.value, 10))}
+                    style={{ width: "100%" }} />
                 </div>
                 <h4 style={styles.dialogueTitle}>{"\u5BF9\u8BDD\u5185\u5BB9"}</h4>
                 {selected.dialogues.map((d, i) => (

@@ -272,9 +272,21 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                         width: npcSize,
                         height: npcSize,
                         borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
-                        transform: npc.flip ? "scaleX(-1)" : "none",
+                        // Compose: optional 3D perspective tilt, rotation, flip.
+                        perspective: npc.perspective ? (npc.perspective + "px") : undefined,
+                        transform: [
+                          npc.tiltX ? `rotateX(${npc.tiltX}deg)` : "",
+                          npc.tiltY ? `rotateY(${npc.tiltY}deg)` : "",
+                          npc.rotate ? `rotate(${npc.rotate}deg)` : "",
+                          npc.flip ? "scaleX(-1)" : "",
+                        ].filter(Boolean).join(" ") || "none",
                       }}>
-                        <img src={npc.portrait} alt={npc.name} style={styles.npcPortraitImg} />
+                        <img
+                          src={npc.portrait}
+                          alt={npc.name}
+                          style={styles.npcPortraitImg}
+                          onError={(e) => { e.currentTarget.style.opacity = "0.2"; }}
+                        />
                       </div>
                       <span style={styles.npcName}>{npc.name}</span>
                     </>
@@ -377,7 +389,22 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                     {/* Portrait overlapping the bar from the left */}
                     {portrait && (
                       <div style={styles.dialoguePortraitArea}>
-                        <img src={portrait} alt="" style={styles.dialoguePortraitLarge} />
+                        <img
+                          src={portrait}
+                          alt=""
+                          style={styles.dialoguePortraitLarge}
+                          onError={(e) => {
+                            // If the speaker-specific portrait is missing,
+                            // fall back to the activeNpc's portrait, then
+                            // to a neutral silhouette so dialogue never
+                            // loses its avatar.
+                            if (activeNpc.portrait && e.currentTarget.src !== window.location.origin + activeNpc.portrait) {
+                              e.currentTarget.src = activeNpc.portrait;
+                            } else {
+                              e.currentTarget.style.display = "none";
+                            }
+                          }}
+                        />
                       </div>
                     )}
                     {/* Text content */}
@@ -1432,33 +1459,47 @@ function EscapeGamePhase({ phase, onComplete }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [won, gridW, gridH, cells]);
 
-  // ---- Guard tick: Pac-Man tracks ------------------------------------------
+  // ---- Guard tick: Pac-Man tracks + close-range pursuit --------------------
   useEffect(() => {
     if (won) return;
+    const chaseRadius = phase.chaseRadius || 0;
     const t = setInterval(() => {
       setGuards((gs) => gs.map((g) => {
         let dir = g.dir;
-        // 1. If current cell has an arrow, override direction.
-        const overrideAtCurrent = arrowMap.get(g.pos.x + "," + g.pos.y);
-        if (overrideAtCurrent) dir = overrideAtCurrent;
-        // 2. Try to step. If blocked, reverse direction and stay (will move next tick).
+        // Close-range pursuit: if player is within chaseRadius (in
+        // Chebyshev distance), head toward them on the longer axis first,
+        // overriding the patrol track. This lets guards "see" and chase.
+        if (chaseRadius > 0) {
+          const adx = Math.abs(player.x - g.pos.x);
+          const ady = Math.abs(player.y - g.pos.y);
+          if (Math.max(adx, ady) <= chaseRadius) {
+            if (adx >= ady) {
+              dir = player.x > g.pos.x ? "right" : (player.x < g.pos.x ? "left" : dir);
+            } else {
+              dir = player.y > g.pos.y ? "down" : (player.y < g.pos.y ? "up" : dir);
+            }
+          }
+        }
+        // If current cell has an arrow AND we're not chasing, take the arrow.
+        if (chaseRadius === 0 || Math.max(Math.abs(player.x - g.pos.x), Math.abs(player.y - g.pos.y)) > chaseRadius) {
+          const overrideAtCurrent = arrowMap.get(g.pos.x + "," + g.pos.y);
+          if (overrideAtCurrent) dir = overrideAtCurrent;
+        }
+        // Step. If blocked, reverse direction.
         const { dx, dy } = stepDir(dir);
         let nx = g.pos.x + dx, ny = g.pos.y + dy;
         if (isBlocked(nx, ny)) {
           dir = reverseDir(dir);
           const r = stepDir(dir);
           nx = g.pos.x + r.dx; ny = g.pos.y + r.dy;
-          if (isBlocked(nx, ny)) {
-            // Cornered — just flip direction and don't move.
-            return { ...g, dir };
-          }
+          if (isBlocked(nx, ny)) return { ...g, dir };
         }
         return { ...g, pos: { x: nx, y: ny }, dir };
       }));
     }, tickMs);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [won, tickMs]);
+  }, [won, tickMs, player.x, player.y]);
 
   // ---- Collision + win ------------------------------------------------------
   useEffect(() => {
