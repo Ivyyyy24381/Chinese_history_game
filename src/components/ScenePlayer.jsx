@@ -1128,8 +1128,20 @@ function ClickPointsPhase({ phase, onComplete }) {
   const poemLines = phase.progressivePoem || [];
   const threshold = phase.unlockThreshold || 3;
   const imageSrc = phase.image || phase.background;
+  const hintIntervalSec = phase.hintIntervalSec || 30;
+  const hintDurationSec = phase.hintDurationSec || 3;
   const [clicked, setClicked] = useState(new Set());
   const [activePoint, setActivePoint] = useState(null);
+  const [showHint, setShowHint] = useState(false);
+
+  // Hint timer: briefly flash unclicked markers every `hintIntervalSec`.
+  useEffect(() => {
+    const tick = setInterval(() => {
+      setShowHint(true);
+      setTimeout(() => setShowHint(false), hintDurationSec * 1000);
+    }, hintIntervalSec * 1000);
+    return () => clearInterval(tick);
+  }, [hintIntervalSec, hintDurationSec]);
 
   const handleClick = (pt) => {
     setActivePoint(pt);
@@ -1173,12 +1185,14 @@ function ClickPointsPhase({ phase, onComplete }) {
                   top: pt.position.y + "%",
                   transform: "translate(-50%, -50%)",
                   width: 64, height: 64, borderRadius: "50%",
-                  border: isClicked ? "4px solid #E74C3C" : "2px dashed rgba(231,76,60,0.0)",
+                  border: isClicked ? "4px solid #E74C3C" : "none",
                   backgroundColor: "transparent",
                   cursor: isClicked ? "pointer" : "crosshair",
                   zIndex: 5,
                   boxShadow: isClicked ? "0 0 12px rgba(231,76,60,0.5)" : "none",
-                  animation: isClicked ? "none" : "spotPulse 2.2s ease-out infinite",
+                  // Unclicked markers are fully invisible; pulse animation only
+                  // runs during the brief hint window every `hintIntervalSec`.
+                  animation: isClicked ? "none" : (showHint ? "spotPulse 1.5s ease-out 2" : "none"),
                 }}
                 title={pt.label || ""}
               />
@@ -1329,17 +1343,24 @@ function EscapeGamePhase({ phase, onComplete }) {
   const chaseRadius = phase.chaseRadius || 3;
   const tickMs = 200;
 
+  // Factory: rebuild guards from phase config so we can fully reset on death.
+  const buildGuards = useCallback(() => (phase.guards || []).map((g) => ({
+    pos: { ...g.path[0] },
+    path: g.path,
+    pIdx: 0,
+    speed: g.speed || 1,
+  })), [phase.guards]);
+
   const [player, setPlayer] = useState({ ...phase.start });
-  const [guards, setGuards] = useState(
-    (phase.guards || []).map((g) => ({
-      pos: { ...g.path[0] },
-      path: g.path,
-      pIdx: 0,
-      speed: g.speed || 1,
-    }))
-  );
+  const [guards, setGuards] = useState(buildGuards);
   const [won, setWon] = useState(false);
   const [deaths, setDeaths] = useState(0);
+  // Manual restart — bumps a key so all state regenerates from phase config.
+  const resetGame = useCallback(() => {
+    setPlayer({ ...phase.start });
+    setGuards(buildGuards());
+    setWon(false);
+  }, [phase.start, buildGuards]);
 
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
@@ -1401,7 +1422,10 @@ function EscapeGamePhase({ phase, onComplete }) {
     }
     if (guards.some((g) => g.pos.x === player.x && g.pos.y === player.y)) {
       setDeaths((d) => d + 1);
+      // Reset BOTH player and guards on death so we don't get stuck in an
+      // infinite re-spawn loop with a guard standing on the start square.
       setPlayer({ ...phase.start });
+      setGuards(buildGuards());
     }
   }, [player, guards, won, phase.end, phase.start]);
 
@@ -1412,9 +1436,15 @@ function EscapeGamePhase({ phase, onComplete }) {
       <div style={{ ...styles.choicePanel, maxWidth: 760, textAlign: "center" }}>
         <h2 style={{ margin: "0 0 4px", fontSize: 20 }}>{"\u{1F3C3} 出城：避开守卫"}</h2>
         {phase.narrative && <p style={{ color: "#666", fontSize: 13, margin: "4px 0 12px" }}>{phase.narrative}</p>}
-        <div style={{ fontSize: 12, color: "#888", marginBottom: 12 }}>
-          {"方向键 / WASD 移动 · 遇守卫回起点 · 抵达绿点胜利"}
-          <span style={{ marginLeft: 16, color: "#DC3545" }}>{"被抓：" + deaths}</span>
+        <div style={{ fontSize: 12, color: "#888", marginBottom: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 16 }}>
+          <span>{"方向键 / WASD 移动 · 遇守卫回起点 · 抵达绿点胜利"}</span>
+          <span style={{ color: "#DC3545" }}>{"被抓：" + deaths}</span>
+          <button
+            onClick={resetGame}
+            style={{ fontSize: 12, padding: "4px 10px", border: "1px solid #999", borderRadius: 4, backgroundColor: "#FFF", cursor: "pointer", fontFamily: "inherit" }}
+          >
+            {"重新开始"}
+          </button>
         </div>
         <div style={{
           display: "grid",
