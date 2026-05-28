@@ -914,19 +914,10 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   }
 
   // --- CLICK POINTS PHASE (点击触发独白 + 渐进式诗句) ---
+  // Renders as a popup modal containing the scene image with click-to-circle
+  // 找茬-style markers, instruction at the top, and progressive poem reveal.
   if (currentPhase.type === "click_points") {
-    return (
-      <div style={styles.sceneOuter}>
-        <div style={styles.sceneStage}>
-          <div style={{
-            ...styles.sceneStageInner,
-            backgroundImage: currentPhase.background ? `url(${currentPhase.background})` : "none",
-          }}>
-            <ClickPointsPhase phase={currentPhase} onComplete={goToNextPhase} />
-          </div>
-        </div>
-      </div>
-    );
+    return <ClickPointsPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
   // --- ESCAPE GAME PHASE (红蓝点逃离) ---
@@ -1136,6 +1127,7 @@ function ClickPointsPhase({ phase, onComplete }) {
   const points = phase.points || [];
   const poemLines = phase.progressivePoem || [];
   const threshold = phase.unlockThreshold || 3;
+  const imageSrc = phase.image || phase.background;
   const [clicked, setClicked] = useState(new Set());
   const [activePoint, setActivePoint] = useState(null);
 
@@ -1146,105 +1138,185 @@ function ClickPointsPhase({ phase, onComplete }) {
     setClicked(next);
   };
 
-  // How many poem lines should currently be visible:
-  // 1st line appears once `threshold` points have been clicked; +1 line per additional click.
+  // Progressive poem: 1st line appears once `threshold` points are clicked,
+  // then +1 line per additional click.
   const visibleLines = Math.max(0, clicked.size - threshold + 1);
   const allClicked = clicked.size >= points.length;
 
   return (
-    <>
-      {phase.title && (
-        <div style={styles.phaseHeader}>
-          <h2 style={styles.phaseTitle}>{phase.title}</h2>
-          {phase.narrative && <p style={styles.phaseNarrative}>{phase.narrative}</p>}
+    <div style={cpStyles.overlay}>
+      <div style={cpStyles.popup}>
+        {/* Header: title + instruction */}
+        <div style={cpStyles.header}>
+          <h2 style={cpStyles.title}>{phase.title || "\u8BE5\u6BB5\u8BD7\u753B"}</h2>
+          {phase.narrative && <p style={cpStyles.narrative}>{phase.narrative}</p>}
+          <div style={cpStyles.instructionRow}>
+            <span>{"\u{1F441} " + (phase.instruction || "\u70B9\u51FB\u753B\u4E2D\u4E0D\u540C\u4F4D\u7F6E\uFF0C\u542C\u7956\u7236\u5199\u4E0B\u5FC3\u4E2D\u53E5\u5B50")}</span>
+            <span style={cpStyles.progress}>
+              {"\u5DF2\u53D1\u73B0 "}<strong>{clicked.size}</strong>{" / "}{points.length}
+            </span>
+          </div>
         </div>
-      )}
-      {phase.instruction && (
-        <div style={styles.instructionBar}>
-          <span style={styles.instructionIcon}>{"\u{1F441}"}</span>
-          <span>{phase.instruction}</span>
-          <span style={styles.talkCount}>{clicked.size}/{points.length}</span>
-        </div>
-      )}
 
-      {/* Progressive poem (top overlay) */}
-      {visibleLines > 0 && (
-        <div style={{
-          position: "absolute", top: 80, left: "50%", transform: "translateX(-50%)",
-          backgroundColor: "rgba(0,0,0,0.55)", color: "#F5E6D3",
-          padding: "12px 24px", borderRadius: 8, textAlign: "center",
-          fontFamily: "'Noto Serif SC', 'Songti SC', serif",
-          fontSize: 18, letterSpacing: 2, lineHeight: 1.8, zIndex: 15,
-        }}>
-          {poemLines.slice(0, visibleLines).map((ln, i) => <div key={i}>{ln}</div>)}
+        {/* Image with click-to-circle markers */}
+        <div style={cpStyles.imageWrap}>
+          <img src={imageSrc} alt="" style={cpStyles.image} />
+          {points.map((pt) => {
+            const isClicked = clicked.has(pt.id);
+            return (
+              <button
+                key={pt.id}
+                onClick={() => handleClick(pt)}
+                style={{
+                  position: "absolute",
+                  left: pt.position.x + "%",
+                  top: pt.position.y + "%",
+                  transform: "translate(-50%, -50%)",
+                  width: 64, height: 64, borderRadius: "50%",
+                  border: isClicked ? "4px solid #E74C3C" : "2px dashed rgba(231,76,60,0.0)",
+                  backgroundColor: "transparent",
+                  cursor: isClicked ? "pointer" : "crosshair",
+                  zIndex: 5,
+                  boxShadow: isClicked ? "0 0 12px rgba(231,76,60,0.5)" : "none",
+                  animation: isClicked ? "none" : "spotPulse 2.2s ease-out infinite",
+                }}
+                title={pt.label || ""}
+              />
+            );
+          })}
         </div>
-      )}
 
-      {/* Click points */}
-      {points.map((pt) => {
-        const isClicked = clicked.has(pt.id);
-        return (
-          <button
-            key={pt.id}
-            onClick={() => handleClick(pt)}
-            style={{
-              position: "absolute",
-              left: pt.position.x + "%",
-              top: pt.position.y + "%",
-              transform: "translate(-50%, -50%)",
-              width: 44, height: 44, borderRadius: "50%",
-              backgroundColor: isClicked ? "rgba(149,165,166,0.7)" : "rgba(231,76,60,0.85)",
-              border: "3px solid rgba(255,255,255,0.9)",
-              cursor: "pointer", zIndex: 10,
-              color: "#FFF", fontSize: 18,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
-              animation: isClicked ? "none" : "clickPointPulse 1.8s ease-out infinite",
-            }}
-            title={pt.label || pt.id}
-          >
-            {isClicked ? "✓" : "?"}
+        {/* Progressive 春望 reveal */}
+        {visibleLines > 0 && (
+          <div style={cpStyles.poemBox}>
+            <div style={cpStyles.poemTitle}>{"\u300A\u6625\u671B\u300B"}</div>
+            {poemLines.slice(0, visibleLines).map((ln, i) => (
+              <div key={i} style={cpStyles.poemLine}>{ln}</div>
+            ))}
+          </div>
+        )}
+
+        {/* Footer: continue */}
+        {allClicked ? (
+          <button onClick={onComplete} style={cpStyles.continueBtn}>
+            {"\u7EE7\u7EED \u2192"}
           </button>
-        );
-      })}
+        ) : (
+          <div style={cpStyles.hint}>
+            {clicked.size < threshold
+              ? `\u518D\u70B9 ${threshold - clicked.size} \u5904\uFF0C\u300A\u6625\u671B\u300B\u5C06\u7F13\u7F13\u6D6E\u73B0\u2026`
+              : "\u7EE7\u7EED\u70B9\u51FB\u672A\u53D1\u73B0\u7684\u4F4D\u7F6E\u2026"}
+          </div>
+        )}
+      </div>
 
-      {/* Active text bubble */}
+      {/* Active text bubble — pops up after each click */}
       {activePoint && (
         <div
           onClick={() => setActivePoint(null)}
-          style={{
-            position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)",
-            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 30, cursor: "pointer",
-          }}
+          style={cpStyles.bubbleOverlay}
         >
-          <div style={{
-            backgroundColor: "#F5E6D3", padding: "20px 28px", borderRadius: 8,
-            maxWidth: 460, fontSize: 17, lineHeight: 1.7, color: "#3E2723",
-            fontFamily: "'Noto Serif SC', 'Songti SC', serif",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
-          }}>
-            {activePoint.label && <div style={{ fontSize: 12, color: "#999", marginBottom: 6 }}>{activePoint.label}</div>}
-            <div>{activePoint.text}</div>
-            <div style={{ marginTop: 12, fontSize: 12, color: "#999", textAlign: "right" }}>{"点击关闭"}</div>
+          <div style={cpStyles.bubble} onClick={(e) => e.stopPropagation()}>
+            {activePoint.label && <div style={cpStyles.bubbleLabel}>{activePoint.label}</div>}
+            <div style={cpStyles.bubbleText}>{activePoint.text}</div>
+            <button onClick={() => setActivePoint(null)} style={cpStyles.bubbleClose}>{"\u77E5\u9053\u4E86"}</button>
           </div>
         </div>
       )}
-
-      {allClicked && (
-        <button
-          onClick={onComplete}
-          style={{
-            position: "absolute", bottom: 30, left: "50%", transform: "translateX(-50%)",
-            padding: "12px 32px", fontSize: 16, fontWeight: "bold",
-            backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 8,
-            cursor: "pointer", zIndex: 25,
-            fontFamily: "'Noto Serif SC', 'Songti SC', serif",
-          }}
-        >
-          {"继续 →"}
-        </button>
-      )}
-    </>
+    </div>
   );
+}
+
+const cpStyles = {
+  overlay: {
+    position: "fixed", inset: 0, zIndex: 250,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    padding: 20,
+  },
+  popup: {
+    backgroundColor: "#F5E6D3",
+    borderRadius: 12,
+    maxWidth: "min(900px, 95vw)",
+    width: "100%",
+    maxHeight: "95vh",
+    overflowY: "auto",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+    display: "flex", flexDirection: "column",
+  },
+  header: {
+    padding: "16px 24px 12px",
+    borderBottom: "1px solid #D4A574",
+  },
+  title: {
+    margin: "0 0 4px", fontSize: 22, color: "#3E2723",
+    letterSpacing: 2,
+  },
+  narrative: {
+    margin: "0 0 8px", fontSize: 13, color: "#6B5340", lineHeight: 1.6,
+  },
+  instructionRow: {
+    display: "flex", justifyContent: "space-between", alignItems: "center",
+    fontSize: 13, color: "#8B7355",
+  },
+  progress: { color: "#3E2723" },
+  imageWrap: {
+    position: "relative",
+    margin: "12px 16px",
+    backgroundColor: "#000",
+    borderRadius: 8,
+    overflow: "hidden",
+    lineHeight: 0,
+  },
+  image: { width: "100%", height: "auto", display: "block" },
+  poemBox: {
+    margin: "8px 24px 12px",
+    padding: "12px 16px",
+    backgroundColor: "rgba(212,165,116,0.18)",
+    borderLeft: "4px solid #D4A574",
+    borderRadius: 4,
+    textAlign: "center",
+  },
+  poemTitle: {
+    fontSize: 14, color: "#8B7355", marginBottom: 6, letterSpacing: 2,
+  },
+  poemLine: {
+    fontSize: 18, color: "#3E2723", lineHeight: 1.8, letterSpacing: 2,
+  },
+  continueBtn: {
+    margin: "8px 24px 20px",
+    padding: "12px 0", fontSize: 16, fontWeight: "bold",
+    backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 6,
+    cursor: "pointer", fontFamily: "inherit",
+  },
+  hint: {
+    margin: "8px 24px 20px",
+    fontSize: 13, color: "#8B7355", textAlign: "center", fontStyle: "italic",
+  },
+  bubbleOverlay: {
+    position: "fixed", inset: 0, zIndex: 260,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    cursor: "pointer",
+  },
+  bubble: {
+    backgroundColor: "#FFF8EE", padding: "20px 28px", borderRadius: 8,
+    maxWidth: 480, width: "85%",
+    boxShadow: "0 6px 32px rgba(0,0,0,0.6)",
+    border: "2px solid #D4A574",
+    cursor: "default",
+  },
+  bubbleLabel: { fontSize: 12, color: "#999", marginBottom: 8, letterSpacing: 1 },
+  bubbleText: {
+    fontSize: 18, color: "#3E2723", lineHeight: 1.8, letterSpacing: 1,
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+  },
+  bubbleClose: {
+    marginTop: 16, padding: "8px 24px", fontSize: 14,
+    backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 4,
+    cursor: "pointer", float: "right", fontFamily: "inherit",
+  },
 }
 
 // ============================================================
@@ -1395,6 +1467,11 @@ if (typeof document !== "undefined" && !document.getElementById("click-point-key
     @keyframes clickPointPulse {
       0% { box-shadow: 0 0 0 0 rgba(231,76,60,0.6); }
       100% { box-shadow: 0 0 0 18px rgba(231,76,60,0); }
+    }
+    @keyframes spotPulse {
+      0%   { box-shadow: 0 0 0 0   rgba(231,76,60,0.55); }
+      70%  { box-shadow: 0 0 0 12px rgba(231,76,60,0);   }
+      100% { box-shadow: 0 0 0 0   rgba(231,76,60,0);    }
     }
   `;
   document.head.appendChild(style);

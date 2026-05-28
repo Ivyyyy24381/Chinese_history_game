@@ -16,8 +16,8 @@
           "id": "appointment_letter",
           "name": "委任状",
           "position": {
-            "x": 50,
-            "y": 55
+            "x": 47,
+            "y": 66
           },
           "scale": 0.9,
           "isClue": true,
@@ -91,12 +91,14 @@
       "title": "入仕 · 朝堂",
       "transitionText": "数日后，尚书省。一封婉拒的奏疏摆在案头。",
       "announcement": {
-        "text": "改除杜甫为右卫率府兵曹参军。"
+        "text": "改除杜甫为右卫率府兵曹参军。",
+        "style": "imperial_decree"
       },
       "dufu_reaction": {
         "portrait": "/assets/characters/dufu/portrait.png",
         "text": "看管兵器……也好。总比河西尉强。"
-      }
+      },
+      "narrative": ""
     },
     {
       "id": "fanyang_rumor",
@@ -111,10 +113,10 @@
           "name": "驿卒",
           "portrait": "/assets/characters/npcs/messenger.png",
           "position": {
-            "x": 50,
-            "y": 52
+            "x": 66,
+            "y": 74
           },
-          "scale": 1.5,
+          "scale": 1.1,
           "isClue": true,
           "dialogues": [
             {
@@ -134,8 +136,8 @@
           "name": "百姓甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
           "position": {
-            "x": 20,
-            "y": 65
+            "x": 22,
+            "y": 80
           },
           "scale": 1.1,
           "dialogues": [
@@ -156,8 +158,8 @@
           "name": "百姓乙",
           "portrait": "/assets/characters/npcs/merchant_b.png",
           "position": {
-            "x": 35,
-            "y": 72
+            "x": 33,
+            "y": 79
           },
           "scale": 1.2,
           "dialogues": [
@@ -178,10 +180,10 @@
           "name": "路过官员",
           "portrait": "/assets/characters/npcs/official.png",
           "position": {
-            "x": 67,
-            "y": 58
+            "x": 57,
+            "y": 76
           },
-          "scale": 1.3,
+          "scale": 1.2,
           "flip": true,
           "dialogues": [
             {
@@ -201,8 +203,8 @@
           "name": "街头告示",
           "portrait": "",
           "position": {
-            "x": 84,
-            "y": 38
+            "x": 79,
+            "y": 63
           },
           "isClue": true,
           "dialogues": [
@@ -219,7 +221,7 @@
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "changan_falls"
     },
     {
@@ -236,7 +238,8 @@
         "portrait": "/assets/characters/dufu/portrait.png",
         "text": "我把家人安顿在鄜州，自己却走不出长安。"
       },
-      "nextPhase": "besieged"
+      "nextPhase": "besieged",
+      "narrative": ""
     },
     {
       "id": "besieged",
@@ -251,8 +254,8 @@
           "name": "难民妇人",
           "portrait": "/assets/characters/npcs/refugee_woman.png",
           "position": {
-            "x": 25,
-            "y": 65
+            "x": 33,
+            "y": 67
           },
           "scale": 1.4,
           "isClue": true,
@@ -274,7 +277,7 @@
           "name": "难民老汉",
           "portrait": "/assets/characters/npcs/refugee_old.png",
           "position": {
-            "x": 50,
+            "x": 48,
             "y": 70
           },
           "scale": 1.3,
@@ -297,8 +300,8 @@
           "name": "叛军军官",
           "portrait": "/assets/characters/npcs/rebel_officer.png",
           "position": {
-            "x": 75,
-            "y": 55
+            "x": 76,
+            "y": 68
           },
           "scale": 1.5,
           "isClue": true,
@@ -320,8 +323,8 @@
           "name": "城墙刻字",
           "portrait": "",
           "position": {
-            "x": 90,
-            "y": 35
+            "x": 58,
+            "y": 68
           },
           "isClue": true,
           "dialogues": [
@@ -338,80 +341,80 @@
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "chunwang"
     },
     {
       "id": "chunwang",
       "type": "click_points",
-      "background": "/assets/events/755_anshi/backgrounds/changan_ruin.png",
+      "background": "/assets/events/755_anshi/backgrounds/chunwang_scene.png",
       "title": "《春望》·画面独白",
       "narrative": "杜甫站在长安城头，远望残破宫城。",
-      "instruction": "点击画面不同位置，听他写下心中的句子。",
+      "instruction": "画面里藏着 7 个杜甫的心事——点击它们，听他写下心中的句子",
       "unlockThreshold": 3,
       "points": [
         {
-          "id": "wall",
-          "label": "围墙",
+          "id": "beacon",
+          "label": "烽火",
           "position": {
-            "x": 15,
-            "y": 70
+            "x": 33,
+            "y": 14
           },
-          "text": "城郭陷落日萧条，支离围墙空落寞。"
+          "text": "烽火悬在云边久，胡马来后未得熄。"
+        },
+        {
+          "id": "peach",
+          "label": "桃花树枝",
+          "position": {
+            "x": 78,
+            "y": 18
+          },
+          "text": "故国春花不知意，是春依旧烂漫开。"
         },
         {
           "id": "city",
           "label": "长安城",
           "position": {
-            "x": 50,
+            "x": 37,
             "y": 50
           },
           "text": "长安城里屋舍在，圣人车辇今何之？"
         },
         {
-          "id": "peach",
-          "label": "桃花",
+          "id": "wall",
+          "label": "围墙",
           "position": {
-            "x": 30,
-            "y": 30
+            "x": 87,
+            "y": 47
           },
-          "text": "故国春花不知意，是春依旧烂漫开。"
-        },
-        {
-          "id": "flower",
-          "label": "下方花",
-          "position": {
-            "x": 40,
-            "y": 80
-          },
-          "text": "空见落花红池沼，玉箸一夜为谁流。"
-        },
-        {
-          "id": "bird",
-          "label": "鸟",
-          "position": {
-            "x": 70,
-            "y": 35
-          },
-          "text": "嘶鸣偏和破阵乐，啼叫犹带泣血声。"
-        },
-        {
-          "id": "beacon",
-          "label": "烽火",
-          "position": {
-            "x": 85,
-            "y": 25
-          },
-          "text": "烽火悬在云边久，胡马来后未得熄。"
+          "text": "城郭陷落日萧条，支离围墙空落寞。"
         },
         {
           "id": "book",
           "label": "书本",
           "position": {
-            "x": 60,
-            "y": 75
+            "x": 65,
+            "y": 50
           },
           "text": "欲问鄜州闺中事，独在西都不得知。"
+        },
+        {
+          "id": "bird",
+          "label": "鸟",
+          "position": {
+            "x": 24,
+            "y": 57
+          },
+          "text": "嘶鸣偏和破阵乐，啼叫犹带泣血声。"
+        },
+        {
+          "id": "flower",
+          "label": "下方花",
+          "position": {
+            "x": 10,
+            "y": 80
+          },
+          "text": "空见落花红池沼，玉箸一夜为谁流。"
         }
       ],
       "progressivePoem": [
@@ -419,7 +422,8 @@
         "感时花溅泪，恨别鸟惊心。",
         "烽火连三月，家书抵万金。",
         "白头搔更短，浑欲不胜簪。"
-      ]
+      ],
+      "image": "/assets/events/755_anshi/backgrounds/chunwang_scene.png"
     },
     {
       "id": "escape",
