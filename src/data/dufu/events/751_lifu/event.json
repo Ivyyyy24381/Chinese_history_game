@@ -231,47 +231,28 @@
       "nextPhase": "writing_choice"
     },
     {
-      "id": "writing_choice",
-      "type": "forced_choice",
+      "id": "writing_puzzle",
+      "type": "sliding_puzzle",
       "background": "/assets/events/751_lifu/backgrounds/dufu_home.png",
-      "title": "落笔之际",
-      "narrative": "灯下，杜甫提起笔，又顿住——这篇《朝献太清宫赋》，该如何写？",
-      "question": "你将如何完成这篇献赋？",
-      "options": [
+      "title": "落笔之际 · 数字华容道",
+      "narrative": "灯下，杜甫提起笔——三大礼赋的句子在脑中翻涌。请把它们重新拼齐。",
+      "puzzles": [
         {
-          "id": "polish",
-          "text": "润饰辞藻",
-          "correct": true,
-          "response": {
-            "speaker": "dufu",
-            "speakerName": "杜甫",
-            "text": "辞采愈工，心却愈寒。"
-          }
+          "label": "《朝献太清宫赋》",
+          "solution": "祝融掷火以焚香，溪女捧盘而盥漱",
+          "timeoutSec": 300
         },
         {
-          "id": "flatter",
-          "text": "加入更多歌功颂德之语",
-          "correct": true,
-          "response": {
-            "speaker": "dufu",
-            "speakerName": "杜甫",
-            "text": "（沉默）……"
-          }
+          "label": "《朝享太庙赋》",
+          "solution": "鞉鼓埙篪为之主，钟磬竽瑟以之和",
+          "timeoutSec": 300
         },
         {
-          "id": "truth",
-          "text": "保留自己的真实想法",
-          "correct": true,
-          "response": {
-            "speaker": "dufu",
-            "speakerName": "杜甫",
-            "text": "这样的文章，圣人真的会看吗？"
-          }
+          "label": "《有事于南郊赋》",
+          "solution": "群望之遍祭在斯，示有以明其翼戴",
+          "timeoutSec": 300
         }
-      ],
-      "conclusion": {
-        "narrative": "三大礼赋终成。杜甫将文章郑重地投入了延恩匦。"
-      }
+      ]
     },
     {
       "id": "palace_gate",

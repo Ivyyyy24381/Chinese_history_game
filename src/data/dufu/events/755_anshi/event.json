@@ -5,6 +5,100 @@
   "type": "interactive",
   "phases": [
     {
+      "id": "ru_shi_home",
+      "type": "explore",
+      "background": "/assets/events/751_lifu/backgrounds/dufu_home.png",
+      "title": "入仕 · 杜甫家中",
+      "narrative": "天宝十四载（755）十月。长安。困守长安十年，杜甫终于等到了任命。",
+      "instruction": "查看桌案上的委任状。",
+      "npcs": [
+        {
+          "id": "appointment_letter",
+          "name": "委任状",
+          "position": {
+            "x": 50,
+            "y": 55
+          },
+          "scale": 0.9,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "text": "桌案上摊着一封朱印诏书——「除杜甫为河西尉。」"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "等待四年，终于得到了朝廷的委任。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "河西尉？一个负责缉捕盗匪的九品小员？"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 1
+    },
+    {
+      "id": "ru_shi_choice",
+      "type": "forced_choice",
+      "background": "/assets/events/751_lifu/backgrounds/dufu_home.png",
+      "title": "入仕 · 该如何回应",
+      "narrative": "杜甫提笔欲奏。但该说什么呢？",
+      "question": "杜甫该如何拒绝这份任命？",
+      "options": [
+        {
+          "id": "self",
+          "text": "「不作河西尉，凄凉为折腰。」",
+          "correct": true,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "这是我自己的话。河西尉，我不去。"
+          }
+        },
+        {
+          "id": "libai",
+          "text": "「安能摧眉折腰事权贵，使我不得开心颜？」",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "（顿）……这是太白的句子，不是我的。"
+          }
+        },
+        {
+          "id": "menghaoran",
+          "text": "「不才明主弃，多病故人疏。」",
+          "correct": false,
+          "response": {
+            "speaker": "dufu",
+            "speakerName": "杜甫",
+            "text": "（顿）……这是孟襄阳的句子。我有我自己的话。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "杜甫上书婉拒。朝堂上又起了波澜。"
+      }
+    },
+    {
+      "id": "ru_shi_court",
+      "type": "transition",
+      "background": "/assets/events/747_exam/backgrounds/palace_outside.png",
+      "title": "入仕 · 朝堂",
+      "transitionText": "数日后，尚书省。一封婉拒的奏疏摆在案头。",
+      "announcement": {
+        "text": "改除杜甫为右卫率府兵曹参军。"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/characters/dufu/portrait.png",
+        "text": "看管兵器……也好。总比河西尉强。"
+      }
+    },
+    {
       "id": "fanyang_rumor",
       "type": "explore",
       "background": "/assets/events/755_anshi/backgrounds/changan_winter.png",
@@ -16,57 +110,112 @@
           "id": "messenger",
           "name": "驿卒",
           "portrait": "/assets/characters/npcs/messenger.png",
-          "position": { "x": 50, "y": 52 },
+          "position": {
+            "x": 50,
+            "y": 52
+          },
           "scale": 1.5,
           "isClue": true,
           "dialogues": [
-            { "speaker": "messenger", "speakerName": "驿卒（喘）", "text": "范阳——范阳起兵了！安禄山反了！" },
-            { "speaker": "messenger", "speakerName": "驿卒", "text": "沿途州县望风披靡，没人挡得住！" }
+            {
+              "speaker": "messenger",
+              "speakerName": "驿卒（喘）",
+              "text": "范阳——范阳起兵了！安禄山反了！"
+            },
+            {
+              "speaker": "messenger",
+              "speakerName": "驿卒",
+              "text": "沿途州县望风披靡，没人挡得住！"
+            }
           ]
         },
         {
           "id": "commoner_a",
           "name": "百姓甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
-          "position": { "x": 20, "y": 65 },
+          "position": {
+            "x": 20,
+            "y": 65
+          },
           "scale": 1.1,
           "dialogues": [
-            { "speaker": "commoner_a", "speakerName": "百姓甲", "text": "胡说！圣人正在华清池，安将军是义子，怎会造反？" },
-            { "speaker": "commoner_a", "speakerName": "百姓甲", "text": "你莫不是吃了酒乱报？" }
+            {
+              "speaker": "commoner_a",
+              "speakerName": "百姓甲",
+              "text": "胡说！圣人正在华清池，安将军是义子，怎会造反？"
+            },
+            {
+              "speaker": "commoner_a",
+              "speakerName": "百姓甲",
+              "text": "你莫不是吃了酒乱报？"
+            }
           ]
         },
         {
           "id": "commoner_b",
           "name": "百姓乙",
           "portrait": "/assets/characters/npcs/merchant_b.png",
-          "position": { "x": 35, "y": 72 },
+          "position": {
+            "x": 35,
+            "y": 72
+          },
           "scale": 1.2,
           "dialogues": [
-            { "speaker": "commoner_b", "speakerName": "百姓乙", "text": "驿卒怎敢妄言……" },
-            { "speaker": "commoner_b", "speakerName": "百姓乙", "text": "可若是真的——天下要乱了。" }
+            {
+              "speaker": "commoner_b",
+              "speakerName": "百姓乙",
+              "text": "驿卒怎敢妄言……"
+            },
+            {
+              "speaker": "commoner_b",
+              "speakerName": "百姓乙",
+              "text": "可若是真的——天下要乱了。"
+            }
           ]
         },
         {
           "id": "official",
           "name": "路过官员",
           "portrait": "/assets/characters/npcs/official.png",
-          "position": { "x": 67, "y": 58 },
+          "position": {
+            "x": 67,
+            "y": 58
+          },
           "scale": 1.3,
           "flip": true,
           "dialogues": [
-            { "speaker": "official", "speakerName": "官员（疾走）", "text": "速去告知宰相！" },
-            { "speaker": "official", "speakerName": "官员", "text": "不可声张！不可声张！" }
+            {
+              "speaker": "official",
+              "speakerName": "官员（疾走）",
+              "text": "速去告知宰相！"
+            },
+            {
+              "speaker": "official",
+              "speakerName": "官员",
+              "text": "不可声张！不可声张！"
+            }
           ]
         },
         {
           "id": "poster",
           "name": "街头告示",
           "portrait": "",
-          "position": { "x": 84, "y": 38 },
+          "position": {
+            "x": 84,
+            "y": 38
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "告示", "text": "「谋反逆者，凡有所言皆斩。」" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "这盛世……" }
+            {
+              "speaker": "narrator",
+              "speakerName": "告示",
+              "text": "「谋反逆者，凡有所言皆斩。」"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "这盛世……"
+            }
           ]
         }
       ],
@@ -101,47 +250,91 @@
           "id": "refugee_woman",
           "name": "难民妇人",
           "portrait": "/assets/characters/npcs/refugee_woman.png",
-          "position": { "x": 25, "y": 65 },
+          "position": {
+            "x": 25,
+            "y": 65
+          },
           "scale": 1.4,
           "isClue": true,
           "dialogues": [
-            { "speaker": "refugee_woman", "speakerName": "难民妇人", "text": "我们的儿子——被叛军抓走了！" },
-            { "speaker": "refugee_woman", "speakerName": "难民妇人", "text": "他才十六岁，他才十六岁啊！" }
+            {
+              "speaker": "refugee_woman",
+              "speakerName": "难民妇人",
+              "text": "我们的儿子——被叛军抓走了！"
+            },
+            {
+              "speaker": "refugee_woman",
+              "speakerName": "难民妇人",
+              "text": "他才十六岁，他才十六岁啊！"
+            }
           ]
         },
         {
           "id": "refugee_old",
           "name": "难民老汉",
           "portrait": "/assets/characters/npcs/refugee_old.png",
-          "position": { "x": 50, "y": 70 },
+          "position": {
+            "x": 50,
+            "y": 70
+          },
           "scale": 1.3,
           "isClue": true,
           "dialogues": [
-            { "speaker": "refugee_old", "speakerName": "难民老汉", "text": "天子也跑了，我们能往哪里去？" },
-            { "speaker": "refugee_old", "speakerName": "难民老汉", "text": "……活一天算一天罢。" }
+            {
+              "speaker": "refugee_old",
+              "speakerName": "难民老汉",
+              "text": "天子也跑了，我们能往哪里去？"
+            },
+            {
+              "speaker": "refugee_old",
+              "speakerName": "难民老汉",
+              "text": "……活一天算一天罢。"
+            }
           ]
         },
         {
           "id": "rebel_officer",
           "name": "叛军军官",
           "portrait": "/assets/characters/npcs/rebel_officer.png",
-          "position": { "x": 75, "y": 55 },
+          "position": {
+            "x": 75,
+            "y": 55
+          },
           "scale": 1.5,
           "isClue": true,
           "dialogues": [
-            { "speaker": "rebel_officer", "speakerName": "叛军军官", "text": "凡留城者，皆为叛贼之民！" },
-            { "speaker": "rebel_officer", "speakerName": "叛军军官", "text": "敢出城者，斩。" }
+            {
+              "speaker": "rebel_officer",
+              "speakerName": "叛军军官",
+              "text": "凡留城者，皆为叛贼之民！"
+            },
+            {
+              "speaker": "rebel_officer",
+              "speakerName": "叛军军官",
+              "text": "敢出城者，斩。"
+            }
           ]
         },
         {
           "id": "wall_inscription",
           "name": "城墙刻字",
           "portrait": "",
-          "position": { "x": 90, "y": 35 },
+          "position": {
+            "x": 90,
+            "y": 35
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "不知何人刻在墙根：「国破山河在，城春草木深。」" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "……这是我心里的话。" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "不知何人刻在墙根：「国破山河在，城春草木深。」"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "……这是我心里的话。"
+            }
           ]
         }
       ],
@@ -150,57 +343,164 @@
     },
     {
       "id": "chunwang",
-      "type": "poem_compose",
-      "background": "/assets/events/755_anshi/backgrounds/changan_wall.png",
-      "title": "《春望》",
-      "poemContext": "杜甫站在长安城头，远望残破宫城。心中诗句一句一句涌出——把候选词填到正确的位置。",
-      "puzzle": "国破___，城春___。\n感时___，恨别___。\n烽火___，家书___。\n白头___，浑欲___。",
-      "blanks": ["山河在", "草木深", "花溅泪", "鸟惊心", "连三月", "抵万金", "搔更短", "不胜簪"],
-      "distractors": ["千万里", "归去来", "无人识"],
-      "poemTitle": "春望"
-    },
-    {
-      "id": "decision",
-      "type": "forced_choice",
-      "background": "/assets/events/755_anshi/backgrounds/changan_wall.png",
-      "title": "决意北上",
-      "narrative": "长安已不可留。杜甫面前有三条路。",
-      "question": "下一步去哪里？",
-      "options": [
+      "type": "click_points",
+      "background": "/assets/events/755_anshi/backgrounds/changan_ruin.png",
+      "title": "《春望》·画面独白",
+      "narrative": "杜甫站在长安城头，远望残破宫城。",
+      "instruction": "点击画面不同位置，听他写下心中的句子。",
+      "unlockThreshold": 3,
+      "points": [
         {
-          "id": "stay",
-          "text": "留在长安等家信",
-          "correct": false,
-          "response": {
-            "speaker": "dufu",
-            "speakerName": "杜甫",
-            "text": "家书抵万金……再等等。\n（但只会越来越危险。）"
-          }
+          "id": "wall",
+          "label": "围墙",
+          "position": {
+            "x": 15,
+            "y": 70
+          },
+          "text": "城郭陷落日萧条，支离围墙空落寞。"
         },
         {
-          "id": "north",
-          "text": "冒死出城寻肃宗",
-          "correct": true,
-          "response": {
-            "speaker": "dufu",
-            "speakerName": "杜甫",
-            "text": "我虽一介布衣，也当报国！"
-          }
+          "id": "city",
+          "label": "长安城",
+          "position": {
+            "x": 50,
+            "y": 50
+          },
+          "text": "长安城里屋舍在，圣人车辇今何之？"
         },
         {
-          "id": "submit",
-          "text": "投靠叛军求活",
-          "correct": false,
-          "response": {
-            "speaker": "dufu",
-            "speakerName": "杜甫",
-            "text": "不可。"
-          }
+          "id": "peach",
+          "label": "桃花",
+          "position": {
+            "x": 30,
+            "y": 30
+          },
+          "text": "故国春花不知意，是春依旧烂漫开。"
+        },
+        {
+          "id": "flower",
+          "label": "下方花",
+          "position": {
+            "x": 40,
+            "y": 80
+          },
+          "text": "空见落花红池沼，玉箸一夜为谁流。"
+        },
+        {
+          "id": "bird",
+          "label": "鸟",
+          "position": {
+            "x": 70,
+            "y": 35
+          },
+          "text": "嘶鸣偏和破阵乐，啼叫犹带泣血声。"
+        },
+        {
+          "id": "beacon",
+          "label": "烽火",
+          "position": {
+            "x": 85,
+            "y": 25
+          },
+          "text": "烽火悬在云边久，胡马来后未得熄。"
+        },
+        {
+          "id": "book",
+          "label": "书本",
+          "position": {
+            "x": 60,
+            "y": 75
+          },
+          "text": "欲问鄜州闺中事，独在西都不得知。"
         }
       ],
-      "conclusion": {
-        "narrative": "至德二载（757）四月，杜甫从长安城西金光门出，奔赴凤翔。\n他记下了这一段——日后写成《春望》。"
-      }
+      "progressivePoem": [
+        "国破山河在，城春草木深。",
+        "感时花溅泪，恨别鸟惊心。",
+        "烽火连三月，家书抵万金。",
+        "白头搔更短，浑欲不胜簪。"
+      ]
+    },
+    {
+      "id": "escape",
+      "type": "escape_game",
+      "background": "/assets/events/755_anshi/backgrounds/changan_ruin.png",
+      "title": "出城 · 红蓝点逃离",
+      "narrative": "长安不可留。穿过守卫，从金光门出城。",
+      "gridW": 16,
+      "gridH": 9,
+      "start": {
+        "x": 0,
+        "y": 8
+      },
+      "end": {
+        "x": 15,
+        "y": 0
+      },
+      "chaseRadius": 3,
+      "guards": [
+        {
+          "path": [
+            {
+              "x": 4,
+              "y": 2
+            },
+            {
+              "x": 4,
+              "y": 6
+            }
+          ],
+          "speed": 1
+        },
+        {
+          "path": [
+            {
+              "x": 8,
+              "y": 4
+            },
+            {
+              "x": 12,
+              "y": 4
+            }
+          ],
+          "speed": 1
+        },
+        {
+          "path": [
+            {
+              "x": 10,
+              "y": 1
+            },
+            {
+              "x": 14,
+              "y": 1
+            },
+            {
+              "x": 14,
+              "y": 5
+            },
+            {
+              "x": 10,
+              "y": 5
+            }
+          ],
+          "speed": 1
+        },
+        {
+          "path": [
+            {
+              "x": 2,
+              "y": 0
+            },
+            {
+              "x": 6,
+              "y": 0
+            }
+          ],
+          "speed": 1
+        }
+      ],
+      "conclusion": "至德二载（757）四月，杜甫从长安城西金光门出，奔赴凤翔。"
     }
   ]
 }

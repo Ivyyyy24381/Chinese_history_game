@@ -898,6 +898,40 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
     );
   }
 
+  // --- SLIDING PUZZLE PHASE (数字华容道) ---
+  if (currentPhase.type === "sliding_puzzle") {
+    return (
+      <div style={bgStyle}>
+        <SlidingPuzzlePhase phase={currentPhase} onComplete={goToNextPhase} />
+      </div>
+    );
+  }
+
+  // --- CLICK POINTS PHASE (点击触发独白 + 渐进式诗句) ---
+  if (currentPhase.type === "click_points") {
+    return (
+      <div style={styles.sceneOuter}>
+        <div style={styles.sceneStage}>
+          <div style={{
+            ...styles.sceneStageInner,
+            backgroundImage: currentPhase.background ? `url(${currentPhase.background})` : "none",
+          }}>
+            <ClickPointsPhase phase={currentPhase} onComplete={goToNextPhase} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- ESCAPE GAME PHASE (红蓝点逃离) ---
+  if (currentPhase.type === "escape_game") {
+    return (
+      <div style={bgStyle}>
+        <EscapeGamePhase phase={currentPhase} onComplete={goToNextPhase} />
+      </div>
+    );
+  }
+
   // --- MINIGAME PHASE ---
   if (currentPhase.type === "minigame") {
     const items = currentPhase.minigameItems || [];
@@ -927,6 +961,437 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   }
 
   return null;
+}
+
+// ============================================================
+// SLIDING PUZZLE — 数字华容道 (4x4)
+// ============================================================
+// phase.puzzles: [{ label, solution: string (15 chars), timeoutSec? }]
+// Solution string is the 15 chars in their CORRECT order (row-major,
+// with one empty slot at position 15 / bottom-right).
+function SlidingPuzzlePhase({ phase, onComplete }) {
+  const puzzles = phase.puzzles || [];
+  const [pIdx, setPIdx] = useState(0);
+  const [tiles, setTiles] = useState([]); // length 16: chars + 1 null
+  const [solved, setSolved] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  // Build solved order then shuffle by performing N random valid swaps
+  // (guarantees a solvable state).
+  const buildShuffled = useCallback((solution) => {
+    const chars = solution.split("").slice(0, 15);
+    const board = [...chars, null];
+    let empty = 15;
+    for (let i = 0; i < 200; i++) {
+      const r = Math.floor(empty / 4);
+      const c = empty % 4;
+      const neighbors = [];
+      if (r > 0) neighbors.push(empty - 4);
+      if (r < 3) neighbors.push(empty + 4);
+      if (c > 0) neighbors.push(empty - 1);
+      if (c < 3) neighbors.push(empty + 1);
+      const pick = neighbors[Math.floor(Math.random() * neighbors.length)];
+      board[empty] = board[pick];
+      board[pick] = null;
+      empty = pick;
+    }
+    return board;
+  }, []);
+
+  const startPuzzle = useCallback((idx) => {
+    const p = puzzles[idx];
+    if (!p) return;
+    setTiles(buildShuffled(p.solution));
+    setSolved(false);
+    setTimeLeft(p.timeoutSec || 300);
+  }, [puzzles, buildShuffled]);
+
+  useEffect(() => {
+    if (puzzles.length === 0) return;
+    startPuzzle(pIdx);
+  }, [pIdx, puzzles.length, startPuzzle]);
+
+  // Timer
+  useEffect(() => {
+    if (solved || timeLeft <= 0) return;
+    const t = setInterval(() => setTimeLeft((s) => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [solved, timeLeft]);
+
+  // Auto-skip on timeout
+  const skipPuzzle = useCallback(() => {
+    if (pIdx + 1 < puzzles.length) setPIdx(pIdx + 1);
+    else onComplete();
+  }, [pIdx, puzzles.length, onComplete]);
+
+  useEffect(() => {
+    if (!solved && timeLeft === 0 && tiles.length > 0) {
+      // Timed out — auto move on (small delay so player sees "时间到")
+      const t = setTimeout(skipPuzzle, 1200);
+      return () => clearTimeout(t);
+    }
+  }, [timeLeft, solved, tiles.length, skipPuzzle]);
+
+  const handleTileClick = (i) => {
+    if (solved || timeLeft <= 0) return;
+    const empty = tiles.indexOf(null);
+    const r = Math.floor(i / 4), c = i % 4;
+    const er = Math.floor(empty / 4), ec = empty % 4;
+    if ((r === er && Math.abs(c - ec) === 1) || (c === ec && Math.abs(r - er) === 1)) {
+      const next = [...tiles];
+      next[empty] = next[i];
+      next[i] = null;
+      setTiles(next);
+      const currentP = puzzles[pIdx];
+      const target = currentP.solution.split("").slice(0, 15);
+      const isSolved = target.every((ch, k) => next[k] === ch) && next[15] === null;
+      if (isSolved) setSolved(true);
+    }
+  };
+
+  if (puzzles.length === 0) {
+    return (
+      <div style={styles.choiceOverlay}>
+        <div style={styles.choicePanel}>
+          <p>{"暂无题目"}</p>
+          <button style={styles.proceedBtn} onClick={onComplete}>{"继续 →"}</button>
+        </div>
+      </div>
+    );
+  }
+  const currentP = puzzles[pIdx];
+
+  return (
+    <div style={styles.choiceOverlay}>
+      <div style={{ ...styles.choicePanel, maxWidth: 560 }}>
+        <h2 style={{ margin: "0 0 4px", fontSize: 20 }}>
+          {"\u{1F4DC} 数字华容道  "}<span style={{ color: "#888", fontSize: 14 }}>{`(${pIdx + 1}/${puzzles.length})`}</span>
+        </h2>
+        {currentP.label && <p style={{ color: "#666", fontSize: 14, margin: "4px 0 12px" }}>{currentP.label}</p>}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{ fontSize: 13, color: timeLeft <= 30 ? "#DC3545" : "#666" }}>
+            {"⏱ 剩余 "}{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
+          </span>
+          <button style={{ ...styles.choiceBtn, fontSize: 12, padding: "4px 12px", margin: 0, width: "auto" }} onClick={skipPuzzle}>
+            {"跳过"}
+          </button>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 4, aspectRatio: "1", marginBottom: 16 }}>
+          {tiles.map((ch, i) => (
+            <button
+              key={i}
+              onClick={() => handleTileClick(i)}
+              style={{
+                aspectRatio: "1",
+                fontSize: 24,
+                fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+                fontWeight: "bold",
+                backgroundColor: ch === null ? "transparent" : (solved ? "#D4EDDA" : "#F5E6D3"),
+                border: ch === null ? "2px dashed #CCC" : "2px solid #8B7355",
+                borderRadius: 4,
+                cursor: ch === null || solved ? "default" : "pointer",
+                color: "#3E2723",
+              }}
+            >
+              {ch}
+            </button>
+          ))}
+        </div>
+        {solved && (
+          <div style={{ ...styles.explanationBox, backgroundColor: "#D4EDDA", textAlign: "center" }}>
+            <strong>{"✓ 拼出原句："}</strong>
+            <div style={{ marginTop: 6, fontSize: 16 }}>{currentP.solution}</div>
+          </div>
+        )}
+        {timeLeft === 0 && !solved && (
+          <div style={{ ...styles.explanationBox, backgroundColor: "#FFF3CD", textAlign: "center" }}>
+            <strong>{"⏱ 时间到"}</strong>
+            <div style={{ marginTop: 6, fontSize: 14, color: "#666" }}>{"原句：" + currentP.solution}</div>
+          </div>
+        )}
+        {(solved || timeLeft === 0) && (
+          <button style={styles.proceedBtn} onClick={skipPuzzle}>
+            {pIdx + 1 < puzzles.length ? "下一题 →" : "继续 →"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CLICK POINTS — 画面点击触发独白 + 渐进式诗句
+// ============================================================
+// phase.points: [{ id, position:{x,y}, label?, text }]
+// phase.progressivePoem: [string]  — lines that appear one-by-one once
+//   `unlockThreshold` distinct points have been clicked.
+// phase.unlockThreshold: number (default 3)
+function ClickPointsPhase({ phase, onComplete }) {
+  const points = phase.points || [];
+  const poemLines = phase.progressivePoem || [];
+  const threshold = phase.unlockThreshold || 3;
+  const [clicked, setClicked] = useState(new Set());
+  const [activePoint, setActivePoint] = useState(null);
+
+  const handleClick = (pt) => {
+    setActivePoint(pt);
+    const next = new Set(clicked);
+    next.add(pt.id);
+    setClicked(next);
+  };
+
+  // How many poem lines should currently be visible:
+  // 1st line appears once `threshold` points have been clicked; +1 line per additional click.
+  const visibleLines = Math.max(0, clicked.size - threshold + 1);
+  const allClicked = clicked.size >= points.length;
+
+  return (
+    <>
+      {phase.title && (
+        <div style={styles.phaseHeader}>
+          <h2 style={styles.phaseTitle}>{phase.title}</h2>
+          {phase.narrative && <p style={styles.phaseNarrative}>{phase.narrative}</p>}
+        </div>
+      )}
+      {phase.instruction && (
+        <div style={styles.instructionBar}>
+          <span style={styles.instructionIcon}>{"\u{1F441}"}</span>
+          <span>{phase.instruction}</span>
+          <span style={styles.talkCount}>{clicked.size}/{points.length}</span>
+        </div>
+      )}
+
+      {/* Progressive poem (top overlay) */}
+      {visibleLines > 0 && (
+        <div style={{
+          position: "absolute", top: 80, left: "50%", transform: "translateX(-50%)",
+          backgroundColor: "rgba(0,0,0,0.55)", color: "#F5E6D3",
+          padding: "12px 24px", borderRadius: 8, textAlign: "center",
+          fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+          fontSize: 18, letterSpacing: 2, lineHeight: 1.8, zIndex: 15,
+        }}>
+          {poemLines.slice(0, visibleLines).map((ln, i) => <div key={i}>{ln}</div>)}
+        </div>
+      )}
+
+      {/* Click points */}
+      {points.map((pt) => {
+        const isClicked = clicked.has(pt.id);
+        return (
+          <button
+            key={pt.id}
+            onClick={() => handleClick(pt)}
+            style={{
+              position: "absolute",
+              left: pt.position.x + "%",
+              top: pt.position.y + "%",
+              transform: "translate(-50%, -50%)",
+              width: 44, height: 44, borderRadius: "50%",
+              backgroundColor: isClicked ? "rgba(149,165,166,0.7)" : "rgba(231,76,60,0.85)",
+              border: "3px solid rgba(255,255,255,0.9)",
+              cursor: "pointer", zIndex: 10,
+              color: "#FFF", fontSize: 18,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+              animation: isClicked ? "none" : "clickPointPulse 1.8s ease-out infinite",
+            }}
+            title={pt.label || pt.id}
+          >
+            {isClicked ? "✓" : "?"}
+          </button>
+        );
+      })}
+
+      {/* Active text bubble */}
+      {activePoint && (
+        <div
+          onClick={() => setActivePoint(null)}
+          style={{
+            position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.4)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 30, cursor: "pointer",
+          }}
+        >
+          <div style={{
+            backgroundColor: "#F5E6D3", padding: "20px 28px", borderRadius: 8,
+            maxWidth: 460, fontSize: 17, lineHeight: 1.7, color: "#3E2723",
+            fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
+          }}>
+            {activePoint.label && <div style={{ fontSize: 12, color: "#999", marginBottom: 6 }}>{activePoint.label}</div>}
+            <div>{activePoint.text}</div>
+            <div style={{ marginTop: 12, fontSize: 12, color: "#999", textAlign: "right" }}>{"点击关闭"}</div>
+          </div>
+        </div>
+      )}
+
+      {allClicked && (
+        <button
+          onClick={onComplete}
+          style={{
+            position: "absolute", bottom: 30, left: "50%", transform: "translateX(-50%)",
+            padding: "12px 32px", fontSize: 16, fontWeight: "bold",
+            backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 8,
+            cursor: "pointer", zIndex: 25,
+            fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+          }}
+        >
+          {"继续 →"}
+        </button>
+      )}
+    </>
+  );
+}
+
+// ============================================================
+// ESCAPE GAME — 红蓝点逃离
+// ============================================================
+// phase: { gridW, gridH, start:{x,y}, end:{x,y}, guards: [{ path:[{x,y},...], speed? }], chaseRadius? }
+function EscapeGamePhase({ phase, onComplete }) {
+  const gridW = phase.gridW || 16;
+  const gridH = phase.gridH || 9;
+  const chaseRadius = phase.chaseRadius || 3;
+  const tickMs = 200;
+
+  const [player, setPlayer] = useState({ ...phase.start });
+  const [guards, setGuards] = useState(
+    (phase.guards || []).map((g) => ({
+      pos: { ...g.path[0] },
+      path: g.path,
+      pIdx: 0,
+      speed: g.speed || 1,
+    }))
+  );
+  const [won, setWon] = useState(false);
+  const [deaths, setDeaths] = useState(0);
+
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+  // Keyboard input
+  useEffect(() => {
+    const onKey = (e) => {
+      if (won) return;
+      setPlayer((p) => {
+        let { x, y } = p;
+        if (e.key === "ArrowUp" || e.key === "w") y -= 1;
+        else if (e.key === "ArrowDown" || e.key === "s") y += 1;
+        else if (e.key === "ArrowLeft" || e.key === "a") x -= 1;
+        else if (e.key === "ArrowRight" || e.key === "d") x += 1;
+        else return p;
+        x = Math.max(0, Math.min(gridW - 1, x));
+        y = Math.max(0, Math.min(gridH - 1, y));
+        return { x, y };
+      });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [won, gridW, gridH]);
+
+  // Guard tick
+  useEffect(() => {
+    if (won) return;
+    const t = setInterval(() => {
+      setGuards((gs) => gs.map((g) => {
+        const d = dist(g.pos, player);
+        if (d <= chaseRadius) {
+          // Chase: move 1 step toward player
+          const dx = Math.sign(player.x - g.pos.x);
+          const dy = Math.sign(player.y - g.pos.y);
+          // Move along axis with greater distance first
+          let nx = g.pos.x, ny = g.pos.y;
+          if (Math.abs(player.x - g.pos.x) >= Math.abs(player.y - g.pos.y)) nx += dx;
+          else ny += dy;
+          return { ...g, pos: { x: nx, y: ny } };
+        }
+        // Patrol: step toward next waypoint
+        const target = g.path[(g.pIdx + 1) % g.path.length];
+        const dx = Math.sign(target.x - g.pos.x);
+        const dy = Math.sign(target.y - g.pos.y);
+        let nx = g.pos.x + dx, ny = g.pos.y + dy;
+        let nIdx = g.pIdx;
+        if (nx === target.x && ny === target.y) nIdx = (g.pIdx + 1) % g.path.length;
+        return { ...g, pos: { x: nx, y: ny }, pIdx: nIdx };
+      }));
+    }, tickMs);
+    return () => clearInterval(t);
+  }, [player, chaseRadius, won]);
+
+  // Collision + win check
+  useEffect(() => {
+    if (won) return;
+    if (player.x === phase.end.x && player.y === phase.end.y) {
+      setWon(true);
+      return;
+    }
+    if (guards.some((g) => g.pos.x === player.x && g.pos.y === player.y)) {
+      setDeaths((d) => d + 1);
+      setPlayer({ ...phase.start });
+    }
+  }, [player, guards, won, phase.end, phase.start]);
+
+  // Render
+  const cellSize = `min(${Math.floor(80 / gridW)}vw, ${Math.floor(80 / gridH)}vh)`;
+  return (
+    <div style={styles.choiceOverlay}>
+      <div style={{ ...styles.choicePanel, maxWidth: 760, textAlign: "center" }}>
+        <h2 style={{ margin: "0 0 4px", fontSize: 20 }}>{"\u{1F3C3} 出城：避开守卫"}</h2>
+        {phase.narrative && <p style={{ color: "#666", fontSize: 13, margin: "4px 0 12px" }}>{phase.narrative}</p>}
+        <div style={{ fontSize: 12, color: "#888", marginBottom: 12 }}>
+          {"方向键 / WASD 移动 · 遇守卫回起点 · 抵达绿点胜利"}
+          <span style={{ marginLeft: 16, color: "#DC3545" }}>{"被抓：" + deaths}</span>
+        </div>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${gridW}, ${cellSize})`,
+          gridTemplateRows: `repeat(${gridH}, ${cellSize})`,
+          gap: 1, justifyContent: "center", margin: "0 auto",
+          backgroundColor: "#3E2723", padding: 4, borderRadius: 4,
+        }}>
+          {Array.from({ length: gridW * gridH }).map((_, i) => {
+            const x = i % gridW, y = Math.floor(i / gridW);
+            const isStart = x === phase.start.x && y === phase.start.y;
+            const isEnd = x === phase.end.x && y === phase.end.y;
+            const isPlayer = x === player.x && y === player.y;
+            const guard = guards.find((g) => g.pos.x === x && g.pos.y === y);
+            let bg = "#5D4037";
+            if (isEnd) bg = "#27AE60";
+            if (isStart && !isPlayer) bg = "#8B7355";
+            return (
+              <div key={i} style={{
+                backgroundColor: bg,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                position: "relative",
+              }}>
+                {isPlayer && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#E74C3C", boxShadow: "0 0 6px #E74C3C" }} />}
+                {guard && !isPlayer && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#3498DB", boxShadow: "0 0 6px #3498DB" }} />}
+                {isEnd && !isPlayer && <span style={{ color: "#FFF", fontSize: 12 }}>{"门"}</span>}
+              </div>
+            );
+          })}
+        </div>
+        {won && (
+          <>
+            <div style={{ ...styles.explanationBox, backgroundColor: "#D4EDDA", marginTop: 16 }}>
+              <strong>{"✓ 出城成功！"}</strong>
+              {phase.conclusion && <div style={{ marginTop: 6 }}>{phase.conclusion}</div>}
+            </div>
+            <button style={styles.proceedBtn} onClick={onComplete}>{"继续 →"}</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Inject pulse keyframes for ClickPointsPhase markers
+if (typeof document !== "undefined" && !document.getElementById("click-point-keyframes")) {
+  const style = document.createElement("style");
+  style.id = "click-point-keyframes";
+  style.textContent = `
+    @keyframes clickPointPulse {
+      0% { box-shadow: 0 0 0 0 rgba(231,76,60,0.6); }
+      100% { box-shadow: 0 0 0 18px rgba(231,76,60,0); }
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 // ============================================================
