@@ -126,9 +126,15 @@ const styles = {
     minHeight: 400,
   },
   mapBackground: {
+    // Match the actual image ratio (1752 × 1245) so percentage-based pin
+    // coordinates land on the right map features instead of empty letterbox.
+    aspectRatio: "1752 / 1245",
+    // Constrain by available viewport so the map doesn't dominate the screen.
+    // Whichever of width/height hits its limit first wins; the other follows
+    // via aspectRatio.
+    maxWidth: "min(720px, 90%)",
+    maxHeight: "calc(100vh - 280px)",
     width: "100%",
-    maxWidth: 800,
-    aspectRatio: "1",
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
