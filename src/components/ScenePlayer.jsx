@@ -250,29 +250,35 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                   }}
                   onClick={() => handleNpcClick(npc)}
                 >
-                  {!talked && <div style={styles.npcBubble}>{"?"}</div>}
-                  {talked && <div style={styles.npcCheckMark}>{"\u2713"}</div>}
-                  {npc.portrait ? (
-                    <div style={{
-                      ...styles.npcPortraitWrap,
-                      width: npcSize,
-                      height: npcSize,
-                      borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
-                      transform: npc.flip ? "scaleX(-1)" : "none",
-                    }}>
-                      <img src={npc.portrait} alt={npc.name} style={styles.npcPortraitImg} />
+                  {/* Portrait-less items render as a single ? marker — no name label.
+                      Items with a portrait still show ? bubble + name. */}
+                  {!npc.portrait ? (
+                    <div
+                      style={{
+                        ...styles.npcQuestionMark,
+                        backgroundColor: talked
+                          ? "rgba(149,165,166,0.85)"
+                          : npc.isClue ? "rgba(231,76,60,0.9)" : "rgba(212,165,116,0.95)",
+                      }}
+                    >
+                      {talked ? "\u2713" : "?"}
                     </div>
                   ) : (
-                    <div style={{
-                      ...styles.npcTextLabel,
-                      borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#D4A574",
-                      backgroundColor: talked ? "rgba(149,165,166,0.15)" : "rgba(212,165,116,0.2)",
-                    }}>
-                      <span style={styles.npcTextLabelName}>{npc.name}</span>
-                      {!talked && <span style={styles.npcTextLabelHint}>{"点击查看"}</span>}
-                    </div>
+                    <>
+                      {!talked && <div style={styles.npcBubble}>{"?"}</div>}
+                      {talked && <div style={styles.npcCheckMark}>{"\u2713"}</div>}
+                      <div style={{
+                        ...styles.npcPortraitWrap,
+                        width: npcSize,
+                        height: npcSize,
+                        borderColor: talked ? "#95A5A6" : npc.isClue ? "#E74C3C" : "#3498DB",
+                        transform: npc.flip ? "scaleX(-1)" : "none",
+                      }}>
+                        <img src={npc.portrait} alt={npc.name} style={styles.npcPortraitImg} />
+                      </div>
+                      <span style={styles.npcName}>{npc.name}</span>
+                    </>
                   )}
-                  {npc.portrait && <span style={styles.npcName}>{npc.name}</span>}
                 </div>
               );
             })}
@@ -1493,6 +1499,18 @@ const styles = {
     fontSize: 14, fontWeight: "bold",
     pointerEvents: "none",
     marginBottom: 4,
+  },
+  // Standalone ? marker for portrait-less items (props, paintings, scrolls).
+  // No name label; the ? itself is the clickable element.
+  npcQuestionMark: {
+    width: 36, height: 36, borderRadius: "50%",
+    color: "#FFF",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 18, fontWeight: "bold",
+    border: "2px solid rgba(255,255,255,0.9)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+    cursor: "pointer",
+    transition: "transform 0.15s ease",
   },
   npcCheckMark: {
     width: 28, height: 28, borderRadius: "50%",
