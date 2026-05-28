@@ -1334,86 +1334,133 @@ const cpStyles = {
 }
 
 // ============================================================
-// ESCAPE GAME — 红蓝点逃离
+// ESCAPE GAME — Pac-Man style 长安出城
 // ============================================================
-// phase: { gridW, gridH, start:{x,y}, end:{x,y}, guards: [{ path:[{x,y},...], speed? }], chaseRadius? }
+// phase: {
+//   gridW, gridH,
+//   start: {x,y}, end: {x,y},
+//   cells: [{ x, y, w?, h?, label?, blocking?, fill? }]   // merged labeled buildings
+//   arrows: [{ x, y, dir: "up"|"down"|"left"|"right" }]    // forces guard direction
+//   gates:  [{ x, y, label }]                              // text label on a street cell
+//   guards: [{ x, y, dir, portrait? }]                     // patrol with direction
+//   soldierPortraits: [string]                             // pool used if guard has no portrait
+//   chaseRadius?, tickMs?, playerPortrait?, mapBackground?
+// }
 function EscapeGamePhase({ phase, onComplete }) {
-  const gridW = phase.gridW || 16;
-  const gridH = phase.gridH || 9;
-  const chaseRadius = phase.chaseRadius || 3;
-  const tickMs = 200;
+  const gridW = phase.gridW || 13;
+  const gridH = phase.gridH || 14;
+  const tickMs = phase.tickMs || 300;
+  const cells = phase.cells || [];
+  const arrows = phase.arrows || [];
+  const gates = phase.gates || [];
+  const portraitPool = phase.soldierPortraits || [];
 
-  // Factory: rebuild guards from phase config so we can fully reset on death.
-  const buildGuards = useCallback(() => (phase.guards || []).map((g) => ({
-    pos: { ...g.path[0] },
-    path: g.path,
-    pIdx: 0,
-    speed: g.speed || 1,
-  })), [phase.guards]);
+  // ---- Lookup tables --------------------------------------------------------
+  // Map each (x,y) to its parent blocking cell (if any). Multi-tile labels
+  // mark every covered cell as blocking, but only the top-left renders the
+  // label/background.
+  const blockMap = new Map();
+  const ownerMap = new Map(); // (x,y) -> the cell object that covers it
+  cells.forEach((c) => {
+    const w = c.w || 1, h = c.h || 1;
+    for (let dy = 0; dy < h; dy++) {
+      for (let dx = 0; dx < w; dx++) {
+        const key = (c.x + dx) + "," + (c.y + dy);
+        if (c.blocking !== false) blockMap.set(key, true);
+        ownerMap.set(key, c);
+      }
+    }
+  });
+  const arrowMap = new Map();
+  arrows.forEach((a) => arrowMap.set(a.x + "," + a.y, a.dir));
+  const gateMap = new Map();
+  gates.forEach((g) => gateMap.set(g.x + "," + g.y, g.label));
+
+  const isBlocked = (x, y) => {
+    if (x < 0 || y < 0 || x >= gridW || y >= gridH) return true;
+    return blockMap.has(x + "," + y);
+  };
+  const stepDir = (dir) => {
+    if (dir === "up")    return { dx:  0, dy: -1 };
+    if (dir === "down")  return { dx:  0, dy:  1 };
+    if (dir === "left")  return { dx: -1, dy:  0 };
+    if (dir === "right") return { dx:  1, dy:  0 };
+    return { dx: 0, dy: 0 };
+  };
+  const reverseDir = (d) => ({ up: "down", down: "up", left: "right", right: "left" }[d] || d);
+
+  // ---- Guard factory --------------------------------------------------------
+  // Each guard is given a deterministic portrait index so it doesn't flicker
+  // every tick. If the guard has its own `portrait` field, that wins.
+  const buildGuards = useCallback(() => (phase.guards || []).map((g, i) => ({
+    pos: { x: g.x, y: g.y },
+    dir: g.dir || "right",
+    portrait: g.portrait || (portraitPool.length ? portraitPool[i % portraitPool.length] : null),
+  })), [phase.guards, portraitPool]);
 
   const [player, setPlayer] = useState({ ...phase.start });
   const [guards, setGuards] = useState(buildGuards);
   const [won, setWon] = useState(false);
   const [deaths, setDeaths] = useState(0);
-  // Manual restart — bumps a key so all state regenerates from phase config.
+
   const resetGame = useCallback(() => {
     setPlayer({ ...phase.start });
     setGuards(buildGuards());
     setWon(false);
   }, [phase.start, buildGuards]);
 
-  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-
-  // Keyboard input
+  // ---- Player input (arrows / WASD) ----------------------------------------
   useEffect(() => {
     const onKey = (e) => {
       if (won) return;
+      let dir = null;
+      if (e.key === "ArrowUp"    || e.key === "w") dir = "up";
+      else if (e.key === "ArrowDown"  || e.key === "s") dir = "down";
+      else if (e.key === "ArrowLeft"  || e.key === "a") dir = "left";
+      else if (e.key === "ArrowRight" || e.key === "d") dir = "right";
+      if (!dir) return;
+      e.preventDefault();
+      const { dx, dy } = stepDir(dir);
       setPlayer((p) => {
-        let { x, y } = p;
-        if (e.key === "ArrowUp" || e.key === "w") y -= 1;
-        else if (e.key === "ArrowDown" || e.key === "s") y += 1;
-        else if (e.key === "ArrowLeft" || e.key === "a") x -= 1;
-        else if (e.key === "ArrowRight" || e.key === "d") x += 1;
-        else return p;
-        x = Math.max(0, Math.min(gridW - 1, x));
-        y = Math.max(0, Math.min(gridH - 1, y));
-        return { x, y };
+        const nx = p.x + dx, ny = p.y + dy;
+        if (isBlocked(nx, ny)) return p;
+        return { x: nx, y: ny };
       });
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [won, gridW, gridH]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [won, gridW, gridH, cells]);
 
-  // Guard tick
+  // ---- Guard tick: Pac-Man tracks ------------------------------------------
   useEffect(() => {
     if (won) return;
     const t = setInterval(() => {
       setGuards((gs) => gs.map((g) => {
-        const d = dist(g.pos, player);
-        if (d <= chaseRadius) {
-          // Chase: move 1 step toward player
-          const dx = Math.sign(player.x - g.pos.x);
-          const dy = Math.sign(player.y - g.pos.y);
-          // Move along axis with greater distance first
-          let nx = g.pos.x, ny = g.pos.y;
-          if (Math.abs(player.x - g.pos.x) >= Math.abs(player.y - g.pos.y)) nx += dx;
-          else ny += dy;
-          return { ...g, pos: { x: nx, y: ny } };
-        }
-        // Patrol: step toward next waypoint
-        const target = g.path[(g.pIdx + 1) % g.path.length];
-        const dx = Math.sign(target.x - g.pos.x);
-        const dy = Math.sign(target.y - g.pos.y);
+        let dir = g.dir;
+        // 1. If current cell has an arrow, override direction.
+        const overrideAtCurrent = arrowMap.get(g.pos.x + "," + g.pos.y);
+        if (overrideAtCurrent) dir = overrideAtCurrent;
+        // 2. Try to step. If blocked, reverse direction and stay (will move next tick).
+        const { dx, dy } = stepDir(dir);
         let nx = g.pos.x + dx, ny = g.pos.y + dy;
-        let nIdx = g.pIdx;
-        if (nx === target.x && ny === target.y) nIdx = (g.pIdx + 1) % g.path.length;
-        return { ...g, pos: { x: nx, y: ny }, pIdx: nIdx };
+        if (isBlocked(nx, ny)) {
+          dir = reverseDir(dir);
+          const r = stepDir(dir);
+          nx = g.pos.x + r.dx; ny = g.pos.y + r.dy;
+          if (isBlocked(nx, ny)) {
+            // Cornered — just flip direction and don't move.
+            return { ...g, dir };
+          }
+        }
+        return { ...g, pos: { x: nx, y: ny }, dir };
       }));
     }, tickMs);
     return () => clearInterval(t);
-  }, [player, chaseRadius, won]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [won, tickMs]);
 
-  // Collision + win check
+  // ---- Collision + win ------------------------------------------------------
   useEffect(() => {
     if (won) return;
     if (player.x === phase.end.x && player.y === phase.end.y) {
@@ -1422,72 +1469,190 @@ function EscapeGamePhase({ phase, onComplete }) {
     }
     if (guards.some((g) => g.pos.x === player.x && g.pos.y === player.y)) {
       setDeaths((d) => d + 1);
-      // Reset BOTH player and guards on death so we don't get stuck in an
-      // infinite re-spawn loop with a guard standing on the start square.
       setPlayer({ ...phase.start });
       setGuards(buildGuards());
     }
-  }, [player, guards, won, phase.end, phase.start]);
+  }, [player, guards, won, phase.end, phase.start, buildGuards]);
 
-  // Render
-  const cellSize = `min(${Math.floor(80 / gridW)}vw, ${Math.floor(80 / gridH)}vh)`;
+  // ---- Render ---------------------------------------------------------------
+  // Each cell is a square; merged cells span via grid-column/row.
+  const cellPx = `min(calc(80vw / ${gridW}), calc(70vh / ${gridH}))`;
+  const arrowGlyph = { up: "\u2191", down: "\u2193", left: "\u2190", right: "\u2192" };
+
   return (
-    <div style={styles.choiceOverlay}>
-      <div style={{ ...styles.choicePanel, maxWidth: 760, textAlign: "center" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: 20 }}>{"\u{1F3C3} 出城：避开守卫"}</h2>
-        {phase.narrative && <p style={{ color: "#666", fontSize: 13, margin: "4px 0 12px" }}>{phase.narrative}</p>}
-        <div style={{ fontSize: 12, color: "#888", marginBottom: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 16 }}>
-          <span>{"方向键 / WASD 移动 · 遇守卫回起点 · 抵达绿点胜利"}</span>
-          <span style={{ color: "#DC3545" }}>{"被抓：" + deaths}</span>
-          <button
-            onClick={resetGame}
-            style={{ fontSize: 12, padding: "4px 10px", border: "1px solid #999", borderRadius: 4, backgroundColor: "#FFF", cursor: "pointer", fontFamily: "inherit" }}
-          >
-            {"重新开始"}
-          </button>
+    <div style={egStyles.overlay}>
+      <div style={egStyles.popup}>
+        <h2 style={egStyles.title}>{"\u{1F6AA} \u51FA\u57CE\uFF1A\u907F\u5F00\u5B88\u536B"}</h2>
+        {phase.narrative && <p style={egStyles.narrative}>{phase.narrative}</p>}
+        <div style={egStyles.statusRow}>
+          <span>{"\u65B9\u5411\u952E / WASD \u79FB\u52A8 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u95E8\u5916\u80DC\u5229"}</span>
+          <span style={{ color: "#DC3545" }}>{"\u88AB\u6293\uFF1A" + deaths}</span>
+          <button onClick={resetGame} style={egStyles.restartBtn}>{"\u91CD\u65B0\u5F00\u59CB"}</button>
         </div>
+
         <div style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${gridW}, ${cellSize})`,
-          gridTemplateRows: `repeat(${gridH}, ${cellSize})`,
-          gap: 1, justifyContent: "center", margin: "0 auto",
-          backgroundColor: "#3E2723", padding: 4, borderRadius: 4,
+          gridTemplateColumns: `repeat(${gridW}, ${cellPx})`,
+          gridTemplateRows: `repeat(${gridH}, ${cellPx})`,
+          gap: 1,
+          justifyContent: "center",
+          backgroundColor: "#5D4037",
+          padding: 4, borderRadius: 4,
+          margin: "0 auto",
+          position: "relative",
         }}>
+          {/* Render street cells first */}
           {Array.from({ length: gridW * gridH }).map((_, i) => {
             const x = i % gridW, y = Math.floor(i / gridW);
             const isStart = x === phase.start.x && y === phase.start.y;
             const isEnd = x === phase.end.x && y === phase.end.y;
-            const isPlayer = x === player.x && y === player.y;
-            const guard = guards.find((g) => g.pos.x === x && g.pos.y === y);
-            let bg = "#5D4037";
-            if (isEnd) bg = "#27AE60";
-            if (isStart && !isPlayer) bg = "#8B7355";
+            const blocked = blockMap.has(x + "," + y);
+            const arrow = arrowMap.get(x + "," + y);
+            const gate = gateMap.get(x + "," + y);
+
+            if (blocked) {
+              // Only render the top-left tile of a merged building; let others be transparent
+              const owner = ownerMap.get(x + "," + y);
+              if (owner && (owner.x !== x || owner.y !== y)) {
+                return <div key={i} style={{ backgroundColor: "transparent" }} />;
+              }
+              return (
+                <div key={i} style={{
+                  gridColumn: `${x + 1} / span ${(owner?.w) || 1}`,
+                  gridRow: `${y + 1} / span ${(owner?.h) || 1}`,
+                  backgroundColor: owner?.fill || "#D4B89A",
+                  border: "2px solid #8B7355",
+                  borderRadius: 4,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  textAlign: "center",
+                  fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+                  color: "#3E2723",
+                  fontSize: "min(1.2vw, 14px)", fontWeight: "bold",
+                  letterSpacing: 1, lineHeight: 1.2,
+                  whiteSpace: "pre-wrap",
+                }}>
+                  {owner?.label || ""}
+                </div>
+              );
+            }
+
+            // Street cell (walkable)
+            let bg = "#F5F5DC";
+            if (isEnd) bg = "#90EE90";
+            if (isStart) bg = "#FFD580";
             return (
               <div key={i} style={{
                 backgroundColor: bg,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 position: "relative",
+                fontSize: 10, color: "#888",
               }}>
-                {isPlayer && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#E74C3C", boxShadow: "0 0 6px #E74C3C" }} />}
-                {guard && !isPlayer && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#3498DB", boxShadow: "0 0 6px #3498DB" }} />}
-                {isEnd && !isPlayer && <span style={{ color: "#FFF", fontSize: 12 }}>{"门"}</span>}
+                {arrow && (
+                  <span style={{ color: "#3498DB", fontSize: "min(2vw, 22px)", fontWeight: "bold", opacity: 0.7 }}>
+                    {arrowGlyph[arrow] || ""}
+                  </span>
+                )}
+                {gate && (
+                  <span style={{ position: "absolute", top: 1, left: 2, fontSize: 9, color: "#666", whiteSpace: "nowrap" }}>
+                    {gate}
+                  </span>
+                )}
+                {isEnd && !arrow && <span style={{ fontSize: 9, color: "#1B5E20", fontWeight: "bold" }}>{"\u51FA\u95E8"}</span>}
+                {isStart && !arrow && <span style={{ fontSize: 9, color: "#E65100", fontWeight: "bold" }}>{"\u8D77\u70B9"}</span>}
               </div>
             );
           })}
+
+          {/* Player overlay (absolute over the grid) */}
+          <div style={{
+            position: "absolute",
+            left: `calc(4px + (${player.x} + 0.5) * (${cellPx} + 1px))`,
+            top:  `calc(4px + (${player.y} + 0.5) * (${cellPx} + 1px))`,
+            transform: "translate(-50%, -50%)",
+            width: `calc(${cellPx} * 0.8)`,
+            height: `calc(${cellPx} * 0.8)`,
+            borderRadius: "50%",
+            backgroundColor: phase.playerPortrait ? "transparent" : "#E74C3C",
+            backgroundImage: phase.playerPortrait ? `url(${phase.playerPortrait})` : "none",
+            backgroundSize: "cover", backgroundPosition: "center top",
+            border: "2px solid #FFF",
+            boxShadow: "0 0 8px rgba(231,76,60,0.7)",
+            zIndex: 20, transition: "left 0.12s linear, top 0.12s linear",
+            pointerEvents: "none",
+          }} />
+
+          {/* Guards overlay */}
+          {guards.map((g, i) => (
+            <div key={i} style={{
+              position: "absolute",
+              left: `calc(4px + (${g.pos.x} + 0.5) * (${cellPx} + 1px))`,
+              top:  `calc(4px + (${g.pos.y} + 0.5) * (${cellPx} + 1px))`,
+              transform: "translate(-50%, -50%)",
+              width: `calc(${cellPx} * 0.85)`,
+              height: `calc(${cellPx} * 0.85)`,
+              borderRadius: "50%",
+              backgroundColor: g.portrait ? "transparent" : "#3498DB",
+              backgroundImage: g.portrait ? `url(${g.portrait})` : "none",
+              backgroundSize: "cover", backgroundPosition: "center top",
+              border: "2px solid #1F4E79",
+              boxShadow: "0 0 6px rgba(52,152,219,0.65)",
+              zIndex: 15,
+              transition: `left ${tickMs}ms linear, top ${tickMs}ms linear`,
+              pointerEvents: "none",
+            }} />
+          ))}
         </div>
+
         {won && (
           <>
-            <div style={{ ...styles.explanationBox, backgroundColor: "#D4EDDA", marginTop: 16 }}>
-              <strong>{"✓ 出城成功！"}</strong>
+            <div style={{ ...egStyles.win }}>
+              <strong>{"\u2713 \u51FA\u57CE\u6210\u529F\uFF01"}</strong>
               {phase.conclusion && <div style={{ marginTop: 6 }}>{phase.conclusion}</div>}
             </div>
-            <button style={styles.proceedBtn} onClick={onComplete}>{"继续 →"}</button>
+            <button style={egStyles.continueBtn} onClick={onComplete}>{"\u7EE7\u7EED \u2192"}</button>
           </>
         )}
       </div>
     </div>
   );
 }
+
+const egStyles = {
+  overlay: {
+    position: "fixed", inset: 0, zIndex: 240,
+    backgroundColor: "rgba(0,0,0,0.78)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    padding: 16, overflow: "auto",
+  },
+  popup: {
+    backgroundColor: "#F5E6D3", borderRadius: 12, padding: "16px 20px",
+    maxWidth: "min(95vw, 980px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+    textAlign: "center", maxHeight: "95vh", overflow: "auto",
+  },
+  title: { margin: "0 0 4px", fontSize: 22, color: "#3E2723", letterSpacing: 2 },
+  narrative: { margin: "0 0 8px", fontSize: 13, color: "#6B5340" },
+  statusRow: {
+    fontSize: 12, color: "#666", marginBottom: 10,
+    display: "flex", gap: 16, justifyContent: "center", alignItems: "center",
+    flexWrap: "wrap",
+  },
+  restartBtn: {
+    fontSize: 12, padding: "4px 12px", border: "1px solid #999",
+    borderRadius: 4, backgroundColor: "#FFF", cursor: "pointer",
+    fontFamily: "inherit",
+  },
+  win: {
+    marginTop: 16, padding: 12, backgroundColor: "#D4EDDA",
+    color: "#155724", borderRadius: 6,
+  },
+  continueBtn: {
+    marginTop: 12, padding: "12px 32px", fontSize: 16, fontWeight: "bold",
+    backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 6,
+    cursor: "pointer", fontFamily: "inherit",
+  },
+};
+
 
 // Inject pulse keyframes for ClickPointsPhase markers
 if (typeof document !== "undefined" && !document.getElementById("click-point-keyframes")) {

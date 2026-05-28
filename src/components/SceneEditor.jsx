@@ -293,6 +293,19 @@ export default function SceneEditor({ initialEventId, onExit }) {
       if (phaseType === "narration") {
         phase.narrationSlides = narrationSlides;
       }
+      if (phaseType === "escape_game") {
+        phase.gridW = egGridW;
+        phase.gridH = egGridH;
+        phase.tickMs = egTickMs;
+        phase.start = egStart;
+        phase.end = egEnd;
+        phase.cells = egCells;
+        phase.arrows = egArrows;
+        phase.gates = egGates;
+        phase.guards = egGuards;
+        phase.soldierPortraits = egSoldierPortraits;
+        phase.playerPortrait = egPlayerPortrait;
+      }
       if (phaseType === "click_points") {
         phase.instruction = phaseInstruction;
         phase.image = clickPointImage || bg;
@@ -514,6 +527,24 @@ export default function SceneEditor({ initialEventId, onExit }) {
   const [progressivePoem, setProgressivePoem] = useState([]);
   const [unlockThreshold, setUnlockThreshold] = useState(3);
 
+  // === Escape-game state (Pac-Man-ish 长安出城 phase) ===
+  const [egGridW, setEgGridW] = useState(13);
+  const [egGridH, setEgGridH] = useState(14);
+  const [egTickMs, setEgTickMs] = useState(350);
+  const [egStart, setEgStart] = useState({ x: 6, y: 13 });
+  const [egEnd, setEgEnd] = useState({ x: 0, y: 7 });
+  const [egCells, setEgCells] = useState([]);    // labeled blocking buildings
+  const [egArrows, setEgArrows] = useState([]);  // directional patrol tiles
+  const [egGates, setEgGates] = useState([]);    // street-cell gate labels
+  const [egGuards, setEgGuards] = useState([]);
+  const [egSoldierPortraits, setEgSoldierPortraits] = useState([]);
+  const [egPlayerPortrait, setEgPlayerPortrait] = useState("/assets/characters/dufu/portrait.png");
+  // Editor brush: what does clicking a cell do?
+  const [egBrush, setEgBrush] = useState("toggle_block");
+  const [egArrowDir, setEgArrowDir] = useState("right");
+  // Currently-selected building cell (for label/size edits)
+  const [egSelCell, setEgSelCell] = useState(null);
+
   // Extend loadPhase to load all phase types
   const loadPhaseExtended = (phase) => {
     // Exam
@@ -559,6 +590,19 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setClickPointImage(phase.image || phase.background || "");
     setProgressivePoem(phase.progressivePoem || []);
     setUnlockThreshold(phase.unlockThreshold ?? 3);
+    // Escape game
+    setEgGridW(phase.gridW ?? 13);
+    setEgGridH(phase.gridH ?? 14);
+    setEgTickMs(phase.tickMs ?? 350);
+    setEgStart(phase.start ?? { x: 0, y: 0 });
+    setEgEnd(phase.end ?? { x: 0, y: 0 });
+    setEgCells(phase.cells ?? []);
+    setEgArrows(phase.arrows ?? []);
+    setEgGates(phase.gates ?? []);
+    setEgGuards(phase.guards ?? []);
+    setEgSoldierPortraits(phase.soldierPortraits ?? []);
+    setEgPlayerPortrait(phase.playerPortrait ?? "/assets/characters/dufu/portrait.png");
+    setEgSelCell(null);
   };
 
   // Export JSON — builds full phase based on type
@@ -620,6 +664,19 @@ export default function SceneEditor({ initialEventId, onExit }) {
     }
     if (phaseType === "narration") {
       phase.narrationSlides = narrationSlides;
+    }
+    if (phaseType === "escape_game") {
+      phase.gridW = egGridW;
+      phase.gridH = egGridH;
+      phase.tickMs = egTickMs;
+      phase.start = egStart;
+      phase.end = egEnd;
+      phase.cells = egCells;
+      phase.arrows = egArrows;
+      phase.gates = egGates;
+      phase.guards = egGuards;
+      phase.soldierPortraits = egSoldierPortraits;
+      phase.playerPortrait = egPlayerPortrait;
     }
     if (phaseType === "click_points") {
       phase.instruction = phaseInstruction;
@@ -783,7 +840,8 @@ export default function SceneEditor({ initialEventId, onExit }) {
             <option value="map_travel">map_travel (\u5730\u56FE\u884C\u65C5)</option>
             <option value="dialogue_branch">dialogue_branch (\u5BF9\u8BDD\u5206\u652F)</option>
             <option value="narration">narration (\u53D9\u4E8B\u6F14\u51FA)</option>
-            <option value="click_points">{"\u{1F441} 找茬 (click_points)"}</option>
+            <option value="escape_game">{"\u{1F6AA} 出城 (escape_game)"}</option>
+                <option value="click_points">{"\u{1F441} 找茬 (click_points)"}</option>
                 <option value="minigame">minigame (\u5C0F\u6E38\u620F)</option>
           </select>
         </div>
@@ -1148,6 +1206,251 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 <p>{"\u62D6\u62FD\u8C03\u6574\u4F4D\u7F6E"}</p>
               </div>
             )
+          )}
+
+          {/* ---- ESCAPE_GAME: 长安出城 editor ---- */}
+          {phaseType === "escape_game" && (
+            <div style={{ marginBottom: 16 }}>
+              <h3 style={styles.editorSectionTitle}>{"\u{1F6AA} 出城棋盘地图"}</h3>
+              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={styles.fieldLabel}>{"列 (gridW)"}</label>
+                  <input type="number" min="5" max="30" style={styles.fieldInput}
+                    value={egGridW}
+                    onChange={(e) => setEgGridW(parseInt(e.target.value, 10) || 13)} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={styles.fieldLabel}>{"行 (gridH)"}</label>
+                  <input type="number" min="5" max="30" style={styles.fieldInput}
+                    value={egGridH}
+                    onChange={(e) => setEgGridH(parseInt(e.target.value, 10) || 14)} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={styles.fieldLabel}>{"节拍 (ms)"}</label>
+                  <input type="number" min="50" max="2000" step="50" style={styles.fieldInput}
+                    value={egTickMs}
+                    onChange={(e) => setEgTickMs(parseInt(e.target.value, 10) || 350)} />
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={styles.fieldLabel}>{"起点 (x, y)"}</label>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <input type="number" style={styles.fieldInput}
+                      value={egStart.x} onChange={(e) => setEgStart({ ...egStart, x: parseInt(e.target.value, 10) || 0 })} />
+                    <input type="number" style={styles.fieldInput}
+                      value={egStart.y} onChange={(e) => setEgStart({ ...egStart, y: parseInt(e.target.value, 10) || 0 })} />
+                  </div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={styles.fieldLabel}>{"终点 (x, y)"}</label>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <input type="number" style={styles.fieldInput}
+                      value={egEnd.x} onChange={(e) => setEgEnd({ ...egEnd, x: parseInt(e.target.value, 10) || 0 })} />
+                    <input type="number" style={styles.fieldInput}
+                      value={egEnd.y} onChange={(e) => setEgEnd({ ...egEnd, y: parseInt(e.target.value, 10) || 0 })} />
+                  </div>
+                </div>
+              </div>
+
+              <h4 style={styles.dialogueTitle}>{"\u753B\u7B14 (\u70B9\u51FB\u68CB\u76D8\u4E0A\u7684\u683C\u5B50)"}</h4>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
+                {[
+                  ["toggle_block", "建筑/可走 切换"],
+                  ["place_arrow", "放箭头"],
+                  ["remove_arrow", "删箭头"],
+                  ["place_guard", "放守卫"],
+                  ["remove_guard", "删守卫"],
+                  ["place_gate", "命名地点"],
+                  ["set_start", "设起点"],
+                  ["set_end", "设终点"],
+                ].map(([k, label]) => (
+                  <button key={k}
+                    onClick={() => setEgBrush(k)}
+                    style={{
+                      fontSize: 11, padding: "4px 8px",
+                      border: egBrush === k ? "2px solid #F4D03F" : "1px solid #555",
+                      backgroundColor: egBrush === k ? "#F4D03F" : "#2C3E50",
+                      color: egBrush === k ? "#1a1a2e" : "#AAB7C4",
+                      borderRadius: 4, cursor: "pointer",
+                    }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {egBrush === "place_arrow" && (
+                <div style={{ marginBottom: 8 }}>
+                  <label style={styles.fieldLabel}>{"箭头方向"}</label>
+                  <select style={styles.fieldInput} value={egArrowDir}
+                    onChange={(e) => setEgArrowDir(e.target.value)}>
+                    <option value="up">{"\u2191 上"}</option>
+                    <option value="down">{"\u2193 下"}</option>
+                    <option value="left">{"\u2190 左"}</option>
+                    <option value="right">{"\u2192 右"}</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Live grid editor */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${egGridW}, 22px)`,
+                gridTemplateRows: `repeat(${egGridH}, 22px)`,
+                gap: 1, backgroundColor: "#3E2723", padding: 2,
+                marginBottom: 8,
+              }}>
+                {Array.from({ length: egGridW * egGridH }).map((_, i) => {
+                  const x = i % egGridW, y = Math.floor(i / egGridW);
+                  const k = x + "," + y;
+                  const owner = egCells.find((c) => x >= c.x && x < c.x + (c.w || 1) && y >= c.y && y < c.y + (c.h || 1));
+                  const isBlocking = !!owner;
+                  const arrow = egArrows.find((a) => a.x === x && a.y === y);
+                  const guard = egGuards.find((g) => g.x === x && g.y === y);
+                  const gate = egGates.find((g) => g.x === x && g.y === y);
+                  const isStart = egStart.x === x && egStart.y === y;
+                  const isEnd = egEnd.x === x && egEnd.y === y;
+                  const isSel = egSelCell && egSelCell.x === x && egSelCell.y === y;
+                  let bg = "#F5F5DC";
+                  if (isBlocking) bg = owner.fill || "#D4B89A";
+                  if (isEnd) bg = "#90EE90";
+                  if (isStart) bg = "#FFD580";
+                  const arrowGlyph = { up: "\u2191", down: "\u2193", left: "\u2190", right: "\u2192" };
+                  const onClickCell = () => {
+                    if (egBrush === "toggle_block") {
+                      if (owner) {
+                        // Click on an existing building => select it (for label edits)
+                        if (owner.x === x && owner.y === y) setEgSelCell({ x, y });
+                        else setEgCells(egCells.filter((c) => c !== owner)); // click body deletes
+                      } else {
+                        const nc = { x, y, w: 1, h: 1, label: "新建筑", fill: "#D4B89A" };
+                        setEgCells([...egCells, nc]);
+                        setEgSelCell({ x, y });
+                      }
+                    } else if (egBrush === "place_arrow") {
+                      setEgArrows([...egArrows.filter((a) => !(a.x === x && a.y === y)), { x, y, dir: egArrowDir }]);
+                    } else if (egBrush === "remove_arrow") {
+                      setEgArrows(egArrows.filter((a) => !(a.x === x && a.y === y)));
+                    } else if (egBrush === "place_guard") {
+                      setEgGuards([...egGuards, { x, y, dir: egArrowDir }]);
+                    } else if (egBrush === "remove_guard") {
+                      setEgGuards(egGuards.filter((g) => !(g.x === x && g.y === y)));
+                    } else if (egBrush === "place_gate") {
+                      const label = prompt("地点名称（如 金光门）", "新地点");
+                      if (label) setEgGates([...egGates.filter((g) => !(g.x === x && g.y === y)), { x, y, label }]);
+                    } else if (egBrush === "set_start") {
+                      setEgStart({ x, y });
+                    } else if (egBrush === "set_end") {
+                      setEgEnd({ x, y });
+                    }
+                  };
+                  return (
+                    <div key={i} onClick={onClickCell} style={{
+                      backgroundColor: bg,
+                      border: isSel ? "2px solid #F4D03F" : "1px solid #C0A082",
+                      cursor: "pointer",
+                      position: "relative",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 11, color: "#333",
+                    }}>
+                      {arrow && <span style={{ color: "#3498DB", fontWeight: "bold" }}>{arrowGlyph[arrow.dir]}</span>}
+                      {guard && <span style={{ position: "absolute", color: "#1F4E79" }}>{"\u26A0"}</span>}
+                      {gate && <span style={{ position: "absolute", top: 0, left: 1, fontSize: 7, color: "#666" }}>{gate.label.slice(0, 2)}</span>}
+                      {isStart && <span style={{ position: "absolute", bottom: 0, right: 1, fontSize: 7, color: "#E65100" }}>{"S"}</span>}
+                      {isEnd && <span style={{ position: "absolute", bottom: 0, right: 1, fontSize: 7, color: "#1B5E20" }}>{"E"}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Selected building editor */}
+              {egSelCell && (() => {
+                const cell = egCells.find((c) => c.x === egSelCell.x && c.y === egSelCell.y);
+                if (!cell) return null;
+                const upd = (field, val) =>
+                  setEgCells(egCells.map((c) => c === cell ? { ...c, [field]: val } : c));
+                return (
+                  <div style={{ ...styles.dialogueItem, borderColor: "#F4D03F", borderWidth: 2, borderStyle: "solid", padding: 8 }}>
+                    <div style={{ fontWeight: "bold", marginBottom: 6 }}>{"\u9009\u4E2D\u5EFA\u7B51 ("}{cell.x}{", "}{cell.y}{")"}</div>
+                    <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={styles.fieldLabel}>{"宽 (w)"}</label>
+                        <input type="number" min="1" max="10" style={styles.fieldInput}
+                          value={cell.w || 1} onChange={(e) => upd("w", parseInt(e.target.value, 10) || 1)} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <label style={styles.fieldLabel}>{"高 (h)"}</label>
+                        <input type="number" min="1" max="10" style={styles.fieldInput}
+                          value={cell.h || 1} onChange={(e) => upd("h", parseInt(e.target.value, 10) || 1)} />
+                      </div>
+                    </div>
+                    <label style={styles.fieldLabel}>{"标签 (用 \\n 换行)"}</label>
+                    <input style={styles.fieldInput}
+                      value={cell.label || ""} onChange={(e) => upd("label", e.target.value)} />
+                    <label style={styles.fieldLabel}>{"填充色 (CSS)"}</label>
+                    <input style={styles.fieldInput}
+                      value={cell.fill || ""} placeholder="#D4B89A"
+                      onChange={(e) => upd("fill", e.target.value)} />
+                    <button style={styles.btnRemoveDialogue}
+                      onClick={() => { setEgCells(egCells.filter((c) => c !== cell)); setEgSelCell(null); }}>
+                      {"\u5220\u9664\u6B64\u5EFA\u7B51"}
+                    </button>
+                  </div>
+                );
+              })()}
+
+              {/* Guards list */}
+              <h4 style={styles.dialogueTitle}>{"\u5B88\u536B ("}{egGuards.length}{")"}</h4>
+              {egGuards.map((g, i) => (
+                <div key={i} style={{ ...styles.dialogueItem, padding: 6 }}>
+                  <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                    <span style={{ fontSize: 11, color: "#AAB7C4" }}>{"(" + g.x + "," + g.y + ")"}</span>
+                    <select style={{ ...styles.fieldInput, flex: 1 }} value={g.dir}
+                      onChange={(e) => {
+                        const next = [...egGuards]; next[i] = { ...g, dir: e.target.value }; setEgGuards(next);
+                      }}>
+                      <option value="up">{"\u2191"}</option>
+                      <option value="down">{"\u2193"}</option>
+                      <option value="left">{"\u2190"}</option>
+                      <option value="right">{"\u2192"}</option>
+                    </select>
+                    <input style={{ ...styles.fieldInput, flex: 2, fontSize: 10 }}
+                      placeholder="立绘 URL (留空则用 pool)"
+                      value={g.portrait || ""}
+                      onChange={(e) => {
+                        const next = [...egGuards];
+                        next[i] = { ...g, portrait: e.target.value || undefined };
+                        setEgGuards(next);
+                      }} />
+                    <button style={styles.btnRemoveDialogue}
+                      onClick={() => setEgGuards(egGuards.filter((_, j) => j !== i))}>{"\u2715"}</button>
+                  </div>
+                </div>
+              ))}
+
+              {/* Soldier portrait pool */}
+              <h4 style={styles.dialogueTitle}>{"\u58EB\u5175\u7ACB\u7ED8\u6C60 (\u968F\u673A\u5206\u914D\u7ED9\u5B88\u536B)"}</h4>
+              {egSoldierPortraits.map((p, i) => (
+                <div key={i} style={{ display: "flex", gap: 4, marginBottom: 4 }}>
+                  <input style={{ ...styles.fieldInput, flex: 1, fontSize: 11 }}
+                    value={p}
+                    onChange={(e) => {
+                      const next = [...egSoldierPortraits]; next[i] = e.target.value; setEgSoldierPortraits(next);
+                    }} />
+                  <button style={styles.btnRemoveDialogue}
+                    onClick={() => setEgSoldierPortraits(egSoldierPortraits.filter((_, j) => j !== i))}>{"\u2715"}</button>
+                </div>
+              ))}
+              <button style={styles.btnAddDialogue}
+                onClick={() => setEgSoldierPortraits([...egSoldierPortraits, "/assets/characters/npcs/"])}>
+                {"+ \u6DFB\u52A0\u7ACB\u7ED8"}
+              </button>
+
+              <label style={{ ...styles.fieldLabel, marginTop: 8, display: "block" }}>{"\u73A9\u5BB6\u7ACB\u7ED8 URL"}</label>
+              <input style={styles.fieldInput}
+                value={egPlayerPortrait}
+                onChange={(e) => setEgPlayerPortrait(e.target.value)} />
+            </div>
           )}
 
           {/* ---- CLICK_POINTS: 找茬 editor ---- */}
