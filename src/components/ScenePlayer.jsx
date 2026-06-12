@@ -1616,10 +1616,12 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
             const gate = gateMap.get(x + "," + y);
 
             if (blocked) {
-              // Only render the top-left tile of a merged building; let others be transparent
+              // Only render the top-left tile of a merged building. Covered
+              // tiles render nothing — every cell below is explicitly placed
+              // via gridColumn/gridRow, so auto-flow can never shift the board.
               const owner = ownerMap.get(x + "," + y);
               if (owner && (owner.x !== x || owner.y !== y)) {
-                return <div key={i} style={{ backgroundColor: "transparent" }} />;
+                return null;
               }
               return (
                 <div key={i} style={{
@@ -1649,6 +1651,8 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
             if (isStart) bg = "#FFD580";
             return (
               <div key={i} style={{
+                gridColumn: `${x + 1} / span 1`,
+                gridRow: `${y + 1} / span 1`,
                 backgroundColor: bg,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 position: "relative",
@@ -1676,8 +1680,8 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
             left: `calc(4px + (${player.x} + 0.5) * ${cellPx})`,
             top:  `calc(4px + (${player.y} + 0.5) * ${cellPx})`,
             transform: "translate(-50%, -50%)",
-            width: `calc(${cellPx} * 0.8)`,
-            height: `calc(${cellPx} * 0.8)`,
+            width: `calc(${cellPx} * 0.72)`,
+            height: `calc(${cellPx} * 0.72)`,
             borderRadius: "50%",
             backgroundColor: playerPortrait ? "transparent" : "#E74C3C",
             backgroundImage: playerPortrait ? `url(${playerPortrait})` : "none",
@@ -1695,8 +1699,8 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
               left: `calc(4px + (${g.pos.x} + 0.5) * ${cellPx})`,
               top:  `calc(4px + (${g.pos.y} + 0.5) * ${cellPx})`,
               transform: "translate(-50%, -50%)",
-              width: `calc(${cellPx} * 0.85)`,
-              height: `calc(${cellPx} * 0.85)`,
+              width: `calc(${cellPx} * 0.75)`,
+              height: `calc(${cellPx} * 0.75)`,
               borderRadius: "50%",
               backgroundColor: g.portrait ? "transparent" : "#3498DB",
               backgroundImage: g.portrait ? `url(${g.portrait})` : "none",
