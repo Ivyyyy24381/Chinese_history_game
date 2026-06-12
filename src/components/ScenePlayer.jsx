@@ -1853,7 +1853,7 @@ const styles = {
   triggerZone: {
     position: "absolute", transform: "translate(-50%, -50%)",
     display: "flex", flexDirection: "column", alignItems: "center",
-    cursor: "pointer", zIndex: 10,
+    cursor: "pointer", zIndex: 30, // always above character art (npcMarker z=10)
   },
   triggerPulse: {
     width: 50, height: 50, borderRadius: "50%",
@@ -1872,6 +1872,7 @@ const styles = {
     color: "#FFF", border: "none", borderRadius: 8,
     fontSize: 15, fontWeight: "bold", cursor: "pointer",
     boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+    zIndex: 30, // always above character art (npcMarker z=10)
   },
   // Dialogue overlay
   dialogueOverlay: {
