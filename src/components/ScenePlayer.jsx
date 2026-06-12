@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
 
 // ---- Portrait resolution -----------------------------------------------------
 // Convention: every NPC PNG lives at /assets/characters/npcs/<speaker_id>.png.
@@ -7,15 +8,10 @@ function npcPortraitPath(speakerId) {
   return `/assets/characters/npcs/${speakerId}.png`;
 }
 
-// Du Fu has multiple poses across life stages, organized as
-//   /assets/characters/dufu/<stage>/<pose>.png
-// e.g. dufu/drift/grief.png, dufu/youth/standing.png. A phase in event.json may
-// set `dufu_pose: "drift/grief"` to override the default portrait. A line in a
-// dialogue can also set `dufu_pose: "..."` for one-off overrides.
-function dufuPortraitPath(pose) {
-  if (!pose) return "/assets/characters/dufu/portrait.png";
-  return `/assets/characters/dufu/${pose}.png`;
-}
+// Du Fu portrait resolution lives in src/data/dufuPoses.js (shared with the
+// editor). Priority: line dufu_pose > phase dufu_pose > event dufu_pose >
+// stage default derived from the event year. The legacy
+// /assets/characters/dufu/portrait.png is a blank image and is remapped.
 
 /**
  * ScenePlayer - Interactive scene engine
@@ -192,7 +188,13 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
           ) : hasReaction ? (
             <div style={styles.announcementPanel}>
               <div style={styles.reactionBox}>
-                <img src={currentPhase.dufu_reaction.portrait} alt="" style={styles.reactionPortrait} />
+                <img
+                  src={
+                    currentPhase.dufu_reaction.portrait && currentPhase.dufu_reaction.portrait !== DUFU_LEGACY_PORTRAIT
+                      ? currentPhase.dufu_reaction.portrait
+                      : dufuPortraitPath(currentPhase.dufu_reaction.dufu_pose || currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year)
+                  }
+                  alt="" style={styles.reactionPortrait} />
                 <p style={styles.reactionText}>{currentPhase.dufu_reaction.text}</p>
               </div>
               <button style={styles.proceedBtn} onClick={goToNextPhase}>
@@ -352,10 +354,10 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
             {(() => {
               const line = activeNpc.dialogues[dialogueIndex];
               const isSelf = line.speaker === "dufu" || line.speaker === "self";
-              // Du Fu pose: per-line override > per-phase default > legacy portrait.
-              const dufuPose = line.dufu_pose || currentPhase.dufu_pose;
+              // Du Fu pose: per-line override > per-phase > per-event > stage default by year.
+              const dufuPose = line.dufu_pose || currentPhase.dufu_pose || sceneData.dufu_pose;
               let portrait;
-              if (isSelf) portrait = dufuPortraitPath(dufuPose);
+              if (isSelf) portrait = dufuPortraitPath(dufuPose, sceneData.year);
               else if (line.speaker === "narrator" || line.speaker === "portrait") portrait = "";
               else portrait = npcPortraitPath(line.speaker) || activeNpc.portrait;
               const isLast = dialogueIndex >= activeNpc.dialogues.length - 1;
@@ -951,7 +953,10 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   if (currentPhase.type === "escape_game") {
     return (
       <div style={bgStyle}>
-        <EscapeGamePhase phase={currentPhase} onComplete={goToNextPhase} />
+        <EscapeGamePhase
+          phase={currentPhase}
+          defaultPlayerPortrait={dufuPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year)}
+          onComplete={goToNextPhase} />
       </div>
     );
   }
@@ -1373,7 +1378,12 @@ const cpStyles = {
 //   soldierPortraits: [string]                             // pool used if guard has no portrait
 //   chaseRadius?, tickMs?, playerPortrait?, mapBackground?
 // }
-function EscapeGamePhase({ phase, onComplete }) {
+function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
+  // The legacy dufu/portrait.png is blank — remap it to the stage default.
+  const playerPortrait =
+    phase.playerPortrait && phase.playerPortrait !== DUFU_LEGACY_PORTRAIT
+      ? phase.playerPortrait
+      : defaultPlayerPortrait;
   const gridW = phase.gridW || 13;
   const gridH = phase.gridH || 14;
   const tickMs = phase.tickMs || 300;
@@ -1615,8 +1625,8 @@ function EscapeGamePhase({ phase, onComplete }) {
             width: `calc(${cellPx} * 0.8)`,
             height: `calc(${cellPx} * 0.8)`,
             borderRadius: "50%",
-            backgroundColor: phase.playerPortrait ? "transparent" : "#E74C3C",
-            backgroundImage: phase.playerPortrait ? `url(${phase.playerPortrait})` : "none",
+            backgroundColor: playerPortrait ? "transparent" : "#E74C3C",
+            backgroundImage: playerPortrait ? `url(${playerPortrait})` : "none",
             backgroundSize: "cover", backgroundPosition: "center top",
             border: "2px solid #FFF",
             boxShadow: "0 0 8px rgba(231,76,60,0.7)",
