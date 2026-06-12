@@ -22,6 +22,23 @@ const NPC_PORTRAITS = Object.keys(charGlob).map((k) => {
   return { id: name, name, file };
 });
 
+// Auto-discover props/items (榜单、卷轴、酒坛……) — placeable like NPCs
+const propGlob = import.meta.glob("/public/assets/props/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
+const itemGlob = import.meta.glob("/public/assets/items/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
+const PROP_NAMES = {
+  boat_oar: "船桨", book_wenxuan: "《文选》", brush_inkstone: "笔砚", dafu_scroll: "大赋卷轴",
+  helmet_broken: "破盔", letter_jiashu: "家书", medicine_bowl: "药碗", military_dispatch: "军报",
+  paper_failed: "落第榜单", petition: "奏疏", scroll_imperial: "诏书", spear: "长枪",
+  sword: "剑", thatched_roof_piece: "茅草", walking_stick: "拐杖", wine_cup: "酒杯",
+  wine_cup_empty: "空酒杯", wine_jar: "酒坛",
+  scroll_blank: "空白卷轴", paper_ball: "纸团", scroll_small: "小卷轴",
+};
+const PROP_PORTRAITS = Object.keys({ ...propGlob, ...itemGlob }).map((k) => {
+  const file = k.replace("/public", "");
+  const id = file.split("/").pop().replace(/\.\w+$/, "");
+  return { id, name: PROP_NAMES[id] || id, file };
+});
+
 // Auto-discover event scenes from new folder structure: events/<id>/event.json
 const sceneGlob = import.meta.glob("/src/data/dufu/events/*/event.json");
 const SCENE_FILES = Object.keys(sceneGlob).map((k) => {
@@ -86,6 +103,24 @@ export default function SceneEditor({ initialEventId, onExit }) {
       npcId: "label_" + Date.now(),
       name: "文字标签",
       portrait: "",
+      x: 50,
+      y: 50,
+      scale: 1,
+      flip: false,
+      isClue: false,
+      dialogues: [{ speaker: "narrator", speakerName: "旁白", text: "" }],
+    };
+    setNpcs([...npcs, newNpc]);
+    setSelectedNpc(newNpc.id);
+  };
+
+  // Add prop/item from palette (narrated object, e.g. 榜单/卷轴)
+  const addProp = (prop) => {
+    const newNpc = {
+      id: prop.id + "_" + Date.now(),
+      npcId: prop.id,
+      name: prop.name,
+      portrait: prop.file,
       x: 50,
       y: 50,
       scale: 1,
@@ -904,6 +939,16 @@ export default function SceneEditor({ initialEventId, onExit }) {
             ))}
           </div>
 
+          <h3 style={styles.paletteTitle}>{"\u7269\u54C1 / \u9053\u5177"}</h3>
+          <div style={styles.paletteGrid}>
+            {PROP_PORTRAITS.map((p) => (
+              <div key={p.file} style={styles.paletteItem} onClick={() => addProp(p)} title={p.name}>
+                <img src={p.file} alt={p.name} style={styles.paletteImg} />
+                <span style={styles.paletteName}>{p.name}</span>
+              </div>
+            ))}
+          </div>
+
           <h3 style={styles.paletteTitle}>{"\u4EA4\u4E92\u89E6\u53D1\u5668"}</h3>
           <div style={styles.triggerPalette}>
             <div style={styles.triggerItem} onClick={addTriggerZone}>
@@ -1256,6 +1301,19 @@ export default function SceneEditor({ initialEventId, onExit }) {
                       onChange={(e) => updateNpcField(selected.id, "name", e.target.value)} />
                     <div style={styles.detailCoordText}>{"\u4F4D\u7F6E: "}({selected.x}, {selected.y})</div>
                   </div>
+                </div>
+                <div style={styles.detailRow}>
+                  <label style={styles.fieldLabel}>{"\u7ACB\u7ED8"}</label>
+                  <select style={styles.fieldInput} value={selected.portrait || ""}
+                    onChange={(e) => updateNpcField(selected.id, "portrait", e.target.value)}>
+                    <option value="">{"\u65E0\uFF08\u7EAF\u6587\u5B57\u6807\u7B7E\uFF09"}</option>
+                    <optgroup label={"\u7269\u54C1 / \u9053\u5177"}>
+                      {PROP_PORTRAITS.map((p) => (<option key={p.file} value={p.file}>{p.name}</option>))}
+                    </optgroup>
+                    <optgroup label={"\u4EBA\u7269"}>
+                      {NPC_PORTRAITS.map((p) => (<option key={p.file} value={p.file}>{p.name}</option>))}
+                    </optgroup>
+                  </select>
                 </div>
                 <div style={styles.detailRow}>
                   <label style={styles.checkLabel}>
