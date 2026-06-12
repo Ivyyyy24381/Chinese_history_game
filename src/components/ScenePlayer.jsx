@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
 
 // ---- Portrait resolution -----------------------------------------------------
@@ -1176,6 +1176,23 @@ function ClickPointsPhase({ phase, onComplete }) {
   const [clicked, setClicked] = useState(new Set());
   const [activePoint, setActivePoint] = useState(null);
   const [showHint, setShowHint] = useState(false);
+  // Fit-to-space scaling: the image shrinks when the poem appears so nothing
+  // is ever covered. We measure the available area + image ratio, then size
+  // the marker container exactly to the displayed image (keeps % coords true).
+  const areaRef = useRef(null);
+  const [areaBox, setAreaBox] = useState({ w: 0, h: 0 });
+  const [imgRatio, setImgRatio] = useState(16 / 9);
+  useEffect(() => {
+    if (!areaRef.current) return;
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0].contentRect;
+      setAreaBox({ w: r.width, h: r.height });
+    });
+    ro.observe(areaRef.current);
+    return () => ro.disconnect();
+  }, []);
+  const imgW = areaBox.w ? Math.min(areaBox.w, Math.max(120, areaBox.h) * imgRatio) : 0;
+  const imgH = imgW / imgRatio;
 
   // Hint timer: briefly flash unclicked markers every `hintIntervalSec`.
   useEffect(() => {
@@ -1213,9 +1230,19 @@ function ClickPointsPhase({ phase, onComplete }) {
           </div>
         </div>
 
-        {/* Image with click-to-circle markers */}
-        <div style={cpStyles.imageWrap}>
-          <img src={imageSrc} alt="" style={cpStyles.image} />
+        {/* Image with click-to-circle markers — scales to whatever space the
+            poem leaves free; marker container == displayed image exactly. */}
+        <div ref={areaRef} style={cpStyles.imageArea}>
+          <div style={{ ...cpStyles.imageWrap, width: imgW || "100%", height: imgW ? imgH : "auto" }}>
+          <img
+            src={imageSrc}
+            alt=""
+            style={cpStyles.image}
+            onLoad={(e) => {
+              const im = e.currentTarget;
+              if (im.naturalWidth && im.naturalHeight) setImgRatio(im.naturalWidth / im.naturalHeight);
+            }}
+          />
           {points.map((pt) => {
             const isClicked = clicked.has(pt.id);
             return (
@@ -1241,6 +1268,7 @@ function ClickPointsPhase({ phase, onComplete }) {
               />
             );
           })}
+          </div>
         </div>
 
         {/* Progressive 春望 reveal */}
@@ -1297,14 +1325,15 @@ const cpStyles = {
     borderRadius: 12,
     maxWidth: "min(900px, 95vw)",
     width: "100%",
-    maxHeight: "95vh",
-    overflowY: "auto",
+    height: "95vh",
+    overflow: "hidden", // never scroll — the image scales down instead
     boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
     display: "flex", flexDirection: "column",
   },
   header: {
     padding: "16px 24px 12px",
     borderBottom: "1px solid #D4A574",
+    flexShrink: 0,
   },
   title: {
     margin: "0 0 4px", fontSize: 22, color: "#3E2723",
@@ -1318,15 +1347,21 @@ const cpStyles = {
     fontSize: 13, color: "#8B7355",
   },
   progress: { color: "#3E2723" },
+  imageArea: {
+    flex: "1 1 auto", minHeight: 120,
+    margin: "12px 16px",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    overflow: "hidden",
+  },
   imageWrap: {
     position: "relative",
-    margin: "12px 16px",
     backgroundColor: "#000",
     borderRadius: 8,
     overflow: "hidden",
     lineHeight: 0,
+    flexShrink: 0,
   },
-  image: { width: "100%", height: "auto", display: "block" },
+  image: { width: "100%", height: "100%", display: "block" },
   poemBox: {
     margin: "8px 24px 12px",
     padding: "12px 16px",
@@ -1334,6 +1369,7 @@ const cpStyles = {
     borderLeft: "4px solid #D4A574",
     borderRadius: 4,
     textAlign: "center",
+    flexShrink: 0,
   },
   poemTitle: {
     fontSize: 14, color: "#8B7355", marginBottom: 6, letterSpacing: 2,
@@ -1342,6 +1378,7 @@ const cpStyles = {
     fontSize: 18, color: "#3E2723", lineHeight: 1.8, letterSpacing: 2,
   },
   continueBtn: {
+    flexShrink: 0,
     margin: "8px 24px 20px",
     padding: "12px 0", fontSize: 16, fontWeight: "bold",
     backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 6,
@@ -1350,6 +1387,7 @@ const cpStyles = {
   hint: {
     margin: "8px 24px 20px",
     fontSize: 13, color: "#8B7355", textAlign: "center", fontStyle: "italic",
+    flexShrink: 0,
   },
   bubbleOverlay: {
     position: "fixed", inset: 0, zIndex: 260,
