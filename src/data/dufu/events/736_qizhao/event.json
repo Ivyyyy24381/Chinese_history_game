@@ -96,7 +96,8 @@
         "portrait": "/assets/characters/dufu/portrait.png",
         "text": "不中便不中。天地之大，岂止一榜？"
       },
-      "nextPhase": "grand_tour"
+      "nextPhase": "grand_tour",
+      "narrative": ""
     },
     {
       "id": "grand_tour",
@@ -153,7 +154,8 @@
           ]
         }
       ],
-      "nextPhase": "wangyue_compose"
+      "nextPhase": "wangyue_compose",
+      "narrative": ""
     },
     {
       "id": "wangyue_compose",
@@ -175,7 +177,10 @@
         "见",
         "雷电"
       ],
-      "poemTitle": "望岳"
+      "poemTitle": "望岳",
+      "narrative": "",
+      "poemAnswer": "",
+      "poemCandidates": []
     },
     {
       "id": "tour_end",
@@ -186,7 +191,8 @@
       "dufu_reaction": {
         "portrait": "/assets/characters/dufu/portrait.png",
         "text": "李太白……他的诗，我读了十年。听说他也要来洛阳。"
-      }
+      },
+      "narrative": ""
     }
   ]
 }

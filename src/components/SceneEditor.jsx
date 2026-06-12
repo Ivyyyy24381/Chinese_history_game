@@ -296,7 +296,9 @@ export default function SceneEditor({ initialEventId, onExit }) {
         if (poemExplanation) phase.poemExplanation = poemExplanation;
       }
       if (phaseType === "map_travel") {
-        phase.destinations = destinations;
+        // Player reads `waypoints` — write that, and drop the legacy key.
+        phase.waypoints = destinations.map(({ uid, ...rest }) => rest);
+        delete phase.destinations;
         phase.travelNarrative = travelNarrative;
       }
       if (phaseType === "dialogue_branch") {
@@ -432,6 +434,11 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setClickPoints((prev) =>
       prev.map((p) =>
         p.uid === dragging ? { ...p, x: clampX, y: clampY } : p
+      )
+    );
+    setDestinations((prev) =>
+      prev.map((d) =>
+        d.uid === dragging ? { ...d, x: clampX, y: clampY } : d
       )
     );
   }, [dragging, didDrag, dragStartPos]);
@@ -579,8 +586,12 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setPoemAnswer(phase.poemAnswer || "");
     setPoemCandidates(phase.poemCandidates || []);
     setPoemExplanation(phase.poemExplanation || "");
-    // Map travel
-    setDestinations(phase.destinations || []);
+    // Map travel — data uses `waypoints`; `destinations` is a legacy editor key.
+    setDestinations(((phase.waypoints && phase.waypoints.length ? phase.waypoints : phase.destinations) || []).map((d, i) => ({
+      ...d,
+      uid: "wp_" + i + "_" + (d.id || ""),
+      dialogues: d.dialogues || [],
+    })));
     setTravelNarrative(phase.travelNarrative || "");
     // Dialogue branch
     setDialogueTree(phase.dialogueTree || []);
@@ -675,7 +686,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
       if (poemExplanation) phase.poemExplanation = poemExplanation;
     }
     if (phaseType === "map_travel") {
-      phase.destinations = destinations;
+      phase.waypoints = destinations.map(({ uid, ...rest }) => rest);
       phase.travelNarrative = travelNarrative;
     }
     if (phaseType === "dialogue_branch") {
@@ -1021,6 +1032,55 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 </div>
               );
             })}
+            {/* Map-travel waypoints on canvas: numbered draggable pins + route line */}
+            {phaseType === "map_travel" && destinations.length > 0 && (
+              <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 14 }}
+                viewBox="0 0 100 100" preserveAspectRatio="none">
+                <polyline
+                  points={destinations.map((d) => `${d.x},${d.y}`).join(" ")}
+                  fill="none" stroke="#E74C3C" strokeWidth="0.5" strokeDasharray="1.5,1" opacity="0.85" />
+              </svg>
+            )}
+            {phaseType === "map_travel" && destinations.map((wp, wi) => (
+              <div
+                key={wp.uid}
+                style={{
+                  position: "absolute",
+                  left: wp.x + "%",
+                  top: wp.y + "%",
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 19,
+                  cursor: dragging === wp.uid ? "grabbing" : "grab",
+                  textAlign: "center",
+                  outline: selectedNpc === wp.uid ? "3px solid #F4D03F" : "none",
+                  borderRadius: 8,
+                }}
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  setSelectedNpc(wp.uid);
+                  setDragging(wp.uid);
+                  setDragStartPos({ x: e.clientX, y: e.clientY });
+                  setDidDrag(false);
+                }}
+                onClick={(e) => { e.stopPropagation(); setSelectedNpc(wp.uid); }}
+              >
+                <div style={{
+                  width: 26, height: 26, borderRadius: "50% 50% 50% 0",
+                  transform: "rotate(-45deg)",
+                  backgroundColor: "#E74C3C", border: "2px solid #FFF",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  margin: "0 auto",
+                }}>
+                  <span style={{ transform: "rotate(45deg)", color: "#FFF", fontSize: 12, fontWeight: "bold" }}>{wi + 1}</span>
+                </div>
+                <div style={{
+                  marginTop: 2, fontSize: 11, fontWeight: "bold", color: "#FFF",
+                  textShadow: "0 1px 3px #000", whiteSpace: "nowrap",
+                }}>{wp.name || wp.id || "?"}</div>
+                <div style={{ fontSize: 9, color: "#AAB7C4" }}>({wp.x}, {wp.y})</div>
+              </div>
+            ))}
             {/* Trigger zones on canvas */}
             {triggerZones.map((tz) => (
               <div
@@ -1827,28 +1887,69 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 <textarea style={styles.fieldTextarea} value={travelNarrative} rows={2}
                   onChange={(e) => setTravelNarrative(e.target.value)} />
               </div>
+              <p style={{ ...styles.phaseDesc, color: "#F4D03F" }}>{"\uD83D\uDCA1 \u9014\u7ECF\u70B9\u53EF\u76F4\u63A5\u5728\u5DE6\u4FA7\u5730\u56FE\u4E0A\u62D6\u62FD"}</p>
               {destinations.map((dest, di) => (
-                <div key={di} style={styles.questionCard}>
+                <div key={dest.uid || di} style={{
+                  ...styles.questionCard,
+                  outline: selectedNpc === dest.uid ? "2px solid #F4D03F" : "none",
+                }}>
                   <div style={styles.dialogueRow}>
+                    <span style={{ color: "#E74C3C", fontWeight: "bold", minWidth: 22 }}>{di + 1}</span>
                     <input style={styles.fieldInput} value={dest.name || ""} placeholder={"\u5730\u540D\uFF08\u5982\u201C\u6210\u90FD\u201D\uFF09"}
                       onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], name: e.target.value }; setDestinations(nd); }} />
                     <button style={styles.btnRemoveDialogue}
                       onClick={() => setDestinations(destinations.filter((_, i) => i !== di))}>{"\u2715"}</button>
                   </div>
-                  <input style={styles.fieldInput} value={dest.x || ""} placeholder={"x \u5750\u6807 (0-100)"}
-                    onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], x: Number(e.target.value) }; setDestinations(nd); }} />
-                  <input style={styles.fieldInput} value={dest.y || ""} placeholder={"y \u5750\u6807 (0-100)"}
-                    onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], y: Number(e.target.value) }; setDestinations(nd); }} />
-                  <textarea style={styles.dialogueText} value={dest.description || ""} rows={2}
-                    placeholder={"\u5230\u8FBE\u540E\u7684\u53D9\u8FF0/\u4E8B\u4EF6"}
-                    onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], description: e.target.value }; setDestinations(nd); }} />
-                  <input style={styles.fieldInput} value={dest.nextScene || ""} placeholder={"\u89E6\u53D1\u573A\u666F\u6587\u4EF6\uFF08\u53EF\u9009\uFF09"}
-                    onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], nextScene: e.target.value }; setDestinations(nd); }} />
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <input style={{ ...styles.fieldInput, flex: 1.4 }} value={dest.id || ""} placeholder={"id\uFF08\u62FC\u97F3\uFF09"}
+                      onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], id: e.target.value }; setDestinations(nd); }} />
+                    <input style={{ ...styles.fieldInput, flex: 1 }} type="number" value={dest.x ?? ""} placeholder={"x"}
+                      onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], x: Number(e.target.value) }; setDestinations(nd); }} />
+                    <input style={{ ...styles.fieldInput, flex: 1 }} type="number" value={dest.y ?? ""} placeholder={"y"}
+                      onChange={(e) => { const nd = [...destinations]; nd[di] = { ...nd[di], y: Number(e.target.value) }; setDestinations(nd); }} />
+                  </div>
+                  {(dest.dialogues || []).map((dl, dli) => (
+                    <div key={dli} style={{ display: "flex", gap: 4, marginTop: 4 }}>
+                      <select style={{ ...styles.dialogueSpeakerSelect, width: 86 }} value={dl.speaker || "dufu"}
+                        onChange={(e) => {
+                          const nd = [...destinations]; const dlg = [...nd[di].dialogues];
+                          const sp = e.target.value;
+                          dlg[dli] = { ...dlg[dli], speaker: sp, speakerName: sp === "dufu" ? "\u675C\u752B" : sp === "narrator" ? "\u65C1\u767D" : (dlg[dli].speakerName || sp) };
+                          nd[di] = { ...nd[di], dialogues: dlg }; setDestinations(nd);
+                        }}>
+                        <option value="dufu">{"\u675C\u752B"}</option>
+                        <option value="narrator">{"\u65C1\u767D"}</option>
+                      </select>
+                      <textarea style={{ ...styles.dialogueText, flex: 1, marginTop: 0 }} value={dl.text || ""} rows={2}
+                        placeholder={"\u5230\u8FBE\u540E\u7684\u53F0\u8BCD\u2026"}
+                        onChange={(e) => {
+                          const nd = [...destinations]; const dlg = [...nd[di].dialogues];
+                          dlg[dli] = { ...dlg[dli], text: e.target.value };
+                          nd[di] = { ...nd[di], dialogues: dlg }; setDestinations(nd);
+                        }} />
+                      <button style={styles.btnRemoveDialogue}
+                        onClick={() => {
+                          const nd = [...destinations];
+                          nd[di] = { ...nd[di], dialogues: nd[di].dialogues.filter((_, i) => i !== dli) };
+                          setDestinations(nd);
+                        }}>{"\u2715"}</button>
+                    </div>
+                  ))}
+                  <button style={styles.btnAddDialogue}
+                    onClick={() => {
+                      const nd = [...destinations];
+                      nd[di] = { ...nd[di], dialogues: [...(nd[di].dialogues || []), { speaker: "dufu", speakerName: "\u675C\u752B", text: "" }] };
+                      setDestinations(nd);
+                    }}>{"+ \u53F0\u8BCD"}</button>
                 </div>
               ))}
               <button style={styles.btnAddPhaseStyle}
-                onClick={() => setDestinations([...destinations, { name: "", x: 50, y: 50, description: "", nextScene: "" }])}>
-                {"+ \u65B0\u589E\u76EE\u7684\u5730"}
+                onClick={() => setDestinations([...destinations, {
+                  uid: "wp_new_" + Date.now(),
+                  id: "", name: "", x: 50, y: 50,
+                  dialogues: [{ speaker: "dufu", speakerName: "\u675C\u752B", text: "" }],
+                }])}>
+                {"+ \u65B0\u589E\u9014\u7ECF\u70B9"}
               </button>
             </div>
           )}
