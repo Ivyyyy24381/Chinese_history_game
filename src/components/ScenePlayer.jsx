@@ -21,6 +21,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [talkedNpcs, setTalkedNpcs] = useState(new Set());
   const [activeNpc, setActiveNpc] = useState(null);
+  const [hoveredNpc, setHoveredNpc] = useState(null);
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const [cluesFound, setCluesFound] = useState(0);
   // Exam state
@@ -251,6 +252,8 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                     opacity: talked ? 0.6 : 1,
                   }}
                   onClick={() => handleNpcClick(npc)}
+                  onMouseEnter={() => setHoveredNpc(npc.id)}
+                  onMouseLeave={() => setHoveredNpc(null)}
                 >
                   {/* Portrait-less items render as a single ? marker — no name label.
                       Items with a portrait still show ? bubble + name. */}
@@ -290,7 +293,8 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                           onError={(e) => { e.currentTarget.style.opacity = "0.2"; }}
                         />
                       </div>
-                      <span style={styles.npcName}>{npc.name}</span>
+                      {/* Name only on hover — keeps the scene immersive */}
+                      {hoveredNpc === npc.id && <span style={styles.npcName}>{npc.name}</span>}
                     </>
                   )}
                 </div>
@@ -1809,9 +1813,12 @@ const styles = {
     fontSize: 10, color: "rgba(255,255,255,0.7)",
   },
   npcName: {
-    marginTop: 4, fontSize: 12, color: "#FFF",
+    // Absolutely positioned so the hover tooltip doesn't shift the portrait.
+    position: "absolute", top: "100%", left: "50%",
+    transform: "translateX(-50%)", marginTop: 4,
+    fontSize: 12, color: "#FFF",
     backgroundColor: "rgba(0,0,0,0.6)", padding: "2px 8px",
-    borderRadius: 4, whiteSpace: "nowrap",
+    borderRadius: 4, whiteSpace: "nowrap", pointerEvents: "none",
   },
   npcPortraitWrap: {
     width: 140, height: 140, overflow: "hidden",
