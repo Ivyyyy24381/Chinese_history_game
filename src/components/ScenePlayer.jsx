@@ -1500,6 +1500,15 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
     setWon(false);
   }, [phase.start, buildGuards]);
 
+  // Always (re)spawn at the configured start whenever the board data changes
+  // (covers hot data reloads / phase reuse — player can never begin off-start).
+  useEffect(() => {
+    setPlayer({ ...phase.start });
+    setGuards(buildGuards());
+    setWon(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase.start.x, phase.start.y, gridW, gridH]);
+
   // ---- Player input (arrows / WASD) ----------------------------------------
   useEffect(() => {
     const onKey = (e) => {
@@ -1580,8 +1589,24 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
   }, [player, guards, won, phase.end, phase.start, buildGuards]);
 
   // ---- Render ---------------------------------------------------------------
-  // Each cell is a square; merged cells span via grid-column/row.
-  const cellPx = `min(calc(80vw / ${gridW}), calc(70vh / ${gridH}))`;
+  // Board always fits the popup: measure the available area and derive an
+  // exact pixel cell size (immune to window/display scaling \u2014 the whole
+  // board, including the exit, is always visible).
+  const boardRef = useRef(null);
+  const [boardBox, setBoardBox] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    if (!boardRef.current) return;
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0].contentRect;
+      setBoardBox({ w: r.width, h: r.height });
+    });
+    ro.observe(boardRef.current);
+    return () => ro.disconnect();
+  }, []);
+  const cell = boardBox.w
+    ? Math.max(12, Math.floor(Math.min((boardBox.w - 8) / gridW, (boardBox.h - 8) / gridH)))
+    : 24;
+  const cellPx = cell + "px";
   const arrowGlyph = { up: "\u2191", down: "\u2193", left: "\u2190", right: "\u2192" };
 
   return (
@@ -1595,6 +1620,10 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
           <button onClick={resetGame} style={egStyles.restartBtn}>{"\u91CD\u65B0\u5F00\u59CB"}</button>
         </div>
 
+        <div ref={boardRef} style={{
+          flex: "1 1 auto", minHeight: 0,
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
         <div style={{
           display: "grid",
           gridTemplateColumns: `repeat(${gridW}, ${cellPx})`,
@@ -1605,6 +1634,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
           padding: 4, borderRadius: 4,
           margin: "0 auto",
           position: "relative",
+          flexShrink: 0,
         }}>
           {/* Render street cells first */}
           {Array.from({ length: gridW * gridH }).map((_, i) => {
@@ -1627,11 +1657,11 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
                 <div key={i} style={{
                   gridColumn: `${x + 1} / span ${(owner?.w) || 1}`,
                   gridRow: `${y + 1} / span ${(owner?.h) || 1}`,
-                  backgroundColor: owner?.fill || "#D4B89A",
-                  border: "2px solid #8B7355",
-                  borderRadius: 6,
-                  margin: 3, // shrink buildings so the lanes between walls look wider
-                  boxShadow: "inset 0 0 0 2px rgba(255,255,255,0.25)",
+                  // Flush tiles — no margins/seams, so the ONLY light areas are
+                  // real walkable streets. Dark = wall, light = road, period.
+                  backgroundColor: owner?.fill || "#A98F6C",
+                  border: "1px solid #8B7355",
+                  borderRadius: 2,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   textAlign: "center",
                   fontFamily: "'Noto Serif SC', 'Songti SC', serif",
@@ -1713,6 +1743,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
             }} />
           ))}
         </div>
+        </div>
 
         {won && (
           <>
@@ -1738,8 +1769,13 @@ const egStyles = {
   },
   popup: {
     backgroundColor: "#F5E6D3", borderRadius: 12, padding: "16px 20px",
-    maxWidth: "min(95vw, 980px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-    textAlign: "center", maxHeight: "95vh", overflow: "auto",
+    width: "min(95vw, 980px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+    textAlign: "center",
+    // Fixed height + flex column: the board area is measured and the cell
+    // size derived from it, so the full maze (incl. exit) always fits —
+    // no clipping at any window size / display scaling.
+    height: "94vh", overflow: "hidden",
+    display: "flex", flexDirection: "column",
   },
   title: { margin: "0 0 4px", fontSize: 22, color: "#3E2723", letterSpacing: 2 },
   narrative: { margin: "0 0 8px", fontSize: 13, color: "#6B5340" },
