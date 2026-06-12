@@ -2179,14 +2179,17 @@ const styles = {
   // Transition
   transitionOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.8)",
+    // Lighter mask so the scene background stays visible during transitions.
+    backgroundColor: "rgba(0,0,0,0.45)",
   },
   transitionCard: {
     textAlign: "center", cursor: "pointer", padding: 40,
+    maxWidth: 760,
   },
   transitionText: {
-    color: "#F4D03F", fontSize: 32, letterSpacing: 8,
+    color: "#F4D03F", fontSize: 20, letterSpacing: 3, lineHeight: 2,
     marginBottom: 16,
+    textShadow: "0 1px 6px rgba(0,0,0,0.9)", // keep readable over the lighter mask
   },
   clickHint: { color: "#AAA", fontSize: 14, marginTop: 12 },
   // Examiner intro
