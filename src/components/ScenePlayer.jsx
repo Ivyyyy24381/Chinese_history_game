@@ -1535,7 +1535,7 @@ function EscapeGamePhase({ phase, onComplete }) {
           display: "grid",
           gridTemplateColumns: `repeat(${gridW}, ${cellPx})`,
           gridTemplateRows: `repeat(${gridH}, ${cellPx})`,
-          gap: 1,
+          gap: 0, // continuous streets — corridors read as wide Pac-Man lanes
           justifyContent: "center",
           backgroundColor: "#5D4037",
           padding: 4, borderRadius: 4,
@@ -1563,7 +1563,9 @@ function EscapeGamePhase({ phase, onComplete }) {
                   gridRow: `${y + 1} / span ${(owner?.h) || 1}`,
                   backgroundColor: owner?.fill || "#D4B89A",
                   border: "2px solid #8B7355",
-                  borderRadius: 4,
+                  borderRadius: 6,
+                  margin: 3, // shrink buildings so the lanes between walls look wider
+                  boxShadow: "inset 0 0 0 2px rgba(255,255,255,0.25)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   textAlign: "center",
                   fontFamily: "'Noto Serif SC', 'Songti SC', serif",
@@ -1607,8 +1609,8 @@ function EscapeGamePhase({ phase, onComplete }) {
           {/* Player overlay (absolute over the grid) */}
           <div style={{
             position: "absolute",
-            left: `calc(4px + (${player.x} + 0.5) * (${cellPx} + 1px))`,
-            top:  `calc(4px + (${player.y} + 0.5) * (${cellPx} + 1px))`,
+            left: `calc(4px + (${player.x} + 0.5) * ${cellPx})`,
+            top:  `calc(4px + (${player.y} + 0.5) * ${cellPx})`,
             transform: "translate(-50%, -50%)",
             width: `calc(${cellPx} * 0.8)`,
             height: `calc(${cellPx} * 0.8)`,
@@ -1626,8 +1628,8 @@ function EscapeGamePhase({ phase, onComplete }) {
           {guards.map((g, i) => (
             <div key={i} style={{
               position: "absolute",
-              left: `calc(4px + (${g.pos.x} + 0.5) * (${cellPx} + 1px))`,
-              top:  `calc(4px + (${g.pos.y} + 0.5) * (${cellPx} + 1px))`,
+              left: `calc(4px + (${g.pos.x} + 0.5) * ${cellPx})`,
+              top:  `calc(4px + (${g.pos.y} + 0.5) * ${cellPx})`,
               transform: "translate(-50%, -50%)",
               width: `calc(${cellPx} * 0.85)`,
               height: `calc(${cellPx} * 0.85)`,
