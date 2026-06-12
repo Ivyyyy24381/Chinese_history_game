@@ -15,11 +15,15 @@
         {
           "id": "appointment_letter",
           "name": "委任状",
+          "portrait": "",
           "position": {
-            "x": 47,
-            "y": 66
+            "x": 45,
+            "y": 65
           },
           "scale": 0.9,
+          "flip": true,
+          "rotate": 180,
+          "tiltY": -3,
           "isClue": true,
           "dialogues": [
             {
@@ -36,11 +40,27 @@
               "speakerName": "杜甫",
               "text": "河西尉？一个负责缉捕盗匪的九品小员？"
             }
-          ],
-          "portrait": "/assets/items/scroll_blank.png"
+          ]
+        },
+        {
+          "id": "kneeling",
+          "name": "kneeling",
+          "portrait": "/assets/characters/dufu/official/kneeling.png",
+          "position": {
+            "x": 56,
+            "y": 73
+          },
+          "scale": 2.2,
+          "dialogues": [
+            {
+              "speaker": "kneeling",
+              "speakerName": "kneeling",
+              "text": ""
+            }
+          ]
         }
       ],
-      "requiredTalks": 1
+      "requiredTalks": 2
     },
     {
       "id": "ru_shi_choice",
@@ -96,7 +116,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/characters/dufu/scholar/standing.png",
         "text": "看管兵器……也好。总比河西尉强。"
       },
       "narrative": ""
@@ -442,50 +462,66 @@
       "gridH": 14,
       "tickMs": 350,
       "start": {
-        "x": 10,
-        "y": 12
+        "x": 9,
+        "y": 9
       },
       "end": {
         "x": 0,
-        "y": 7
+        "y": 5
       },
-      "playerPortrait": "/assets/characters/dufu/portrait.png",
+      "playerPortrait": "",
       "soldierPortraits": [
         "/assets/characters/npcs/rebel_officer.png",
         "/assets/characters/npcs/officer_night.png"
       ],
       "cells": [
         {
+          "x": 1,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "label": "掖庭宫",
+          "fill": "#C9A86A"
+        },
+        {
           "x": 4,
           "y": 0,
-          "w": 3,
-          "h": 3,
-          "label": "宫城",
-          "fill": "#E8D5B7"
+          "w": 2,
+          "h": 2,
+          "label": "宫城\n太极殿",
+          "fill": "#C9A86A"
         },
         {
           "x": 7,
           "y": 0,
           "w": 2,
-          "h": 1,
-          "label": "西内苑",
-          "fill": "#E8D5B7"
+          "h": 2,
+          "label": "东宫",
+          "fill": "#C9A86A"
         },
         {
-          "x": 9,
+          "x": 10,
           "y": 0,
           "w": 2,
           "h": 2,
           "label": "大明宫",
-          "fill": "#E8D5B7"
+          "fill": "#C9A86A"
         },
         {
           "x": 4,
           "y": 3,
-          "w": 3,
+          "w": 2,
           "h": 2,
           "label": "皇城",
-          "fill": "#EFE0C0"
+          "fill": "#C9A86A"
+        },
+        {
+          "x": 10,
+          "y": 3,
+          "w": 2,
+          "h": 2,
+          "label": "兴庆宫",
+          "fill": "#C9A86A"
         },
         {
           "x": 1,
@@ -493,181 +529,240 @@
           "w": 2,
           "h": 2,
           "label": "西市",
-          "fill": "#FFE5B4"
+          "fill": "#D4B89A"
         },
         {
-          "x": 9,
+          "x": 10,
           "y": 6,
           "w": 2,
           "h": 2,
           "label": "东市",
-          "fill": "#FFE5B4"
+          "fill": "#D4B89A"
         },
         {
-          "x": 11,
-          "y": 5,
+          "x": 10,
+          "y": 12,
           "w": 2,
           "h": 2,
-          "label": "兴庆宫",
-          "fill": "#E8D5B7"
-        },
-        {
-          "x": 11,
-          "y": 11,
-          "w": 2,
-          "h": 3,
           "label": "芙蓉池",
-          "fill": "#B0D8F0"
+          "fill": "#A8C8E0"
         },
         {
-          "x": 0,
-          "y": 0,
-          "w": 4,
-          "h": 2,
-          "fill": "#D4B89A"
-        },
-        {
-          "x": 0,
+          "x": 1,
           "y": 3,
-          "w": 4,
-          "h": 2,
-          "fill": "#D4B89A"
-        },
-        {
-          "x": 0,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "fill": "#D4B89A"
-        },
-        {
-          "x": 3,
-          "y": 9,
-          "w": 2,
-          "h": 1,
-          "fill": "#D4B89A"
-        },
-        {
-          "x": 0,
-          "y": 11,
           "w": 2,
           "h": 2,
-          "fill": "#D4B89A"
+          "fill": "#C9B08A"
         },
         {
-          "x": 3,
-          "y": 11,
-          "w": 2,
-          "h": 2,
-          "fill": "#D4B89A"
-        },
-        {
-          "x": 7,
+          "x": 1,
           "y": 9,
           "w": 2,
-          "h": 1,
-          "fill": "#D4B89A"
-        },
-        {
-          "x": 7,
-          "y": 11,
-          "w": 3,
           "h": 2,
-          "fill": "#D4B89A"
+          "fill": "#C9B08A"
         },
         {
-          "x": 11,
-          "y": 9,
+          "x": 1,
+          "y": 12,
           "w": 2,
           "h": 1,
-          "fill": "#D4B89A"
+          "fill": "#C9B08A"
+        },
+        {
+          "x": 4,
+          "y": 6,
+          "w": 2,
+          "h": 2,
+          "fill": "#C9B08A"
+        },
+        {
+          "x": 4,
+          "y": 9,
+          "w": 2,
+          "h": 2,
+          "fill": "#C9B08A"
+        },
+        {
+          "x": 4,
+          "y": 12,
+          "w": 2,
+          "h": 1,
+          "fill": "#C9B08A"
         },
         {
           "x": 7,
           "y": 3,
           "w": 2,
           "h": 2,
-          "fill": "#D4B89A"
-        }
-      ],
-      "arrows": [
-        {
-          "x": 0,
-          "y": 8,
-          "dir": "right"
+          "fill": "#C9B08A"
         },
         {
-          "x": 6,
-          "y": 8,
-          "dir": "right"
+          "x": 7,
+          "y": 6,
+          "w": 2,
+          "h": 2,
+          "fill": "#C9B08A"
         },
         {
-          "x": 12,
-          "y": 8,
-          "dir": "down"
+          "x": 7,
+          "y": 9,
+          "w": 2,
+          "h": 2,
+          "fill": "#C9B08A"
         },
         {
-          "x": 12,
-          "y": 10,
-          "dir": "left"
+          "x": 7,
+          "y": 12,
+          "w": 2,
+          "h": 1,
+          "fill": "#C9B08A"
         },
         {
-          "x": 6,
-          "y": 10,
-          "dir": "left"
+          "x": 10,
+          "y": 9,
+          "w": 2,
+          "h": 2,
+          "fill": "#C9B08A"
+        },
+        {
+          "x": 5,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
         },
         {
           "x": 2,
-          "y": 10,
-          "dir": "up"
-        },
-        {
-          "x": 6,
           "y": 5,
-          "dir": "down"
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
         },
         {
-          "x": 6,
+          "x": 11,
+          "y": 2,
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
+        },
+        {
+          "x": 4,
+          "y": 8,
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
+        },
+        {
+          "x": 8,
+          "y": 11,
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
+        },
+        {
+          "x": 11,
           "y": 13,
-          "dir": "left"
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
+        },
+        {
+          "x": 0,
+          "y": 4,
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
+        },
+        {
+          "x": 9,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "fill": "#8A6F52"
         }
       ],
+      "arrows": [],
       "gates": [
         {
           "x": 0,
-          "y": 7,
+          "y": 5,
           "label": "金光门"
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "label": "开远门"
+        },
+        {
+          "x": 0,
+          "y": 8,
+          "label": "延平门"
+        },
+        {
+          "x": 12,
+          "y": 2,
+          "label": "通化门"
         },
         {
           "x": 12,
           "y": 5,
           "label": "春明门"
-        }
-      ],
-      "guards": [
-        {
-          "x": 6,
-          "y": 8,
-          "dir": "right"
         },
         {
           "x": 12,
           "y": 8,
+          "label": "延兴门"
+        },
+        {
+          "x": 3,
+          "y": 13,
+          "label": "安化门"
+        },
+        {
+          "x": 6,
+          "y": 13,
+          "label": "明德门"
+        },
+        {
+          "x": 9,
+          "y": 13,
+          "label": "启夏门"
+        }
+      ],
+      "guards": [
+        {
+          "x": 3,
+          "y": 3,
+          "dir": "down"
+        },
+        {
+          "x": 6,
+          "y": 4,
           "dir": "down"
         },
         {
           "x": 2,
-          "y": 10,
-          "dir": "up"
+          "y": 2,
+          "dir": "right"
+        },
+        {
+          "x": 11,
+          "y": 8,
+          "dir": "left"
         },
         {
           "x": 6,
-          "y": 5,
-          "dir": "down"
+          "y": 12,
+          "dir": "up"
+        },
+        {
+          "x": 9,
+          "y": 11,
+          "dir": "left"
         }
       ],
       "conclusion": "至德二载（757）四月，杜甫从长安城西金光门出，奔赴凤翔。",
-      "chaseRadius": 3
+      "chaseRadius": 2
     }
   ]
 }

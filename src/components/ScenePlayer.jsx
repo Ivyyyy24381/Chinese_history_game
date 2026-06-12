@@ -1464,6 +1464,11 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
 
   const isBlocked = (x, y) => {
     if (x < 0 || y < 0 || x >= gridW || y >= gridH) return true;
+    // Start & exit tiles are always enterable, even if a building cell was
+    // accidentally painted over them in the editor — guarantees the game can
+    // always start correctly and finish at the exit.
+    if (phase.end && x === phase.end.x && y === phase.end.y) return false;
+    if (phase.start && x === phase.start.x && y === phase.start.y) return false;
     return blockMap.has(x + "," + y);
   };
   const stepDir = (dir) => {
@@ -1585,7 +1590,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
         <h2 style={egStyles.title}>{"\u{1F6AA} \u51FA\u57CE\uFF1A\u907F\u5F00\u5B88\u536B"}</h2>
         {phase.narrative && <p style={egStyles.narrative}>{phase.narrative}</p>}
         <div style={egStyles.statusRow}>
-          <span>{"\u65B9\u5411\u952E / WASD \u79FB\u52A8 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u95E8\u5916\u80DC\u5229"}</span>
+          <span>{"\u65B9\u5411\u952E / WASD \u79FB\u52A8 \u00B7 \u6D45\u8272\uFF1D\u8857\u9053\u53EF\u8D70 \u00B7 \u6DF1\u8272\uFF1D\u574A\u5899\u5EFA\u7B51\u4E0D\u53EF\u8D70 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u91D1\u5149\u95E8\u80DC\u5229"}</span>
           <span style={{ color: "#DC3545" }}>{"\u88AB\u6293\uFF1A" + deaths}</span>
           <button onClick={resetGame} style={egStyles.restartBtn}>{"\u91CD\u65B0\u5F00\u59CB"}</button>
         </div>
@@ -1638,8 +1643,8 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
               );
             }
 
-            // Street cell (walkable)
-            let bg = "#F5F5DC";
+            // Street cell (walkable) — kept clearly lighter than buildings/walls
+            let bg = "#FBF5E6";
             if (isEnd) bg = "#90EE90";
             if (isStart) bg = "#FFD580";
             return (
