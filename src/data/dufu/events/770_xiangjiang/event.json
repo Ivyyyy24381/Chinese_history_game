@@ -14,7 +14,8 @@
         "portrait": "/assets/characters/dufu/portrait.png",
         "text": "往哪里去呢？故乡是不能回了。"
       },
-      "nextPhase": "yueyang_lou"
+      "nextPhase": "yueyang_lou",
+      "narrative": ""
     },
     {
       "id": "yueyang_lou",
@@ -28,45 +29,77 @@
           "id": "dongting",
           "name": "洞庭水",
           "portrait": "",
-          "position": { "x": 30, "y": 55 },
+          "position": {
+            "x": 30,
+            "y": 55
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "昔闻洞庭水，今上岳阳楼。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "昔闻洞庭水，今上岳阳楼。"
+            }
           ]
         },
         {
           "id": "wupu",
           "name": "吴楚分界",
           "portrait": "",
-          "position": { "x": 55, "y": 50 },
+          "position": {
+            "x": 55,
+            "y": 50
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "吴楚东南坼，乾坤日夜浮。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "吴楚东南坼，乾坤日夜浮。"
+            }
           ]
         },
         {
           "id": "letter",
           "name": "未回的家书",
           "portrait": "",
-          "position": { "x": 75, "y": 65 },
+          "position": {
+            "x": 75,
+            "y": 65
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "亲朋无一字，老病有孤舟。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "亲朋无一字，老病有孤舟。"
+            }
           ]
         },
         {
           "id": "north",
           "name": "北望",
           "portrait": "",
-          "position": { "x": 50, "y": 30 },
+          "position": {
+            "x": 50,
+            "y": 30
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "戎马关山北……" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "凭轩涕泗流。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "戎马关山北……"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "凭轩涕泗流。"
+            }
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "drift_route"
     },
     {
@@ -81,47 +114,74 @@
         {
           "id": "jiangling",
           "name": "江陵",
-          "x": 58, "y": 60,
+          "x": 58,
+          "y": 60,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "投亲不得。停舟江陵。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "投亲不得。停舟江陵。"
+            }
           ]
         },
         {
           "id": "gongan",
           "name": "公安",
-          "x": 59, "y": 62,
+          "x": 59,
+          "y": 62,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "呜呼！何路寄此身？" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "呜呼！何路寄此身？"
+            }
           ]
         },
         {
           "id": "tanzhou",
           "name": "潭州",
-          "x": 60, "y": 66,
+          "x": 60,
+          "y": 66,
           "isKey": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "岁暮百草零，疾风高冈裂。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "岁暮百草零，疾风高冈裂。"
+            }
           ]
         },
         {
           "id": "hengzhou",
           "name": "衡州",
-          "x": 61, "y": 68,
+          "x": 61,
+          "y": 68,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "老病有孤舟。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "老病有孤舟。"
+            }
           ]
         },
         {
           "id": "leiyang",
           "name": "耒阳",
-          "x": 62, "y": 70,
+          "x": 62,
+          "y": 70,
           "isKey": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "（大水阻舟，停在方田驿。县令送来酒肉。）" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（大水阻舟，停在方田驿。县令送来酒肉。）"
+            }
           ]
         }
       ],
-      "nextPhase": "dream"
+      "nextPhase": "dream",
+      "narrative": "",
+      "destinations": []
     },
     {
       "id": "dream",
@@ -135,32 +195,57 @@
           "id": "libai_dream",
           "name": "李白·影",
           "portrait": "/assets/characters/npcs/libai.png",
-          "position": { "x": 50, "y": 50 },
+          "position": {
+            "x": 50,
+            "y": 50
+          },
           "scale": 1.5,
           "isClue": true,
           "dialogues": [
-            { "speaker": "libai", "speakerName": "李白", "text": "子美，我读了你的诗。十年了。" },
-            { "speaker": "libai", "speakerName": "李白", "text": "（笑声穿过雾——也可能根本没有人。）" }
+            {
+              "speaker": "libai",
+              "speakerName": "李白",
+              "text": "子美，我读了你的诗。十年了。"
+            },
+            {
+              "speaker": "libai",
+              "speakerName": "李白",
+              "text": "（笑声穿过雾——也可能根本没有人。）"
+            }
           ]
         },
         {
           "id": "yanwu_dream",
           "name": "严武·影",
           "portrait": "/assets/characters/npcs/yanwu.png",
-          "position": { "x": 25, "y": 60 },
+          "position": {
+            "x": 25,
+            "y": 60
+          },
           "scale": 1.3,
           "dialogues": [
-            { "speaker": "yanwu", "speakerName": "严武", "text": "子美兄，草堂还在。" }
+            {
+              "speaker": "yanwu",
+              "speakerName": "严武",
+              "text": "子美兄，草堂还在。"
+            }
           ]
         },
         {
           "id": "wife_dream",
           "name": "妻·影",
           "portrait": "/assets/characters/npcs/wife.png",
-          "position": { "x": 75, "y": 65 },
+          "position": {
+            "x": 75,
+            "y": 65
+          },
           "scale": 1.2,
           "dialogues": [
-            { "speaker": "wife", "speakerName": "妻", "text": "回家吧。" }
+            {
+              "speaker": "wife",
+              "speakerName": "妻",
+              "text": "回家吧。"
+            }
           ]
         }
       ],
