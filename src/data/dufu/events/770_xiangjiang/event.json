@@ -11,7 +11,7 @@
       "title": "出夔州后",
       "transitionText": "大历三年（768）春。\n杜甫携家出三峡。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/characters/dufu/old/sitting.png",
         "text": "往哪里去呢？故乡是不能回了。"
       },
       "nextPhase": "yueyang_lou",
@@ -30,8 +30,8 @@
           "name": "洞庭水",
           "portrait": "",
           "position": {
-            "x": 30,
-            "y": 55
+            "x": 25,
+            "y": 81
           },
           "isClue": true,
           "dialogues": [
@@ -47,8 +47,8 @@
           "name": "吴楚分界",
           "portrait": "",
           "position": {
-            "x": 55,
-            "y": 50
+            "x": 61,
+            "y": 34
           },
           "isClue": true,
           "dialogues": [
@@ -64,8 +64,8 @@
           "name": "未回的家书",
           "portrait": "",
           "position": {
-            "x": 75,
-            "y": 65
+            "x": 83,
+            "y": 74
           },
           "isClue": true,
           "dialogues": [
@@ -81,8 +81,8 @@
           "name": "北望",
           "portrait": "",
           "position": {
-            "x": 50,
-            "y": 30
+            "x": 28,
+            "y": 31
           },
           "isClue": true,
           "dialogues": [
@@ -114,8 +114,8 @@
         {
           "id": "jiangling",
           "name": "江陵",
-          "x": 58,
-          "y": 60,
+          "x": 52,
+          "y": 10,
           "dialogues": [
             {
               "speaker": "dufu",
@@ -127,8 +127,8 @@
         {
           "id": "gongan",
           "name": "公安",
-          "x": 59,
-          "y": 62,
+          "x": 53,
+          "y": 19,
           "dialogues": [
             {
               "speaker": "dufu",
@@ -141,7 +141,7 @@
           "id": "tanzhou",
           "name": "潭州",
           "x": 60,
-          "y": 66,
+          "y": 50,
           "isKey": true,
           "dialogues": [
             {
@@ -154,8 +154,8 @@
         {
           "id": "hengzhou",
           "name": "衡州",
-          "x": 61,
-          "y": 68,
+          "x": 56,
+          "y": 75,
           "dialogues": [
             {
               "speaker": "dufu",
@@ -167,8 +167,8 @@
         {
           "id": "leiyang",
           "name": "耒阳",
-          "x": 62,
-          "y": 70,
+          "x": 60,
+          "y": 87,
           "isKey": true,
           "dialogues": [
             {
@@ -275,7 +275,8 @@
       "transitionText": "四十三年后，元和八年（813）。\n其孙杜嗣业奉杜甫灵柩归葬偃师，路过荆州时，请元稹作墓志。",
       "announcement": {
         "text": "「至于子美，盖所谓上薄风骚，下该沈宋，言夺苏李，气吞曹刘……诗人以来，未有如子美者。」——元稹",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "后世之评"
       },
       "dufu_reaction": {
         "portrait": "/assets/characters/dufu/portrait.png",

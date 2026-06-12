@@ -177,12 +177,13 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
             </div>
           ) : !showConclusion && hasAnnouncement ? (
             <div style={styles.scrollContainer} onClick={() => hasReaction ? setShowConclusion(true) : goToNextPhase()}>
+              {/* Self-contained parchment card \u2014 no image dependency (the old
+                  scroll.png path was a 404, which collapsed the layout). */}
               <div style={styles.scrollWrap}>
-                <img src="/assets/scenes/02_changan/scroll.png" alt="" style={styles.scrollImg} />
-                <div style={styles.scrollTextArea}>
-                  <h2 style={styles.scrollTitle}>{"\u5236\u4E3E\u653E\u699C"}</h2>
-                  <p style={styles.scrollResult}>{currentPhase.announcement.text}</p>
-                </div>
+                {currentPhase.announcement.title && (
+                  <h2 style={styles.scrollTitle}>{currentPhase.announcement.title}</h2>
+                )}
+                <p style={styles.scrollResult}>{currentPhase.announcement.text}</p>
               </div>
               <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
             </div>
@@ -2219,27 +2220,25 @@ const styles = {
     cursor: "pointer",
   },
   scrollWrap: {
-    position: "relative", width: 500, maxWidth: "90vw",
-  },
-  scrollImg: {
-    width: "100%", height: "auto", display: "block",
-  },
-  scrollTextArea: {
-    position: "absolute",
-    top: "18%", left: "18%", right: "18%", bottom: "22%",
-    display: "flex", flexDirection: "column",
-    alignItems: "center", justifyContent: "center",
+    // Parchment decree card
+    width: "min(680px, 88vw)",
+    backgroundColor: "rgba(242,230,204,0.96)",
+    border: "3px double #8B5A2B",
+    borderRadius: 6,
+    padding: "32px 40px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.55)",
     textAlign: "center",
   },
   scrollTitle: {
-    fontSize: 28, color: "#3B2510", letterSpacing: 8,
-    fontWeight: "bold", margin: "0 0 20px",
+    fontSize: 20, color: "#3B2510", letterSpacing: 6,
+    fontWeight: "bold", margin: "0 0 16px",
     fontFamily: "'Noto Serif SC', 'Songti SC', serif",
   },
   scrollResult: {
-    fontSize: 36, color: "#8B0000", fontWeight: "bold",
-    letterSpacing: 12, margin: 0,
+    fontSize: 21, color: "#8B0000", fontWeight: "bold",
+    letterSpacing: 2, lineHeight: 2.1, margin: 0,
     fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    whiteSpace: "pre-wrap",
   },
   // Announcement
   announcementPanel: {

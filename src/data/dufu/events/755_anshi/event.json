@@ -114,7 +114,8 @@
       "transitionText": "数日后，尚书省。一封婉拒的奏疏摆在案头。",
       "announcement": {
         "text": "改除杜甫为右卫率府兵曹参军。",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "诏"
       },
       "dufu_reaction": {
         "portrait": "/assets/characters/dufu/scholar/standing.png",
@@ -257,7 +258,8 @@
       "transitionText": "天宝十五载六月。\n潼关失守。\n玄宗连夜出奔蜀地。\n长安无主。",
       "announcement": {
         "text": "「车驾西幸蜀郡，朕将与万民共艰。」——御诏",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "御诏"
       },
       "dufu_reaction": {
         "portrait": "/assets/characters/dufu/scholar/standing.png",

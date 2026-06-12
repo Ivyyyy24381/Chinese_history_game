@@ -321,7 +321,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
       }
       if (phaseType === "transition") {
         phase.transitionText = transitionText;
-        if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree" };
+        if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree", ...(announcementTitle ? { title: announcementTitle } : {}) };
         if (dufuReactionText) phase.dufu_reaction = { portrait: dufuPortraitPath(phaseDufuPose, updated.year), text: dufuReactionText };
       }
       if (phaseType === "forced_choice") {
@@ -562,6 +562,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
   // === Transition state ===
   const [transitionText, setTransitionText] = useState("");
   const [announcementText, setAnnouncementText] = useState("");
+  const [announcementTitle, setAnnouncementTitle] = useState("");
   const [dufuReactionText, setDufuReactionText] = useState("");
 
   // === Forced choice state ===
@@ -629,6 +630,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
     // Transition
     setTransitionText(phase.transitionText || "");
     setAnnouncementText(phase.announcement?.text || "");
+    setAnnouncementTitle(phase.announcement?.title || "");
     setDufuReactionText(phase.dufu_reaction?.text || "");
     // Du Fu pose
     setPhaseDufuPose(phase.dufu_pose || "");
@@ -735,7 +737,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
     }
     if (phaseType === "transition") {
       phase.transitionText = transitionText;
-      if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree" };
+      if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree", ...(announcementTitle ? { title: announcementTitle } : {}) };
       if (dufuReactionText) phase.dufu_reaction = { portrait: dufuPortraitPath(phaseDufuPose, sceneData?.year), text: dufuReactionText };
     }
     if (phaseType === "forced_choice") {
@@ -1931,6 +1933,11 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 <label style={styles.fieldLabel}>{"\u516C\u544A/\u699C\u5355\u6587\u5B57"}</label>
                 <input style={styles.fieldInput} value={announcementText}
                   onChange={(e) => setAnnouncementText(e.target.value)} placeholder={"\u5982\uFF1A\u672A\u4E0A\u699C"} />
+              </div>
+              <div style={styles.fieldGroup}>
+                <label style={styles.fieldLabel}>{"公告标题（留空 = 不显示标题）"}</label>
+                <input style={styles.fieldInput} value={announcementTitle}
+                  onChange={(e) => setAnnouncementTitle(e.target.value)} placeholder={"如：诏 / 放榜"} />
               </div>
               <div style={styles.fieldGroup}>
                 <label style={styles.fieldLabel}>{"\u675C\u752B\u53CD\u5E94"}</label>

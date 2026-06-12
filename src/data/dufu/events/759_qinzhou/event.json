@@ -103,16 +103,16 @@
           "id": "p1_writing",
           "x": 0,
           "y": 0,
-          "w": 56.7,
+          "w": 50.1,
           "h": 62.3,
           "dialogues": []
         },
         {
           "id": "p2_wall",
-          "x": 56.7,
+          "x": 50,
           "y": 0,
-          "w": 43.3,
-          "h": 32.6,
+          "w": 50.1,
+          "h": 33.2,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -123,9 +123,9 @@
         },
         {
           "id": "p3_door",
-          "x": 56.7,
-          "y": 32.6,
-          "w": 43.3,
+          "x": 50,
+          "y": 33,
+          "w": 49.9,
           "h": 29.7,
           "dialogues": []
         },
@@ -354,8 +354,8 @@
         {
           "id": "huazhou",
           "name": "华州",
-          "x": 48,
-          "y": 53,
+          "x": 37,
+          "y": 5,
           "dialogues": [
             {
               "speaker": "dufu",
@@ -367,8 +367,8 @@
         {
           "id": "qinzhou",
           "name": "秦州",
-          "x": 42,
-          "y": 56,
+          "x": 31,
+          "y": 6,
           "isKey": true,
           "dialogues": [
             {
@@ -381,8 +381,8 @@
         {
           "id": "tonggu",
           "name": "同谷",
-          "x": 42,
-          "y": 60,
+          "x": 32,
+          "y": 19,
           "isKey": true,
           "dialogues": [
             {
@@ -395,8 +395,8 @@
         {
           "id": "road_son",
           "name": "途中",
-          "x": 46,
-          "y": 62,
+          "x": 27,
+          "y": 43,
           "dialogues": [
             {
               "speaker": "son",
@@ -418,8 +418,8 @@
         {
           "id": "chengdu_gate",
           "name": "成都",
-          "x": 50,
-          "y": 64,
+          "x": 16,
+          "y": 66,
           "isKey": true,
           "dialogues": [
             {
@@ -430,7 +430,8 @@
           ]
         }
       ],
-      "nextPhase": "ending"
+      "nextPhase": "ending",
+      "narrative": ""
     },
     {
       "id": "ending",

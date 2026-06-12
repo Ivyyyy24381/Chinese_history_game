@@ -316,10 +316,10 @@
           "name": "商贩甲",
           "portrait": "/assets/characters/npcs/merchant_a.png",
           "position": {
-            "x": 74,
-            "y": 37
+            "x": 56,
+            "y": 80
           },
-          "scale": 0.7,
+          "scale": 2.1,
           "isClue": true,
           "dialogues": [
             {
@@ -334,10 +334,10 @@
           "name": "旅店伙计",
           "portrait": "/assets/characters/npcs/innkeeper.png",
           "position": {
-            "x": 62,
-            "y": 33
+            "x": 39,
+            "y": 76
           },
-          "scale": 0.6,
+          "scale": 1.8,
           "isClue": true,
           "dialogues": [
             {
@@ -352,10 +352,12 @@
           "name": "榜单",
           "portrait": "",
           "position": {
-            "x": 29,
-            "y": 29
+            "x": 37,
+            "y": 28
           },
-          "scale": 1.6,
+          "scale": 2.2,
+          "rotate": 2,
+          "tiltY": 18,
           "isClue": true,
           "dialogues": [
             {
@@ -396,7 +398,7 @@
           "portrait": "",
           "position": {
             "x": 13,
-            "y": 19
+            "y": 70
           },
           "dialogues": [
             {
@@ -408,6 +410,73 @@
               "speaker": "portrait",
               "speakerName": "杜甫",
               "text": "元结？他是谁？"
+            }
+          ]
+        },
+        {
+          "id": "official",
+          "name": "落榜书生乙",
+          "portrait": "/assets/characters/npcs/official.png",
+          "position": {
+            "x": 46,
+            "y": 61
+          },
+          "dialogues": [
+            {
+              "speaker": "official",
+              "speakerName": "",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "id": "local_boy",
+          "name": "local_boy",
+          "portrait": "/assets/characters/npcs/local_boy.png",
+          "position": {
+            "x": 71,
+            "y": 90
+          },
+          "clickable": false,
+          "dialogues": [
+            {
+              "speaker": "local_boy",
+              "speakerName": "local_boy",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "id": "officer_night",
+          "name": "officer_night",
+          "portrait": "/assets/characters/npcs/officer_night.png",
+          "position": {
+            "x": 98,
+            "y": 73
+          },
+          "clickable": false,
+          "dialogues": [
+            {
+              "speaker": "officer_night",
+              "speakerName": "officer_night",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "id": "libai",
+          "name": "libai",
+          "portrait": "/assets/characters/npcs/libai.png",
+          "position": {
+            "x": 82,
+            "y": 79
+          },
+          "clickable": false,
+          "dialogues": [
+            {
+              "speaker": "libai",
+              "speakerName": "libai",
+              "text": ""
             }
           ]
         }

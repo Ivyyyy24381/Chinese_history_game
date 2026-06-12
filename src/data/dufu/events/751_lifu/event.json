@@ -158,9 +158,9 @@
         {
           "id": "desk",
           "name": "桌案",
-          "portrait": "/assets/items/scroll_blank.png",
+          "portrait": "",
           "position": {
-            "x": 52,
+            "x": 30,
             "y": 59
           },
           "isClue": true,
@@ -182,8 +182,8 @@
           "name": "纸团",
           "portrait": "/assets/items/paper_ball.png",
           "position": {
-            "x": 86,
-            "y": 82
+            "x": 81,
+            "y": 78
           },
           "scale": 0.3,
           "isClue": true,
@@ -203,11 +203,12 @@
         {
           "id": "label_1778532955294",
           "name": "杜甫",
-          "portrait": "",
+          "portrait": "/assets/characters/dufu/official/kneeling.png",
           "position": {
-            "x": 75,
-            "y": 31
+            "x": 49,
+            "y": 65
           },
+          "scale": 2.8,
           "isClue": true,
           "dialogues": [
             {
@@ -224,6 +225,43 @@
               "speaker": "portrait",
               "speakerName": "杜甫",
               "text": "可若不如此，又如何让天下听见我的声音？"
+            }
+          ]
+        },
+        {
+          "id": "label_1781300886754",
+          "name": "文字标签",
+          "portrait": "/assets/items/paper_ball.png",
+          "position": {
+            "x": 85,
+            "y": 81
+          },
+          "scale": 0.5,
+          "rotate": 27,
+          "tiltX": -39,
+          "clickable": false,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "id": "label_1781300930700",
+          "name": "文字标签",
+          "portrait": "/assets/props/book_wenxuan.png",
+          "position": {
+            "x": 79,
+            "y": 90
+          },
+          "clickable": false,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": ""
             }
           ]
         }
@@ -334,7 +372,8 @@
       "narrative": "",
       "announcement": {
         "text": "玄宗奇之，命待制集贤院，试文章。",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "诏"
       },
       "dufu_reaction": {
         "portrait": "/assets/characters/dufu/portrait.png",

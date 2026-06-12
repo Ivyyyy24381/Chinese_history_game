@@ -16,38 +16,59 @@
         {
           "id": "jiazhou",
           "name": "嘉州",
-          "x": 51, "y": 64,
+          "x": 14,
+          "y": 76,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "青衣江口看潮生，思君何处更登台？" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "青衣江口看潮生，思君何处更登台？"
+            }
           ]
         },
         {
           "id": "zhongzhou",
           "name": "忠州",
-          "x": 53, "y": 63,
+          "x": 61,
+          "y": 62,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "我病多时不饮酒。寄人篱下又一城。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "我病多时不饮酒。寄人篱下又一城。"
+            }
           ]
         },
         {
           "id": "yunan",
           "name": "云安",
-          "x": 54, "y": 62,
+          "x": 67,
+          "y": 43,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "久客江南，岂能无恙。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "久客江南，岂能无恙。"
+            }
           ]
         },
         {
           "id": "kuizhou",
           "name": "夔州·白帝城",
-          "x": 55, "y": 62,
+          "x": 78,
+          "y": 43,
           "isKey": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "永泰元年秋，杜甫到夔州。" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "永泰元年秋，杜甫到夔州。"
+            }
           ]
         }
       ],
-      "nextPhase": "gao_zhai"
+      "nextPhase": "gao_zhai",
+      "narrative": ""
     },
     {
       "id": "gao_zhai",
@@ -61,56 +82,99 @@
           "id": "window_river",
           "name": "江景窗",
           "portrait": "",
-          "position": { "x": 25, "y": 50 },
+          "position": {
+            "x": 60,
+            "y": 39
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "风急天高猿啸哀，渚清沙白鸟飞回。" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "风急天高猿啸哀，渚清沙白鸟飞回。"
+            }
           ]
         },
         {
           "id": "falling_leaves",
           "name": "落叶",
           "portrait": "",
-          "position": { "x": 55, "y": 55 },
+          "position": {
+            "x": 21,
+            "y": 30
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "无边落木萧萧下，不尽长江滚滚来。" }
-          ]
-        },
-        {
-          "id": "hairbrush",
-          "name": "白发",
-          "portrait": "",
-          "position": { "x": 75, "y": 65 },
-          "isClue": true,
-          "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "艰难苦恨繁霜鬓……" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "无边落木萧萧下，不尽长江滚滚来。"
+            }
           ]
         },
         {
           "id": "empty_cup",
           "name": "空酒杯",
           "portrait": "",
-          "position": { "x": 45, "y": 75 },
+          "position": {
+            "x": 45,
+            "y": 75
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "潦倒新停浊酒杯。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "潦倒新停浊酒杯。",
+              "dufu_pose": "drift/writing"
+            }
           ]
         },
         {
           "id": "local_boy",
           "name": "当地小厮",
           "portrait": "/assets/characters/npcs/local_boy.png",
-          "position": { "x": 15, "y": 72 },
-          "scale": 1.0,
+          "position": {
+            "x": 10,
+            "y": 80
+          },
           "dialogues": [
-            { "speaker": "local_boy", "speakerName": "当地小厮", "text": "先生，柏都督派人送来今日的炭。" },
-            { "speaker": "local_boy", "speakerName": "当地小厮", "text": "先生身体可还好？" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "老了。一日不如一日。" }
+            {
+              "speaker": "local_boy",
+              "speakerName": "当地小厮",
+              "text": "先生，柏都督派人送来今日的炭。"
+            },
+            {
+              "speaker": "local_boy",
+              "speakerName": "当地小厮",
+              "text": "先生身体可还好？"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "老了。一日不如一日。"
+            }
+          ]
+        },
+        {
+          "id": "wine_jar",
+          "name": "酒坛",
+          "portrait": "/assets/props/wine_jar.png",
+          "position": {
+            "x": 82,
+            "y": 75
+          },
+          "dialogues": [
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "艰难苦恨繁霜鬓……",
+              "dufu_pose": "drift/drinking_alone"
+            }
           ]
         }
       ],
-      "requiredTalks": 5,
+      "requiredTalks": 3,
       "nextPhase": "denggao_compose"
     },
     {
@@ -120,9 +184,25 @@
       "title": "《登高》",
       "poemContext": "九月九日。一个人。一座台。一江风。把诗句填回正确的位置——这首诗被后人称为「古今七律第一」。",
       "puzzle": "风急___，渚清___。\n无边落木___，不尽长江___。\n万里___，百年___。\n艰难苦恨___，潦倒新停___。",
-      "blanks": ["天高猿啸哀", "沙白鸟飞回", "萧萧下", "滚滚来", "悲秋常作客", "多病独登台", "繁霜鬓", "浊酒杯"],
-      "distractors": ["月明星稀低", "草绿故人来", "重重叠"],
-      "poemTitle": "登高"
+      "blanks": [
+        "天高猿啸哀",
+        "沙白鸟飞回",
+        "萧萧下",
+        "滚滚来",
+        "悲秋常作客",
+        "多病独登台",
+        "繁霜鬓",
+        "浊酒杯"
+      ],
+      "distractors": [
+        "月明星稀低",
+        "草绿故人来",
+        "重重叠"
+      ],
+      "poemTitle": "登高",
+      "narrative": "",
+      "poemAnswer": "",
+      "poemCandidates": []
     },
     {
       "id": "qiu_xing",
@@ -136,46 +216,82 @@
           "id": "qiuxing",
           "name": "《秋兴》之一",
           "portrait": "",
-          "position": { "x": 25, "y": 55 },
+          "position": {
+            "x": 22,
+            "y": 23
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "玉露凋伤枫树林，巫山巫峡气萧森。" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "（北望长安——我离它越远，它越像一场梦。）" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "玉露凋伤枫树林，巫山巫峡气萧森。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "（北望长安——我离它越远，它越像一场梦。）"
+            }
           ]
         },
         {
           "id": "yonghuai",
           "name": "《咏怀古迹》之三",
           "portrait": "",
-          "position": { "x": 50, "y": 60 },
+          "position": {
+            "x": 54,
+            "y": 35
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "群山万壑赴荆门，生长明妃尚有村。" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "（昭君也是远嫁的人。我也是。）" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "群山万壑赴荆门，生长明妃尚有村。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "（昭君也是远嫁的人。我也是。）"
+            }
           ]
         },
         {
           "id": "zhujiang",
           "name": "《诸将》",
           "portrait": "",
-          "position": { "x": 75, "y": 55 },
+          "position": {
+            "x": 84,
+            "y": 39
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "韩公本意筑三城，拟绝天骄拔汉旌。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "韩公本意筑三城，拟绝天骄拔汉旌。"
+            }
           ]
         },
         {
           "id": "gujiang",
           "name": "《古柏行》",
           "portrait": "",
-          "position": { "x": 50, "y": 75 },
+          "position": {
+            "x": 23,
+            "y": 77
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "孔明庙前有老柏，柯如青铜根如石。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "孔明庙前有老柏，柯如青铜根如石。"
+            }
           ]
         }
       ],
-      "requiredTalks": 2,
+      "requiredTalks": 3,
       "nextPhase": "leave"
     },
     {
@@ -185,9 +301,10 @@
       "title": "离开夔州",
       "transitionText": "大历三年（768）正月，\n杜甫终于决定出峡，乘舟东下。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/characters/dufu/drift/walking.png",
         "text": "江湖再大，也还是要再走一走。"
-      }
+      },
+      "narrative": ""
     }
   ]
 }

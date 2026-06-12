@@ -69,7 +69,8 @@
             {
               "speaker": "dufu",
               "speakerName": "杜甫",
-              "text": "孩儿想先出门看看天下。"
+              "text": "孩儿想先出门看看天下。",
+              "dufu_pose": "youth/standing"
             },
             {
               "speaker": "mother",
@@ -90,10 +91,11 @@
       "transitionText": "开元二十三年（735），杜甫赴洛阳应进士试……",
       "announcement": {
         "text": "榜单：杜甫——未中。",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "放榜"
       },
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/characters/dufu/youth/standing.png",
         "text": "不中便不中。天地之大，岂止一榜？"
       },
       "nextPhase": "grand_tour",
@@ -111,8 +113,8 @@
         {
           "id": "yanzhou",
           "name": "兖州",
-          "x": 64,
-          "y": 50,
+          "x": 82,
+          "y": 54,
           "dialogues": [
             {
               "speaker": "dufu",
@@ -124,8 +126,8 @@
         {
           "id": "taishan_foot",
           "name": "泰山下",
-          "x": 66,
-          "y": 48,
+          "x": 87,
+          "y": 42,
           "dialogues": [
             {
               "speaker": "dufu",
@@ -137,8 +139,8 @@
         {
           "id": "taishan_top",
           "name": "泰山绝顶",
-          "x": 67,
-          "y": 46,
+          "x": 85,
+          "y": 31,
           "isKey": true,
           "dialogues": [
             {
