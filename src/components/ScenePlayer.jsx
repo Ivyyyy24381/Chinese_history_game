@@ -1759,6 +1759,7 @@ const styles = {
   // Phase header
   phaseHeader: {
     padding: "16px 24px",
+    paddingRight: "38%", // keep title/narrative clear of the top-right instruction box
     background: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)",
     color: "#FFF",
     position: "relative",
@@ -1768,13 +1769,16 @@ const styles = {
   phaseNarrative: { margin: 0, fontSize: 13, opacity: 0.85, lineHeight: 1.6 },
   // Instruction
   instructionBar: {
-    position: "absolute", bottom: 80, left: "50%", transform: "translateX(-50%)",
+    // Top-right corner so it never overlaps character art in the scene.
+    position: "absolute", top: 14, right: 14,
+    maxWidth: "36%",
     backgroundColor: "rgba(0,0,0,0.8)", color: "#F5E6D3",
-    padding: "10px 20px", borderRadius: 8, fontSize: 13,
-    display: "flex", alignItems: "center", gap: 8, whiteSpace: "nowrap",
+    padding: "10px 16px", borderRadius: 8, fontSize: 13, lineHeight: 1.5,
+    display: "flex", alignItems: "center", gap: 8,
+    zIndex: 25,
   },
   instructionIcon: { fontSize: 18 },
-  talkCount: { marginLeft: 16, color: "#F4D03F", fontWeight: "bold" },
+  talkCount: { marginLeft: 16, color: "#F4D03F", fontWeight: "bold", whiteSpace: "nowrap" },
   // NPC markers
   npcMarker: {
     position: "absolute", transform: "translate(-50%, -50%)",
