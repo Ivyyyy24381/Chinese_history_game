@@ -944,7 +944,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 {DUFU_POSES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
               </select>
               <img src={dufuPortraitPath(phaseDufuPose, sceneData?.year)} alt=""
-                style={{ width: 44, height: 60, objectFit: "cover", borderRadius: 4, border: "1px solid #555", backgroundColor: "#FFF" }}
+                style={{ width: 44, height: 60, objectFit: "cover", objectPosition: "center top", borderRadius: 4, border: "1px solid #555", backgroundColor: "#FFF" }}
                 onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
             </div>
           </div>
@@ -1325,7 +1325,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
                           {DUFU_POSES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
                         </select>
                         <img src={dufuPortraitPath(d.dufu_pose || phaseDufuPose, sceneData?.year)} alt=""
-                          style={{ width: 28, height: 38, objectFit: "cover", borderRadius: 3, border: "1px solid #555", backgroundColor: "#FFF" }}
+                          style={{ width: 28, height: 38, objectFit: "cover", objectPosition: "center top", borderRadius: 3, border: "1px solid #555", backgroundColor: "#FFF" }}
                           onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
                       </div>
                     )}

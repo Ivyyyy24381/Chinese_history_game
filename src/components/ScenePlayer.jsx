@@ -2047,6 +2047,7 @@ const styles = {
   },
   reactionPortrait: {
     width: 60, height: 60, borderRadius: "50%", objectFit: "cover",
+    objectPosition: "center top", // full-body art: crop to the head, not the torso
     border: "2px solid #D4A574",
   },
   reactionText: { color: "#F5E6D3", fontSize: 14, lineHeight: 1.6, margin: 0, flex: 1 },
