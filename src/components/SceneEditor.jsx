@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { DUFU_POSES, dufuPortraitPath } from "../data/dufuPoses";
 
 /**
  * SceneEditor - Visual drag-and-drop scene designer
@@ -40,6 +41,8 @@ export default function SceneEditor({ initialEventId, onExit }) {
   const [phaseTitle, setPhaseTitle] = useState("");
   const [phaseNarrative, setPhaseNarrative] = useState("");
   const [phaseInstruction, setPhaseInstruction] = useState("");
+  // Du Fu pose for this phase ("" = auto by event year)
+  const [phaseDufuPose, setPhaseDufuPose] = useState("");
   const [npcSize, setNpcSize] = useState(140);
   const sceneRef = useRef(null);
   // Scene/phase selection
@@ -226,6 +229,8 @@ export default function SceneEditor({ initialEventId, onExit }) {
         type: phaseType,
         ...(nextPhase ? { nextPhase } : {}),
       };
+      if (phaseDufuPose) phase.dufu_pose = phaseDufuPose;
+      else delete phase.dufu_pose;
       if (phaseType === "explore") {
         phase.instruction = phaseInstruction;
         phase.npcs = npcs.map((n) => ({
@@ -277,7 +282,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
       if (phaseType === "transition") {
         phase.transitionText = transitionText;
         if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree" };
-        if (dufuReactionText) phase.dufu_reaction = { portrait: "/assets/characters/dufu/portrait.png", text: dufuReactionText };
+        if (dufuReactionText) phase.dufu_reaction = { portrait: dufuPortraitPath(phaseDufuPose, updated.year), text: dufuReactionText };
       }
       if (phaseType === "forced_choice") {
         phase.question = choiceQuestion;
@@ -546,7 +551,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
   const [egGates, setEgGates] = useState([]);    // street-cell gate labels
   const [egGuards, setEgGuards] = useState([]);
   const [egSoldierPortraits, setEgSoldierPortraits] = useState([]);
-  const [egPlayerPortrait, setEgPlayerPortrait] = useState("/assets/characters/dufu/portrait.png");
+  const [egPlayerPortrait, setEgPlayerPortrait] = useState(""); // "" = auto (stage default by year)
   // Editor brush: what does clicking a cell do?
   const [egBrush, setEgBrush] = useState("toggle_block");
   const [egArrowDir, setEgArrowDir] = useState("right");
@@ -563,6 +568,8 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setTransitionText(phase.transitionText || "");
     setAnnouncementText(phase.announcement?.text || "");
     setDufuReactionText(phase.dufu_reaction?.text || "");
+    // Du Fu pose
+    setPhaseDufuPose(phase.dufu_pose || "");
     // Forced choice
     setChoiceQuestion(phase.question || "");
     setChoiceOptions(phase.options || []);
@@ -609,7 +616,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setEgGates(phase.gates ?? []);
     setEgGuards(phase.guards ?? []);
     setEgSoldierPortraits(phase.soldierPortraits ?? []);
-    setEgPlayerPortrait(phase.playerPortrait ?? "/assets/characters/dufu/portrait.png");
+    setEgPlayerPortrait(phase.playerPortrait ?? "");
     setEgSelCell(null);
   };
 
@@ -622,6 +629,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
       title: phaseTitle,
       narrative: phaseNarrative,
       ...(nextPhase ? { nextPhase } : {}),
+      ...(phaseDufuPose ? { dufu_pose: phaseDufuPose } : {}),
     };
     if (phaseType === "explore") {
       phase.instruction = phaseInstruction;
@@ -653,7 +661,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
     if (phaseType === "transition") {
       phase.transitionText = transitionText;
       if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree" };
-      if (dufuReactionText) phase.dufu_reaction = { portrait: "/assets/characters/dufu/portrait.png", text: dufuReactionText };
+      if (dufuReactionText) phase.dufu_reaction = { portrait: dufuPortraitPath(phaseDufuPose, sceneData?.year), text: dufuReactionText };
     }
     if (phaseType === "forced_choice") {
       phase.question = choiceQuestion;
@@ -915,6 +923,19 @@ export default function SceneEditor({ initialEventId, onExit }) {
           <div style={styles.fieldGroup}>
             <label style={styles.fieldLabel}>{"\u6307\u793A"}</label>
             <input style={styles.fieldInput} value={phaseInstruction} onChange={(e) => setPhaseInstruction(e.target.value)} placeholder={"\u73A9\u5BB6\u6307\u793A"} />
+          </div>
+          <div style={styles.fieldGroup}>
+            <label style={styles.fieldLabel}>{"\u675C\u752B\u7ACB\u7ED8\uFF08\u672C\u6BB5\u9ED8\u8BA4\uFF09"}</label>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <select style={{ ...styles.fieldInput, flex: 1 }} value={phaseDufuPose}
+                onChange={(e) => setPhaseDufuPose(e.target.value)}>
+                <option value="">{"\u81EA\u52A8\uFF08\u6309\u4E8B\u4EF6\u5E74\u4EE3" + (sceneData?.year ? " \u00B7 " + sceneData.year : "") + "\uFF09"}</option>
+                {DUFU_POSES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
+              </select>
+              <img src={dufuPortraitPath(phaseDufuPose, sceneData?.year)} alt=""
+                style={{ width: 44, height: 60, objectFit: "cover", borderRadius: 4, border: "1px solid #555", backgroundColor: "#FFF" }}
+                onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
+            </div>
           </div>
 
         </div>
@@ -1230,10 +1251,24 @@ export default function SceneEditor({ initialEventId, onExit }) {
                       <select style={styles.dialogueSpeakerSelect} value={d.speaker || ""}
                         onChange={(e) => updateDialogue(selected.id, i, "speaker", e.target.value)}>
                         <option value="">--speaker--</option>
-                        {NPC_PORTRAITS.map((p) => (<option key={p.id} value={p.id}>{p.id}</option>))}
+                        <option value="dufu">{"dufu（杜甫）"}</option>
+                        <option value="narrator">{"narrator（旁白）"}</option>
+                        {NPC_PORTRAITS.map((p) => (<option key={p.file} value={p.id}>{p.id}</option>))}
                       </select>
                       <button style={styles.btnRemoveDialogue} onClick={() => removeDialogue(selected.id, i)}>{"\u2715"}</button>
                     </div>
+                    {(d.speaker === "dufu" || d.speaker === "self") && (
+                      <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 4 }}>
+                        <select style={{ ...styles.dialogueSpeakerSelect, flex: 1 }} value={d.dufu_pose || ""}
+                          onChange={(e) => updateDialogue(selected.id, i, "dufu_pose", e.target.value)}>
+                          <option value="">{"\u675c\u752b\u7acb\u7ed8\uff1a\u8ddf\u968f\u672c\u6bb5"}</option>
+                          {DUFU_POSES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
+                        </select>
+                        <img src={dufuPortraitPath(d.dufu_pose || phaseDufuPose, sceneData?.year)} alt=""
+                          style={{ width: 28, height: 38, objectFit: "cover", borderRadius: 3, border: "1px solid #555", backgroundColor: "#FFF" }}
+                          onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
+                      </div>
+                    )}
                     <textarea style={styles.dialogueText} value={d.text}
                       onChange={(e) => updateDialogue(selected.id, i, "text", e.target.value)}
                       placeholder={"\u5BF9\u8BDD\u5185\u5BB9..."} rows={2} />
@@ -1489,9 +1524,10 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 {"+ \u6DFB\u52A0\u7ACB\u7ED8"}
               </button>
 
-              <label style={{ ...styles.fieldLabel, marginTop: 8, display: "block" }}>{"\u73A9\u5BB6\u7ACB\u7ED8 URL"}</label>
+              <label style={{ ...styles.fieldLabel, marginTop: 8, display: "block" }}>{"\u73A9\u5BB6\u7ACB\u7ED8 URL\uFF08\u7559\u7A7A = \u81EA\u52A8\u7528\u5BF9\u5E94\u65F6\u671F\u675C\u752B\uFF09"}</label>
               <input style={styles.fieldInput}
                 value={egPlayerPortrait}
+                placeholder={dufuPortraitPath(phaseDufuPose, sceneData?.year)}
                 onChange={(e) => setEgPlayerPortrait(e.target.value)} />
             </div>
           )}
