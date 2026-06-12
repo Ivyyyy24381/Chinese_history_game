@@ -105,7 +105,7 @@
     {
       "id": "drift_route",
       "type": "map_travel",
-      "background": "/assets/maps/tang_dynasty.png",
+      "background": "/assets/maps/route_770_xiangjiang.png",
       "title": "漂泊路线",
       "travelNarrative": "大历四年（769）至大历五年（770）。杜甫携家漂泊于潭州、衡州、耒阳之间。",
       "instruction": "依次点击每一个停点。",

@@ -7,7 +7,7 @@
     {
       "id": "sanxia_route",
       "type": "map_travel",
-      "background": "/assets/maps/tang_dynasty.png",
+      "background": "/assets/maps/route_765_sanxia.png",
       "title": "三峡水路",
       "travelNarrative": "永泰元年（765）秋。严武去世后，杜甫携家乘舟东下，沿长江过三峡。",
       "instruction": "点击每一站，听一段独白。",

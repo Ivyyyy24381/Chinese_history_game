@@ -209,7 +209,7 @@
     {
       "id": "qinzhou_road",
       "type": "map_travel",
-      "background": "/assets/maps/tang_dynasty.png",
+      "background": "/assets/maps/route_759_qinzhou.png",
       "title": "秦州古道",
       "travelNarrative": "携家西行。每一站走一遍。",
       "instruction": "点击每一个停点，听一听途中的故事。",

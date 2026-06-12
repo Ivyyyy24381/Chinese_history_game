@@ -7,7 +7,7 @@
     {
       "id": "escape_road",
       "type": "map_travel",
-      "background": "/assets/maps/tang_dynasty.png",
+      "background": "/assets/maps/route_757_fengxiang.png",
       "title": "奔赴凤翔",
       "travelNarrative": "至德二载（757）四月。杜甫衣衫褴褛地从长安西金光门出，穿越叛军封锁线。",
       "instruction": "点击每一站，看杜甫如何走完这段险路。",

@@ -102,7 +102,7 @@
     {
       "id": "grand_tour",
       "type": "map_travel",
-      "background": "/assets/maps/tang_dynasty.png",
+      "background": "/assets/maps/route_736_qizhao.png",
       "title": "齐赵壮游",
       "travelNarrative": "落第后，杜甫从洛阳出发，开始为期数年的齐赵之游。",
       "instruction": "点击每一站，听他在路上的话。",

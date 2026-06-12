@@ -36,7 +36,7 @@ export default function GameMap({
       <div
         style={{
           ...styles.mapBackground,
-          backgroundImage: `url('/assets/maps/tang_dynasty.png')`,
+          backgroundImage: `url('/assets/maps/dufu_general_map.png')`,
         }}
       >
         {/* Trajectory overlay (SVG, 0..100 viewBox in %) */}

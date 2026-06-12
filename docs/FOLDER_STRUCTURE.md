@@ -54,7 +54,13 @@ Chinese_history_game/
         │   ├── dufu/portrait.png   # 主角立绘（唯一）
         │   └── npcs/               # 反复出现的 NPC（李白、李林甫、张九龄…）
         ├── maps/
-        │   └── tang_dynasty.png    # 大地图（唯一）
+        │   ├── dufu_general_map.png   # 主地图（GameMap / TimelineEditor）
+        │   ├── route_736_qizhao.png   # 736 齐赵壮游 路线图
+        │   ├── route_757_fengxiang.png# 757 奔赴凤翔 路线图
+        │   ├── route_759_qinzhou.png  # 759 秦州古道 路线图
+        │   ├── route_765_sanxia.png   # 765 三峡行舟 路线图
+        │   ├── route_770_xiangjiang.png # 770 湘江漂泊 路线图
+        │   └── tang_dynasty.png       # 旧版大地图（备用）
         └── events/                 # 每个事件的专属美工
             ├── 736_qizhao/
             │   ├── backgrounds/    # 场景背景图

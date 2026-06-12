@@ -305,7 +305,7 @@ no text, no watermark, no signature, no modern buildings, no anachronisms, no ch
 |---|---|
 | 主角立绘 | `/assets/characters/dufu/portrait.png` |
 | 卷轴道具 | `/assets/events/747_exam/backgrounds/scroll.png` |
-| 大地图 | `/assets/maps/tang_dynasty.png` |
+| 大地图 | `/assets/maps/dufu_general_map.png` |
 
 ---
 

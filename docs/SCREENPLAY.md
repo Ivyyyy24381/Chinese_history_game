@@ -89,7 +89,7 @@ Phase 类型约定（与 `ScenePlayer.jsx` 已支持的一致）：
 
 ### Phase 3 · map_travel · 齐赵壮游
 
-- **背景**：大地图覆盖（`/assets/maps/tang_dynasty.png`）+ 路线动画
+- **背景**：大地图覆盖（`/assets/maps/route_736_qizhao.png`）+ 路线动画
 - **路径**：洛阳 → 兖州 → 泰山 → 齐州
 - **沿途事件触发点**（每点一次插入一段独白）：
   - `yanzhou` 「兖州」(x, y)：杜甫：「父亲在此为司马，先来探望。」
