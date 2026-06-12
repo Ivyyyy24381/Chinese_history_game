@@ -240,6 +240,10 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                 the stage regardless of window size. */}
             {currentPhase.npcs.map((npc) => {
               const talked = talkedNpcs.has(npc.id);
+              // Decorative props: clickable=false → no dialogue, no cursor, no hint.
+              // hideHint=true → clickable but without the ? bubble.
+              const clickable = npc.clickable !== false;
+              const showHint = clickable && npc.hideHint !== true;
               const basePct = 12 * (npc.scale || 1);
               const npcSize = `min(${basePct}vw, ${(basePct * 16) / 9}vh)`;
               return (
@@ -249,29 +253,32 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                     ...styles.npcMarker,
                     left: npc.position.x + "%",
                     top: npc.position.y + "%",
-                    opacity: talked ? 0.6 : 1,
+                    opacity: clickable && talked ? 0.6 : 1,
+                    cursor: clickable ? "pointer" : "default",
                   }}
-                  onClick={() => handleNpcClick(npc)}
-                  onMouseEnter={() => setHoveredNpc(npc.id)}
-                  onMouseLeave={() => setHoveredNpc(null)}
+                  onClick={clickable ? () => handleNpcClick(npc) : undefined}
+                  onMouseEnter={clickable ? () => setHoveredNpc(npc.id) : undefined}
+                  onMouseLeave={clickable ? () => setHoveredNpc(null) : undefined}
                 >
                   {/* Portrait-less items render as a single ? marker — no name label.
                       Items with a portrait still show ? bubble + name. */}
                   {!npc.portrait ? (
-                    <div
-                      style={{
-                        ...styles.npcQuestionMark,
-                        backgroundColor: talked
-                          ? "rgba(149,165,166,0.85)"
-                          : npc.isClue ? "rgba(231,76,60,0.9)" : "rgba(212,165,116,0.95)",
-                      }}
-                    >
-                      {talked ? "\u2713" : "?"}
-                    </div>
+                    clickable && (
+                      <div
+                        style={{
+                          ...styles.npcQuestionMark,
+                          backgroundColor: talked
+                            ? "rgba(149,165,166,0.85)"
+                            : npc.isClue ? "rgba(231,76,60,0.9)" : "rgba(212,165,116,0.95)",
+                        }}
+                      >
+                        {talked ? "\u2713" : "?"}
+                      </div>
+                    )
                   ) : (
                     <>
-                      {!talked && <div style={styles.npcBubble}>{"?"}</div>}
-                      {talked && <div style={styles.npcCheckMark}>{"\u2713"}</div>}
+                      {showHint && !talked && <div style={styles.npcBubble}>{"?"}</div>}
+                      {clickable && talked && <div style={styles.npcCheckMark}>{"\u2713"}</div>}
                       <div style={{
                         ...styles.npcPortraitWrap,
                         width: npcSize,

@@ -201,6 +201,8 @@ export default function SceneEditor({ initialEventId, onExit }) {
           tiltY: n.tiltY ?? 0,
           perspective: n.perspective ?? 0,
           isClue: n.isClue || false,
+          clickable: n.clickable !== false,
+          hideHint: n.hideHint || false,
           dialogues: n.dialogues || [{ speaker: n.id, speakerName: n.name, text: "" }],
         }))
       );
@@ -278,9 +280,12 @@ export default function SceneEditor({ initialEventId, onExit }) {
           ...(n.tiltY ? { tiltY: n.tiltY } : {}),
           ...(n.perspective ? { perspective: n.perspective } : {}),
           ...(n.isClue ? { isClue: true } : {}),
+          ...(n.clickable === false ? { clickable: false } : {}),
+          ...(n.hideHint ? { hideHint: true } : {}),
           dialogues: n.dialogues,
         }));
-        phase.requiredTalks = Math.min(npcs.length, 3);
+        // Decorative (non-clickable) props don't count toward required talks.
+        phase.requiredTalks = Math.min(npcs.filter((n) => n.clickable !== false).length, 3);
         // Save trigger zones
         if (triggerZones.length > 0) {
           phase.triggers = triggerZones.map(t => ({
@@ -691,9 +696,11 @@ export default function SceneEditor({ initialEventId, onExit }) {
         ...(n.tiltY ? { tiltY: n.tiltY } : {}),
         ...(n.perspective ? { perspective: n.perspective } : {}),
         ...(n.isClue ? { isClue: true } : {}),
+        ...(n.clickable === false ? { clickable: false } : {}),
+        ...(n.hideHint ? { hideHint: true } : {}),
         dialogues: n.dialogues,
       }));
-      phase.requiredTalks = Math.min(npcs.length, 3);
+      phase.requiredTalks = Math.min(npcs.filter((n) => n.clickable !== false).length, 3);
     }
     if (phaseType === "exam") {
       phase.questions = questions;
@@ -1322,6 +1329,22 @@ export default function SceneEditor({ initialEventId, onExit }) {
                     {" \u662F\u7EBF\u7D22 (isClue)"}
                   </label>
                 </div>
+                <div style={styles.detailRow}>
+                  <label style={styles.checkLabel}>
+                    <input type="checkbox" checked={selected.clickable !== false}
+                      onChange={(e) => updateNpcField(selected.id, "clickable", e.target.checked)} />
+                    {" \u53EF\u70B9\u51FB\u89E6\u53D1\u5BF9\u8BDD"}
+                  </label>
+                </div>
+                {selected.clickable !== false && (
+                  <div style={styles.detailRow}>
+                    <label style={styles.checkLabel}>
+                      <input type="checkbox" checked={!selected.hideHint}
+                        onChange={(e) => updateNpcField(selected.id, "hideHint", !e.target.checked)} />
+                      {" \u663E\u793A ? \u63D0\u793A\u6C14\u6CE1"}
+                    </label>
+                  </div>
+                )}
                 <div style={styles.detailRow}>
                   <label style={styles.fieldLabel}>{"\u7F29\u653E: "}{(selected.scale || 1).toFixed(1)}x</label>
                   <input type="range" min="0.3" max="3" step="0.1" value={selected.scale || 1}
