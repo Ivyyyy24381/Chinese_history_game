@@ -16,35 +16,73 @@
           "id": "clerk",
           "name": "小吏",
           "portrait": "/assets/characters/npcs/clerk.png",
-          "position": { "x": 25, "y": 64 },
-          "scale": 1.3,
+          "position": {
+            "x": 37,
+            "y": 66
+          },
+          "scale": 2.8,
           "isClue": true,
           "dialogues": [
-            { "speaker": "clerk", "speakerName": "小吏", "text": "大人，前方又来征兵的文书。" },
-            { "speaker": "clerk", "speakerName": "小吏", "text": "邺城兵败，朝廷要在关辅再征丁壮。" },
-            { "speaker": "clerk", "speakerName": "小吏", "text": "这次连老人都要拉走。" }
+            {
+              "speaker": "clerk",
+              "speakerName": "小吏",
+              "text": "大人，前方又来征兵的文书。"
+            },
+            {
+              "speaker": "clerk",
+              "speakerName": "小吏",
+              "text": "邺城兵败，朝廷要在关辅再征丁壮。"
+            },
+            {
+              "speaker": "clerk",
+              "speakerName": "小吏",
+              "text": "这次连老人都要拉走。"
+            }
           ]
         },
         {
           "id": "colleague",
           "name": "同僚",
           "portrait": "/assets/characters/npcs/official.png",
-          "position": { "x": 55, "y": 60 },
-          "scale": 1.2,
+          "position": {
+            "x": 52,
+            "y": 65
+          },
+          "scale": 2.9,
           "dialogues": [
-            { "speaker": "colleague", "speakerName": "同僚", "text": "杜参军，又在写诗？" },
-            { "speaker": "colleague", "speakerName": "同僚", "text": "写诗不能当饭吃。" }
+            {
+              "speaker": "colleague",
+              "speakerName": "同僚",
+              "text": "杜参军，又在写诗？"
+            },
+            {
+              "speaker": "colleague",
+              "speakerName": "同僚",
+              "text": "写诗不能当饭吃。"
+            }
           ]
         },
         {
           "id": "paperwork",
           "name": "公文",
           "portrait": "",
-          "position": { "x": 75, "y": 70 },
+          "position": {
+            "x": 75,
+            "y": 48
+          },
           "isClue": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "文书", "text": "文书上密密麻麻：「征丁名册」「催粮单」「失踪农户报」。" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "不写诗，便要发狂。" }
+            {
+              "speaker": "narrator",
+              "speakerName": "文书",
+              "text": "文书上密密麻麻：「征丁名册」「催粮单」「失踪农户报」。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "不写诗，便要发狂。",
+              "dufu_pose": "scholar/writing"
+            }
           ]
         }
       ],
@@ -53,64 +91,117 @@
     },
     {
       "id": "shihao_village",
-      "type": "explore",
+      "type": "comic_reveal",
       "background": "/assets/events/759_qinzhou/backgrounds/shihao_night.png",
       "title": "石壕村·夜",
       "narrative": "暮投石壕村，有吏夜捉人。\n夜里有动静。",
-      "instruction": "点击窗外看个清楚——按顺序，看到结束。",
-      "npcs": [
+      "instruction": "点击画面，一格一格看下去。",
+      "nextPhase": "sanbie",
+      "autoAdvanceSec": 2,
+      "panels": [
         {
-          "id": "window_view",
-          "name": "窗口",
-          "portrait": "",
-          "position": { "x": 50, "y": 35 },
-          "isClue": true,
+          "id": "p1_writing",
+          "x": 0,
+          "y": 0,
+          "w": 56.7,
+          "h": 62.3,
+          "dialogues": []
+        },
+        {
+          "id": "p2_wall",
+          "x": 56.7,
+          "y": 0,
+          "w": 43.3,
+          "h": 32.6,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "窗外人影晃动。一个老翁翻墙逃走，一个老妇出门相迎。" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "窗外人影晃动。一个老翁翻墙逃走，一个老妇出门相迎。"
+            }
           ]
         },
         {
-          "id": "officer_night",
-          "name": "官吏",
-          "portrait": "/assets/characters/npcs/officer_night.png",
-          "position": { "x": 30, "y": 60 },
-          "scale": 1.5,
-          "isClue": true,
+          "id": "p3_door",
+          "x": 56.7,
+          "y": 32.6,
+          "w": 43.3,
+          "h": 29.7,
+          "dialogues": []
+        },
+        {
+          "id": "p4_torch",
+          "x": 0,
+          "y": 62.3,
+          "w": 33.3,
+          "h": 37.7,
           "dialogues": [
-            { "speaker": "officer_night", "speakerName": "官吏", "text": "家中尚有男丁否？！" },
-            { "speaker": "officer_night", "speakerName": "官吏", "text": "再敢藏匿，全家处斩！" }
+            {
+              "speaker": "officer_night",
+              "speakerName": "官吏",
+              "text": "家中尚有男丁否？！"
+            },
+            {
+              "speaker": "officer_night",
+              "speakerName": "官吏",
+              "text": "再敢藏匿，全家处斩！"
+            }
           ]
         },
         {
-          "id": "old_woman",
-          "name": "老妇",
-          "portrait": "/assets/characters/npcs/old_woman.png",
-          "position": { "x": 60, "y": 65 },
-          "scale": 1.4,
-          "isClue": true,
+          "id": "p5_search",
+          "x": 33.3,
+          "y": 62.3,
+          "w": 27.5,
+          "h": 37.7,
           "dialogues": [
-            { "speaker": "old_woman", "speakerName": "老妇", "text": "三男邺城戍。" },
-            { "speaker": "old_woman", "speakerName": "老妇", "text": "一男附书至，二男新战死。" },
-            { "speaker": "old_woman", "speakerName": "老妇", "text": "存者且偷生，死者长已矣……" },
-            { "speaker": "old_woman", "speakerName": "老妇", "text": "室中更无人，惟有乳下孙。" },
-            { "speaker": "old_woman", "speakerName": "老妇", "text": "老身虽衰，请从吏夜归。急应河阳役，犹得备晨炊。" }
+            {
+              "speaker": "old_woman",
+              "speakerName": "老妇",
+              "text": "三男邺城戍。"
+            },
+            {
+              "speaker": "old_woman",
+              "speakerName": "老妇",
+              "text": "一男附书至，二男新战死。"
+            },
+            {
+              "speaker": "old_woman",
+              "speakerName": "老妇",
+              "text": "存者且偷生，死者长已矣……"
+            },
+            {
+              "speaker": "old_woman",
+              "speakerName": "老妇",
+              "text": "室中更无人，惟有乳下孙。"
+            },
+            {
+              "speaker": "old_woman",
+              "speakerName": "老妇",
+              "text": "老身虽衰，请从吏夜归。急应河阳役，犹得备晨炊。"
+            }
           ]
         },
         {
-          "id": "dufu_silent",
-          "name": "杜甫·窗后",
-          "portrait": "",
-          "position": { "x": 50, "y": 45 },
-          "isClue": true,
-          "bubbleMode": true,
+          "id": "p6_silent",
+          "x": 60.8,
+          "y": 62.3,
+          "w": 39.2,
+          "h": 37.7,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "……" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "我连一句话，都说不出口。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "……"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "我连一句话，都说不出口。"
+            }
           ]
         }
-      ],
-      "requiredTalks": 4,
-      "nextPhase": "sanbie"
+      ]
     },
     {
       "id": "sanbie",
@@ -124,39 +215,84 @@
           "id": "xinhun",
           "name": "新婚女子",
           "portrait": "/assets/characters/npcs/xinhun.png",
-          "position": { "x": 20, "y": 65 },
+          "position": {
+            "x": 34,
+            "y": 69
+          },
           "scale": 1.4,
           "isClue": true,
           "dialogues": [
-            { "speaker": "xinhun", "speakerName": "新婚女子", "text": "君今往死地，沉痛迫中肠。" },
-            { "speaker": "xinhun", "speakerName": "新婚女子", "text": "嫁女与征夫，不如弃路旁。" },
-            { "speaker": "narrator", "speakerName": "旁白", "text": "（《新婚别》）" }
+            {
+              "speaker": "xinhun",
+              "speakerName": "新婚女子",
+              "text": "君今往死地，沉痛迫中肠。"
+            },
+            {
+              "speaker": "xinhun",
+              "speakerName": "新婚女子",
+              "text": "嫁女与征夫，不如弃路旁。"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（《新婚别》）"
+            }
           ]
         },
         {
           "id": "wujia",
           "name": "无家的兵",
           "portrait": "/assets/characters/npcs/wujia.png",
-          "position": { "x": 50, "y": 60 },
+          "position": {
+            "x": 71,
+            "y": 74
+          },
           "scale": 1.4,
           "isClue": true,
           "dialogues": [
-            { "speaker": "wujia", "speakerName": "无家的兵", "text": "家乡既荡尽，远近理亦齐。" },
-            { "speaker": "wujia", "speakerName": "无家的兵", "text": "人生无家别，何以为蒸黎？" },
-            { "speaker": "narrator", "speakerName": "旁白", "text": "（《无家别》）" }
+            {
+              "speaker": "wujia",
+              "speakerName": "无家的兵",
+              "text": "家乡既荡尽，远近理亦齐。"
+            },
+            {
+              "speaker": "wujia",
+              "speakerName": "无家的兵",
+              "text": "人生无家别，何以为蒸黎？"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（《无家别》）"
+            }
           ]
         },
         {
           "id": "chuilao",
           "name": "垂老老兵",
           "portrait": "/assets/characters/npcs/chuilao.png",
-          "position": { "x": 80, "y": 65 },
+          "position": {
+            "x": 80,
+            "y": 65
+          },
           "scale": 1.4,
           "isClue": true,
           "dialogues": [
-            { "speaker": "chuilao", "speakerName": "垂老老兵", "text": "老妻卧路啼，岁暮衣裳单。" },
-            { "speaker": "chuilao", "speakerName": "垂老老兵", "text": "孰知是死别，且复伤其寒。" },
-            { "speaker": "narrator", "speakerName": "旁白", "text": "（《垂老别》）" }
+            {
+              "speaker": "chuilao",
+              "speakerName": "垂老老兵",
+              "text": "老妻卧路啼，岁暮衣裳单。"
+            },
+            {
+              "speaker": "chuilao",
+              "speakerName": "垂老老兵",
+              "text": "孰知是死别，且复伤其寒。"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（《垂老别》）"
+            }
           ]
         }
       ],
@@ -218,46 +354,79 @@
         {
           "id": "huazhou",
           "name": "华州",
-          "x": 48, "y": 53,
+          "x": 48,
+          "y": 53,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "辞了官，反而轻松了。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "辞了官，反而轻松了。"
+            }
           ]
         },
         {
           "id": "qinzhou",
           "name": "秦州",
-          "x": 42, "y": 56,
+          "x": 42,
+          "y": 56,
           "isKey": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "以为能在此安顿。结果亲戚也已断了往来。" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "以为能在此安顿。结果亲戚也已断了往来。"
+            }
           ]
         },
         {
           "id": "tonggu",
           "name": "同谷",
-          "x": 42, "y": 60,
+          "x": 42,
+          "y": 60,
           "isKey": true,
           "dialogues": [
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "同谷七歌——「有客有客字子美，白头乱发垂过耳。」" }
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "同谷七歌——「有客有客字子美，白头乱发垂过耳。」"
+            }
           ]
         },
         {
           "id": "road_son",
           "name": "途中",
-          "x": 46, "y": 62,
+          "x": 46,
+          "y": 62,
           "dialogues": [
-            { "speaker": "son", "speakerName": "儿子", "text": "爹爹，我们要去哪里？" },
-            { "speaker": "dufu", "speakerName": "杜甫", "text": "去一个能让你们吃饱饭的地方。" },
-            { "speaker": "wife", "speakerName": "妻", "text": "这就够了。" }
+            {
+              "speaker": "son",
+              "speakerName": "儿子",
+              "text": "爹爹，我们要去哪里？"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "去一个能让你们吃饱饭的地方。"
+            },
+            {
+              "speaker": "wife",
+              "speakerName": "妻",
+              "text": "这就够了。"
+            }
           ]
         },
         {
           "id": "chengdu_gate",
           "name": "成都",
-          "x": 50, "y": 64,
+          "x": 50,
+          "y": 64,
           "isKey": true,
           "dialogues": [
-            { "speaker": "narrator", "speakerName": "旁白", "text": "乾元二年冬末，杜甫一家踏进成都。" }
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "乾元二年冬末，杜甫一家踏进成都。"
+            }
           ]
         }
       ],
@@ -270,9 +439,10 @@
       "title": "此后漂泊",
       "transitionText": "秋去冬来。\n一家人风餐露宿，\n终于走到了浣花溪畔。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/characters/dufu/drift/walking.png",
         "text": "这里，能不能停下？"
-      }
+      },
+      "narrative": ""
     }
   ]
 }

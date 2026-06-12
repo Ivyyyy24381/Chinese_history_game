@@ -960,6 +960,11 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
     return <ClickPointsPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
+  // --- COMIC REVEAL PHASE (连环画：遮盖分格，点击按顺序揭开) ---
+  if (currentPhase.type === "comic_reveal") {
+    return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
+  }
+
   // --- ESCAPE GAME PHASE (红蓝点逃离) ---
   if (currentPhase.type === "escape_game") {
     return (
@@ -1308,6 +1313,115 @@ function ClickPointsPhase({ phase, onComplete }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ============================================================
+// COMIC REVEAL — 连环画分格：全图遮盖，按顺序揭开（点击 like PPT，
+// 或 autoAdvanceSec 秒后自动揭下一格；有台词的格子先点完台词）
+// ============================================================
+// phase.panels: [{ id, x, y, w, h (percent), dialogues?: [{speaker, speakerName, text}] }]
+// phase.autoAdvanceSec: number (optional) — auto-reveal delay; clicking always works.
+function ComicRevealPhase({ phase, onComplete }) {
+  const panels = phase.panels || [];
+  const imageSrc = phase.image || phase.background;
+  const autoSec = phase.autoAdvanceSec || 0;
+  const [revealed, setRevealed] = useState(0); // how many panels are visible
+  const [lineIdx, setLineIdx] = useState(0);   // dialogue line within current panel
+  // Fit-to-space (same approach as click_points)
+  const areaRef = useRef(null);
+  const [areaBox, setAreaBox] = useState({ w: 0, h: 0 });
+  const [imgRatio, setImgRatio] = useState(16 / 9);
+  useEffect(() => {
+    if (!areaRef.current) return;
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0].contentRect;
+      setAreaBox({ w: r.width, h: r.height });
+    });
+    ro.observe(areaRef.current);
+    return () => ro.disconnect();
+  }, []);
+  const imgW = areaBox.w ? Math.min(areaBox.w, Math.max(120, areaBox.h) * imgRatio) : 0;
+  const imgH = imgW / imgRatio;
+
+  const currentPanel = revealed > 0 ? panels[revealed - 1] : null;
+  const lines = (currentPanel && currentPanel.dialogues) || [];
+  const pendingLines = revealed > 0 && lineIdx < lines.length;
+  const allDone = revealed >= panels.length && !pendingLines;
+
+  const advance = useCallback(() => {
+    if (pendingLines) { setLineIdx((i) => i + 1); return; }
+    if (revealed < panels.length) { setRevealed((r) => r + 1); setLineIdx(0); }
+  }, [pendingLines, revealed, panels.length]);
+
+  // Auto-advance: only when no dialogue lines are waiting to be read.
+  useEffect(() => {
+    if (!autoSec || allDone || pendingLines) return;
+    const t = setTimeout(advance, autoSec * 1000);
+    return () => clearTimeout(t);
+  }, [autoSec, allDone, pendingLines, advance, revealed, lineIdx]);
+
+  const activeLine = pendingLines ? lines[lineIdx] : null;
+
+  return (
+    <div style={cpStyles.overlay}>
+      <div style={cpStyles.popup} onClick={allDone ? undefined : advance}>
+        <div style={cpStyles.header}>
+          <h2 style={cpStyles.title}>{phase.title || "连环画"}</h2>
+          {phase.narrative && <p style={cpStyles.narrative}>{phase.narrative}</p>}
+          <div style={cpStyles.instructionRow}>
+            <span>{"📖 " + (phase.instruction || "点击画面，一格一格看下去。")}</span>
+            <span style={cpStyles.progress}>{revealed}{" / "}{panels.length}</span>
+          </div>
+        </div>
+
+        <div ref={areaRef} style={cpStyles.imageArea}>
+          <div style={{ ...cpStyles.imageWrap, width: imgW || "100%", height: imgW ? imgH : "auto", cursor: allDone ? "default" : "pointer" }}>
+            <img
+              src={imageSrc}
+              alt=""
+              style={cpStyles.image}
+              onLoad={(e) => {
+                const im = e.currentTarget;
+                if (im.naturalWidth && im.naturalHeight) setImgRatio(im.naturalWidth / im.naturalHeight);
+              }}
+            />
+            {/* Covers — fade away one by one */}
+            {panels.map((p, i) => (
+              <div key={p.id || i} style={{
+                position: "absolute",
+                left: p.x + "%", top: p.y + "%",
+                width: p.w + "%", height: p.h + "%",
+                backgroundColor: "#241A12",
+                border: "1px solid #3E2E23",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "rgba(212,165,116,0.5)", fontSize: 22, fontFamily: "inherit",
+                opacity: i < revealed ? 0 : 1,
+                transition: "opacity 0.8s ease",
+                pointerEvents: "none",
+              }}>
+                {i + 1}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Dialogue line for the just-revealed panel */}
+        {activeLine ? (
+          <div style={cpStyles.poemBox}>
+            {activeLine.speakerName && <div style={cpStyles.poemTitle}>{activeLine.speakerName}</div>}
+            <div style={cpStyles.poemLine}>{activeLine.text}</div>
+            <div style={{ fontSize: 11, color: "#8B7355", marginTop: 4 }}>{"▼ 点击继续"}</div>
+          </div>
+        ) : allDone ? (
+          <button onClick={onComplete} style={cpStyles.continueBtn}>{"继续 →"}</button>
+        ) : (
+          <div style={cpStyles.hint}>
+            {autoSec ? `自动播放中…点击可加快` : "点击画面揭开下一格"}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

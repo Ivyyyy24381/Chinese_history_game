@@ -361,6 +361,12 @@ export default function SceneEditor({ initialEventId, onExit }) {
         phase.soldierPortraits = egSoldierPortraits;
         phase.playerPortrait = egPlayerPortrait;
       }
+      if (phaseType === "comic_reveal") {
+        phase.instruction = phaseInstruction;
+        phase.panels = comicPanels.map(({ uid, ...rest }) => rest);
+        if (comicAutoSec > 0) phase.autoAdvanceSec = comicAutoSec;
+        else delete phase.autoAdvanceSec;
+      }
       if (phaseType === "click_points") {
         phase.instruction = phaseInstruction;
         phase.image = clickPointImage || bg;
@@ -481,6 +487,11 @@ export default function SceneEditor({ initialEventId, onExit }) {
         d.uid === dragging ? { ...d, x: clampX, y: clampY } : d
       )
     );
+    setComicPanels((prev) =>
+      prev.map((p) =>
+        p.uid === dragging ? { ...p, x: clampX, y: clampY } : p
+      )
+    );
   }, [dragging, didDrag, dragStartPos]);
 
   const handleMouseUp = useCallback(() => {
@@ -580,6 +591,10 @@ export default function SceneEditor({ initialEventId, onExit }) {
   const [minigameItems, setMinigameItems] = useState([]);
   const [minigameInstruction, setMinigameInstruction] = useState("");
 
+  // === Comic-reveal state (连环画分格) ===
+  const [comicPanels, setComicPanels] = useState([]);
+  const [comicAutoSec, setComicAutoSec] = useState(0);
+
   // === Click-points state (春望-style 找茬 phase) ===
   const [clickPoints, setClickPoints] = useState([]);
   const [selectedClickPoint, setSelectedClickPoint] = useState(null);
@@ -642,6 +657,13 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setMinigameType(phase.minigameType || "memory");
     setMinigameItems(phase.minigameItems || []);
     setMinigameInstruction(phase.minigameInstruction || "");
+    // Comic reveal
+    setComicPanels((phase.panels || []).map((p, i) => ({
+      ...p,
+      uid: "panel_" + i + "_" + (p.id || ""),
+      dialogues: p.dialogues || [],
+    })));
+    setComicAutoSec(phase.autoAdvanceSec || 0);
     // Click points
     setClickPoints((phase.points || []).map((p, i) => ({
       uid: (p.id || "pt") + "_" + i,
@@ -763,6 +785,11 @@ export default function SceneEditor({ initialEventId, onExit }) {
         size: p.size,
         text: p.text,
       }));
+    }
+    if (phaseType === "comic_reveal") {
+      phase.instruction = phaseInstruction;
+      phase.panels = comicPanels.map(({ uid, ...rest }) => rest);
+      if (comicAutoSec > 0) phase.autoAdvanceSec = comicAutoSec;
     }
     if (phaseType === "minigame") {
       phase.minigameType = minigameType;
@@ -915,6 +942,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
             <option value="narration">narration (\u53D9\u4E8B\u6F14\u51FA)</option>
             <option value="escape_game">{"\u{1F6AA} 出城 (escape_game)"}</option>
                 <option value="click_points">{"\u{1F441} 找茬 (click_points)"}</option>
+                <option value="comic_reveal">{"\uD83D\uDCD6 \u8FDE\u73AF\u753B (comic_reveal)"}</option>
                 <option value="minigame">minigame (\u5C0F\u6E38\u620F)</option>
           </select>
         </div>
@@ -1131,6 +1159,34 @@ export default function SceneEditor({ initialEventId, onExit }) {
                   textShadow: "0 1px 3px #000", whiteSpace: "nowrap",
                 }}>{wp.name || wp.id || "?"}</div>
                 <div style={{ fontSize: 9, color: "#AAB7C4" }}>({wp.x}, {wp.y})</div>
+              </div>
+            ))}
+            {/* Comic-reveal panels on canvas: draggable numbered frames */}
+            {phaseType === "comic_reveal" && comicPanels.map((p, pi) => (
+              <div
+                key={p.uid}
+                style={{
+                  position: "absolute",
+                  left: p.x + "%", top: p.y + "%",
+                  width: p.w + "%", height: p.h + "%",
+                  border: selectedNpc === p.uid ? "3px solid #F4D03F" : "2px dashed rgba(231,76,60,0.9)",
+                  backgroundColor: "rgba(36,26,18,0.35)",
+                  zIndex: 17,
+                  cursor: dragging === p.uid ? "grabbing" : "grab",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#FFF", fontSize: 20, fontWeight: "bold",
+                  textShadow: "0 1px 3px #000",
+                }}
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  setSelectedNpc(p.uid);
+                  setDragging(p.uid);
+                  setDragStartPos({ x: e.clientX, y: e.clientY });
+                  setDidDrag(false);
+                }}
+                onClick={(e) => { e.stopPropagation(); setSelectedNpc(p.uid); }}
+              >
+                {pi + 1}
               </div>
             ))}
             {/* Trigger zones on canvas */}
@@ -1955,6 +2011,79 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 <textarea style={styles.fieldTextarea} value={poemExplanation} rows={2}
                   onChange={(e) => setPoemExplanation(e.target.value)} />
               </div>
+            </div>
+          )}
+
+          {/* ---- COMIC REVEAL: 连环画分格 editor ---- */}
+          {phaseType === "comic_reveal" && (
+            <div style={styles.examEditor}>
+              <h3 style={styles.editorSectionTitle}>{"📖 连环画分格"}</h3>
+              <p style={styles.phaseDesc}>{"全图遮盖，按顺序揭开。格子可在左侧画布拖拽（拖动 = 移动左上角）。"}</p>
+              <div style={styles.fieldGroup}>
+                <label style={styles.fieldLabel}>{"自动播放间隔（秒，0 = 仅点击）"}</label>
+                <input type="number" min="0" max="20" step="0.5" style={styles.fieldInput}
+                  value={comicAutoSec}
+                  onChange={(e) => setComicAutoSec(parseFloat(e.target.value) || 0)} />
+              </div>
+              {comicPanels.map((p, pi) => (
+                <div key={p.uid} style={{
+                  ...styles.questionCard,
+                  outline: selectedNpc === p.uid ? "2px solid #F4D03F" : "none",
+                }}>
+                  <div style={styles.dialogueRow}>
+                    <span style={{ color: "#E74C3C", fontWeight: "bold", minWidth: 22 }}>{pi + 1}</span>
+                    <input style={styles.fieldInput} value={p.id || ""} placeholder={"id"}
+                      onChange={(e) => { const np = [...comicPanels]; np[pi] = { ...np[pi], id: e.target.value }; setComicPanels(np); }} />
+                    <button style={styles.btnRemoveDialogue}
+                      onClick={() => setComicPanels(comicPanels.filter((_, i) => i !== pi))}>{"✕"}</button>
+                  </div>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    {["x", "y", "w", "h"].map((k) => (
+                      <input key={k} type="number" step="0.1" style={{ ...styles.fieldInput, flex: 1 }}
+                        value={p[k] ?? ""} placeholder={k}
+                        onChange={(e) => { const np = [...comicPanels]; np[pi] = { ...np[pi], [k]: parseFloat(e.target.value) || 0 }; setComicPanels(np); }} />
+                    ))}
+                  </div>
+                  {(p.dialogues || []).map((dl, dli) => (
+                    <div key={dli} style={{ display: "flex", gap: 4, marginTop: 4 }}>
+                      <input style={{ ...styles.dialogueSpeaker, width: 64 }} value={dl.speakerName || ""}
+                        placeholder={"说话人"}
+                        onChange={(e) => {
+                          const np = [...comicPanels]; const dlg = [...np[pi].dialogues];
+                          dlg[dli] = { ...dlg[dli], speakerName: e.target.value };
+                          np[pi] = { ...np[pi], dialogues: dlg }; setComicPanels(np);
+                        }} />
+                      <textarea style={{ ...styles.dialogueText, flex: 1, marginTop: 0 }} value={dl.text || ""} rows={2}
+                        placeholder={"揭开后显示的台词…"}
+                        onChange={(e) => {
+                          const np = [...comicPanels]; const dlg = [...np[pi].dialogues];
+                          dlg[dli] = { ...dlg[dli], text: e.target.value };
+                          np[pi] = { ...np[pi], dialogues: dlg }; setComicPanels(np);
+                        }} />
+                      <button style={styles.btnRemoveDialogue}
+                        onClick={() => {
+                          const np = [...comicPanels];
+                          np[pi] = { ...np[pi], dialogues: np[pi].dialogues.filter((_, i) => i !== dli) };
+                          setComicPanels(np);
+                        }}>{"✕"}</button>
+                    </div>
+                  ))}
+                  <button style={styles.btnAddDialogue}
+                    onClick={() => {
+                      const np = [...comicPanels];
+                      np[pi] = { ...np[pi], dialogues: [...(np[pi].dialogues || []), { speaker: "narrator", speakerName: "旁白", text: "" }] };
+                      setComicPanels(np);
+                    }}>{"+ 台词"}</button>
+                </div>
+              ))}
+              <button style={styles.btnAddPhaseStyle}
+                onClick={() => setComicPanels([...comicPanels, {
+                  uid: "panel_new_" + Date.now(),
+                  id: "p" + (comicPanels.length + 1),
+                  x: 5, y: 5, w: 30, h: 30, dialogues: [],
+                }])}>
+                {"+ 新增分格"}
+              </button>
             </div>
           )}
 
