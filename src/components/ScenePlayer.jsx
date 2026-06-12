@@ -1330,21 +1330,6 @@ function ComicRevealPhase({ phase, onComplete }) {
   const autoSec = phase.autoAdvanceSec || 0;
   const [revealed, setRevealed] = useState(0); // how many panels are visible
   const [lineIdx, setLineIdx] = useState(0);   // dialogue line within current panel
-  // Fit-to-space (same approach as click_points)
-  const areaRef = useRef(null);
-  const [areaBox, setAreaBox] = useState({ w: 0, h: 0 });
-  const [imgRatio, setImgRatio] = useState(16 / 9);
-  useEffect(() => {
-    if (!areaRef.current) return;
-    const ro = new ResizeObserver((entries) => {
-      const r = entries[0].contentRect;
-      setAreaBox({ w: r.width, h: r.height });
-    });
-    ro.observe(areaRef.current);
-    return () => ro.disconnect();
-  }, []);
-  const imgW = areaBox.w ? Math.min(areaBox.w, Math.max(120, areaBox.h) * imgRatio) : 0;
-  const imgH = imgW / imgRatio;
 
   const currentPanel = revealed > 0 ? panels[revealed - 1] : null;
   const lines = (currentPanel && currentPanel.dialogues) || [];
@@ -1365,62 +1350,65 @@ function ComicRevealPhase({ phase, onComplete }) {
 
   const activeLine = pendingLines ? lines[lineIdx] : null;
 
+  // Fullscreen, immersive — same 16:9 locked stage as explore scenes.
+  // The comic IS the background; covers fade out in place. No card, no chrome.
   return (
-    <div style={cpStyles.overlay}>
-      <div style={cpStyles.popup} onClick={allDone ? undefined : advance}>
-        <div style={cpStyles.header}>
-          <h2 style={cpStyles.title}>{phase.title || "连环画"}</h2>
-          {phase.narrative && <p style={cpStyles.narrative}>{phase.narrative}</p>}
-          <div style={cpStyles.instructionRow}>
-            <span>{"📖 " + (phase.instruction || "点击画面，一格一格看下去。")}</span>
-            <span style={cpStyles.progress}>{revealed}{" / "}{panels.length}</span>
-          </div>
+    <div style={styles.sceneOuter} onClick={allDone ? undefined : advance}>
+      <div style={{
+        ...styles.sceneStageInner,
+        backgroundImage: `url(${imageSrc})`,
+        cursor: allDone ? "default" : "pointer",
+      }}>
+        {/* Covers — fade away one by one */}
+        {panels.map((p, i) => (
+          <div key={p.id || i} style={{
+            position: "absolute",
+            left: p.x + "%", top: p.y + "%",
+            width: p.w + "%", height: p.h + "%",
+            backgroundColor: "#15100B",
+            opacity: i < revealed ? 0 : 1,
+            transition: "opacity 0.9s ease",
+            pointerEvents: "none",
+          }} />
+        ))}
+
+        {/* Subtle progress in the corner */}
+        <div style={{
+          position: "absolute", top: 12, right: 16, zIndex: 30,
+          color: "rgba(245,230,211,0.75)", fontSize: 13, letterSpacing: 2,
+          textShadow: "0 1px 4px #000",
+        }}>
+          {revealed}{" / "}{panels.length}
         </div>
 
-        <div ref={areaRef} style={cpStyles.imageArea}>
-          <div style={{ ...cpStyles.imageWrap, width: imgW || "100%", height: imgW ? imgH : "auto", cursor: allDone ? "default" : "pointer" }}>
-            <img
-              src={imageSrc}
-              alt=""
-              style={cpStyles.image}
-              onLoad={(e) => {
-                const im = e.currentTarget;
-                if (im.naturalWidth && im.naturalHeight) setImgRatio(im.naturalWidth / im.naturalHeight);
-              }}
-            />
-            {/* Covers — fade away one by one */}
-            {panels.map((p, i) => (
-              <div key={p.id || i} style={{
-                position: "absolute",
-                left: p.x + "%", top: p.y + "%",
-                width: p.w + "%", height: p.h + "%",
-                backgroundColor: "#241A12",
-                border: "1px solid #3E2E23",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "rgba(212,165,116,0.5)", fontSize: 22, fontFamily: "inherit",
-                opacity: i < revealed ? 0 : 1,
-                transition: "opacity 0.8s ease",
-                pointerEvents: "none",
-              }}>
-                {i + 1}
+        {/* Dialogue line for the just-revealed panel — bottom bar */}
+        {activeLine && (
+          <div style={{
+            position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30,
+            backgroundColor: "rgba(20,12,6,0.88)",
+            borderTop: "1px solid rgba(212,165,116,0.45)",
+            padding: "16px 32px 18px",
+            textAlign: "left",
+          }}>
+            {activeLine.speakerName && (
+              <div style={{ color: "#D4A574", fontSize: 13, fontWeight: "bold", letterSpacing: 2, marginBottom: 6 }}>
+                {activeLine.speakerName}
               </div>
-            ))}
+            )}
+            <div style={{ color: "#F5E6D3", fontSize: 16, lineHeight: 1.8, fontFamily: "'Noto Serif SC', 'Songti SC', serif" }}>
+              {activeLine.text}
+            </div>
+            <div style={{ color: "#A89968", fontSize: 11, marginTop: 6, textAlign: "right" }}>{"▼ 点击继续"}</div>
           </div>
-        </div>
+        )}
 
-        {/* Dialogue line for the just-revealed panel */}
-        {activeLine ? (
-          <div style={cpStyles.poemBox}>
-            {activeLine.speakerName && <div style={cpStyles.poemTitle}>{activeLine.speakerName}</div>}
-            <div style={cpStyles.poemLine}>{activeLine.text}</div>
-            <div style={{ fontSize: 11, color: "#8B7355", marginTop: 4 }}>{"▼ 点击继续"}</div>
-          </div>
-        ) : allDone ? (
-          <button onClick={onComplete} style={cpStyles.continueBtn}>{"继续 →"}</button>
-        ) : (
-          <div style={cpStyles.hint}>
-            {autoSec ? `自动播放中…点击可加快` : "点击画面揭开下一格"}
-          </div>
+        {/* Finished → continue */}
+        {allDone && (
+          <button
+            style={styles.floatingProceed}
+            onClick={(e) => { e.stopPropagation(); onComplete(); }}>
+            {"继续 →"}
+          </button>
         )}
       </div>
     </div>

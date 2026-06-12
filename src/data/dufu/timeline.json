@@ -25,8 +25,8 @@
           "summary": "杜甫初次应试落第，开始齐赵壮游，留下《望岳》。",
           "location": {
             "name": "洛阳/齐赵",
-            "mapX": 67.9,
-            "mapY": 46.9
+            "mapX": 68.9,
+            "mapY": 18.1
           },
           "hasScene": true,
           "hasQuiz": true
@@ -39,8 +39,8 @@
           "summary": "杜甫在洛阳与李白相遇，结下深厚友谊，同游梁宋。",
           "location": {
             "name": "洛阳",
-            "mapX": 63.5,
-            "mapY": 53
+            "mapX": 60.1,
+            "mapY": 27.2
           },
           "hasScene": true,
           "hasQuiz": false
@@ -63,8 +63,8 @@
           "summary": "玄宗特办制举，李林甫导演「野无遗贤」骗局，无人及第。",
           "location": {
             "name": "长安",
-            "mapX": 56,
-            "mapY": 54
+            "mapX": 48.8,
+            "mapY": 30.7
           },
           "hasScene": true,
           "hasQuiz": true
@@ -77,8 +77,8 @@
           "summary": "杜甫向玄宗献《朝献太清宫赋》《朝享太庙赋》《有事于南郊赋》，获召试文章。",
           "location": {
             "name": "长安",
-            "mapX": 56,
-            "mapY": 54
+            "mapX": 43.5,
+            "mapY": 27.9
           },
           "hasScene": true,
           "hasQuiz": false
@@ -101,8 +101,8 @@
           "summary": "安禄山起兵反唐，长安陷落，杜甫被困乱军。",
           "location": {
             "name": "长安",
-            "mapX": 56,
-            "mapY": 54
+            "mapX": 49.6,
+            "mapY": 21.4
           },
           "hasScene": true,
           "hasQuiz": false
@@ -115,8 +115,8 @@
           "summary": "杜甫从沦陷的长安逃出，奔赴凤翔投奔肃宗，授左拾遗。",
           "location": {
             "name": "凤翔",
-            "mapX": 53,
-            "mapY": 54
+            "mapX": 38.7,
+            "mapY": 30.7
           },
           "hasScene": true,
           "hasQuiz": true
@@ -129,8 +129,8 @@
           "summary": "杜甫弃华州司功参军之职，携家西赴秦州，开始漂泊生涯。",
           "location": {
             "name": "华州→秦州",
-            "mapX": 49,
-            "mapY": 53
+            "mapX": 31,
+            "mapY": 27.2
           },
           "hasScene": true,
           "hasQuiz": false
@@ -153,8 +153,8 @@
           "summary": "杜甫在浣花溪畔筑草堂，得严武等人接济，写下大量名作。",
           "location": {
             "name": "成都",
-            "mapX": 50,
-            "mapY": 64
+            "mapX": 23.7,
+            "mapY": 53.1
           },
           "hasScene": true,
           "hasQuiz": true
@@ -177,8 +177,8 @@
           "summary": "杜甫居夔州近两年，诗歌创作达到巅峰，作《秋兴八首》《登高》。",
           "location": {
             "name": "三峡/夔州",
-            "mapX": 55,
-            "mapY": 62
+            "mapX": 44.8,
+            "mapY": 56.6
           },
           "hasScene": true,
           "hasQuiz": true
@@ -191,8 +191,8 @@
           "summary": "杜甫漂泊于潭州、岳阳间，在小船上病逝，享年59岁。",
           "location": {
             "name": "湘江",
-            "mapX": 60,
-            "mapY": 68
+            "mapX": 59.7,
+            "mapY": 69.7
           },
           "hasScene": true,
           "hasQuiz": true

@@ -184,72 +184,101 @@
     },
     {
       "id": "dream",
-      "type": "explore",
+      "type": "comic_reveal",
       "background": "/assets/events/770_xiangjiang/backgrounds/old_river_dream.png",
       "title": "回忆",
       "narrative": "夜泊。江上起雾。杜甫在船舱里睡去，梦见了从前。",
       "instruction": "点开浮在江面上的影子。",
-      "npcs": [
+      "nextPhase": "ending",
+      "autoAdvanceSec": 2,
+      "panels": [
         {
-          "id": "libai_dream",
-          "name": "李白·影",
-          "portrait": "/assets/characters/npcs/libai.png",
-          "position": {
-            "x": 50,
-            "y": 50
-          },
-          "scale": 1.5,
-          "isClue": true,
-          "dialogues": [
-            {
-              "speaker": "libai",
-              "speakerName": "李白",
-              "text": "子美，我读了你的诗。十年了。"
-            },
-            {
-              "speaker": "libai",
-              "speakerName": "李白",
-              "text": "（笑声穿过雾——也可能根本没有人。）"
-            }
-          ]
+          "id": "p1_mist",
+          "x": 0,
+          "y": 0,
+          "w": 37.0,
+          "h": 38.6,
+          "dialogues": []
         },
         {
-          "id": "yanwu_dream",
-          "name": "严武·影",
-          "portrait": "/assets/characters/npcs/yanwu.png",
-          "position": {
-            "x": 25,
-            "y": 60
-          },
-          "scale": 1.3,
+          "id": "p2_yanwu",
+          "x": 37.0,
+          "y": 0,
+          "w": 30.8,
+          "h": 38.6,
           "dialogues": [
             {
               "speaker": "yanwu",
-              "speakerName": "严武",
+              "speakerName": "严武·影",
               "text": "子美兄，草堂还在。"
             }
           ]
         },
         {
-          "id": "wife_dream",
-          "name": "妻·影",
-          "portrait": "/assets/characters/npcs/wife.png",
-          "position": {
-            "x": 75,
-            "y": 65
-          },
-          "scale": 1.2,
+          "id": "p3_wife",
+          "x": 67.8,
+          "y": 0,
+          "w": 32.2,
+          "h": 38.6,
           "dialogues": [
             {
               "speaker": "wife",
-              "speakerName": "妻",
+              "speakerName": "妻·影",
               "text": "回家吧。"
             }
           ]
+        },
+        {
+          "id": "p4_letter",
+          "x": 0,
+          "y": 38.6,
+          "w": 30.0,
+          "h": 31.7,
+          "dialogues": [
+            {
+              "speaker": "libai",
+              "speakerName": "李白·影",
+              "text": "子美，我读了你的诗。十年了。"
+            }
+          ]
+        },
+        {
+          "id": "p5_drunk",
+          "x": 30.0,
+          "y": 38.6,
+          "w": 37.2,
+          "h": 31.7,
+          "dialogues": []
+        },
+        {
+          "id": "p6_laugh",
+          "x": 67.2,
+          "y": 38.6,
+          "w": 32.8,
+          "h": 31.7,
+          "dialogues": [
+            {
+              "speaker": "libai",
+              "speakerName": "李白·影",
+              "text": "（笑声穿过雾——也可能根本没有人。）"
+            }
+          ]
+        },
+        {
+          "id": "p7_wake",
+          "x": 0,
+          "y": 70.3,
+          "w": 100,
+          "h": 29.7,
+          "dialogues": [
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "太白……"
+            }
+          ]
         }
-      ],
-      "requiredTalks": 1,
-      "nextPhase": "ending"
+      ]
     },
     {
       "id": "ending",
