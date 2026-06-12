@@ -19,88 +19,63 @@
     },
     {
       "id": "yueyang_lou",
-      "type": "explore",
+      "type": "comic_reveal",
       "background": "/assets/events/770_xiangjiang/backgrounds/yueyang_lou.png",
       "title": "岳阳楼",
       "narrative": "大历三年冬。杜甫终于登上久闻其名的岳阳楼。",
       "instruction": "登楼远望——四个方向，四种心情。",
-      "npcs": [
+      "nextPhase": "drift_route",
+      "autoAdvanceSec": 2,
+      "panels": [
         {
-          "id": "dongting",
-          "name": "洞庭水",
-          "portrait": "",
-          "position": {
-            "x": 25,
-            "y": 81
-          },
-          "isClue": true,
-          "dialogues": [
-            {
-              "speaker": "dufu",
-              "speakerName": "杜甫",
-              "text": "昔闻洞庭水，今上岳阳楼。"
-            }
-          ]
+          "id": "p1_arrive",
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 29.7,
+          "dialogues": []
         },
         {
-          "id": "wupu",
-          "name": "吴楚分界",
-          "portrait": "",
-          "position": {
-            "x": 61,
-            "y": 34
-          },
-          "isClue": true,
-          "dialogues": [
-            {
-              "speaker": "dufu",
-              "speakerName": "杜甫",
-              "text": "吴楚东南坼，乾坤日夜浮。"
-            }
-          ]
+          "id": "p2_dongting",
+          "x": 0,
+          "y": 29.7,
+          "w": 50,
+          "h": 25.2,
+          "dialogues": []
         },
         {
-          "id": "letter",
-          "name": "未回的家书",
-          "portrait": "",
-          "position": {
-            "x": 83,
-            "y": 74
-          },
-          "isClue": true,
-          "dialogues": [
-            {
-              "speaker": "dufu",
-              "speakerName": "杜甫",
-              "text": "亲朋无一字，老病有孤舟。"
-            }
-          ]
+          "id": "p3_wuchu",
+          "x": 50,
+          "y": 29.7,
+          "w": 50,
+          "h": 25.2,
+          "dialogues": []
         },
         {
-          "id": "north",
-          "name": "北望",
-          "portrait": "",
-          "position": {
-            "x": 28,
-            "y": 31
-          },
-          "isClue": true,
-          "dialogues": [
-            {
-              "speaker": "dufu",
-              "speakerName": "杜甫",
-              "text": "戎马关山北……"
-            },
-            {
-              "speaker": "dufu",
-              "speakerName": "杜甫",
-              "text": "凭轩涕泗流。"
-            }
-          ]
+          "id": "p4_letter",
+          "x": 0,
+          "y": 54.9,
+          "w": 50,
+          "h": 24.6,
+          "dialogues": []
+        },
+        {
+          "id": "p5_war",
+          "x": 50,
+          "y": 54.9,
+          "w": 50,
+          "h": 24.6,
+          "dialogues": []
+        },
+        {
+          "id": "p6_tears",
+          "x": 0,
+          "y": 79.5,
+          "w": 100,
+          "h": 20.5,
+          "dialogues": []
         }
-      ],
-      "requiredTalks": 3,
-      "nextPhase": "drift_route"
+      ]
     },
     {
       "id": "drift_route",
