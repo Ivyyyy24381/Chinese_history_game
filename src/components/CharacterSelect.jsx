@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function CharacterSelect({ characters, onSelect }) {
+export default function CharacterSelect({ characters, onSelect, achievements = {}, achievementTitles = {}, onRecap }) {
   const [selectedId, setSelectedId] = useState(null);
 
   const handleSelect = (char) => {
@@ -9,10 +9,12 @@ export default function CharacterSelect({ characters, onSelect }) {
     onSelect(char);
   };
 
+  const earnedCount = characters.filter((c) => achievements[c.id]).length;
+
   return (
     <div style={styles.selectScreen}>
-      <h1 style={styles.mainTitle}>{"\u4e2d\u56fd\u5386\u53f2\u6e38"}</h1>
-      <p style={styles.subtitle}>{"\u9009\u62e9\u4f60\u7684\u4e3b\u4eba\u516c"}</p>
+      <h1 style={styles.mainTitle}>{"中国历史游"}</h1>
+      <p style={styles.subtitle}>{"选择你的主人公"}</p>
 
       <div style={styles.characterGrid}>
         {characters.map((char) => (
@@ -20,7 +22,7 @@ export default function CharacterSelect({ characters, onSelect }) {
             key={char.id}
             style={{
               ...styles.characterCard,
-              borderColor: char.color,
+              borderColor: achievements[char.id] ? "#F4D03F" : char.color,
               opacity: char.locked ? 0.6 : 1,
               cursor: char.locked ? "not-allowed" : "pointer",
               transform: selectedId === char.id ? "scale(1.05)" : "scale(1)",
@@ -41,10 +43,44 @@ export default function CharacterSelect({ characters, onSelect }) {
             <p style={styles.charDesc}>{char.description}</p>
             {char.locked && (
               <div style={styles.lockOverlay}>
-                {"\ud83d\udd10 \u7b49\u5f85\u5f00\u653e"}
+                {"🔐 等待开放"}
               </div>
             )}
+            {achievements[char.id] && (
+              <>
+                <div
+                  style={styles.achBadge}
+                  title={"历史成就 · " + (achievementTitles[char.id] || "人物传完成")}
+                >
+                  {"🏆"}
+                </div>
+                <button
+                  style={styles.recapBtn}
+                  onClick={(e) => { e.stopPropagation(); onRecap && onRecap(char.id); }}
+                >
+                  {"📜 人物回顾"}
+                </button>
+              </>
+            )}
           </div>
+        ))}
+      </div>
+
+      {/* 成就栏 */}
+      <div style={styles.achievementBar}>
+        <span style={styles.achievementHeading}>
+          {"🏆 历史成就 "}{earnedCount}{" / "}{characters.length}
+        </span>
+        {characters.map((c) => (
+          <span
+            key={c.id}
+            style={{
+              ...styles.achievementChip,
+              ...(achievements[c.id] ? {} : styles.achievementChipLocked),
+            }}
+          >
+            {(achievements[c.id] ? "✓ " : "… ") + (achievementTitles[c.id] || c.name + "传")}
+          </span>
         ))}
       </div>
     </div>
@@ -142,5 +178,51 @@ const styles = {
     color: "#FFF",
     fontSize: 18,
     letterSpacing: 2,
+  },
+  achBadge: {
+    position: "absolute",
+    top: 10,
+    right: 12,
+    fontSize: 24,
+    filter: "drop-shadow(0 0 6px rgba(244,208,63,0.8))",
+  },
+  recapBtn: {
+    marginTop: 12,
+    padding: "7px 16px",
+    border: "1px solid #F4D03F",
+    borderRadius: 6,
+    backgroundColor: "rgba(244,208,63,0.12)",
+    color: "#F4D03F",
+    cursor: "pointer",
+    fontSize: 13,
+    fontFamily: "inherit",
+    letterSpacing: 1,
+  },
+  achievementBar: {
+    marginTop: 36,
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  achievementHeading: {
+    color: "#F4D03F",
+    fontSize: 14,
+    letterSpacing: 2,
+  },
+  achievementChip: {
+    padding: "4px 14px",
+    borderRadius: 14,
+    fontSize: 12,
+    letterSpacing: 1,
+    backgroundColor: "rgba(244,208,63,0.15)",
+    color: "#F4D03F",
+    border: "1px solid rgba(244,208,63,0.5)",
+  },
+  achievementChipLocked: {
+    backgroundColor: "rgba(255,255,255,0.05)",
+    color: "#667",
+    border: "1px solid rgba(255,255,255,0.15)",
   },
 };

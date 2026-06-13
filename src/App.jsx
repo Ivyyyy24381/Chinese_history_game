@@ -8,6 +8,15 @@ import QuizPanel from "./components/QuizPanel";
 import ScenePlayer from "./components/ScenePlayer";
 import SceneEditor from "./components/SceneEditor";
 import TimelineEditor from "./components/TimelineEditor";
+import CharacterRecap from "./components/CharacterRecap";
+
+// Achievements persist across sessions.
+const ACH_KEY = "lishiyou_achievements";
+const loadAchievements = () => {
+  try { return JSON.parse(localStorage.getItem(ACH_KEY)) || {}; } catch { return {}; }
+};
+// Achievement title per character biography.
+const ACHIEVEMENT_TITLES = { dufu: "诗圣之路", libai: "诗仙之路", sushi: "东坡之路" };
 
 // Static character data
 const CHARACTERS = [
@@ -62,6 +71,10 @@ export default function App() {
   const [showScene, setShowScene] = useState(false);
   const [sceneData, setSceneData] = useState(null);
   const [pendingEvent, setPendingEvent] = useState(null);
+  // Achievements + completion flow
+  const [achievements, setAchievements] = useState(loadAchievements);
+  const [showCongrats, setShowCongrats] = useState(false);
+  const [recapData, setRecapData] = useState(null); // {character, stages}
 
   // Load timeline data when character is selected
   useEffect(() => {
@@ -139,12 +152,39 @@ export default function App() {
     }
   };
 
+  const unlockAchievement = (charId) => {
+    setAchievements((prev) => {
+      if (prev[charId]) return prev; // already earned
+      const next = { ...prev, [charId]: { date: new Date().toISOString() } };
+      try { localStorage.setItem(ACH_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
   const handleSceneComplete = () => {
     setShowScene(false);
     setSceneData(null);
     if (currentEvent && (progressYear == null || currentEvent.year > progressYear)) {
       setProgressYear(currentEvent.year);
     }
+    // Completing the final event of the timeline = biography complete.
+    const lastEvent = allEvents[allEvents.length - 1];
+    if (character && lastEvent && currentEvent && currentEvent.id === lastEvent.id) {
+      unlockAchievement(character.id);
+      setShowCongrats(true);
+    }
+  };
+
+  // Open the recap (from congrats dialog or from home page badge).
+  const openRecap = async () => {
+    if (timelineData) {
+      setRecapData({ character: timelineData.character, stages: timelineData.stages });
+      return;
+    }
+    try {
+      const mod = await import("./data/dufu/timeline.json");
+      setRecapData({ character: mod.default.character, stages: mod.default.stages });
+    } catch { /* ignore */ }
   };
 
   // Editor mode via ?editor=true (entry: timeline editor; drill into scene editor per event)
@@ -153,7 +193,24 @@ export default function App() {
   }
 
   if (screen === "select") {
-    return <CharacterSelect characters={CHARACTERS} onSelect={handleCharacterSelect} />;
+    return (
+      <>
+        <CharacterSelect
+          characters={CHARACTERS}
+          achievements={achievements}
+          achievementTitles={ACHIEVEMENT_TITLES}
+          onSelect={handleCharacterSelect}
+          onRecap={openRecap}
+        />
+        {recapData && (
+          <CharacterRecap
+            character={recapData.character}
+            stages={recapData.stages}
+            onClose={() => setRecapData(null)}
+          />
+        )}
+      </>
+    );
   }
 
   if (!timelineData || currentYear == null || !currentStage || !currentEvent) {
@@ -265,6 +322,51 @@ export default function App() {
           onComplete={handleSceneComplete}
         />
       )}
+      {showCongrats && (
+        <div style={styles.congratsOverlay}>
+          <div style={styles.congratsCard}>
+            <div style={{ fontSize: 56, marginBottom: 8 }}>{"🏆"}</div>
+            <h2 style={styles.congratsTitle}>{"历史成就达成"}</h2>
+            <div style={styles.congratsBadge}>
+              {ACHIEVEMENT_TITLES[character?.id] || "人物传完成"}
+            </div>
+            <p style={styles.congratsText}>
+              {`你走完了${character?.name || ""}的一生——从裘马轻狂的少年，到湘江舟中的诗圣。`}
+            </p>
+            <p style={styles.congratsUnlock}>{"✨ 已解锁：人物回顾"}</p>
+            <p style={styles.congratsNext}>{"下一位人物：李白（即将推出，敬请期待）"}</p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20 }}>
+              <button
+                style={{ ...styles.congratsBtn, backgroundColor: "#8B7355", color: "#FFF" }}
+                onClick={() => { setShowCongrats(false); openRecap(); }}>
+                {"📜 查看人物回顾"}
+              </button>
+              <button
+                style={styles.congratsBtn}
+                onClick={() => {
+                  setShowCongrats(false);
+                  setScreen("select");
+                  setCharacter(null);
+                  setTimelineData(null);
+                  setCurrentYear(null);
+                  setProgressYear(null);
+                }}>
+                {"返回主页"}
+              </button>
+              <button style={styles.congratsBtn} onClick={() => setShowCongrats(false)}>
+                {"继续游览"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {recapData && (
+        <CharacterRecap
+          character={recapData.character}
+          stages={recapData.stages}
+          onClose={() => setRecapData(null)}
+        />
+      )}
     </div>
   );
 }
@@ -331,6 +433,30 @@ const styles = {
     fontSize: 13,
     cursor: "pointer",
     transition: "all 0.2s",
+  },
+  congratsOverlay: {
+    position: "fixed", inset: 0, zIndex: 350,
+    backgroundColor: "rgba(12,10,8,0.82)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+  },
+  congratsCard: {
+    backgroundColor: "#F5EFE3", borderRadius: 14,
+    padding: "36px 48px", maxWidth: 560, textAlign: "center",
+    border: "2px solid #C9A86A",
+    boxShadow: "0 12px 48px rgba(0,0,0,0.6)",
+  },
+  congratsTitle: { margin: 0, fontSize: 24, color: "#3B2510", letterSpacing: 4 },
+  congratsBadge: {
+    display: "inline-block", margin: "12px 0",
+    padding: "6px 22px", backgroundColor: "#3B2510", color: "#F4D03F",
+    borderRadius: 20, fontSize: 16, letterSpacing: 3,
+  },
+  congratsText: { color: "#555", fontSize: 14, lineHeight: 1.8, margin: "8px 0" },
+  congratsUnlock: { color: "#1B5E20", fontSize: 14, fontWeight: "bold", margin: "10px 0 2px" },
+  congratsNext: { color: "#8B7355", fontSize: 13, margin: "4px 0 0" },
+  congratsBtn: {
+    padding: "10px 18px", border: "1px solid #C9B08A", borderRadius: 8,
+    backgroundColor: "#FFF", cursor: "pointer", fontSize: 14, fontFamily: "inherit",
   },
   backBtn: {
     position: "fixed",
