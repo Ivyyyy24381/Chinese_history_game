@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import CharacterSelect from "./components/CharacterSelect";
 import GameMap from "./components/GameMap";
 import Timeline from "./components/Timeline";
@@ -75,6 +75,12 @@ export default function App() {
   const [achievements, setAchievements] = useState(loadAchievements);
   const [showCongrats, setShowCongrats] = useState(false);
   const [recapData, setRecapData] = useState(null); // {character, stages}
+  // Background music — one looping track per stage (period). Missing files
+  // fail silently. User toggle persists.
+  const [musicOn, setMusicOn] = useState(() => {
+    try { return localStorage.getItem("lishiyou_music") !== "off"; } catch { return true; }
+  });
+  const audioRef = useRef(null);
 
   // Load timeline data when character is selected
   useEffect(() => {
@@ -93,6 +99,38 @@ export default function App() {
         });
     }
   }, [character, timelineData]);
+
+  // BGM: play /assets/audio/bgm/<stageId>.mp3 for the current stage.
+  // onerror → silently stop (file not provided yet).
+  useEffect(() => {
+    if (!audioRef.current) {
+      const a = new Audio();
+      a.loop = true;
+      a.volume = 0.35;
+      a.onerror = () => { /* track missing — skip silently */ };
+      audioRef.current = a;
+    }
+    const a = audioRef.current;
+    const stageId = screen === "game" && currentYear != null && timelineData
+      ? (timelineData.stages.find((s) => currentYear >= s.yearStart && currentYear <= s.yearEnd)
+         || timelineData.stages[timelineData.stages.length - 1])?.id
+      : null;
+    if (!musicOn || !stageId) { a.pause(); return; }
+    const src = `/assets/audio/bgm/${stageId}.mp3`;
+    if (!a.src.endsWith(src)) a.src = src;
+    a.play().catch(() => { /* autoplay blocked or missing file — ignore */ });
+  }, [screen, currentYear, timelineData, musicOn]);
+
+  // Pause on unmount
+  useEffect(() => () => { audioRef.current && audioRef.current.pause(); }, []);
+
+  const toggleMusic = () => {
+    setMusicOn((on) => {
+      const next = !on;
+      try { localStorage.setItem("lishiyou_music", next ? "on" : "off"); } catch { /* ignore */ }
+      return next;
+    });
+  };
 
   // Flatten events from all stages with stage references attached.
   const allEvents = useMemo(() => {
@@ -283,6 +321,13 @@ export default function App() {
         onEventSelect={(ev) => setCurrentYear(ev.year)}
       />
       <button
+        style={styles.musicBtn}
+        title={musicOn ? "关闭背景音乐" : "开启背景音乐"}
+        onClick={toggleMusic}
+      >
+        {musicOn ? "🎵" : "🔇"}
+      </button>
+      <button
         style={styles.backBtn}
         onClick={() => {
           setScreen("select");
@@ -433,6 +478,19 @@ const styles = {
     fontSize: 13,
     cursor: "pointer",
     transition: "all 0.2s",
+  },
+  musicBtn: {
+    position: "fixed",
+    bottom: 20,
+    right: 20,
+    width: 44, height: 44,
+    backgroundColor: "#FFF",
+    border: "1px solid #DDD",
+    borderRadius: "50%",
+    cursor: "pointer",
+    fontSize: 18,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+    zIndex: 60,
   },
   congratsOverlay: {
     position: "fixed", inset: 0, zIndex: 350,
