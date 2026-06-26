@@ -85,5 +85,6 @@ function dataSaverPlugin() {
 }
 
 export default defineConfig({
+  base: './',
   plugins: [react(), dataSaverPlugin()],
 })
