@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
+import { asset } from "../utils/asset";
 
 // ---- Portrait resolution -----------------------------------------------------
 // Convention: every NPC PNG lives at /assets/characters/npcs/<speaker_id>.png.
@@ -153,7 +154,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   // === RENDER ===
   const bgStyle = {
     ...styles.sceneContainer,
-    backgroundImage: currentPhase.background ? `url(${currentPhase.background})` : "none",
+    backgroundImage: currentPhase.background ? `url(${asset(currentPhase.background)})` : "none",
   };
 
   // --- TRANSITION PHASE ---
@@ -191,11 +192,11 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
             <div style={styles.announcementPanel}>
               <div style={styles.reactionBox}>
                 <img
-                  src={
+                  src={asset(
                     currentPhase.dufu_reaction.portrait && currentPhase.dufu_reaction.portrait !== DUFU_LEGACY_PORTRAIT
                       ? currentPhase.dufu_reaction.portrait
                       : dufuPortraitPath(currentPhase.dufu_reaction.dufu_pose || currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year)
-                  }
+                  )}
                   alt="" style={styles.reactionPortrait} />
                 <p style={styles.reactionText}>{currentPhase.dufu_reaction.text}</p>
               </div>
@@ -217,7 +218,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
         <div style={styles.sceneStage}>
           <div style={{
             ...styles.sceneStageInner,
-            backgroundImage: currentPhase.background ? `url(${currentPhase.background})` : "none",
+            backgroundImage: currentPhase.background ? `url(${asset(currentPhase.background)})` : "none",
           }}>
             {/* Phase title & instruction */}
             <div style={styles.phaseHeader}>
@@ -295,7 +296,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                         ].filter(Boolean).join(" ") || "none",
                       }}>
                         <img
-                          src={npc.portrait}
+                          src={asset(npc.portrait)}
                           alt={npc.name}
                           style={styles.npcPortraitImg}
                           onError={(e) => { e.currentTarget.style.opacity = "0.2"; }}
@@ -404,7 +405,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                     {portrait && (
                       <div style={styles.dialoguePortraitArea}>
                         <img
-                          src={portrait}
+                          src={asset(portrait)}
                           alt=""
                           style={styles.dialoguePortraitLarge}
                           onError={(e) => {
@@ -412,8 +413,9 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                             // fall back to the activeNpc's portrait, then
                             // to a neutral silhouette so dialogue never
                             // loses its avatar.
-                            if (activeNpc.portrait && e.currentTarget.src !== window.location.origin + activeNpc.portrait) {
-                              e.currentTarget.src = activeNpc.portrait;
+                            if (activeNpc.portrait && !e.currentTarget.dataset.fallback) {
+                              e.currentTarget.dataset.fallback = "1";
+                              e.currentTarget.src = asset(activeNpc.portrait);
                             } else {
                               e.currentTarget.style.display = "none";
                             }
@@ -476,7 +478,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
           {/* Examiner portrait on the left — always visible */}
           <div style={styles.examPortraitArea}>
             {examinerPortrait ? (
-              <img src={examinerPortrait} alt={currentPhase.examiner?.name || ""} style={styles.examPortraitImg} />
+              <img src={asset(examinerPortrait)} alt={currentPhase.examiner?.name || ""} style={styles.examPortraitImg} />
             ) : (
               <div style={{ width: "100%", height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#888", fontSize: 14 }}>
                 {"（无考官立绘）"}
@@ -824,7 +826,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
         <div style={styles.sceneStage}>
           <div style={{
             ...styles.sceneStageInner,
-            backgroundImage: currentPhase.background ? `url(${currentPhase.background})` : "none",
+            backgroundImage: currentPhase.background ? `url(${asset(currentPhase.background)})` : "none",
           }}>
             <div style={styles.phaseHeader}>
               <h2 style={styles.phaseTitle}>{currentPhase.title || "\u5730\u56FE\u884C\u65C5"}</h2>
@@ -933,7 +935,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
               <p style={{ color: "#AAA", textAlign: "center" }}>{"\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09"}</p>
             ) : slides.map((slide, i) => (
               <div key={i} style={{ marginBottom: 24, textAlign: "center" }}>
-                {slide.image && <img src={slide.image} alt="" style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }} />}
+                {slide.image && <img src={asset(slide.image)} alt="" style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }} />}
                 {slide.speaker && <div style={{ color: "#D4A574", fontSize: 14, fontWeight: "bold", marginBottom: 4 }}>{slide.speaker}</div>}
                 <p style={{ color: "#F5E6D3", fontSize: 16, lineHeight: 1.8, margin: 0 }}>{slide.text}</p>
               </div>
@@ -1241,7 +1243,7 @@ function ClickPointsPhase({ phase, onComplete }) {
         <div ref={areaRef} style={cpStyles.imageArea}>
           <div style={{ ...cpStyles.imageWrap, width: imgW || "100%", height: imgW ? imgH : "auto" }}>
           <img
-            src={imageSrc}
+            src={asset(imageSrc)}
             alt=""
             style={cpStyles.image}
             onLoad={(e) => {
@@ -1356,7 +1358,7 @@ function ComicRevealPhase({ phase, onComplete }) {
     <div style={styles.sceneOuter} onClick={allDone ? undefined : advance}>
       <div style={{
         ...styles.sceneStageInner,
-        backgroundImage: `url(${imageSrc})`,
+        backgroundImage: `url(${asset(imageSrc)})`,
         cursor: allDone ? "default" : "pointer",
       }}>
         {/* Covers — fade away one by one */}
@@ -1817,7 +1819,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
             height: `calc(${cellPx} * 0.72)`,
             borderRadius: "50%",
             backgroundColor: playerPortrait ? "transparent" : "#E74C3C",
-            backgroundImage: playerPortrait ? `url(${playerPortrait})` : "none",
+            backgroundImage: playerPortrait ? `url(${asset(playerPortrait)})` : "none",
             backgroundSize: "cover", backgroundPosition: "center top",
             border: "2px solid #FFF",
             boxShadow: "0 0 8px rgba(231,76,60,0.7)",
@@ -1836,7 +1838,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
               height: `calc(${cellPx} * 0.75)`,
               borderRadius: "50%",
               backgroundColor: g.portrait ? "transparent" : "#3498DB",
-              backgroundImage: g.portrait ? `url(${g.portrait})` : "none",
+              backgroundImage: g.portrait ? `url(${asset(g.portrait)})` : "none",
               backgroundSize: "cover", backgroundPosition: "center top",
               border: "2px solid #1F4E79",
               boxShadow: "0 0 6px rgba(52,152,219,0.65)",

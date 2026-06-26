@@ -9,6 +9,7 @@ import ScenePlayer from "./components/ScenePlayer";
 import SceneEditor from "./components/SceneEditor";
 import TimelineEditor from "./components/TimelineEditor";
 import CharacterRecap from "./components/CharacterRecap";
+import { asset } from "./utils/asset";
 
 // Achievements persist across sessions.
 const ACH_KEY = "lishiyou_achievements";
@@ -116,7 +117,7 @@ export default function App() {
          || timelineData.stages[timelineData.stages.length - 1])?.id
       : null;
     if (!musicOn || !stageId) { a.pause(); return; }
-    const src = `/assets/audio/bgm/${stageId}.mp3`;
+    const src = asset(`/assets/audio/bgm/${stageId}.mp3`);
     if (!a.src.endsWith(src)) a.src = src;
     a.play().catch(() => { /* autoplay blocked or missing file — ignore */ });
   }, [screen, currentYear, timelineData, musicOn]);

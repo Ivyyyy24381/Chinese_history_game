@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { asset } from "../utils/asset";
 
 export default function CharacterSelect({ characters, onSelect, achievements = {}, achievementTitles = {}, onRecap }) {
   const [selectedId, setSelectedId] = useState(null);
@@ -31,7 +32,7 @@ export default function CharacterSelect({ characters, onSelect, achievements = {
             onClick={() => handleSelect(char)}
           >
             {char.portrait ? (
-              <img src={char.portrait} alt={char.name} style={styles.charPortrait} />
+              <img src={asset(char.portrait)} alt={char.name} style={styles.charPortrait} />
             ) : (
               <div style={{ ...styles.charAvatar, backgroundColor: char.color }}>
                 {char.avatar}

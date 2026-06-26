@@ -11,6 +11,8 @@
  *   - Past events:     full color, smaller pin, ✓ inside the pin
  *   - Future events:   muted color, smaller pin, no badge
  */
+import { asset } from "../utils/asset";
+
 export default function GameMap({
   allEvents,
   currentYear,
@@ -36,7 +38,7 @@ export default function GameMap({
       <div
         style={{
           ...styles.mapBackground,
-          backgroundImage: `url('/assets/maps/dufu_general_map.png')`,
+          backgroundImage: `url('${asset("/assets/maps/dufu_general_map.png")}')`,
         }}
       >
         {/* Trajectory overlay (SVG, 0..100 viewBox in %) */}

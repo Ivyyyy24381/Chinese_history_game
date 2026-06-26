@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { asset } from "../utils/asset";
 
 export default function DialogueBox({ dialogues, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -37,7 +38,7 @@ export default function DialogueBox({ dialogues, onComplete }) {
         {!isNarrator && current.position === "left" && (
           <div style={styles.portraitLeft}>
             <img
-              src={current.portrait}
+              src={asset(current.portrait)}
               alt={current.speakerName}
               style={styles.portraitImage}
             />
@@ -81,7 +82,7 @@ export default function DialogueBox({ dialogues, onComplete }) {
         {!isNarrator && current.position === "right" && (
           <div style={styles.portraitRight}>
             <img
-              src={current.portrait}
+              src={asset(current.portrait)}
               alt={current.speakerName}
               style={styles.portraitImage}
             />

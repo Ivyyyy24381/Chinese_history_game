@@ -2,6 +2,8 @@
  * CharacterRecap — 人物回顾（完成人物传后解锁）
  * 纵向时间轴：分期 → 事件（年份/状态/概述/地点），首尾有人物总评。
  */
+import { asset } from "../utils/asset";
+
 export default function CharacterRecap({ character, stages, onClose }) {
   return (
     <div style={styles.overlay}>
@@ -10,7 +12,7 @@ export default function CharacterRecap({ character, stages, onClose }) {
 
         <div style={styles.header}>
           {character.portrait && (
-            <img src={character.portrait} alt={character.name} style={styles.portrait} />
+            <img src={asset(character.portrait)} alt={character.name} style={styles.portrait} />
           )}
           <div>
             <h1 style={styles.name}>{character.name}{"·一生回顾"}</h1>
