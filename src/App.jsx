@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import CharacterSelect from "./components/CharacterSelect";
 import GameMap from "./components/GameMap";
 import Timeline from "./components/Timeline";
@@ -68,7 +68,18 @@ export default function App() {
   const [progressYear, setProgressYear] = useState(null);
   const [showEvent, setShowEvent] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [globalScore, setGlobalScore] = useState(0);
+  // 单局积分：runScore 为本局总分；scoredKeys 保证每一关/每道题单局只计一次分。
+  const [runScore, setRunScore] = useState(0);
+  const scoredKeysRef = useRef(new Set());
+  const awardScore = useCallback((key, points) => {
+    if (scoredKeysRef.current.has(key)) return; // 单次游玩每关不重复计分
+    scoredKeysRef.current.add(key);
+    setRunScore((s) => s + points);
+  }, []);
+  const resetRun = useCallback(() => {
+    scoredKeysRef.current = new Set();
+    setRunScore(0);
+  }, []);
   const [showScene, setShowScene] = useState(false);
   const [sceneData, setSceneData] = useState(null);
   const [pendingEvent, setPendingEvent] = useState(null);
@@ -161,6 +172,7 @@ export default function App() {
   const handleCharacterSelect = (char) => {
     setCharacter(char);
     setScreen("game");
+    resetRun(); // 新的一局，从 0 分开始
   };
 
   const handleEventClick = (event) => {
@@ -279,6 +291,7 @@ export default function App() {
         character={timelineData.character}
         progress={reachedEvents}
         totalStages={totalEvents}
+        score={runScore}
       />
       <div style={styles.mapContainer}>
         <GameMap
@@ -356,6 +369,7 @@ export default function App() {
       {showQuiz && (
         <QuizPanel
           stage={{ ...currentStage, ...currentEvent, quizFile: currentEvent.quizFile }}
+          awardScore={awardScore}
           onComplete={handleQuizComplete}
           onClose={() => setShowQuiz(false)}
         />
@@ -363,8 +377,8 @@ export default function App() {
       {showScene && sceneData && (
         <ScenePlayer
           sceneData={sceneData}
-          globalScore={globalScore}
-          onScoreChange={setGlobalScore}
+          eventId={currentEvent.id}
+          awardScore={awardScore}
           onComplete={handleSceneComplete}
         />
       )}

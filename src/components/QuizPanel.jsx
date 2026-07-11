@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { POINTS } from "../utils/scoring";
 
-export default function QuizPanel({ stage, onComplete, onClose }) {
+export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
   const [quizData, setQuizData] = useState(null);
   const [qIndex, setQIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -35,13 +36,19 @@ export default function QuizPanel({ stage, onComplete, onClose }) {
     if (showResult) return;
     setSelected(idx);
     setShowResult(true);
-    if (idx === current.answer) setScore((s) => s + 1);
+    if (idx === current.answer) {
+      setScore((s) => s + 1);
+      if (awardScore) awardScore(`${stage.id}:quiz:q${qIndex}`, POINTS.choice);
+    }
   };
 
   const handleFill = () => {
     if (showResult) return;
     setShowResult(true);
-    if (fillInput.trim() === current.answer) setScore((s) => s + 1);
+    if (fillInput.trim() === current.answer) {
+      setScore((s) => s + 1);
+      if (awardScore) awardScore(`${stage.id}:quiz:q${qIndex}`, POINTS.poemFill);
+    }
   };
 
   const nextQuestion = () => {

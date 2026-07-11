@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
 import { asset } from "../utils/asset";
+import { POINTS, timedScore } from "../utils/scoring";
 
 // ---- Portrait resolution -----------------------------------------------------
 // Convention: every NPC PNG lives at /assets/characters/npcs/<speaker_id>.png.
@@ -18,7 +19,7 @@ function npcPortraitPath(speakerId) {
  * ScenePlayer - Interactive scene engine
  * Supports phase types: explore, exam, transition, forced_choice
  */
-export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onComplete }) {
+export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete }) {
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [talkedNpcs, setTalkedNpcs] = useState(new Set());
   const [activeNpc, setActiveNpc] = useState(null);
@@ -38,6 +39,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   // Choice state
   const [choiceResponse, setChoiceResponse] = useState(null);
   const [choiceCorrect, setChoiceCorrect] = useState(false);
+  const [choiceAttempted, setChoiceAttempted] = useState(false);
   const [showConclusion, setShowConclusion] = useState(false);
   // Poem compose state (multi-blank drag-fill)
   const [composedBlanks, setComposedBlanks] = useState([]);
@@ -49,6 +51,11 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
 
   const phases = sceneData.phases;
   const currentPhase = phases[phaseIndex];
+
+  // 积分：key 全局唯一（事件:阶段:题目），App 层用它保证单局每关只计一次分。
+  const award = useCallback((suffix, pts) => {
+    if (awardScore && pts > 0) awardScore(`${eventId}:p${phaseIndex}:${suffix}`, pts);
+  }, [awardScore, eventId, phaseIndex]);
 
   const goToNextPhase = useCallback(() => {
     if (phaseIndex < phases.length - 1) {
@@ -66,6 +73,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
       setTransitionDone(false);
       setChoiceResponse(null);
       setChoiceCorrect(false);
+      setChoiceAttempted(false);
       setShowConclusion(false);
       setComposedBlanks([]);
       setComposedSubmitted(false);
@@ -106,7 +114,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
     setExamShowResult(true);
     if (idx === currentPhase.questions[examIndex].answer) {
       setExamScore((s) => s + 1);
-      onScoreChange(globalScore + 1);
+      award(`q${examIndex}`, POINTS.choice);
     }
   };
 
@@ -115,7 +123,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
     setExamShowResult(true);
     if (examFillInput.trim() === currentPhase.questions[examIndex].answer) {
       setExamScore((s) => s + 1);
-      onScoreChange(globalScore + 1);
+      award(`q${examIndex}`, POINTS.poemFill);
     }
   };
 
@@ -139,7 +147,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
     setExamShowResult(true);
     if (word === answer) {
       setExamScore((s) => s + 1);
-      onScoreChange(globalScore + 1);
+      award(`q${examIndex}`, POINTS.poemFill);
     }
   };
 
@@ -148,7 +156,10 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
     setChoiceResponse(option.response);
     if (option.correct) {
       setChoiceCorrect(true);
+      // 只有第一次就选对才得分
+      if (!choiceAttempted) award("choice", POINTS.choice);
     }
+    setChoiceAttempted(true);
   };
 
   // === RENDER ===
@@ -755,7 +766,8 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
                   disabled={!allFilled}
                   onClick={() => {
                     setComposedSubmitted(true);
-                    onScoreChange(globalScore + correctCount);
+                    // 填诗每空答对 +10
+                    award("compose", correctCount * POINTS.poemFill);
                   }}
                 >
                   {"\u63D0\u4EA4 \u2192"}
@@ -951,7 +963,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   if (currentPhase.type === "sliding_puzzle") {
     return (
       <div style={bgStyle}>
-        <SlidingPuzzlePhase phase={currentPhase} onComplete={goToNextPhase} />
+        <SlidingPuzzlePhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />
       </div>
     );
   }
@@ -960,7 +972,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
   // Renders as a popup modal containing the scene image with click-to-circle
   // 找茬-style markers, instruction at the top, and progressive poem reveal.
   if (currentPhase.type === "click_points") {
-    return <ClickPointsPhase phase={currentPhase} onComplete={goToNextPhase} />;
+    return <ClickPointsPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
   }
 
   // --- COMIC REVEAL PHASE (连环画：遮盖分格，点击按顺序揭开) ---
@@ -975,6 +987,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
         <EscapeGamePhase
           phase={currentPhase}
           defaultPlayerPortrait={dufuPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year)}
+          onScore={award}
           onComplete={goToNextPhase} />
       </div>
     );
@@ -1017,7 +1030,7 @@ export default function ScenePlayer({ sceneData, globalScore, onScoreChange, onC
 // phase.puzzles: [{ label, solution: string (15 chars), timeoutSec? }]
 // Solution string is the 15 chars in their CORRECT order (row-major,
 // with one empty slot at position 15 / bottom-right).
-function SlidingPuzzlePhase({ phase, onComplete }) {
+function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
   const puzzles = phase.puzzles || [];
   const [pIdx, setPIdx] = useState(0);
   const [tiles, setTiles] = useState([]); // length 16: chars + 1 null
@@ -1093,7 +1106,12 @@ function SlidingPuzzlePhase({ phase, onComplete }) {
       const currentP = puzzles[pIdx];
       const target = currentP.solution.split("").slice(0, 15);
       const isSolved = target.every((ch, k) => next[k] === ch) && next[15] === null;
-      if (isSolved) setSolved(true);
+      if (isSolved) {
+        setSolved(true);
+        // 满分 100，每过 1 秒扣 1 分（超时不得分）
+        const elapsed = (currentP.timeoutSec || 300) - timeLeft;
+        if (onScore) onScore(`puzzle${pIdx}`, timedScore(POINTS.slidingPuzzleMax, elapsed));
+      }
     }
   };
 
@@ -1174,7 +1192,8 @@ function SlidingPuzzlePhase({ phase, onComplete }) {
 // phase.progressivePoem: [string]  — lines that appear one-by-one once
 //   `unlockThreshold` distinct points have been clicked.
 // phase.unlockThreshold: number (default 3)
-function ClickPointsPhase({ phase, onComplete }) {
+function ClickPointsPhase({ phase, onScore, onComplete }) {
+  const startRef = useRef(Date.now());
   const points = phase.points || [];
   const poemLines = phase.progressivePoem || [];
   const threshold = phase.unlockThreshold || 3;
@@ -1291,7 +1310,14 @@ function ClickPointsPhase({ phase, onComplete }) {
 
         {/* Footer: continue */}
         {allClicked ? (
-          <button onClick={onComplete} style={cpStyles.continueBtn}>
+          <button
+            onClick={() => {
+              // 图片找点：满分 50，每过 1 秒扣 1 分
+              const elapsed = Math.round((Date.now() - startRef.current) / 1000);
+              if (onScore) onScore("clickpoints", timedScore(POINTS.clickPointsMax, elapsed));
+              onComplete();
+            }}
+            style={cpStyles.continueBtn}>
             {"\u7EE7\u7EED \u2192"}
           </button>
         ) : (
@@ -1532,7 +1558,8 @@ const cpStyles = {
 //   soldierPortraits: [string]                             // pool used if guard has no portrait
 //   chaseRadius?, tickMs?, playerPortrait?, mapBackground?
 // }
-function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
+function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) {
+  const startRef = useRef(Date.now());
   // The legacy dufu/portrait.png is blank — remap it to the stage default.
   const playerPortrait =
     phase.playerPortrait && phase.playerPortrait !== DUFU_LEGACY_PORTRAIT
@@ -1684,6 +1711,9 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onComplete }) {
     if (won) return;
     if (player.x === phase.end.x && player.y === phase.end.y) {
       setWon(true);
+      // 出逃：满分 50，每过 1 秒扣 1 分，被抓一次额外扣 10 分
+      const elapsed = Math.round((Date.now() - startRef.current) / 1000);
+      if (onScore) onScore("escape", timedScore(POINTS.escapeMax, elapsed, deaths * POINTS.escapeCaughtPenalty));
       return;
     }
     if (guards.some((g) => g.pos.x === player.x && g.pos.y === player.y)) {

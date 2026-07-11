@@ -1,4 +1,4 @@
-export default function ScoreBar({ character, progress, totalStages }) {
+export default function ScoreBar({ character, progress, totalStages, score = 0 }) {
   const progressPercent = (progress / totalStages) * 100;
 
   return (
@@ -13,6 +13,10 @@ export default function ScoreBar({ character, progress, totalStages }) {
         </div>
       </div>
       <div style={styles.scoreBarRight}>
+        <div style={styles.statItem}>
+          <div style={styles.statLabel}>{"\u79ef\u5206"}</div>
+          <div style={{ ...styles.statValue, color: "#B8860B" }}>{score}</div>
+        </div>
         <div style={styles.statItem}>
           <div style={styles.statLabel}>{"\u8fdb\u5ea6"}</div>
           <div style={styles.statValue}>
