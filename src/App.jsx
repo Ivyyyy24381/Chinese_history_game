@@ -489,19 +489,39 @@ export default function App() {
             awardScore={awardScore}
             onComplete={handleSceneComplete}
           />
-          {/* 场景内随时退出，回到大地图（已得积分保留，本场景阶段进度不保存） */}
-          <button
-            style={styles.sceneExitBtn}
-            title="退出场景，返回地图"
-            onClick={() => {
-              if (window.confirm("退出本场景返回地图？已获得的积分会保留，但本场景要从头再玩。")) {
-                setShowScene(false);
-                setSceneData(null);
-              }
-            }}
-          >
-            {"✕ 退出场景"}
-          </button>
+          {/* 场景内随时退出：回地图或直接回选人页（已得积分保留，本场景阶段进度不保存） */}
+          <div style={styles.sceneExitGroup}>
+            <button
+              style={styles.sceneExitBtn}
+              title="退出场景，返回地图"
+              onClick={() => {
+                if (window.confirm("退出本场景返回地图？已获得的积分会保留，但本场景要从头再玩。")) {
+                  setShowScene(false);
+                  setSceneData(null);
+                }
+              }}
+            >
+              {"✕ 退出场景"}
+            </button>
+            <button
+              style={styles.sceneExitBtn}
+              title="返回人物选择页（进度已保存，可继续上局）"
+              onClick={() => {
+                if (window.confirm("返回选择页？积分和进度已保存，下次可继续上局。")) {
+                  setShowScene(false);
+                  setSceneData(null);
+                  setScreen("select");
+                  setCharacter(null);
+                  setTimelineData(null);
+                  setCurrentYear(null);
+                  setProgressYear(null);
+                  setSavedRun(loadRun());
+                }
+              }}
+            >
+              {"⌂ 返回选择"}
+            </button>
+          </div>
         </>
       )}
       {showCongrats && (
@@ -628,11 +648,15 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.2s",
   },
-  sceneExitBtn: {
+  sceneExitGroup: {
     position: "fixed",
     top: 14,
     right: 16,
     zIndex: 380,
+    display: "flex",
+    gap: 8,
+  },
+  sceneExitBtn: {
     padding: "8px 14px",
     backgroundColor: "rgba(20,12,6,0.72)",
     color: "#F5E6D3",
