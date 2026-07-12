@@ -14,13 +14,14 @@
 
 **美术资产**：46 张时期背景、36 个 NPC 立绘、15 张杜甫分期立绘（青年/中年/官服/漂泊/晚年自动随年代切换）、23 件道具、7 张地图——地图通过专业地图软件检索历史坐标制作，真实还原杜甫一生足迹。
 
-**可直接复用到后续人物的系统**：时间轴 + 大地图导航、成就 + 人物回顾、BGM 框架（按时期自动切歌）、可视化场景编辑器（全部 phase 类型可编辑）。
+**可直接复用到后续人物的系统**：时间轴 + 大地图导航、成就 + 人物回顾、BGM 框架（按时期自动切歌）、可视化场景编辑器（全部 phase 类型可编辑）、积分 + 账号 + 排行榜（LeanCloud 云端 / 本地双模式）。
 
 ### 下一步（Ray）
 
 - **选择性寻找并添加音乐**：目前没有 BGM / 音效，但 pipeline 已搭好，把合适的音乐片段按命名放入即可生效 → [docs/ADD_MUSIC.md](docs/ADD_MUSIC.md)
 - **网页部署**：游戏目前只能本地游玩，尚未 deploy → [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 - **李白和更多人物的 screenplay script**：照模版写剧本即可，引擎零代码复用 → [docs/CHARACTER_TEMPLATE.md](docs/CHARACTER_TEMPLATE.md)
+- **开启云端账号与全网排行榜**：积分/排行榜已内置（本地模式可玩），注册 LeanCloud 贴上密钥即升级为邮箱注册 + 全网排行榜 → [docs/ACCOUNTS_SETUP.md](docs/ACCOUNTS_SETUP.md)
 
 ## 环境要求
 
