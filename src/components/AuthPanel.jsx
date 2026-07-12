@@ -15,6 +15,9 @@ export default function AuthPanel({ onAuthed, onClose }) {
   const [nickname, setNickname] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  // 云端注册需要邮箱验证码：pendingVerify 存 verify 函数，进入输码步骤
+  const [pendingVerify, setPendingVerify] = useState(null);
+  const [code, setCode] = useState("");
 
   const submit = async () => {
     setError("");
@@ -25,9 +28,30 @@ export default function AuthPanel({ onAuthed, onClose }) {
     }
     setBusy(true);
     try {
-      const user = mode === "register"
-        ? await register({ email: email.trim(), password, nickname: nickname.trim() })
-        : await login({ email: email.trim(), password });
+      if (mode === "register") {
+        const res = await register({ email: email.trim(), password, nickname: nickname.trim() });
+        if (res.needCode) {
+          setPendingVerify(() => res.verify); // 下一步：输入邮箱验证码
+        } else {
+          onAuthed(res.user);
+        }
+      } else {
+        const user = await login({ email: email.trim(), password });
+        onAuthed(user);
+      }
+    } catch (e) {
+      setError(translateError(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitCode = async () => {
+    if (!code.trim()) { setError("请输入邮箱收到的验证码"); return; }
+    setError("");
+    setBusy(true);
+    try {
+      const user = await pendingVerify(code.trim());
       onAuthed(user);
     } catch (e) {
       setError(translateError(e));
@@ -35,6 +59,36 @@ export default function AuthPanel({ onAuthed, onClose }) {
       setBusy(false);
     }
   };
+
+  // —— 验证码输入步骤 ——
+  if (pendingVerify) {
+    return (
+      <div style={styles.overlay} onClick={onClose}>
+        <div style={styles.panel} onClick={(e) => e.stopPropagation()}>
+          <h2 style={styles.title}>{"输入验证码"}</h2>
+          <p style={styles.localNote}>
+            {"验证码已发送到 "}{email}{"，请查收（含垃圾箱）。"}
+          </p>
+          <input
+            style={styles.input}
+            placeholder="邮箱验证码"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && submitCode()}
+            autoFocus
+          />
+          {error && <div style={styles.error}>{error}</div>}
+          <button style={styles.primaryBtn} disabled={busy} onClick={submitCode}>
+            {busy ? "请稍候…" : "完成注册"}
+          </button>
+          <button style={styles.switchBtn} onClick={() => { setPendingVerify(null); setCode(""); setError(""); }}>
+            {"← 返回重填"}
+          </button>
+          <button style={styles.closeBtn} onClick={onClose}>{"×"}</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.overlay} onClick={onClose}>
@@ -109,10 +163,12 @@ export default function AuthPanel({ onAuthed, onClose }) {
 
 function translateError(e) {
   const msg = String(e?.message || e);
-  if (/already taken|已经被占用|already exists/i.test(msg)) return "该邮箱已注册，请直接登录";
-  if (/could not find user|doesn't exist/i.test(msg)) return "账号不存在，请先注册";
-  if (/password|密码/i.test(msg)) return "邮箱或密码不正确";
-  if (/network|fetch/i.test(msg)) return "网络错误，请稍后重试";
+  if (/already|已存在|已注册|exist/i.test(msg)) return "该邮箱已注册，请直接登录";
+  if (/not.?found|不存在|no user/i.test(msg)) return "账号不存在，请先注册";
+  if (/password|密码|credential/i.test(msg)) return "邮箱或密码不正确";
+  if (/token|verify|验证码|otp|code/i.test(msg)) return "验证码不正确或已过期";
+  if (/permission_denied|permission/i.test(msg)) return "服务未就绪：请在云开发控制台把本站域名加入安全域名";
+  if (/network|fetch|timeout/i.test(msg)) return "网络错误，请稍后重试";
   return msg;
 }
 
