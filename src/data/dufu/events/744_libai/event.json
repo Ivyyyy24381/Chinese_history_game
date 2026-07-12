@@ -128,7 +128,7 @@
           "response": {
             "speaker": "libai",
             "speakerName": "李白",
-            "text": "哈！子美？你的『骑驴十三载』我也读过。"
+            "text": "哈！子美？你的『会当凌绝顶，一览众山小』我也读过。"
           }
         },
         {
@@ -161,7 +161,7 @@
       "type": "explore",
       "background": "/assets/events/744_libai/backgrounds/liangsong_field.png",
       "title": "梁宋同游",
-      "narrative": "秋。三人相约同游梁宋。李白要去寻仙问道，高适来找老友，杜甫只想留住这段时光。",
+      "narrative": "秋。三人相约同游梁宋、齐鲁。李白要去寻仙问道，高适来找老友，杜甫只想留住这段时光。",
       "instruction": "在田野和酒席间走动，听他们说话。",
       "npcs": [
         {
@@ -255,7 +255,7 @@
         },
         {
           "id": "standing",
-          "name": "standing",
+          "name": "杜甫",
           "portrait": "/assets/characters/dufu/youth/standing.png",
           "position": {
             "x": 68,
@@ -265,9 +265,14 @@
           "flip": true,
           "dialogues": [
             {
-              "speaker": "standing",
+              "speaker": "dufu",
               "speakerName": "杜甫",
-              "text": ""
+              "text": "李侯有佳句，往往似阴铿。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "余亦东蒙客，怜君如弟兄。"
             }
           ]
         }
@@ -280,7 +285,7 @@
       "type": "forced_choice",
       "background": "/assets/events/744_libai/backgrounds/liangsong_field.png",
       "title": "临别",
-      "narrative": "李白要往齐鲁去访道。高适已先一步南下。只剩杜甫送他。\n李白：「莫作小儿女态。诗在，便不算别。」",
+      "narrative": "李白要往吴越去游历。高适已先一步南下。只剩杜甫送他。\n李白：「莫作小儿女态。诗在，便不算别。」",
       "question": "你怎样送别？",
       "options": [
         {
