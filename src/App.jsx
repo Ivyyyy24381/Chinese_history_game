@@ -19,6 +19,12 @@ const ACH_KEY = "lishiyou_achievements";
 const loadAchievements = () => {
   try { return JSON.parse(localStorage.getItem(ACH_KEY)) || {}; } catch { return {}; }
 };
+// 本局进度（积分+位置）持久化：刷新/返回主页都不丢，走完一生结算后清除。
+const RUN_KEY = "lishiyou_run";
+const loadRun = () => {
+  try { return JSON.parse(localStorage.getItem(RUN_KEY)); } catch { return null; }
+};
+const clearRunStorage = () => { try { localStorage.removeItem(RUN_KEY); } catch { /* ignore */ } };
 // Achievement title per character biography.
 const ACHIEVEMENT_TITLES = { dufu: "诗圣之路", libai: "诗仙之路", sushi: "东坡之路" };
 
@@ -83,7 +89,12 @@ export default function App() {
     scoredKeysRef.current = new Set();
     setRunScore(0);
     scoreSubmittedRef.current = false;
+    clearRunStorage();
+    setSavedRun(null);
   }, []);
+  // 断点续玩：选人页展示"继续上局"，进游戏时恢复
+  const [savedRun, setSavedRun] = useState(loadRun);
+  const pendingResumeRef = useRef(null);
   // 账号 + 排行榜
   const [user, setUser] = useState(getCurrentUser);
   const [showAuth, setShowAuth] = useState(false);
@@ -114,10 +125,18 @@ export default function App() {
         .then((module) => {
           const data = module.default;
           setTimelineData(data);
-          const firstEvent = data.stages[0]?.events?.[0];
-          const firstYear = firstEvent?.year ?? data.stages[0].yearStart;
-          setCurrentYear(firstYear);
-          setProgressYear(firstYear);
+          const resume = pendingResumeRef.current;
+          pendingResumeRef.current = null;
+          if (resume) {
+            // 继续上局：恢复到上次的年份和进度
+            setCurrentYear(resume.currentYear);
+            setProgressYear(resume.progressYear);
+          } else {
+            const firstEvent = data.stages[0]?.events?.[0];
+            const firstYear = firstEvent?.year ?? data.stages[0].yearStart;
+            setCurrentYear(firstYear);
+            setProgressYear(firstYear);
+          }
         })
         .catch(() => {
           console.error("Failed to load timeline data");
@@ -185,8 +204,39 @@ export default function App() {
   const handleCharacterSelect = (char) => {
     setCharacter(char);
     setScreen("game");
-    resetRun(); // 新的一局，从 0 分开始
+    const saved = loadRun();
+    if (saved && saved.characterId === char.id) {
+      // 继续上局：恢复积分和去重记录
+      setRunScore(saved.runScore || 0);
+      scoredKeysRef.current = new Set(saved.scoredKeys || []);
+      scoreSubmittedRef.current = false;
+      pendingResumeRef.current = saved;
+    } else {
+      resetRun(); // 新的一局，从 0 分开始
+    }
   };
+
+  // 重新开始（清掉存档，从头玩）
+  const handleRestart = (char) => {
+    resetRun();
+    setCharacter(char);
+    setScreen("game");
+  };
+
+  // 自动保存本局进度（积分、去重、年份）
+  useEffect(() => {
+    if (screen !== "game" || !character || currentYear == null || progressYear == null) return;
+    try {
+      localStorage.setItem(RUN_KEY, JSON.stringify({
+        characterId: character.id,
+        runScore,
+        scoredKeys: [...scoredKeysRef.current],
+        currentYear,
+        progressYear,
+        updated: Date.now(),
+      }));
+    } catch { /* ignore */ }
+  }, [screen, character, runScore, currentYear, progressYear]);
 
   const handleEventClick = (event) => {
     setCurrentYear(event.year);
@@ -236,11 +286,13 @@ export default function App() {
     if (character && lastEvent && currentEvent && currentEvent.id === lastEvent.id) {
       unlockAchievement(character.id);
       setShowCongrats(true);
-      // 一局结束：提交总分进排行榜（每局只提交一次）
+      // 一局结束：提交总分进排行榜（每局只提交一次），存档清除
       if (!scoreSubmittedRef.current) {
         scoreSubmittedRef.current = true;
         submitScore({ score: runScore, characterId: character.id }).catch(() => {});
       }
+      clearRunStorage();
+      setSavedRun(null);
     }
   };
 
@@ -268,7 +320,9 @@ export default function App() {
           characters={CHARACTERS}
           achievements={achievements}
           achievementTitles={ACHIEVEMENT_TITLES}
+          savedRun={savedRun}
           onSelect={handleCharacterSelect}
+          onRestart={handleRestart}
           onRecap={openRecap}
         />
         {/* 账号 + 排行榜（右上角） */}
@@ -395,11 +449,13 @@ export default function App() {
       <button
         style={styles.backBtn}
         onClick={() => {
+          // 返回选人页：进度已自动保存，可随时"继续上局"
           setScreen("select");
           setCharacter(null);
           setTimelineData(null);
           setCurrentYear(null);
           setProgressYear(null);
+          setSavedRun(loadRun());
         }}
       >
         {"← 返回选择"}
@@ -426,12 +482,27 @@ export default function App() {
         />
       )}
       {showScene && sceneData && (
-        <ScenePlayer
-          sceneData={sceneData}
-          eventId={currentEvent.id}
-          awardScore={awardScore}
-          onComplete={handleSceneComplete}
-        />
+        <>
+          <ScenePlayer
+            sceneData={sceneData}
+            eventId={currentEvent.id}
+            awardScore={awardScore}
+            onComplete={handleSceneComplete}
+          />
+          {/* 场景内随时退出，回到大地图（已得积分保留，本场景阶段进度不保存） */}
+          <button
+            style={styles.sceneExitBtn}
+            title="退出场景，返回地图"
+            onClick={() => {
+              if (window.confirm("退出本场景返回地图？已获得的积分会保留，但本场景要从头再玩。")) {
+                setShowScene(false);
+                setSceneData(null);
+              }
+            }}
+          >
+            {"✕ 退出场景"}
+          </button>
+        </>
       )}
       {showCongrats && (
         <div style={styles.congratsOverlay}>
@@ -556,6 +627,21 @@ const styles = {
     fontSize: 13,
     cursor: "pointer",
     transition: "all 0.2s",
+  },
+  sceneExitBtn: {
+    position: "fixed",
+    top: 14,
+    right: 16,
+    zIndex: 380,
+    padding: "8px 14px",
+    backgroundColor: "rgba(20,12,6,0.72)",
+    color: "#F5E6D3",
+    border: "1px solid rgba(245,230,211,0.4)",
+    borderRadius: 8,
+    cursor: "pointer",
+    fontSize: 13,
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    letterSpacing: 1,
   },
   musicBtn: {
     position: "fixed",

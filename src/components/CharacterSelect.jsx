@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { asset } from "../utils/asset";
 
-export default function CharacterSelect({ characters, onSelect, achievements = {}, achievementTitles = {}, onRecap }) {
+export default function CharacterSelect({ characters, onSelect, onRestart, savedRun = null, achievements = {}, achievementTitles = {}, onRecap }) {
   const [selectedId, setSelectedId] = useState(null);
 
   const handleSelect = (char) => {
@@ -45,6 +45,20 @@ export default function CharacterSelect({ characters, onSelect, achievements = {
             {char.locked && (
               <div style={styles.lockOverlay}>
                 {"🔐 等待开放"}
+              </div>
+            )}
+            {savedRun && savedRun.characterId === char.id && !char.locked && (
+              <div style={styles.resumeRow}>
+                <span style={styles.resumeInfo}>
+                  {"▶ 上局进行中 · "}{savedRun.runScore || 0}{" 分"}
+                </span>
+                <button
+                  style={styles.restartBtn}
+                  title="清除上局进度，从头开始"
+                  onClick={(e) => { e.stopPropagation(); onRestart && onRestart(char); }}
+                >
+                  {"重新开始"}
+                </button>
               </div>
             )}
             {achievements[char.id] && (
@@ -186,6 +200,29 @@ const styles = {
     right: 12,
     fontSize: 24,
     filter: "drop-shadow(0 0 6px rgba(244,208,63,0.8))",
+  },
+  resumeRow: {
+    marginTop: 12,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  resumeInfo: {
+    color: "#7FDBAA",
+    fontSize: 12,
+    letterSpacing: 1,
+  },
+  restartBtn: {
+    padding: "4px 10px",
+    border: "1px solid rgba(255,255,255,0.35)",
+    borderRadius: 5,
+    backgroundColor: "transparent",
+    color: "#BBB",
+    cursor: "pointer",
+    fontSize: 11,
+    fontFamily: "inherit",
   },
   recapBtn: {
     marginTop: 12,
