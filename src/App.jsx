@@ -9,6 +9,9 @@ import ScenePlayer from "./components/ScenePlayer";
 import SceneEditor from "./components/SceneEditor";
 import TimelineEditor from "./components/TimelineEditor";
 import CharacterRecap from "./components/CharacterRecap";
+import AuthPanel from "./components/AuthPanel";
+import Leaderboard from "./components/Leaderboard";
+import { getCurrentUser, restoreSession, logout, submitScore } from "./services/backend";
 import { asset } from "./utils/asset";
 
 // Achievements persist across sessions.
@@ -79,6 +82,16 @@ export default function App() {
   const resetRun = useCallback(() => {
     scoredKeysRef.current = new Set();
     setRunScore(0);
+    scoreSubmittedRef.current = false;
+  }, []);
+  // 账号 + 排行榜
+  const [user, setUser] = useState(getCurrentUser);
+  const [showAuth, setShowAuth] = useState(false);
+  const [showBoard, setShowBoard] = useState(false);
+  const [boardHighlight, setBoardHighlight] = useState(null); // 结算时高亮本局得分
+  const scoreSubmittedRef = useRef(false);
+  useEffect(() => {
+    restoreSession().then(setUser).catch(() => {});
   }, []);
   const [showScene, setShowScene] = useState(false);
   const [sceneData, setSceneData] = useState(null);
@@ -223,6 +236,11 @@ export default function App() {
     if (character && lastEvent && currentEvent && currentEvent.id === lastEvent.id) {
       unlockAchievement(character.id);
       setShowCongrats(true);
+      // 一局结束：提交总分进排行榜（每局只提交一次）
+      if (!scoreSubmittedRef.current) {
+        scoreSubmittedRef.current = true;
+        submitScore({ score: runScore, characterId: character.id }).catch(() => {});
+      }
     }
   };
 
@@ -253,6 +271,39 @@ export default function App() {
           onSelect={handleCharacterSelect}
           onRecap={openRecap}
         />
+        {/* 账号 + 排行榜（右上角） */}
+        <div style={styles.userCorner}>
+          {user ? (
+            <>
+              <span style={styles.userChip}>{"👤 " + user.nickname}</span>
+              <button
+                style={styles.cornerBtn}
+                onClick={() => { logout().then(() => setUser(null)); }}
+              >
+                {"退出"}
+              </button>
+            </>
+          ) : (
+            <button style={styles.cornerBtn} onClick={() => setShowAuth(true)}>
+              {"登录 / 注册"}
+            </button>
+          )}
+          <button
+            style={styles.cornerBtn}
+            onClick={() => { setBoardHighlight(null); setShowBoard(true); }}
+          >
+            {"🏆 排行榜"}
+          </button>
+        </div>
+        {showAuth && (
+          <AuthPanel
+            onAuthed={(u) => { setUser(u); setShowAuth(false); }}
+            onClose={() => setShowAuth(false)}
+          />
+        )}
+        {showBoard && (
+          <Leaderboard highlightScore={boardHighlight} onClose={() => setShowBoard(false)} />
+        )}
         {recapData && (
           <CharacterRecap
             character={recapData.character}
@@ -393,9 +444,18 @@ export default function App() {
             <p style={styles.congratsText}>
               {`你走完了${character?.name || ""}的一生——从裘马轻狂的少年，到湘江舟中的诗圣。`}
             </p>
+            <div style={styles.congratsScore}>
+              {"本局总分 "}<strong style={{ fontSize: 26 }}>{runScore}</strong>{" 分"}
+              {user ? `（${user.nickname}）` : "（未登录，仅本次显示）"}
+            </div>
             <p style={styles.congratsUnlock}>{"✨ 已解锁：人物回顾"}</p>
             <p style={styles.congratsNext}>{"下一位人物：李白（即将推出，敬请期待）"}</p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20 }}>
+              <button
+                style={{ ...styles.congratsBtn, backgroundColor: "#B8860B", color: "#FFF" }}
+                onClick={() => { setBoardHighlight(runScore); setShowBoard(true); }}>
+                {"🏆 查看排行榜"}
+              </button>
               <button
                 style={{ ...styles.congratsBtn, backgroundColor: "#8B7355", color: "#FFF" }}
                 onClick={() => { setShowCongrats(false); openRecap(); }}>
@@ -419,6 +479,9 @@ export default function App() {
             </div>
           </div>
         </div>
+      )}
+      {showBoard && (
+        <Leaderboard highlightScore={boardHighlight} onClose={() => setShowBoard(false)} />
       )}
       {recapData && (
         <CharacterRecap
@@ -519,6 +582,27 @@ const styles = {
     boxShadow: "0 12px 48px rgba(0,0,0,0.6)",
   },
   congratsTitle: { margin: 0, fontSize: 24, color: "#3B2510", letterSpacing: 4 },
+  congratsScore: {
+    margin: "10px auto 4px", padding: "8px 24px", display: "inline-block",
+    backgroundColor: "rgba(184,134,11,0.12)", borderRadius: 10,
+    color: "#3B2510", fontSize: 15,
+  },
+  userCorner: {
+    position: "fixed", top: 16, right: 20, zIndex: 90,
+    display: "flex", alignItems: "center", gap: 8,
+    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+  },
+  userChip: {
+    color: "#F4D03F", fontSize: 14, letterSpacing: 1,
+    padding: "6px 12px", borderRadius: 16,
+    backgroundColor: "rgba(244,208,63,0.12)",
+    border: "1px solid rgba(244,208,63,0.4)",
+  },
+  cornerBtn: {
+    padding: "6px 14px", borderRadius: 16, fontSize: 13, fontFamily: "inherit",
+    backgroundColor: "rgba(255,255,255,0.08)", color: "#DDD",
+    border: "1px solid rgba(255,255,255,0.25)", cursor: "pointer", letterSpacing: 1,
+  },
   congratsBadge: {
     display: "inline-block", margin: "12px 0",
     padding: "6px 22px", backgroundColor: "#3B2510", color: "#F4D03F",
