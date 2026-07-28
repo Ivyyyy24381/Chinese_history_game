@@ -268,10 +268,15 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     top: npc.position.y + "%",
                     opacity: clickable && talked ? 0.6 : 1,
                     cursor: clickable ? "pointer" : "default",
+                    // 画面下方（更近）的人物盖在上层，点击不会被后排大立绘拦截
+                    zIndex: 10 + Math.round(npc.position.y),
+                    // 有立绘的 NPC：点击区收窄到人物身体（内层 hitbox），
+                    // 立绘 PNG 的透明边不再挡住旁边角色的点击。
+                    pointerEvents: npc.portrait ? "none" : "auto",
                   }}
-                  onClick={clickable ? () => handleNpcClick(npc) : undefined}
-                  onMouseEnter={clickable ? () => setHoveredNpc(npc.id) : undefined}
-                  onMouseLeave={clickable ? () => setHoveredNpc(null) : undefined}
+                  onClick={clickable && !npc.portrait ? () => handleNpcClick(npc) : undefined}
+                  onMouseEnter={clickable && !npc.portrait ? () => setHoveredNpc(npc.id) : undefined}
+                  onMouseLeave={clickable && !npc.portrait ? () => setHoveredNpc(null) : undefined}
                 >
                   {/* Portrait-less items render as a single ? marker — no name label.
                       Items with a portrait still show ? bubble + name. */}
@@ -312,6 +317,21 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                           style={styles.npcPortraitImg}
                           onError={(e) => { e.currentTarget.style.opacity = "0.2"; }}
                         />
+                        {/* 实际点击区：立绘中间 50% 宽 × 80% 高（人物身体位置） */}
+                        {clickable && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              left: "25%", top: "10%", width: "50%", height: "80%",
+                              pointerEvents: "auto",
+                              cursor: "pointer",
+                              zIndex: 2,
+                            }}
+                            onClick={() => handleNpcClick(npc)}
+                            onMouseEnter={() => setHoveredNpc(npc.id)}
+                            onMouseLeave={() => setHoveredNpc(null)}
+                          />
+                        )}
                       </div>
                       {/* Name only on hover — keeps the scene immersive */}
                       {hoveredNpc === npc.id && <span style={styles.npcName}>{npc.name}</span>}

@@ -322,7 +322,7 @@
         },
         {
           "id": "dejected",
-          "name": "dejected",
+          "name": "杜甫·自语",
           "portrait": "/assets/characters/dufu/scholar/dejected.png",
           "position": {
             "x": 76,
@@ -333,9 +333,14 @@
           "clickable": false,
           "dialogues": [
             {
-              "speaker": "dejected",
-              "speakerName": "dejected",
-              "text": ""
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "妻孥怪我在，惊定还拭泪。"
+            },
+            {
+              "speaker": "dufu",
+              "speakerName": "杜甫",
+              "text": "娇儿不离膝，畏我复却去。……我离家太久了。"
             }
           ]
         }

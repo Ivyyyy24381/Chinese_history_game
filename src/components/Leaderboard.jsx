@@ -7,12 +7,24 @@ import { fetchLeaderboard, isCloud } from "../services/backend";
  */
 export default function Leaderboard({ highlightScore = null, onClose }) {
   const [rows, setRows] = useState(null); // null = loading
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     let alive = true;
     fetchLeaderboard(20)
       .then((r) => { if (alive) setRows(r); })
-      .catch(() => { if (alive) setRows([]); });
+      .catch((e) => {
+        if (!alive) return;
+        setRows([]);
+        const msg = String(e?.message || e);
+        if (/permission|denied/i.test(msg)) {
+          setLoadError("无法连接云端：请检查控制台「安全域名」是否已加入本站域名");
+        } else if (/collection|not exist|不存在/i.test(msg)) {
+          setLoadError("云端缺少 scores 集合：请在控制台「数据库」创建");
+        } else {
+          setLoadError("排行榜加载失败：" + msg);
+        }
+      });
     return () => { alive = false; };
   }, []);
 
@@ -32,6 +44,8 @@ export default function Leaderboard({ highlightScore = null, onClose }) {
 
         {rows === null ? (
           <p style={styles.empty}>{"加载中…"}</p>
+        ) : loadError ? (
+          <p style={{ ...styles.empty, color: "#C0392B" }}>{loadError}</p>
         ) : rows.length === 0 ? (
           <p style={styles.empty}>{"暂无记录，快来拿下第一名！"}</p>
         ) : (

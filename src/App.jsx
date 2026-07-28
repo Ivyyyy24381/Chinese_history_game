@@ -80,13 +80,18 @@ export default function App() {
   // 单局积分：runScore 为本局总分；scoredKeys 保证每一关/每道题单局只计一次分。
   const [runScore, setRunScore] = useState(0);
   const scoredKeysRef = useRef(new Set());
+  // ref 与 state 同步累加：提交排行榜时读 ref，避免最后一题的加分
+  // 还没渲染完就结算导致排行榜分数偏少。
+  const runScoreRef = useRef(0);
   const awardScore = useCallback((key, points) => {
     if (scoredKeysRef.current.has(key)) return; // 单次游玩每关不重复计分
     scoredKeysRef.current.add(key);
+    runScoreRef.current += points;
     setRunScore((s) => s + points);
   }, []);
   const resetRun = useCallback(() => {
     scoredKeysRef.current = new Set();
+    runScoreRef.current = 0;
     setRunScore(0);
     scoreSubmittedRef.current = false;
     clearRunStorage();
@@ -208,6 +213,7 @@ export default function App() {
     if (saved && saved.characterId === char.id) {
       // 继续上局：恢复积分和去重记录
       setRunScore(saved.runScore || 0);
+      runScoreRef.current = saved.runScore || 0;
       scoredKeysRef.current = new Set(saved.scoredKeys || []);
       scoreSubmittedRef.current = false;
       pendingResumeRef.current = saved;
@@ -289,7 +295,7 @@ export default function App() {
       // 一局结束：提交总分进排行榜（每局只提交一次），存档清除
       if (!scoreSubmittedRef.current) {
         scoreSubmittedRef.current = true;
-        submitScore({ score: runScore, characterId: character.id }).catch(() => {});
+        submitScore({ score: runScoreRef.current, characterId: character.id }).catch(() => {});
       }
       clearRunStorage();
       setSavedRun(null);
@@ -544,7 +550,7 @@ export default function App() {
             <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20 }}>
               <button
                 style={{ ...styles.congratsBtn, backgroundColor: "#B8860B", color: "#FFF" }}
-                onClick={() => { setBoardHighlight(runScore); setShowBoard(true); }}>
+                onClick={() => { setBoardHighlight(runScoreRef.current); setShowBoard(true); }}>
                 {"🏆 查看排行榜"}
               </button>
               <button
