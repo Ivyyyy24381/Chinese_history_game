@@ -1170,7 +1170,7 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
               style={{
                 aspectRatio: "1",
                 fontSize: 24,
-                fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+                fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
                 fontWeight: "bold",
                 backgroundColor: ch === null ? "transparent" : (solved ? "#D4EDDA" : "#F5E6D3"),
                 border: ch === null ? "2px dashed #CCC" : "2px solid #8B7355",
@@ -1443,7 +1443,7 @@ function ComicRevealPhase({ phase, onComplete }) {
                 {activeLine.speakerName}
               </div>
             )}
-            <div style={{ color: "#F5E6D3", fontSize: 16, lineHeight: 1.8, fontFamily: "'Noto Serif SC', 'Songti SC', serif" }}>
+            <div style={{ color: "#F5E6D3", fontSize: 16, lineHeight: 1.8, fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif" }}>
               {activeLine.text}
             </div>
             <div style={{ color: "#A89968", fontSize: 11, marginTop: 6, textAlign: "right" }}>{"▼ 点击继续"}</div>
@@ -1468,7 +1468,7 @@ const cpStyles = {
     position: "fixed", inset: 0, zIndex: 250,
     backgroundColor: "rgba(0,0,0,0.75)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     padding: 20,
   },
   popup: {
@@ -1556,7 +1556,7 @@ const cpStyles = {
   bubbleLabel: { fontSize: 12, color: "#999", marginBottom: 8, letterSpacing: 1 },
   bubbleText: {
     fontSize: 18, color: "#3E2723", lineHeight: 1.8, letterSpacing: 1,
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   bubbleClose: {
     marginTop: 16, padding: "8px 24px", fontSize: 14,
@@ -1819,7 +1819,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
                   borderRadius: 2,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   textAlign: "center",
-                  fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+                  fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
                   color: "#3E2723",
                   fontSize: "min(1.2vw, 14px)", fontWeight: "bold",
                   letterSpacing: 1, lineHeight: 1.2,
@@ -1919,7 +1919,7 @@ const egStyles = {
     position: "fixed", inset: 0, zIndex: 240,
     backgroundColor: "rgba(0,0,0,0.78)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     padding: 16, overflow: "auto",
   },
   popup: {
@@ -1982,7 +1982,7 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 200,
     backgroundSize: "cover", backgroundPosition: "center",
     backgroundColor: "#2C3E50",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     display: "flex", flexDirection: "column",
   },
   // Locked aspect-ratio wrapper for explore phase
@@ -1990,7 +1990,7 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 200,
     backgroundColor: "#000",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   sceneStage: {
     width: "100%", height: "100%",
@@ -2185,7 +2185,7 @@ const styles = {
     minWidth: 180,
     maxWidth: 320,
     boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   bubbleSpeaker: {
     fontSize: 12,
@@ -2272,12 +2272,12 @@ const styles = {
   scrollTitle: {
     fontSize: 20, color: "#3B2510", letterSpacing: 6,
     fontWeight: "bold", margin: "0 0 16px",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   scrollResult: {
     fontSize: 21, color: "#8B0000", fontWeight: "bold",
     letterSpacing: 2, lineHeight: 2.1, margin: 0,
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     whiteSpace: "pre-wrap",
   },
   // Announcement
@@ -2370,7 +2370,7 @@ const styles = {
   fillPassage: {
     fontSize: 16, lineHeight: 2.2, color: "#333",
     marginBottom: 16, whiteSpace: "pre-wrap",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   fillDropZone: {
     display: "inline-block", minWidth: 60, padding: "4px 12px",
@@ -2387,7 +2387,7 @@ const styles = {
     border: "2px solid #D4A574", borderRadius: 8,
     fontSize: 16, fontWeight: "bold", color: "#5D4E37",
     cursor: "grab", userSelect: "none",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     transition: "all 0.2s",
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   },
@@ -2445,7 +2445,7 @@ const styles = {
   poemTitle: { margin: "0 0 12px", color: "#8B6914", fontSize: 15 },
   poemContent: {
     margin: 0, fontSize: 16, lineHeight: 2, color: "#5D4E37",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     whiteSpace: "pre-wrap", textAlign: "center",
   },
   // Shared

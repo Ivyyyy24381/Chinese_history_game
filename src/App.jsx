@@ -389,7 +389,7 @@ export default function App() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+          fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
           fontSize: 18,
         }}
       >
@@ -618,7 +618,7 @@ const styles = {
   gameContainer: {
     minHeight: "100vh",
     backgroundColor: "#F5F0E8",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     display: "flex",
     flexDirection: "column",
     position: "relative",
@@ -676,7 +676,7 @@ const styles = {
     borderRadius: 8,
     cursor: "pointer",
     fontSize: 13,
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     letterSpacing: 1,
   },
   musicBtn: {
@@ -712,7 +712,7 @@ const styles = {
   userCorner: {
     position: "fixed", top: 16, right: 20, zIndex: 90,
     display: "flex", alignItems: "center", gap: 8,
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   userChip: {
     color: "#8A6D3B", fontSize: 14, letterSpacing: 1,

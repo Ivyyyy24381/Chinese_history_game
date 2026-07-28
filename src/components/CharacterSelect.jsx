@@ -131,7 +131,7 @@ const styles = {
     padding: 40,
     // 亭楼在左，内容整体右移让出背景主体
     paddingLeft: "clamp(40px, 24vw, 460px)",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     position: "relative",
     overflow: "hidden",
   },

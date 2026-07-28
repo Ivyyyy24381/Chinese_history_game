@@ -137,7 +137,7 @@ const styles = {
     fontWeight: "bold",
   },
   poemContent: {
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     fontSize: 14,
     lineHeight: 2,
     color: "#333",

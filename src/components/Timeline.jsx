@@ -232,7 +232,7 @@ const styles = {
     fontSize: 22,
     fontWeight: "bold",
     letterSpacing: 2,
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     transition: "color 0.25s ease",
   },
   lifespan: {

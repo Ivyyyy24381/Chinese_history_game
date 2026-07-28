@@ -63,7 +63,7 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 400,
     backgroundColor: "rgba(12,10,8,0.92)",
     overflowY: "auto",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     padding: "32px 16px",
   },
   page: {

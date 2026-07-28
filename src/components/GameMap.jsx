@@ -351,7 +351,7 @@ const styles = {
     borderRadius: 10,
     whiteSpace: "nowrap",
     boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     transition: "all 0.25s ease",
     display: "inline-flex",
     alignItems: "center",

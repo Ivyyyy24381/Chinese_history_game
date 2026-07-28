@@ -160,7 +160,7 @@ const styles = {
     color: "#F5E6D3",
     fontSize: 15,
     lineHeight: 1.8,
-    fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     minHeight: 60,
   },
   continueIndicator: {
