@@ -662,11 +662,14 @@ const styles = {
   },
   sceneExitGroup: {
     position: "fixed",
-    top: 14,
+    // 右下角；留出场景自带"继续 →"按钮（bottom:20）的位置
+    bottom: 78,
     right: 16,
     zIndex: 380,
     display: "flex",
+    flexDirection: "column",
     gap: 8,
+    alignItems: "flex-end",
   },
   sceneExitBtn: {
     padding: "8px 14px",
