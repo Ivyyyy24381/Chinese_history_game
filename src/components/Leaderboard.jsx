@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchLeaderboard, isCloud } from "../services/backend";
+import { fetchLeaderboard, fetchMyBest, isCloud } from "../services/backend";
 
 /**
  * Leaderboard — 总分排行榜弹窗。
@@ -8,6 +8,13 @@ import { fetchLeaderboard, isCloud } from "../services/backend";
 export default function Leaderboard({ highlightScore = null, onClose }) {
   const [rows, setRows] = useState(null); // null = loading
   const [loadError, setLoadError] = useState("");
+  const [myBest, setMyBest] = useState(null); // {best, rank} 登录后显示
+
+  useEffect(() => {
+    let alive = true;
+    fetchMyBest().then((r) => { if (alive && r) setMyBest(r); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -39,6 +46,12 @@ export default function Leaderboard({ highlightScore = null, onClose }) {
         {highlightScore != null && (
           <div style={styles.myScore}>
             {"本局得分："}<strong style={{ fontSize: 22 }}>{highlightScore}</strong>
+          </div>
+        )}
+        {myBest && (
+          <div style={styles.myScore}>
+            {"我的最好成绩："}<strong>{myBest.best}</strong>{" 分 · 当前第 "}
+            <strong>{myBest.rank}</strong>{" 名"}
           </div>
         )}
 

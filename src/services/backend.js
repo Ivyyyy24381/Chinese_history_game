@@ -50,6 +50,7 @@ const setNick = (n) => {
 function userFromCloud(u) {
   if (!u || u.is_anonymous) return null;
   return {
+    uid: u.id || "",
     nickname: getNick() || u.user_metadata?.nickName || u.user_metadata?.username || u.email?.split("@")[0] || "玩家",
     email: u.email || "",
   };
@@ -95,7 +96,7 @@ export async function register({ email, password, nickname }) {
         const r = await data.verifyOtp({ token: code });
         if (r.error) throw new Error(r.error.message || "验证码不正确");
         setNick(nickname || email.split("@")[0]);
-        cachedUser = { nickname: getNick(), email };
+        cachedUser = { uid: r.data?.user?.id || "", nickname: getNick(), email };
         return cachedUser;
       },
     };
@@ -110,7 +111,7 @@ export async function login({ email, password }) {
     const app = await getApp();
     const { data, error } = await getAuth(app).signInWithPassword({ email, password });
     if (error) throw new Error(error.message || "登录失败");
-    cachedUser = userFromCloud(data?.user) || { nickname: getNick() || email.split("@")[0], email };
+    cachedUser = userFromCloud(data?.user) || { uid: data?.user?.id || "", nickname: getNick() || email.split("@")[0], email };
     return cachedUser;
   }
   const u = { nickname: email || "游客", email: email || "" };
@@ -151,6 +152,7 @@ export async function submitScore({ score, characterId }) {
       score,
       characterId,
       nickname,
+      uid: user?.uid || "", // 绑定账号，便于查"我的成绩"
       createdAt: db.serverDate(),
     });
     return;
@@ -160,6 +162,29 @@ export async function submitScore({ score, characterId }) {
   board.push({ nickname, score, characterId, date: new Date().toISOString() });
   board.sort((a, b) => b.score - a.score);
   localStorage.setItem(LOCAL_BOARD_KEY, JSON.stringify(board.slice(0, 100)));
+}
+
+/** 我的最好成绩和真实排名：{ best, rank } 或 null（未登录/无记录） */
+export async function fetchMyBest() {
+  const user = getCurrentUser();
+  if (!isCloud() || !user?.uid) return null;
+  try {
+    const app = await getApp();
+    await ensureSignedIn(app);
+    const db = app.database();
+    const mine = await db.collection("scores")
+      .where({ uid: user.uid })
+      .orderBy("score", "desc")
+      .limit(1)
+      .get();
+    const best = mine.data?.[0]?.score;
+    if (best == null) return null;
+    const _ = db.command;
+    const higher = await db.collection("scores").where({ score: _.gt(best) }).count();
+    return { best, rank: (higher.total ?? 0) + 1 };
+  } catch {
+    return null;
+  }
 }
 
 /** 取排行榜前 limit 名：[{ nickname, score, characterId }] */
