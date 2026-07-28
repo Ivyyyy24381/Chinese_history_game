@@ -43,7 +43,9 @@ export const CLOUDBASE_CONFIG = {
    - **邮箱验证码**：不能直接勾选，要先配发件邮箱——点卡片上的「配置发件邮箱」→ 选「**开启邮件代发**」（CloudBase 内置邮件服务，零配置）→ 保存，立即生效。**不需要**自己配 SMTP/QQ邮箱授权码，更不需要 Cloudflare
    - **匿名登录**：确认开启（默认开）
    - **用户名密码登录**：确认开启（默认开）
-7. 「安全域名」→ 把游戏网址加进去（如 `你的用户名.github.io`），否则浏览器请求会被拒（报 permission_denied）
+7. 「环境 → **安全来源**」（tcb.cloud.tencent.com/dev#/env/safety-source）→ 把所有会打开游戏的域名加进去，否则一切云端请求都会被浏览器拦截（报 **Failed to fetch / 网络错误**）：
+   - 本地开发：`localhost:5173`（**必须带端口**，端口以 `npm run dev` 终端显示为准）
+   - 线上：`你的用户名.github.io`
 8. 重新构建部署（`npm run build`），完成
 
 行为说明：
