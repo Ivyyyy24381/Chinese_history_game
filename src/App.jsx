@@ -287,6 +287,12 @@ export default function App() {
     if (currentEvent && (progressYear == null || currentEvent.year > progressYear)) {
       setProgressYear(currentEvent.year);
     }
+    // 完成一个事件后，地图自动前进并聚焦到下一个事件
+    const idx = allEvents.findIndex((e) => e.id === currentEvent?.id);
+    const nextEvent = idx >= 0 ? allEvents[idx + 1] : null;
+    if (nextEvent) {
+      setTimeout(() => setCurrentYear(nextEvent.year), 800);
+    }
     // Completing the final event of the timeline = biography complete.
     const lastEvent = allEvents[allEvents.length - 1];
     if (character && lastEvent && currentEvent && currentEvent.id === lastEvent.id) {
@@ -709,15 +715,17 @@ const styles = {
     fontFamily: "'Noto Serif SC', 'Songti SC', serif",
   },
   userChip: {
-    color: "#F4D03F", fontSize: 14, letterSpacing: 1,
-    padding: "6px 12px", borderRadius: 16,
-    backgroundColor: "rgba(244,208,63,0.12)",
-    border: "1px solid rgba(244,208,63,0.4)",
+    color: "#8A6D3B", fontSize: 14, letterSpacing: 1,
+    padding: "6px 14px", borderRadius: 18,
+    backgroundColor: "rgba(252,248,238,0.9)",
+    border: "1px solid #C9A86A",
+    boxShadow: "0 2px 6px rgba(90,70,40,0.12)",
   },
   cornerBtn: {
-    padding: "6px 14px", borderRadius: 16, fontSize: 13, fontFamily: "inherit",
-    backgroundColor: "rgba(255,255,255,0.08)", color: "#DDD",
-    border: "1px solid rgba(255,255,255,0.25)", cursor: "pointer", letterSpacing: 1,
+    padding: "6px 16px", borderRadius: 18, fontSize: 13, fontFamily: "inherit",
+    backgroundColor: "rgba(252,248,238,0.9)", color: "#5A4A32",
+    border: "1px solid #C9B08A", cursor: "pointer", letterSpacing: 1,
+    boxShadow: "0 2px 6px rgba(90,70,40,0.12)",
   },
   congratsBadge: {
     display: "inline-block", margin: "12px 0",
