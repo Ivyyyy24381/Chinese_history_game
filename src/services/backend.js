@@ -34,6 +34,12 @@ async function getApp() {
   return appPromise;
 }
 
+// SDK 版本兼容：v3 里 app.auth 是函数（app.auth() 返回实例），
+// 个别版本是属性。两种都支持，避免 "signUp is not a function"。
+function getAuth(app) {
+  return typeof app.auth === "function" ? app.auth() : app.auth;
+}
+
 const getNick = () => {
   try { return localStorage.getItem(NICK_KEY) || ""; } catch { return ""; }
 };
@@ -64,9 +70,10 @@ export async function restoreSession() {
   if (!isCloud()) return getCurrentUser();
   try {
     const app = await getApp();
-    const { data } = await app.auth.getSession();
+    const auth = getAuth(app);
+    const { data } = await auth.getSession();
     if (data?.session) {
-      const r = await app.auth.getUser();
+      const r = await auth.getUser();
       cachedUser = userFromCloud(r.data?.user);
     }
   } catch { /* 未登录或网络问题 — 保持未登录状态 */ }
@@ -80,7 +87,7 @@ export async function restoreSession() {
 export async function register({ email, password, nickname }) {
   if (isCloud()) {
     const app = await getApp();
-    const { data, error } = await app.auth.signUp({ email, password });
+    const { data, error } = await getAuth(app).signUp({ email, password });
     if (error) throw new Error(error.message || "注册失败");
     return {
       needCode: true,
@@ -101,7 +108,7 @@ export async function register({ email, password, nickname }) {
 export async function login({ email, password }) {
   if (isCloud()) {
     const app = await getApp();
-    const { data, error } = await app.auth.signInWithPassword({ email, password });
+    const { data, error } = await getAuth(app).signInWithPassword({ email, password });
     if (error) throw new Error(error.message || "登录失败");
     cachedUser = userFromCloud(data?.user) || { nickname: getNick() || email.split("@")[0], email };
     return cachedUser;
@@ -115,7 +122,7 @@ export async function logout() {
   if (isCloud()) {
     try {
       const app = await getApp();
-      await app.auth.signOut();
+      await getAuth(app).signOut();
     } catch { /* ignore */ }
     cachedUser = null;
     return;
@@ -127,8 +134,9 @@ export async function logout() {
 
 // 数据库操作需要登录态；未登录玩家用匿名登录兜底。
 async function ensureSignedIn(app) {
-  const { data } = await app.auth.getSession();
-  if (!data?.session) await app.auth.signInAnonymously();
+  const auth = getAuth(app);
+  const { data } = await auth.getSession();
+  if (!data?.session) await auth.signInAnonymously();
 }
 
 /** 提交一局总分。entry: { score, characterId } */
