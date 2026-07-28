@@ -1,18 +1,8 @@
 import { useState } from "react";
 import { asset } from "../utils/asset";
 
-// 亭楼处展示的立绘：悬停/选中哪个人物就显示谁（暂只有杜甫）
-const STAND_SPRITES = {
-  dufu: "/assets/characters/dufu/youth/standing.png",
-};
-
 export default function CharacterSelect({ characters, onSelect, onRestart, savedRun = null, achievements = {}, achievementTitles = {}, onRecap }) {
   const [selectedId, setSelectedId] = useState(null);
-  const [hoverId, setHoverId] = useState(null);
-
-  // 立绘优先级：悬停 > 选中 > 第一个可玩人物
-  const firstPlayable = characters.find((c) => !c.locked)?.id;
-  const spriteSrc = STAND_SPRITES[hoverId] || STAND_SPRITES[selectedId] || STAND_SPRITES[firstPlayable];
 
   const handleSelect = (char) => {
     if (char.locked) return;
@@ -24,10 +14,6 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
 
   return (
     <div style={styles.selectScreen}>
-      {/* 亭楼处的人物立绘 */}
-      {spriteSrc && (
-        <img src={asset(spriteSrc)} alt="" style={styles.pavilionSprite} />
-      )}
       <h1 style={styles.mainTitle}>{"中国历史游"}</h1>
       <p style={styles.subtitle}>{"选择你的主人公"}</p>
 
@@ -44,8 +30,6 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
               transition: "all 0.3s",
             }}
             onClick={() => handleSelect(char)}
-            onMouseEnter={() => setHoverId(char.id)}
-            onMouseLeave={() => setHoverId(null)}
           >
             {char.portrait ? (
               <img src={asset(char.portrait)} alt={char.name} style={styles.charPortrait} />
@@ -134,18 +118,6 @@ const styles = {
     fontFamily: "'Noto Serif SC', 'Songti SC', serif",
     position: "relative",
     overflow: "hidden",
-  },
-  pavilionSprite: {
-    position: "absolute",
-    left: "7%",
-    bottom: "4%",
-    height: "48vh",
-    maxHeight: 520,
-    objectFit: "contain",
-    pointerEvents: "none",
-    zIndex: 1,
-    filter: "drop-shadow(0 6px 14px rgba(60,45,25,0.25))",
-    transition: "opacity 0.3s ease",
   },
   mainTitle: {
     fontSize: 52,
