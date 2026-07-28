@@ -136,16 +136,6 @@ export default function GameMap({
   };
   const resetView = () => { setAnimated(true); setView({ scale: 1, tx: 0, ty: 0 }); };
 
-  // Build SVG polyline points in % space.
-  const points = events
-    .filter((e) => e.location && typeof e.location.mapX === "number")
-    .map((e) => ({
-      x: e.location.mapX,
-      y: e.location.mapY,
-      year: e.year,
-      unlocked: progressYear != null && e.year <= progressYear,
-    }));
-
   const { scale, tx, ty } = view;
 
   return (
@@ -165,26 +155,7 @@ export default function GameMap({
             transition: animated ? "transform 0.7s cubic-bezier(0.25, 0.8, 0.35, 1)" : "none",
           }}
         >
-          {/* Trajectory overlay (SVG, 0..100 viewBox in %) */}
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={styles.trajectorySvg}>
-            {points.length >= 2 &&
-              points.slice(0, -1).map((p, i) => {
-                const q = points[i + 1];
-                const bothUnlocked = p.unlocked && q.unlocked;
-                return (
-                  <line
-                    key={i}
-                    x1={p.x} y1={p.y} x2={q.x} y2={q.y}
-                    stroke={bothUnlocked ? "#C0392B" : "#888"}
-                    strokeWidth={bothUnlocked ? 0.4 : 0.25}
-                    strokeDasharray={bothUnlocked ? "none" : "0.8 0.8"}
-                    opacity={bothUnlocked ? 0.85 : 0.45}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                );
-              })}
-          </svg>
-
+          {/* 事件连线已移除——地图底图上已绘有行迹路线，叠加线反而杂乱 */}
           {events.map((event) => {
             const isCurrent = event.id === currentEventId;
             const isPast = !isCurrent && progressYear != null && event.year <= progressYear;
@@ -311,15 +282,6 @@ const styles = {
     position: "relative",
     transformOrigin: "0 0",
     willChange: "transform",
-  },
-  trajectorySvg: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    pointerEvents: "none",
-    zIndex: 1,
   },
   pinWrap: {
     position: "absolute",
