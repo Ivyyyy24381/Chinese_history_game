@@ -14,7 +14,13 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
 
   return (
     <div style={styles.selectScreen}>
-      <h1 style={styles.mainTitle}>{"中国历史游"}</h1>
+      <h1 style={styles.mainTitle}>
+        <img
+          src={asset("/assets/中国历史游.png")}
+          alt="中国历史游"
+          style={styles.titleImg}
+        />
+      </h1>
       <p style={styles.subtitle}>{"选择你的主人公"}</p>
 
       <div style={styles.characterGrid}>
@@ -38,7 +44,17 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
                 {char.avatar}
               </div>
             )}
-            <h2 style={styles.charName}>{char.name}</h2>
+            <h2 style={styles.charName}>
+              <img
+                src={asset(`/assets/${char.name}.png`)}
+                alt={char.name}
+                style={styles.charNameImg}
+                onError={(e) => {
+                  // 没有对应书法图时退回文字
+                  e.currentTarget.replaceWith(document.createTextNode(char.name));
+                }}
+              />
+            </h2>
             <p style={styles.charTitle}>{char.title}</p>
             <p style={styles.charYears}>{char.years}</p>
             <p style={styles.charDesc}>{char.description}</p>
@@ -120,12 +136,14 @@ const styles = {
     overflow: "hidden",
   },
   mainTitle: {
-    fontSize: 52,
-    color: "#2B2118",
-    letterSpacing: 18,
-    textShadow: "0 1px 0 rgba(255,255,255,0.6)",
     margin: "0 0 10px",
-    fontWeight: 600,
+    lineHeight: 0,
+  },
+  titleImg: {
+    height: 84,
+    // 白底书法图：multiply 让白色融入背景，只留墨迹
+    mixBlendMode: "multiply",
+    filter: "contrast(1.05)",
   },
   subtitle: {
     color: "#6B5A44",
@@ -174,6 +192,13 @@ const styles = {
     margin: "0 0 4px",
     letterSpacing: 6,
     fontWeight: 600,
+    lineHeight: 0,
+  },
+  charNameImg: {
+    height: 40,
+    mixBlendMode: "multiply",
+    filter: "contrast(1.05)",
+    verticalAlign: "middle",
   },
   charTitle: {
     color: "#7A6A50",
