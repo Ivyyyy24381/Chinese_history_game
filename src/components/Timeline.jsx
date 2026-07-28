@@ -14,9 +14,15 @@ export default function Timeline({
   onYearChange,
   onEventSelect,
 }) {
-  const yearStart = stages[0].yearStart;
+  // 时间轴从第一个事件年份开始（留 2 年边距防标签被裁），
+  // 而不是从出生年开始——前段没有事件，纯浪费宽度。
+  const firstEventYear = events?.length
+    ? Math.min(...events.map((e) => e.year))
+    : stages[0].yearStart;
+  const yearStart = firstEventYear - 2;
   const yearEnd = stages[stages.length - 1].yearEnd;
   const totalSpan = yearEnd - yearStart;
+  const lifeStart = stages[0].yearStart; // 展示用的生年
 
   const trackRef = useRef(null);
   const [dragging, setDragging] = useState(false);
@@ -27,7 +33,7 @@ export default function Timeline({
     stages.find((s) => currentYear >= s.yearStart && currentYear <= s.yearEnd) ||
     stages[stages.length - 1];
 
-  const thumbPct = ((currentYear - yearStart) / totalSpan) * 100;
+  const thumbPct = Math.max(0, Math.min(100, ((currentYear - yearStart) / totalSpan) * 100));
 
   const yearAtClientX = (clientX) => {
     if (!trackRef.current) return yearStart;
@@ -84,7 +90,7 @@ export default function Timeline({
         <span style={styles.currentBadge}>
           <span style={{ ...styles.currentDot, backgroundColor: currentStage.color }} />
           {currentEvent ? `${currentEvent.name} · ${currentStage.period}` : currentStage.period}
-          <span style={styles.lifespan}>{`（${yearStart}–${yearEnd}）`}</span>
+          <span style={styles.lifespan}>{`（${lifeStart}–${yearEnd}）`}</span>
         </span>
       </div>
 
@@ -108,8 +114,11 @@ export default function Timeline({
         >
           {/* Stage segments (colored background bands) */}
           {stages.map((stage) => {
-            const left = ((stage.yearStart - yearStart) / totalSpan) * 100;
-            const width = ((stage.yearEnd - stage.yearStart) / totalSpan) * 100;
+            // 裁掉时间轴起点之前的部分（如 712–736 的空白期）
+            const segStart = Math.max(stage.yearStart, yearStart);
+            if (stage.yearEnd <= yearStart) return null;
+            const left = ((segStart - yearStart) / totalSpan) * 100;
+            const width = ((stage.yearEnd - segStart) / totalSpan) * 100;
             return (
               <div
                 key={stage.id}
@@ -316,12 +325,12 @@ const styles = {
     transition: "opacity 0.25s ease, background-color 0.25s ease",
   },
   eventYear: {
-    fontSize: 10,
+    fontSize: 11,
     color: "inherit",
     opacity: 0.7,
   },
   eventName: {
-    fontSize: 11,
+    fontSize: 13,
     color: "inherit",
     marginTop: 1,
   },
