@@ -1,8 +1,18 @@
 import { useState } from "react";
 import { asset } from "../utils/asset";
 
+// 亭楼处展示的立绘：悬停/选中哪个人物就显示谁（暂只有杜甫）
+const STAND_SPRITES = {
+  dufu: "/assets/characters/dufu/youth/standing.png",
+};
+
 export default function CharacterSelect({ characters, onSelect, onRestart, savedRun = null, achievements = {}, achievementTitles = {}, onRecap }) {
   const [selectedId, setSelectedId] = useState(null);
+  const [hoverId, setHoverId] = useState(null);
+
+  // 立绘优先级：悬停 > 选中 > 第一个可玩人物
+  const firstPlayable = characters.find((c) => !c.locked)?.id;
+  const spriteSrc = STAND_SPRITES[hoverId] || STAND_SPRITES[selectedId] || STAND_SPRITES[firstPlayable];
 
   const handleSelect = (char) => {
     if (char.locked) return;
@@ -14,6 +24,10 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
 
   return (
     <div style={styles.selectScreen}>
+      {/* 亭楼处的人物立绘 */}
+      {spriteSrc && (
+        <img src={asset(spriteSrc)} alt="" style={styles.pavilionSprite} />
+      )}
       <h1 style={styles.mainTitle}>{"中国历史游"}</h1>
       <p style={styles.subtitle}>{"选择你的主人公"}</p>
 
@@ -30,6 +44,8 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
               transition: "all 0.3s",
             }}
             onClick={() => handleSelect(char)}
+            onMouseEnter={() => setHoverId(char.id)}
+            onMouseLeave={() => setHoverId(null)}
           >
             {char.portrait ? (
               <img src={asset(char.portrait)} alt={char.name} style={styles.charPortrait} />
@@ -44,7 +60,7 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
             <p style={styles.charDesc}>{char.description}</p>
             {char.locked && (
               <div style={styles.lockOverlay}>
-                {"🔒 等待开放"}
+                <span style={styles.lockPill}>{"🔒 等待开放"}</span>
               </div>
             )}
             {savedRun && savedRun.characterId === char.id && !char.locked && (
@@ -105,7 +121,7 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
 const styles = {
   selectScreen: {
     minHeight: "100vh",
-    backgroundImage: `linear-gradient(rgba(246,241,230,0.58), rgba(246,241,230,0.72)), url('${asset("/assets/events/765_kuizhou/backgrounds/kuizhou_terrace.png")}')`,
+    backgroundImage: `url('${asset("/assets/home_background.png")}')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
@@ -113,7 +129,23 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     padding: 40,
+    // 亭楼在左，内容整体右移让出背景主体
+    paddingLeft: "clamp(40px, 24vw, 460px)",
     fontFamily: "'Noto Serif SC', 'Songti SC', serif",
+    position: "relative",
+    overflow: "hidden",
+  },
+  pavilionSprite: {
+    position: "absolute",
+    left: "7%",
+    bottom: "4%",
+    height: "48vh",
+    maxHeight: 520,
+    objectFit: "contain",
+    pointerEvents: "none",
+    zIndex: 1,
+    filter: "drop-shadow(0 6px 14px rgba(60,45,25,0.25))",
+    transition: "opacity 0.3s ease",
   },
   mainTitle: {
     fontSize: 52,
@@ -137,7 +169,7 @@ const styles = {
   },
   characterCard: {
     width: 230,
-    backgroundColor: "rgba(252,248,238,0.85)",
+    backgroundColor: "rgba(252,248,238,0.55)",
     borderRadius: 14,
     border: "1.5px solid",
     padding: 24,
@@ -191,7 +223,7 @@ const styles = {
   lockOverlay: {
     position: "absolute",
     inset: 0,
-    backgroundColor: "rgba(246,241,230,0.55)",
+    backgroundColor: "rgba(246,241,230,0.42)",
     borderRadius: 12,
     display: "flex",
     alignItems: "center",
@@ -199,6 +231,13 @@ const styles = {
     color: "#8A7A5E",
     fontSize: 16,
     letterSpacing: 3,
+  },
+  lockPill: {
+    backgroundColor: "rgba(252,248,238,0.92)",
+    padding: "8px 20px",
+    borderRadius: 20,
+    border: "1px solid #D8CDB8",
+    boxShadow: "0 2px 8px rgba(90,70,40,0.12)",
   },
   achBadge: {
     position: "absolute",
