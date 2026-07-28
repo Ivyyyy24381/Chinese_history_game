@@ -141,9 +141,7 @@ const styles = {
   },
   titleImg: {
     height: 84,
-    // 白底书法图：multiply 让白色融入背景，只留墨迹
-    mixBlendMode: "multiply",
-    filter: "contrast(1.05)",
+    filter: "drop-shadow(0 1px 2px rgba(255,255,255,0.5))",
   },
   subtitle: {
     color: "#6B5A44",
@@ -196,8 +194,6 @@ const styles = {
   },
   charNameImg: {
     height: 40,
-    mixBlendMode: "multiply",
-    filter: "contrast(1.05)",
     verticalAlign: "middle",
   },
   charTitle: {
