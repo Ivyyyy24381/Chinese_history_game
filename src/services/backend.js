@@ -179,32 +179,52 @@ export async function fetchMyBest() {
       .get();
     const best = mine.data?.[0]?.score;
     if (best == null) return null;
-    const _ = db.command;
-    const higher = await db.collection("scores").where({ score: _.gt(best) }).count();
-    return { best, rank: (higher.total ?? 0) + 1 };
+    // 排名按"每人最高分"口径：取前 100 去重后找自己的位置
+    const top = await db.collection("scores").orderBy("score", "desc").limit(100).get();
+    const deduped = dedupeBest((top.data || []).map((row) => ({
+      nickname: row.nickname || "匿名玩家",
+      score: row.score,
+      uid: row.uid || "",
+    })));
+    const idx = deduped.findIndex((r) => r.uid === user.uid);
+    return { best, rank: idx >= 0 ? idx + 1 : `100+` };
   } catch {
     return null;
   }
 }
 
-/** 取排行榜前 limit 名：[{ nickname, score, characterId }] */
+/** 每个玩家只保留最高分（按 uid 去重；无 uid 的按昵称去重） */
+function dedupeBest(rows) {
+  const best = new Map();
+  for (const r of rows) {
+    const key = r.uid ? `u:${r.uid}` : `n:${r.nickname}`;
+    if (!best.has(key) || r.score > best.get(key).score) best.set(key, r);
+  }
+  return [...best.values()].sort((a, b) => b.score - a.score);
+}
+
+/** 取排行榜前 limit 名（每人只计最高分）：[{ nickname, score, characterId }] */
 export async function fetchLeaderboard(limit = 20) {
   if (isCloud()) {
     const app = await getApp();
     await ensureSignedIn(app);
     const db = app.database();
+    // 多取一些再按玩家去重，保证去重后仍够 limit 条
     const r = await db.collection("scores")
       .orderBy("score", "desc")
-      .limit(limit)
+      .limit(100)
       .get();
-    return (r.data || []).map((row) => ({
+    const rows = (r.data || []).map((row) => ({
       nickname: row.nickname || "匿名玩家",
       score: row.score,
       characterId: row.characterId,
+      uid: row.uid || "",
     }));
+    return dedupeBest(rows).slice(0, limit);
   }
   try {
-    return (JSON.parse(localStorage.getItem(LOCAL_BOARD_KEY)) || []).slice(0, limit);
+    const rows = JSON.parse(localStorage.getItem(LOCAL_BOARD_KEY)) || [];
+    return dedupeBest(rows.map((x) => ({ ...x, uid: "" }))).slice(0, limit);
   } catch {
     return [];
   }

@@ -328,6 +328,7 @@ export default function App() {
   if (screen === "select") {
     return (
       <>
+        <OrientationHint />
         <CharacterSelect
           characters={CHARACTERS}
           achievements={achievements}
@@ -404,6 +405,7 @@ export default function App() {
 
   return (
     <div style={styles.gameContainer}>
+      <OrientationHint />
       <ScoreBar
         character={timelineData.character}
         progress={reachedEvents}
@@ -598,6 +600,65 @@ export default function App() {
 }
 
 /**
+ * OrientationHint — 触屏设备竖屏时提示横屏游玩（旋转后自动消失，可手动关闭）。
+ */
+function OrientationHint() {
+  const [show, setShow] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(orientation: portrait) and (pointer: coarse)");
+    const update = () => setShow(mq.matches);
+    update();
+    if (mq.addEventListener) mq.addEventListener("change", update);
+    else mq.addListener(update);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", update);
+      else mq.removeListener(update);
+    };
+  }, []);
+  if (!show || dismissed) return null;
+  return (
+    <div style={orientStyles.overlay}>
+      <div style={{ fontSize: 64, animation: "rotateHint 1.6s ease-in-out infinite" }}>{"📱"}</div>
+      <div style={orientStyles.text}>{"请将手机横过来游玩"}</div>
+      <div style={orientStyles.sub}>{"地图与场景为横屏设计，横屏体验最佳"}</div>
+      <button style={orientStyles.dismissBtn} onClick={() => setDismissed(true)}>
+        {"仍要竖屏继续"}
+      </button>
+    </div>
+  );
+}
+
+const orientStyles = {
+  overlay: {
+    position: "fixed", inset: 0, zIndex: 900,
+    backgroundColor: "rgba(20,14,8,0.92)",
+    display: "flex", flexDirection: "column",
+    alignItems: "center", justifyContent: "center", gap: 14,
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+  },
+  text: { color: "#F5E6D3", fontSize: 22, letterSpacing: 4 },
+  sub: { color: "#B8A88C", fontSize: 14 },
+  dismissBtn: {
+    marginTop: 10, padding: "9px 22px", borderRadius: 18,
+    border: "1px solid #8B7355", backgroundColor: "transparent",
+    color: "#C9B08A", fontSize: 14, fontFamily: "inherit", cursor: "pointer",
+  },
+};
+
+if (typeof document !== "undefined" && !document.getElementById("rotate-hint-keyframes")) {
+  const style = document.createElement("style");
+  style.id = "rotate-hint-keyframes";
+  style.textContent = `
+    @keyframes rotateHint {
+      0%, 20% { transform: rotate(0deg); }
+      60%, 100% { transform: rotate(90deg); }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+/**
  * EditorShell — entry point for ?editor=true.
  * Starts on the timeline editor; lets the user drill into per-event scene editor.
  */
@@ -662,14 +723,14 @@ const styles = {
   },
   sceneExitGroup: {
     position: "fixed",
-    // 右下角；留出场景自带"继续 →"按钮（bottom:20）的位置
-    bottom: 78,
-    right: 16,
+    // 左下角——右下角留给场景自带的"继续 →"按钮
+    bottom: 20,
+    left: 16,
     zIndex: 380,
     display: "flex",
     flexDirection: "column",
     gap: 8,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
   },
   sceneExitBtn: {
     padding: "8px 14px",
