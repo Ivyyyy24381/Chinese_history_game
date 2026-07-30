@@ -1645,6 +1645,34 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
   const [guards, setGuards] = useState(buildGuards);
   const [won, setWon] = useState(false);
   const [deaths, setDeaths] = useState(0);
+  // 守卫追踪用 ref 读玩家位置——守卫的移动节拍完全独立，
+  // 不再因玩家按键而重置（原来玩家一直动守卫就几乎不动）。
+  const playerRef = useRef(player);
+  useEffect(() => { playerRef.current = player; }, [player]);
+
+  // 统一的移动入口：键盘 / 屏幕方向键 / 滑动 都走这里
+  const movePlayer = (dir) => {
+    if (won) return;
+    const { dx, dy } = stepDir(dir);
+    setPlayer((p) => {
+      const nx = p.x + dx, ny = p.y + dy;
+      if (isBlocked(nx, ny)) return p;
+      return { x: nx, y: ny };
+    });
+  };
+
+  // 屏幕方向键长按连走
+  const holdRef = useRef(null);
+  const stopHold = () => { if (holdRef.current) { clearInterval(holdRef.current); holdRef.current = null; } };
+  const startHold = (dir) => {
+    stopHold();
+    movePlayer(dir);
+    holdRef.current = setInterval(() => movePlayer(dir), 160);
+  };
+  useEffect(() => () => stopHold(), []);
+
+  // 触屏滑动
+  const swipeRef = useRef(null);
 
   const resetGame = useCallback(() => {
     setPlayer({ ...phase.start });
@@ -1672,12 +1700,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
       else if (e.key === "ArrowRight" || e.key === "d") dir = "right";
       if (!dir) return;
       e.preventDefault();
-      const { dx, dy } = stepDir(dir);
-      setPlayer((p) => {
-        const nx = p.x + dx, ny = p.y + dy;
-        if (isBlocked(nx, ny)) return p;
-        return { x: nx, y: ny };
-      });
+      movePlayer(dir);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -1694,19 +1717,20 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
         // Close-range pursuit: if player is within chaseRadius (in
         // Chebyshev distance), head toward them on the longer axis first,
         // overriding the patrol track. This lets guards "see" and chase.
+        const pp = playerRef.current;
         if (chaseRadius > 0) {
-          const adx = Math.abs(player.x - g.pos.x);
-          const ady = Math.abs(player.y - g.pos.y);
+          const adx = Math.abs(pp.x - g.pos.x);
+          const ady = Math.abs(pp.y - g.pos.y);
           if (Math.max(adx, ady) <= chaseRadius) {
             if (adx >= ady) {
-              dir = player.x > g.pos.x ? "right" : (player.x < g.pos.x ? "left" : dir);
+              dir = pp.x > g.pos.x ? "right" : (pp.x < g.pos.x ? "left" : dir);
             } else {
-              dir = player.y > g.pos.y ? "down" : (player.y < g.pos.y ? "up" : dir);
+              dir = pp.y > g.pos.y ? "down" : (pp.y < g.pos.y ? "up" : dir);
             }
           }
         }
         // If current cell has an arrow AND we're not chasing, take the arrow.
-        if (chaseRadius === 0 || Math.max(Math.abs(player.x - g.pos.x), Math.abs(player.y - g.pos.y)) > chaseRadius) {
+        if (chaseRadius === 0 || Math.max(Math.abs(pp.x - g.pos.x), Math.abs(pp.y - g.pos.y)) > chaseRadius) {
           const overrideAtCurrent = arrowMap.get(g.pos.x + "," + g.pos.y);
           if (overrideAtCurrent) dir = overrideAtCurrent;
         }
@@ -1724,7 +1748,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
     }, tickMs);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [won, tickMs, player.x, player.y]);
+  }, [won, tickMs]);
 
   // ---- Collision + win ------------------------------------------------------
   useEffect(() => {
@@ -1770,15 +1794,33 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
         <h2 style={egStyles.title}>{"\u{1F6AA} \u51FA\u57CE\uFF1A\u907F\u5F00\u5B88\u536B"}</h2>
         {phase.narrative && <p style={egStyles.narrative}>{phase.narrative}</p>}
         <div style={egStyles.statusRow}>
-          <span>{"\u65B9\u5411\u952E / WASD \u79FB\u52A8 \u00B7 \u6D45\u8272\uFF1D\u8857\u9053\u53EF\u8D70 \u00B7 \u6DF1\u8272\uFF1D\u574A\u5899\u5EFA\u7B51\u4E0D\u53EF\u8D70 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u91D1\u5149\u95E8\u80DC\u5229"}</span>
+          <span>{"\u65B9\u5411\u952E / WASD / \u5C4F\u5E55\u6309\u952E / \u6ED1\u52A8\u68CB\u76D8 \u79FB\u52A8 \u00B7 \u6D45\u8272\uFF1D\u8857\u9053\u53EF\u8D70 \u00B7 \u6DF1\u8272\uFF1D\u574A\u5899\u4E0D\u53EF\u8D70 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u91D1\u5149\u95E8\u80DC\u5229"}</span>
           <span style={{ color: "#DC3545" }}>{"\u88AB\u6293\uFF1A" + deaths}</span>
           <button onClick={resetGame} style={egStyles.restartBtn}>{"\u91CD\u65B0\u5F00\u59CB"}</button>
         </div>
 
-        <div ref={boardRef} style={{
-          flex: "1 1 auto", minHeight: 0,
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
+        <div
+          ref={boardRef}
+          style={{
+            flex: "1 1 auto", minHeight: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            touchAction: "none", // 阻止页面滚动，让滑动只控制角色
+          }}
+          onTouchStart={(e) => {
+            swipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          }}
+          onTouchEnd={(e) => {
+            const s = swipeRef.current;
+            swipeRef.current = null;
+            if (!s) return;
+            const dx = e.changedTouches[0].clientX - s.x;
+            const dy = e.changedTouches[0].clientY - s.y;
+            if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return; // 太短不算滑动
+            movePlayer(Math.abs(dx) > Math.abs(dy)
+              ? (dx > 0 ? "right" : "left")
+              : (dy > 0 ? "down" : "up"));
+          }}
+        >
         <div style={{
           display: "grid",
           gridTemplateColumns: `repeat(${gridW}, ${cellPx})`,
@@ -1900,6 +1942,30 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
         </div>
         </div>
 
+        {/* 屏幕方向键（触屏/无键盘设备用；支持长按连走） */}
+        {!won && (
+          <div style={egStyles.dpad}>
+            {[
+              { dir: "up", glyph: "▲", area: "up" },
+              { dir: "left", glyph: "◀", area: "left" },
+              { dir: "right", glyph: "▶", area: "right" },
+              { dir: "down", glyph: "▼", area: "down" },
+            ].map((b) => (
+              <button
+                key={b.dir}
+                style={{ ...egStyles.dpadBtn, gridArea: b.area }}
+                onPointerDown={(e) => { e.preventDefault(); startHold(b.dir); }}
+                onPointerUp={stopHold}
+                onPointerLeave={stopHold}
+                onPointerCancel={stopHold}
+                onContextMenu={(e) => e.preventDefault()}
+              >
+                {b.glyph}
+              </button>
+            ))}
+          </div>
+        )}
+
         {won && (
           <>
             <div style={{ ...egStyles.win }}>
@@ -1931,6 +1997,32 @@ const egStyles = {
     // no clipping at any window size / display scaling.
     height: "94vh", overflow: "hidden",
     display: "flex", flexDirection: "column",
+    position: "relative", // 方向键锚点
+  },
+  dpad: {
+    position: "absolute",
+    right: 18,
+    bottom: 18,
+    display: "grid",
+    gridTemplateAreas: `". up ." "left . right" ". down ."`,
+    gridTemplateColumns: "48px 48px 48px",
+    gridTemplateRows: "48px 48px 48px",
+    gap: 4,
+    zIndex: 30,
+    opacity: 0.88,
+  },
+  dpadBtn: {
+    width: 48, height: 48,
+    borderRadius: 10,
+    border: "1px solid #8B7355",
+    backgroundColor: "rgba(255,252,244,0.92)",
+    color: "#5A4A32",
+    fontSize: 16,
+    cursor: "pointer",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+    touchAction: "none",
+    userSelect: "none",
+    WebkitUserSelect: "none",
   },
   title: { margin: "0 0 4px", fontSize: 22, color: "#3E2723", letterSpacing: 2 },
   narrative: { margin: "0 0 8px", fontSize: 13, color: "#6B5340" },
