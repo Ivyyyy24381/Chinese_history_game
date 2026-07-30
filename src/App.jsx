@@ -515,7 +515,7 @@ export default function App() {
               }
             }}
           >
-            {"✕ 退出场景"}
+            {"✕"}
           </button>
         </>
       )}
@@ -704,19 +704,21 @@ const styles = {
   },
   sceneExitBtn: {
     position: "fixed",
-    // 左侧中部悬浮：顶部有标题/说明，底部有对话条和继续按钮，只有这里不挡内容
-    left: 10,
-    top: "45%",
+    // 左下角，小圆钮不显眼
+    left: 14,
+    bottom: 14,
     zIndex: 380,
-    padding: "8px 14px",
-    backgroundColor: "rgba(20,12,6,0.72)",
-    color: "#F5E6D3",
-    border: "1px solid rgba(245,230,211,0.4)",
-    borderRadius: 8,
+    width: 34,
+    height: 34,
+    padding: 0,
+    backgroundColor: "rgba(20,12,6,0.5)",
+    color: "rgba(245,230,211,0.85)",
+    border: "1px solid rgba(245,230,211,0.3)",
+    borderRadius: "50%",
     cursor: "pointer",
-    fontSize: 13,
+    fontSize: 15,
+    lineHeight: 1,
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
-    letterSpacing: 1,
   },
   musicBtn: {
     position: "fixed",
