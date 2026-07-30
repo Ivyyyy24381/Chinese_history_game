@@ -187,26 +187,26 @@ const styles = {
     boxShadow: "0 12px 48px rgba(0,0,0,0.5)",
     display: "flex", flexDirection: "column", gap: 12,
   },
-  title: { margin: 0, fontSize: 22, color: "#3B2510", letterSpacing: 4, textAlign: "center" },
-  localNote: { margin: 0, fontSize: 12, color: "#8B7355", lineHeight: 1.6 },
+  title: { margin: 0, fontSize: "clamp(17.6px, 1.528vw, 25.3px)", color: "#3B2510", letterSpacing: 4, textAlign: "center" },
+  localNote: { margin: 0, fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#8B7355", lineHeight: 1.6 },
   input: {
-    padding: "10px 12px", fontSize: 14, fontFamily: "inherit",
+    padding: "10px 12px", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit",
     border: "1px solid #C9B08A", borderRadius: 8, backgroundColor: "#FFF",
   },
-  error: { color: "#C0392B", fontSize: 13 },
+  error: { color: "#C0392B", fontSize: "clamp(10.4px, 0.903vw, 14.9px)" },
   primaryBtn: {
     padding: "10px 18px", border: "none", borderRadius: 8,
     backgroundColor: "#8B7355", color: "#FFF",
-    cursor: "pointer", fontSize: 15, fontFamily: "inherit", letterSpacing: 2,
+    cursor: "pointer", fontSize: "clamp(12.0px, 1.042vw, 17.2px)", fontFamily: "inherit", letterSpacing: 2,
   },
   switchBtn: {
     padding: 4, border: "none", background: "none",
-    color: "#8B7355", cursor: "pointer", fontSize: 13, fontFamily: "inherit",
+    color: "#8B7355", cursor: "pointer", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", fontFamily: "inherit",
     textDecoration: "underline",
   },
   closeBtn: {
     position: "absolute", top: 8, right: 12,
-    border: "none", background: "none", fontSize: 22,
+    border: "none", background: "none", fontSize: "clamp(17.6px, 1.528vw, 25.3px)",
     color: "#8B7355", cursor: "pointer",
   },
 };

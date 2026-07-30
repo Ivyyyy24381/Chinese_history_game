@@ -45,7 +45,7 @@ export default function Leaderboard({ highlightScore = null, onClose }) {
 
         {highlightScore != null && (
           <div style={styles.myScore}>
-            {"本局得分："}<strong style={{ fontSize: 22 }}>{highlightScore}</strong>
+            {"本局得分："}<strong style={{ fontSize: "clamp(17.6px, 1.528vw, 25.3px)" }}>{highlightScore}</strong>
           </div>
         )}
         {myBest && (
@@ -99,28 +99,28 @@ const styles = {
     boxShadow: "0 12px 48px rgba(0,0,0,0.5)",
     display: "flex", flexDirection: "column", gap: 10,
   },
-  title: { margin: 0, fontSize: 22, color: "#3B2510", letterSpacing: 4, textAlign: "center" },
-  scope: { margin: 0, fontSize: 12, color: "#8B7355", textAlign: "center" },
+  title: { margin: 0, fontSize: "clamp(17.6px, 1.528vw, 25.3px)", color: "#3B2510", letterSpacing: 4, textAlign: "center" },
+  scope: { margin: 0, fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#8B7355", textAlign: "center" },
   myScore: {
     textAlign: "center", padding: "8px 0", borderRadius: 8,
-    backgroundColor: "rgba(244,208,63,0.2)", color: "#3B2510", fontSize: 14,
+    backgroundColor: "rgba(244,208,63,0.2)", color: "#3B2510", fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
   },
   list: { overflowY: "auto", flex: 1 },
   row: {
     display: "flex", alignItems: "center", gap: 10,
-    padding: "8px 10px", borderRadius: 6, fontSize: 14, color: "#3B2510",
+    padding: "8px 10px", borderRadius: 6, fontSize: "clamp(11.2px, 0.972vw, 16.1px)", color: "#3B2510",
   },
-  rank: { width: 32, textAlign: "center", fontSize: 15 },
+  rank: { width: 32, textAlign: "center", fontSize: "clamp(12.0px, 1.042vw, 17.2px)" },
   nick: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
   pts: { fontWeight: "bold", color: "#B8860B" },
-  empty: { textAlign: "center", color: "#8B7355", fontSize: 14, padding: "20px 0" },
+  empty: { textAlign: "center", color: "#8B7355", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", padding: "20px 0" },
   closeBtn2: {
     padding: "9px 18px", border: "1px solid #C9B08A", borderRadius: 8,
-    backgroundColor: "#FFF", cursor: "pointer", fontSize: 14, fontFamily: "inherit",
+    backgroundColor: "#FFF", cursor: "pointer", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit",
   },
   closeBtn: {
     position: "absolute", top: 8, right: 12,
-    border: "none", background: "none", fontSize: 22,
+    border: "none", background: "none", fontSize: "clamp(17.6px, 1.528vw, 25.3px)",
     color: "#8B7355", cursor: "pointer",
   },
 };

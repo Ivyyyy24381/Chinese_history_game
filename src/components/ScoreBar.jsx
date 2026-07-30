@@ -4,7 +4,7 @@ export default function ScoreBar({ character, progress, totalStages, score = 0 }
   return (
     <div style={styles.scoreBar}>
       <div style={styles.scoreBarLeft}>
-        <div style={{ fontSize: 18, fontWeight: "bold" }}>
+        <div style={{ fontSize: "clamp(14.4px, 1.25vw, 20.7px)", fontWeight: "bold" }}>
           {character.avatar}
         </div>
         <div>
@@ -53,12 +53,12 @@ const styles = {
     gap: 10,
   },
   scoreCharName: {
-    fontSize: 18,
+    fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
     fontWeight: "bold",
     color: "#333",
   },
   scoreCharTitle: {
-    fontSize: 13,
+    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
     color: "#999",
     backgroundColor: "#F0EBE0",
     padding: "2px 8px",
@@ -76,11 +76,11 @@ const styles = {
     alignItems: "center",
   },
   statLabel: {
-    fontSize: 11,
+    fontSize: "clamp(8.8px, 0.764vw, 12.6px)",
     color: "#999",
   },
   statValue: {
-    fontSize: 16,
+    fontSize: "clamp(12.8px, 1.111vw, 18.4px)",
     fontWeight: "bold",
     color: "#333",
   },

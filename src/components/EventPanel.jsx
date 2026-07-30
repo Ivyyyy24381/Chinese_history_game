@@ -114,14 +114,14 @@ const styles = {
     backgroundColor: "#F0EBE0",
     border: "none",
     borderRadius: "50%",
-    fontSize: 18,
+    fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
   eventTitle: {
-    fontSize: 28,
+    fontSize: "clamp(22.4px, 1.944vw, 32.2px)",
     margin: "0 0 24px",
   },
   poemSection: {
@@ -133,12 +133,12 @@ const styles = {
   },
   poemTitle: {
     margin: "0 0 12px",
-    fontSize: 16,
+    fontSize: "clamp(12.8px, 1.111vw, 18.4px)",
     fontWeight: "bold",
   },
   poemContent: {
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     lineHeight: 2,
     color: "#333",
     whiteSpace: "pre-wrap",
@@ -147,7 +147,7 @@ const styles = {
     marginBottom: 24,
   },
   narrativeText: {
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     lineHeight: 1.8,
     color: "#555",
     margin: 0,
@@ -165,7 +165,7 @@ const styles = {
     color: "#FFF",
     fontWeight: "bold",
     cursor: "pointer",
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     transition: "all 0.2s",
   },
 };

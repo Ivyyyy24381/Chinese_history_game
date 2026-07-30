@@ -391,7 +391,7 @@ export default function App() {
           alignItems: "center",
           justifyContent: "center",
           fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
-          fontSize: 18,
+          fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
         }}
       >
         {"加载中..."}
@@ -427,7 +427,7 @@ export default function App() {
           <div style={styles.eventMeta}>
             {`${currentEvent.year} 年 · ${currentStage.period}`}
           </div>
-          <p style={{ margin: "8px 0 0", fontSize: 13, color: "#666" }}>
+          <p style={{ margin: "8px 0 0", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#666" }}>
             {currentEvent.summary || currentStage.summary}
           </p>
           <button
@@ -522,7 +522,7 @@ export default function App() {
       {showCongrats && (
         <div style={styles.congratsOverlay}>
           <div style={styles.congratsCard}>
-            <div style={{ fontSize: 56, marginBottom: 8 }}>{"🏆"}</div>
+            <div style={{ fontSize: "clamp(44.8px, 3.889vw, 64.4px)", marginBottom: 8 }}>{"🏆"}</div>
             <h2 style={styles.congratsTitle}>{"历史成就达成"}</h2>
             <div style={styles.congratsBadge}>
               {ACHIEVEMENT_TITLES[character?.id] || "人物传完成"}
@@ -531,7 +531,7 @@ export default function App() {
               {`你走完了${character?.name || ""}的一生——从裘马轻狂的少年，到湘江舟中的诗圣。`}
             </p>
             <div style={styles.congratsScore}>
-              {"本局总分 "}<strong style={{ fontSize: 26 }}>{runScore}</strong>{" 分"}
+              {"本局总分 "}<strong style={{ fontSize: "clamp(20.8px, 1.806vw, 29.9px)" }}>{runScore}</strong>{" 分"}
               {user ? `（${user.nickname}）` : "（未登录，仅本次显示）"}
             </div>
             <p style={styles.congratsUnlock}>{"✨ 已解锁：人物回顾"}</p>
@@ -600,7 +600,7 @@ function OrientationHint() {
   if (!show || dismissed) return null;
   return (
     <div style={orientStyles.overlay}>
-      <div style={{ fontSize: 64, animation: "rotateHint 1.6s ease-in-out infinite" }}>{"📱"}</div>
+      <div style={{ fontSize: "clamp(51.2px, 4.444vw, 73.6px)", animation: "rotateHint 1.6s ease-in-out infinite" }}>{"📱"}</div>
       <div style={orientStyles.text}>{"请将手机横过来游玩"}</div>
       <div style={orientStyles.sub}>{"地图与场景为横屏设计，横屏体验最佳"}</div>
       <button style={orientStyles.dismissBtn} onClick={() => setDismissed(true)}>
@@ -618,12 +618,12 @@ const orientStyles = {
     alignItems: "center", justifyContent: "center", gap: 14,
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
-  text: { color: "#F5E6D3", fontSize: 22, letterSpacing: 4 },
-  sub: { color: "#B8A88C", fontSize: 14 },
+  text: { color: "#F5E6D3", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 4 },
+  sub: { color: "#B8A88C", fontSize: "clamp(11.2px, 0.972vw, 16.1px)" },
   dismissBtn: {
     marginTop: 10, padding: "9px 22px", borderRadius: 18,
     border: "1px solid #8B7355", backgroundColor: "transparent",
-    color: "#C9B08A", fontSize: 14, fontFamily: "inherit", cursor: "pointer",
+    color: "#C9B08A", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit", cursor: "pointer",
   },
 };
 
@@ -686,7 +686,7 @@ const styles = {
     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
   },
   eventMeta: {
-    fontSize: 11,
+    fontSize: "clamp(8.8px, 0.764vw, 12.6px)",
     color: "#999",
     letterSpacing: 1,
   },
@@ -698,7 +698,7 @@ const styles = {
     borderRadius: 4,
     color: "white",
     fontWeight: "bold",
-    fontSize: 13,
+    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
     cursor: "pointer",
     transition: "all 0.2s",
   },
@@ -716,7 +716,7 @@ const styles = {
     border: "1px solid rgba(245,230,211,0.3)",
     borderRadius: "50%",
     cursor: "pointer",
-    fontSize: 15,
+    fontSize: "clamp(12.0px, 1.042vw, 17.2px)",
     lineHeight: 1,
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
@@ -729,7 +729,7 @@ const styles = {
     border: "1px solid #DDD",
     borderRadius: "50%",
     cursor: "pointer",
-    fontSize: 18,
+    fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
     zIndex: 60,
   },
@@ -744,11 +744,11 @@ const styles = {
     border: "2px solid #C9A86A",
     boxShadow: "0 12px 48px rgba(0,0,0,0.6)",
   },
-  congratsTitle: { margin: 0, fontSize: 24, color: "#3B2510", letterSpacing: 4 },
+  congratsTitle: { margin: 0, fontSize: "clamp(19.2px, 1.667vw, 27.6px)", color: "#3B2510", letterSpacing: 4 },
   congratsScore: {
     margin: "10px auto 4px", padding: "8px 24px", display: "inline-block",
     backgroundColor: "rgba(184,134,11,0.12)", borderRadius: 10,
-    color: "#3B2510", fontSize: 15,
+    color: "#3B2510", fontSize: "clamp(12.0px, 1.042vw, 17.2px)",
   },
   userCorner: {
     position: "fixed", top: 16, right: 20, zIndex: 90,
@@ -756,14 +756,14 @@ const styles = {
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   userChip: {
-    color: "#8A6D3B", fontSize: 14, letterSpacing: 1,
+    color: "#8A6D3B", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", letterSpacing: 1,
     padding: "6px 14px", borderRadius: 18,
     backgroundColor: "rgba(252,248,238,0.9)",
     border: "1px solid #C9A86A",
     boxShadow: "0 2px 6px rgba(90,70,40,0.12)",
   },
   cornerBtn: {
-    padding: "6px 16px", borderRadius: 18, fontSize: 13, fontFamily: "inherit",
+    padding: "6px 16px", borderRadius: 18, fontSize: "clamp(10.4px, 0.903vw, 14.9px)", fontFamily: "inherit",
     backgroundColor: "rgba(252,248,238,0.9)", color: "#5A4A32",
     border: "1px solid #C9B08A", cursor: "pointer", letterSpacing: 1,
     boxShadow: "0 2px 6px rgba(90,70,40,0.12)",
@@ -771,14 +771,14 @@ const styles = {
   congratsBadge: {
     display: "inline-block", margin: "12px 0",
     padding: "6px 22px", backgroundColor: "#3B2510", color: "#F4D03F",
-    borderRadius: 20, fontSize: 16, letterSpacing: 3,
+    borderRadius: 20, fontSize: "clamp(12.8px, 1.111vw, 18.4px)", letterSpacing: 3,
   },
-  congratsText: { color: "#555", fontSize: 14, lineHeight: 1.8, margin: "8px 0" },
-  congratsUnlock: { color: "#1B5E20", fontSize: 14, fontWeight: "bold", margin: "10px 0 2px" },
-  congratsNext: { color: "#8B7355", fontSize: 13, margin: "4px 0 0" },
+  congratsText: { color: "#555", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.8, margin: "8px 0" },
+  congratsUnlock: { color: "#1B5E20", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontWeight: "bold", margin: "10px 0 2px" },
+  congratsNext: { color: "#8B7355", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", margin: "4px 0 0" },
   congratsBtn: {
     padding: "10px 18px", border: "1px solid #C9B08A", borderRadius: 8,
-    backgroundColor: "#FFF", cursor: "pointer", fontSize: 14, fontFamily: "inherit",
+    backgroundColor: "#FFF", cursor: "pointer", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit",
   },
   backBtn: {
     position: "fixed",
@@ -789,7 +789,7 @@ const styles = {
     border: "1px solid #DDD",
     borderRadius: 6,
     cursor: "pointer",
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     fontFamily: "inherit",
     transition: "all 0.2s",
   },

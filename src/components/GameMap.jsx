@@ -353,7 +353,7 @@ const styles = {
   },
   pinLabel: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
     padding: "2px 9px",
     borderRadius: 10,
     whiteSpace: "nowrap",
@@ -365,11 +365,11 @@ const styles = {
     gap: 4,
   },
   pinYear: {
-    fontSize: 10,
+    fontSize: "clamp(8.0px, 0.694vw, 11.5px)",
     opacity: 0.75,
   },
   pinName: {
-    fontSize: 12,
+    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
   },
   walker: {
     position: "absolute",
@@ -395,7 +395,7 @@ const styles = {
     border: "1px solid #C9B08A",
     backgroundColor: "rgba(252,248,238,0.92)",
     color: "#5A4A32",
-    fontSize: 13,
+    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
     letterSpacing: 1,
@@ -415,7 +415,7 @@ const styles = {
     borderRadius: 8,
     border: "1px solid #D8CDB8",
     backgroundColor: "rgba(255,255,255,0.92)",
-    fontSize: 17,
+    fontSize: "clamp(13.6px, 1.181vw, 19.5px)",
     cursor: "pointer",
     boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
     color: "#5A4A32",

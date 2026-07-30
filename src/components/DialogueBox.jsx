@@ -152,13 +152,13 @@ const styles = {
   },
   speakerName: {
     color: "#D4A574",
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     fontWeight: "bold",
     letterSpacing: 2,
   },
   dialogueText: {
     color: "#F5E6D3",
-    fontSize: 15,
+    fontSize: "clamp(12.0px, 1.042vw, 17.2px)",
     lineHeight: 1.8,
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     minHeight: 60,
@@ -170,7 +170,7 @@ const styles = {
   },
   clickPrompt: {
     color: "#A89968",
-    fontSize: 12,
+    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
     animation: "pulse 1.5s ease-in-out infinite",
   },
   progressBar: {

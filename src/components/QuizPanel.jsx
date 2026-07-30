@@ -238,7 +238,7 @@ const styles = {
     backgroundColor: "#F0EBE0",
     border: "none",
     borderRadius: "50%",
-    fontSize: 18,
+    fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
     cursor: "pointer",
   },
   quizHeader: {
@@ -251,15 +251,15 @@ const styles = {
     color: "white",
     padding: "6px 12px",
     borderRadius: 20,
-    fontSize: 12,
+    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
     fontWeight: "bold",
   },
   quizProgress: {
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     color: "#999",
   },
   quizQuestion: {
-    fontSize: 18,
+    fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
     color: "#333",
     margin: "0 0 20px",
     lineHeight: 1.6,
@@ -284,7 +284,7 @@ const styles = {
   },
   optionLetter: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: "clamp(12.8px, 1.111vw, 18.4px)",
     minWidth: 24,
   },
   fillContainer: {
@@ -297,7 +297,7 @@ const styles = {
     padding: "10px 12px",
     border: "2px solid",
     borderRadius: 6,
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     fontFamily: "inherit",
   },
   submitBtn: {
@@ -317,7 +317,7 @@ const styles = {
   },
   explanationText: {
     margin: 0,
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     color: "#333",
     lineHeight: 1.6,
   },
@@ -329,7 +329,7 @@ const styles = {
     color: "white",
     fontWeight: "bold",
     cursor: "pointer",
-    fontSize: 14,
+    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
   },
   quizResultPanel: {
     backgroundColor: "#FFF",
@@ -343,7 +343,7 @@ const styles = {
     marginBottom: 20,
   },
   scoreBig: {
-    fontSize: 48,
+    fontSize: "clamp(38.4px, 3.333vw, 55.2px)",
     fontWeight: "bold",
     color: "#333",
   },
