@@ -58,3 +58,31 @@ npm run build
 
 保持前端静态不动，加轻后端即可：国内选 uniCloud / 腾讯云函数 + 云数据库；
 海外选 Supabase / Firebase。当前阶段不需要。
+
+---
+
+## CloudBase 静态托管部署（2026-07 补充：解决国内访问慢）
+
+> 前提：已有 CloudBase 环境（envId: a1-d9g6kjlne4eb972f1）。免费体验环境自带静态托管额度。
+
+### 方式 A：网页上传（最简单，5 分钟）
+
+1. 本地 `npm run build`，得到 `dist/` 文件夹
+2. 打开 <https://tcb.cloud.tencent.com/dev> → 左侧「静态托管」→ 首次进入点「开通」
+3. 把 **dist 文件夹里的全部内容**（不是 dist 文件夹本身）拖拽上传到根目录
+4. 「基础配置」里找到默认域名（形如 `xxx.tcloudbaseapp.com`），打开即是国内加速版
+
+### 方式 B：命令行（以后每次更新一条命令）
+
+```bash
+npm i -g @cloudbase/cli
+tcb login                # 浏览器授权一次
+npm run build
+tcb hosting deploy ./dist -e a1-d9g6kjlne4eb972f1
+```
+
+### 三个必看注意点
+
+1. **安全来源要加新域名**：CloudBase 控制台 → 环境 → 安全来源，把 `xxx.tcloudbaseapp.com` 加进去，否则新域名上注册/排行榜会报 Failed to fetch（是的，自家域名也要加）
+2. **historycharacter.com 绑定静态托管需 ICP 备案**；备案完成前先用默认域名在国内分享，GitHub Pages 域名继续当海外入口
+3. 资产约 100MB，首次上传耐心等；之后 CLI 部署是增量的，很快
