@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
+import { Pin } from "./GameMap";
 import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
 
@@ -873,23 +874,37 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               </div>
             )}
 
-            {/* \u7AD9\u70B9\u53EA\u753B\u5706\u70B9\uFF08\u5E95\u56FE\u5DF2\u6709\u5730\u540D\uFF0C\u6587\u5B57\u6807\u7B7E\u4F1A\u91CD\u5F71\uFF09\uFF1B\u60AC\u505C\u6709 title \u63D0\u793A */}
+            {/* \u7AD9\u70B9\u7528\u4E3B\u9875\u5730\u56FE\u540C\u6B3E\u5C0F Pin\uFF08\u5E95\u56FE\u5DF2\u6709\u5730\u540D\uFF0C\u4E0D\u518D\u53E0\u6587\u5B57\uFF09\uFF1B\u60AC\u505C\u6709 title \u63D0\u793A */}
             {waypoints.map((wp) => {
               const wid = wp.id || wp.name;
               const visited = visitedWaypoints.has(wid);
+              const color = visited ? "#95A5A6" : (wp.isKey ? "#E74C3C" : "#2ECC71");
               return (
                 <div
                   key={wid}
                   title={(visited ? "\u2713 " : "") + (wp.name || "\u76EE\u7684\u5730")}
-                  style={{ ...styles.triggerZone, left: (wp.x || 50) + "%", top: (wp.y || 50) + "%", opacity: visited ? 0.55 : 1 }}
+                  style={{
+                    position: "absolute",
+                    left: (wp.x || 50) + "%",
+                    top: (wp.y || 50) + "%",
+                    transform: "translate(-50%, -100%)",
+                    cursor: "pointer",
+                    zIndex: 30,
+                    opacity: visited ? 0.7 : 1,
+                  }}
                   onClick={() => handleWaypointClick(wp)}
                 >
-                  <div style={{
-                    ...styles.triggerPulse,
-                    backgroundColor: visited ? "rgba(149,165,166,0.4)" : (wp.isKey ? "rgba(231,76,60,0.4)" : "rgba(46,204,113,0.4)"),
-                    borderColor: visited ? "#95A5A6" : (wp.isKey ? "#E74C3C" : "#2ECC71"),
-                    animation: visited ? "none" : "pulse 1.5s ease-in-out infinite",
-                  }} />
+                  {!visited && (
+                    <span style={{
+                      position: "absolute", top: 0, left: "50%",
+                      width: 18, height: 18, borderRadius: "50%",
+                      backgroundColor: color, opacity: 0.35,
+                      transform: "translate(-50%, 0)",
+                      animation: "mapPinPulse 1.6s ease-out infinite",
+                      pointerEvents: "none",
+                    }} />
+                  )}
+                  <Pin color={color} size={22} glow={!visited} badge={visited ? "\u2713" : null} />
                 </div>
               );
             })}
@@ -909,7 +924,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     position: "absolute",
                     left: (at.x || 50) + "%",
                     top: (at.y || 50) + "%",
-                    height: "min(9vw, 15vh)",
+                    height: "min(7vw, 12vh)",
                     transform: "translate(-50%, -96%)",
                     transition: "left 0.9s ease-in-out, top 0.9s ease-in-out",
                     pointerEvents: "none",

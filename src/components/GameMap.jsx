@@ -272,7 +272,7 @@ export default function GameMap({
   );
 }
 
-function Pin({ color, size, glow, badge }) {
+export function Pin({ color, size, glow, badge }) {
   const w = size;
   const h = (size * 4) / 3;
   return (
