@@ -189,8 +189,11 @@ export default function GameMap({
                 {isCurrent && (
                   <span style={{ ...styles.pulseRing, backgroundColor: pinColor }} />
                 )}
-                {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示 */}
-                <Pin color={pinColor} size={pinSize} glow={isCurrent} badge={isPast ? "✓" : null} />
+                {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示。
+                    当前事件不画图钉，由小杜甫立绘代替。 */}
+                {!isCurrent && (
+                  <Pin color={pinColor} size={pinSize} glow={false} badge={isPast ? "✓" : null} />
+                )}
               </button>
             );
           })}
@@ -217,6 +220,31 @@ export default function GameMap({
         <button style={styles.zoomBtn} title="缩小" onClick={() => zoomBy(1 / 1.4)}>{"－"}</button>
         <button style={styles.zoomBtn} title="复位（双击地图也可复位）" onClick={resetView}>{"⟲"}</button>
       </div>
+
+      {/* 事件前进/后退 */}
+      {(() => {
+        const idx = events.findIndex((e) => e.id === currentEventId);
+        const prev = idx > 0 ? events[idx - 1] : null;
+        const next = idx >= 0 && idx < events.length - 1 ? events[idx + 1] : null;
+        return (
+          <div style={styles.stepControls}>
+            <button
+              style={{ ...styles.stepBtn, opacity: prev ? 1 : 0.4, cursor: prev ? "pointer" : "default" }}
+              disabled={!prev}
+              onClick={() => prev && onEventClick(prev)}
+            >
+              {"◀ " + (prev ? `${prev.year} ${prev.name}` : "已是起点")}
+            </button>
+            <button
+              style={{ ...styles.stepBtn, opacity: next ? 1 : 0.4, cursor: next ? "pointer" : "default" }}
+              disabled={!next}
+              onClick={() => next && onEventClick(next)}
+            >
+              {(next ? `${next.year} ${next.name}` : "已是终点") + " ▶"}
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }
@@ -325,6 +353,35 @@ const styles = {
   },
   pinName: {
     fontSize: 12,
+  },
+  walker: {
+    position: "absolute",
+    height: 64,
+    zIndex: 8,
+    pointerEvents: "none",
+    transformOrigin: "50% 100%",
+    transition: "left 0.9s ease-in-out, top 0.9s ease-in-out",
+    filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.35))",
+  },
+  stepControls: {
+    position: "absolute",
+    left: "50%",
+    bottom: 16,
+    transform: "translateX(-50%)",
+    display: "flex",
+    gap: 10,
+    zIndex: 20,
+  },
+  stepBtn: {
+    padding: "8px 16px",
+    borderRadius: 18,
+    border: "1px solid #C9B08A",
+    backgroundColor: "rgba(252,248,238,0.92)",
+    color: "#5A4A32",
+    fontSize: 13,
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
+    letterSpacing: 1,
   },
   zoomControls: {
     position: "absolute",
