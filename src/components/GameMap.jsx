@@ -18,6 +18,13 @@ import { dufuPortraitPath } from "../data/dufuPoses";
 const MIN_SCALE = 1;
 const MAX_SCALE = 4;
 const FOCUS_SCALE = 2.1; // 自动聚焦时的放大倍数
+const IMG_RATIO = 1752 / 1245; // 地图原图宽高比
+
+// 视口任意比例下，底图以 cover 方式铺满（宽或高撑满，可平移看其余部分）
+function coverDims(W, H) {
+  if (W / H >= IMG_RATIO) return { cw: W, ch: W / IMG_RATIO };
+  return { cw: H * IMG_RATIO, ch: H };
+}
 
 export default function GameMap({
   allEvents,
@@ -34,13 +41,27 @@ export default function GameMap({
   const dragRef = useRef(null);        // 当前拖拽状态
   const justDraggedRef = useRef(false); // 拖拽结束后抑制 click
 
+  // 视口尺寸（驱动底图 cover 尺寸）
+  const [box, setBox] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((es) => {
+      const r = es[0].contentRect;
+      setBox({ w: r.width, h: r.height });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const clampView = useCallback((v) => {
     const el = viewportRef.current;
     const s = Math.min(MAX_SCALE, Math.max(MIN_SCALE, v.scale));
     if (!el) return { scale: s, tx: 0, ty: 0 };
     const { width: W, height: H } = el.getBoundingClientRect();
-    const tx = Math.min(0, Math.max(W - W * s, v.tx));
-    const ty = Math.min(0, Math.max(H - H * s, v.ty));
+    const { cw, ch } = coverDims(W, H);
+    const tx = Math.min(0, Math.max(W - cw * s, v.tx));
+    const ty = Math.min(0, Math.max(H - ch * s, v.ty));
     return { scale: s, tx, ty };
   }, []);
 
@@ -49,11 +70,12 @@ export default function GameMap({
     const el = viewportRef.current;
     if (!el) return;
     const { width: W, height: H } = el.getBoundingClientRect();
+    const { cw, ch } = coverDims(W, H);
     setAnimated(true);
     setView(clampView({
       scale,
-      tx: W / 2 - (xPct / 100) * W * scale,
-      ty: H / 2 - (yPct / 100) * H * scale,
+      tx: W / 2 - (xPct / 100) * cw * scale,
+      ty: H / 2 - (yPct / 100) * ch * scale,
     }));
   }, [clampView]);
 
@@ -151,6 +173,7 @@ export default function GameMap({
         <div
           style={{
             ...styles.mapBackground,
+            ...(box.w ? (() => { const d = coverDims(box.w, box.h); return { width: d.cw, height: d.ch }; })() : { width: "100%", height: "100%" }),
             backgroundImage: `url('${asset("/assets/maps/dufu_general_map.png")}')`,
             transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
             transition: animated ? "transform 0.7s cubic-bezier(0.25, 0.8, 0.35, 1)" : "none",
@@ -286,25 +309,19 @@ const styles = {
     flex: 1,
     position: "relative",
     display: "flex",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
-    padding: "6px 12px",
+    padding: 0,
     minHeight: 400,
   },
-  // 视口：固定框，内部地图可平移缩放
+  // 视口：全宽通栏，底图 cover 铺满，可平移缩放
   viewport: {
-    aspectRatio: "1752 / 1245",
-    // 宽度同时受屏宽和屏高约束，保证始终按地图比例完整显示
-    width: "min(1150px, 97%, calc((100vh - 250px) * 1752 / 1245))",
+    width: "100%",
     position: "relative",
     overflow: "hidden",
-    borderRadius: 10,
-    boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
     touchAction: "none",
   },
   mapBackground: {
-    width: "100%",
-    height: "100%",
     backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
     position: "relative",

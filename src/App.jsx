@@ -688,9 +688,9 @@ const styles = {
     flex: 1,
     position: "relative",
     display: "flex",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
-    padding: "10px 20px",
+    padding: 0,
     minHeight: 400,
   },
   floatingInfo: {
