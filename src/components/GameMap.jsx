@@ -13,6 +13,7 @@
  */
 import { useRef, useState, useEffect, useCallback } from "react";
 import { asset } from "../utils/asset";
+import { dufuPortraitPath } from "../data/dufuPoses";
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 4;
@@ -188,26 +189,25 @@ export default function GameMap({
                 {isCurrent && (
                   <span style={{ ...styles.pulseRing, backgroundColor: pinColor }} />
                 )}
+                {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示 */}
                 <Pin color={pinColor} size={pinSize} glow={isCurrent} badge={isPast ? "✓" : null} />
-                <span
-                  style={{
-                    ...styles.pinLabel,
-                    color: isCurrent ? pinColor : "#333",
-                    fontWeight: isCurrent ? "bold" : 500,
-                    backgroundColor: isCurrent
-                      ? "rgba(255,255,255,0.95)"
-                      : isFuture
-                      ? "rgba(255,255,255,0.55)"
-                      : "rgba(255,255,255,0.85)",
-                    fontStyle: isFuture ? "italic" : "normal",
-                  }}
-                >
-                  <span style={styles.pinYear}>{event.year}</span>
-                  <span style={styles.pinName}>{event.name}</span>
-                </span>
               </button>
             );
           })}
+
+          {/* 小杜甫：站在当前事件位置，切换事件时走过去 */}
+          {currentEvent?.location && (
+            <img
+              src={asset(dufuPortraitPath(null, currentEvent.year))}
+              alt=""
+              style={{
+                ...styles.walker,
+                left: `${currentEvent.location.mapX}%`,
+                top: `${currentEvent.location.mapY}%`,
+                transform: `translate(-50%, -96%) scale(${1 / Math.sqrt(scale)})`,
+              }}
+            />
+          )}
         </div>
       </div>
 
