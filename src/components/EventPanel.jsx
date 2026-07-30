@@ -56,20 +56,22 @@ export default function EventPanel({ stage, onStartQuiz, onClose }) {
           )}
 
           <div style={styles.buttonGroup}>
-            <button
-              style={{ ...styles.actionBtn, backgroundColor: stage.color }}
-              onClick={() => {
-                setShowDialogue(true);
-                onClose();
-              }}
-            >
-              {"\ud83d\udde3 \u67e5\u770b\u5bf9\u8bdd"}
-            </button>
+            {sceneData?.dialogues?.length > 0 && (
+              <button
+                style={{ ...styles.actionBtn, backgroundColor: stage.color }}
+                onClick={() => {
+                  setShowDialogue(true);
+                  onClose();
+                }}
+              >
+                {"🗣 查看对话"}
+              </button>
+            )}
             <button
               style={{ ...styles.actionBtn, backgroundColor: stage.color }}
               onClick={onStartQuiz}
             >
-              {"\ud83c\udf89 \u5f00\u59cb\u7aaf\u9898"}
+              {"🎉 开始答题"}
             </button>
           </div>
         </div>

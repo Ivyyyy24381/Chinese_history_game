@@ -256,19 +256,26 @@ export default function App() {
 
   const handleExplore = async () => {
     if (!currentEvent || !currentEvent.hasScene) return;
+    const load = () => import(`./data/dufu/events/${currentEvent.id}/event.json`);
     try {
-      const sceneModule = await import(`./data/dufu/events/${currentEvent.id}/event.json`);
+      let sceneModule;
+      try {
+        sceneModule = await load();
+      } catch {
+        sceneModule = await load(); // 弱网自动重试一次
+      }
       const data = sceneModule.default;
       if (data.type === "interactive" && data.phases) {
         setSceneData(data);
         setShowScene(true);
       } else {
+        // 该事件确实没有互动场景 → 旧版图文+答题面板
         setPendingEvent(currentEvent);
         setShowEvent(true);
       }
     } catch {
-      setPendingEvent(currentEvent);
-      setShowEvent(true);
+      // 网络加载失败：明确提示，而不是错误地掉进旧版面板
+      window.alert("场景加载失败，可能是网络不稳定，请再点一次「探索此事件」。");
     }
   };
 

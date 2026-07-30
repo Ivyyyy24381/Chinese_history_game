@@ -576,19 +576,22 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     {parts[1] || ""}
                   </div>
                   {!examShowResult && (
-                    <div style={styles.fillChips}>
-                      {shuffled.map((word, i) => (
-                        <div
-                          key={i}
-                          draggable
-                          onDragStart={(e) => e.dataTransfer.setData("text/plain", word)}
-                          onClick={() => handleFillDrop(word, q.answer)}
-                          style={styles.fillChip}
-                        >
-                          {word}
-                        </div>
-                      ))}
-                    </div>
+                    <>
+                      <div style={styles.fillChips}>
+                        {shuffled.map((word, i) => (
+                          <div
+                            key={i}
+                            draggable
+                            onDragStart={(e) => e.dataTransfer.setData("text/plain", word)}
+                            onClick={() => handleFillDrop(word, q.answer)}
+                            style={styles.fillChip}
+                          >
+                            {word}
+                          </div>
+                        ))}
+                      </div>
+                      <div style={styles.tapHint}>{"点击词块即可填入（电脑上也可拖拽）"}</div>
+                    </>
                   )}
                   {examShowResult && !isCorrect && (
                     <div style={{ fontSize: "clamp(11.2px, 0.972vw, 16.1px)", color: "#28A745", marginTop: 8 }}>
@@ -782,6 +785,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     </div>
                   ))}
                 </div>
+                <div style={styles.tapHint}>{"点击词块依次填入空格，点已填的字可取出（电脑上也可拖拽）"}</div>
                 <button
                   style={{ ...styles.proceedBtn, opacity: allFilled ? 1 : 0.5, cursor: allFilled ? "pointer" : "not-allowed" }}
                   disabled={!allFilled}
@@ -2465,9 +2469,9 @@ const styles = {
   },
   examPanelRight: {
     backgroundColor: "rgba(255,255,255,0.95)", borderRadius: 12,
-    padding: "24px 32px",
-    maxHeight: "80vh", overflowY: "auto",
-    width: "55vw", maxWidth: 680, minWidth: 360,
+    padding: "clamp(12px, 2vh, 24px) clamp(14px, 2.2vw, 32px)",
+    maxHeight: "92vh", overflowY: "auto",
+    width: "55vw", maxWidth: 680, minWidth: "min(360px, 92vw)",
     boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
     zIndex: 1,
   },
@@ -2527,8 +2531,9 @@ const styles = {
     borderRadius: 6, padding: 12, marginBottom: 16, fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.6,
   },
   examResultCard: {
-    backgroundColor: "#FFF", borderRadius: 12, padding: 32,
+    backgroundColor: "#FFF", borderRadius: 12, padding: "clamp(16px, 3vh, 32px)",
     maxWidth: 400, width: "90%", textAlign: "center",
+    maxHeight: "92vh", overflowY: "auto",
   },
   examResultTitle: { marginBottom: 16 },
   examScoreDisplay: { marginBottom: 16 },
@@ -2540,9 +2545,17 @@ const styles = {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.7)", padding: 20,
   },
+  tapHint: {
+    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
+    color: "#999",
+    marginTop: 6,
+    textAlign: "center",
+  },
   choicePanel: {
-    backgroundColor: "#FFF", borderRadius: 12, padding: 28,
+    backgroundColor: "#FFF", borderRadius: 12,
+    padding: "clamp(14px, 2vh, 28px) clamp(16px, 2vw, 28px)",
     maxWidth: 500, width: "90%",
+    maxHeight: "92vh", overflowY: "auto",
   },
   choiceNarrative: { fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.8, color: "#555", marginBottom: 16 },
   choiceQuestion: { fontSize: "clamp(14.4px, 1.25vw, 20.7px)", marginBottom: 20 },
@@ -2565,7 +2578,7 @@ const styles = {
     backgroundColor: "rgba(0,0,0,0.8)", padding: 20,
   },
   conclusionPanel: {
-    backgroundColor: "#FFF", borderRadius: 12, padding: 28,
+    backgroundColor: "#FFF", borderRadius: 12, padding: "clamp(14px, 2vh, 28px)",
     maxWidth: 560, width: "90%", maxHeight: "85vh", overflowY: "auto",
   },
   conclusionNarrative: { fontSize: "clamp(12.0px, 1.042vw, 17.2px)", lineHeight: 1.8, color: "#444", textIndent: "2em", marginBottom: 20 },
