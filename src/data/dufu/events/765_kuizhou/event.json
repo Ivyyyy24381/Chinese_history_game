@@ -138,6 +138,7 @@
             "x": 10,
             "y": 80
           },
+          "scale": 3,
           "dialogues": [
             {
               "speaker": "local_boy",
