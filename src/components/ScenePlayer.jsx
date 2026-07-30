@@ -873,12 +873,14 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               </div>
             )}
 
+            {/* \u7AD9\u70B9\u53EA\u753B\u5706\u70B9\uFF08\u5E95\u56FE\u5DF2\u6709\u5730\u540D\uFF0C\u6587\u5B57\u6807\u7B7E\u4F1A\u91CD\u5F71\uFF09\uFF1B\u60AC\u505C\u6709 title \u63D0\u793A */}
             {waypoints.map((wp) => {
               const wid = wp.id || wp.name;
               const visited = visitedWaypoints.has(wid);
               return (
                 <div
                   key={wid}
+                  title={(visited ? "\u2713 " : "") + (wp.name || "\u76EE\u7684\u5730")}
                   style={{ ...styles.triggerZone, left: (wp.x || 50) + "%", top: (wp.y || 50) + "%", opacity: visited ? 0.55 : 1 }}
                   onClick={() => handleWaypointClick(wp)}
                 >
@@ -888,13 +890,35 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     borderColor: visited ? "#95A5A6" : (wp.isKey ? "#E74C3C" : "#2ECC71"),
                     animation: visited ? "none" : "pulse 1.5s ease-in-out infinite",
                   }} />
-                  <span style={{
-                    ...styles.triggerLabel,
-                    backgroundColor: visited ? "rgba(149,165,166,0.85)" : (wp.isKey ? "rgba(231,76,60,0.85)" : "rgba(46,204,113,0.85)"),
-                  }}>{(visited ? "\u2713 " : "") + (wp.name || "\u76EE\u7684\u5730")}</span>
                 </div>
               );
             })}
+
+            {/* \u5C0F\u675C\u752B\uFF1A\u7AD9\u5728\u5F53\u524D/\u6700\u8FD1\u5230\u8BBF\u7684\u7AD9\u70B9\uFF0C\u70B9\u4E0B\u4E00\u7AD9\u4F1A\u8D70\u8FC7\u53BB */}
+            {(() => {
+              const lastId = [...visitedWaypoints].pop();
+              const at = activeWaypoint
+                || waypoints.find((w) => (w.id || w.name) === lastId)
+                || waypoints[0];
+              if (!at) return null;
+              return (
+                <img
+                  src={asset(dufuPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year))}
+                  alt=""
+                  style={{
+                    position: "absolute",
+                    left: (at.x || 50) + "%",
+                    top: (at.y || 50) + "%",
+                    height: "min(9vw, 15vh)",
+                    transform: "translate(-50%, -96%)",
+                    transition: "left 0.9s ease-in-out, top 0.9s ease-in-out",
+                    pointerEvents: "none",
+                    zIndex: 12,
+                    filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.4))",
+                  }}
+                />
+              );
+            })()}
 
             {(!requireAll || allVisited) && (
               <button style={styles.floatingProceed} onClick={goToNextPhase}>
