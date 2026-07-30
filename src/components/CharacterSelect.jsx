@@ -129,8 +129,8 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     padding: 40,
-    // 亭楼在左，内容整体右移让出背景主体
-    paddingLeft: "clamp(40px, 24vw, 460px)",
+    // 亭楼在左，内容整体右移让出背景主体；窄屏时留白收小保卡片空间
+    paddingLeft: "clamp(16px, 22vw, 440px)",
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     position: "relative",
     overflow: "hidden",
@@ -140,7 +140,7 @@ const styles = {
     lineHeight: 0,
   },
   titleImg: {
-    height: 84,
+    height: "clamp(48px, 5.8vw, 84px)",
     filter: "drop-shadow(0 1px 2px rgba(255,255,255,0.5))",
   },
   subtitle: {
@@ -150,32 +150,35 @@ const styles = {
     letterSpacing: 8,
   },
   characterGrid: {
-    display: "flex",
-    gap: 24,
-    flexWrap: "wrap",
+    // 三列网格：永远一行，不够宽时三张卡等比收窄
+    display: "grid",
+    gridTemplateColumns: "repeat(3, minmax(0, 230px))",
+    gap: "clamp(10px, 1.6vw, 24px)",
     justifyContent: "center",
+    width: "100%",
   },
   characterCard: {
-    width: 230,
+    width: "auto",
+    minWidth: 0,
     backgroundColor: "rgba(252,248,238,0.55)",
     borderRadius: 14,
     border: "1.5px solid",
-    padding: 24,
+    padding: "clamp(12px, 1.7vw, 24px)",
     textAlign: "center",
     position: "relative",
     backdropFilter: "blur(6px)",
     boxShadow: "0 4px 18px rgba(90,70,40,0.12)",
   },
   charPortrait: {
-    width: 120,
-    height: 120,
+    width: "clamp(72px, 8.4vw, 120px)",
+    height: "clamp(72px, 8.4vw, 120px)",
     objectFit: "contain",
     margin: "0 auto 12px",
     display: "block",
   },
   charAvatar: {
-    width: 80,
-    height: 80,
+    width: "clamp(52px, 5.6vw, 80px)",
+    height: "clamp(52px, 5.6vw, 80px)",
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
@@ -193,7 +196,7 @@ const styles = {
     lineHeight: 0,
   },
   charNameImg: {
-    height: 40,
+    height: "clamp(26px, 2.8vw, 40px)",
     verticalAlign: "middle",
   },
   charTitle: {
