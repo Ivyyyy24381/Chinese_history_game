@@ -775,8 +775,12 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                       draggable
                       onDragStart={(e) => e.dataTransfer.setData("text/plain", word)}
                       onClick={() => {
-                        const firstEmpty = composedBlanks.findIndex((v, i) => !v && i < blanks.length);
-                        const idx = firstEmpty >= 0 ? firstEmpty : 0;
+                        // 按空格总数找第一个未填的（不能在 composedBlanks 上找——
+                        // 它是稀疏数组，会永远命中第 0 格）
+                        let idx = 0;
+                        for (let i = 0; i < blanks.length; i++) {
+                          if (!composedBlanks[i]) { idx = i; break; }
+                        }
                         setBlank(idx, word);
                       }}
                       style={styles.fillChip}
