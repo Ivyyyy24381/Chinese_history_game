@@ -11,7 +11,7 @@ import TimelineEditor from "./components/TimelineEditor";
 import CharacterRecap from "./components/CharacterRecap";
 import AuthPanel from "./components/AuthPanel";
 import Leaderboard from "./components/Leaderboard";
-import { getCurrentUser, restoreSession, logout, submitScore } from "./services/backend";
+import { getCurrentUser, restoreSession, logout, submitScore, logVisit } from "./services/backend";
 import { asset } from "./utils/asset";
 
 // Achievements persist across sessions.
@@ -108,6 +108,7 @@ export default function App() {
   const scoreSubmittedRef = useRef(false);
   useEffect(() => {
     restoreSession().then(setUser).catch(() => {});
+    logVisit(); // 访问统计：无论注册与否都记一条
   }, []);
   const [showScene, setShowScene] = useState(false);
   const [sceneData, setSceneData] = useState(null);

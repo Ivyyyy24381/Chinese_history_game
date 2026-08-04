@@ -131,6 +131,46 @@ export async function logout() {
   try { localStorage.removeItem(LOCAL_USER_KEY); } catch { /* ignore */ }
 }
 
+// ---- 访问统计 ---------------------------------------------------------
+
+const DEVICE_KEY = "lishiyou_device";
+function getDeviceId() {
+  try {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  } catch { return "unknown"; }
+}
+
+/**
+ * 记一次访问（每个浏览器会话只记一次，玩家无需注册/登录）。
+ * 数据写入 CloudBase `visits` 集合，控制台可看总数和明细。
+ * 失败静默，绝不影响游戏。
+ */
+export async function logVisit() {
+  if (!isCloud()) return;
+  try {
+    if (sessionStorage.getItem("lishiyou_visited")) return; // 本会话已记
+    sessionStorage.setItem("lishiyou_visited", "1");
+  } catch { /* ignore */ }
+  try {
+    const app = await getApp();
+    await ensureSignedIn(app);
+    const db = app.database();
+    await db.collection("visits").add({
+      deviceId: getDeviceId(),          // 同一设备同一个 id，可用于估算独立访客
+      path: location.pathname,
+      referrer: document.referrer || "",
+      screen: `${window.screen?.width || 0}x${window.screen?.height || 0}`,
+      touch: navigator.maxTouchPoints > 0, // 大致区分手机/电脑
+      createdAt: db.serverDate(),
+    });
+  } catch { /* 集合未建或网络失败 — 静默 */ }
+}
+
 // ---- 排行榜 -----------------------------------------------------------
 
 // 数据库操作需要登录态；未登录玩家用匿名登录兜底。
