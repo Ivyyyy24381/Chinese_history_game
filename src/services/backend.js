@@ -154,7 +154,6 @@ export async function logVisit() {
   if (!isCloud()) return;
   try {
     if (sessionStorage.getItem("lishiyou_visited")) return; // 本会话已记
-    sessionStorage.setItem("lishiyou_visited", "1");
   } catch { /* ignore */ }
   try {
     const app = await getApp();
@@ -168,6 +167,8 @@ export async function logVisit() {
       touch: navigator.maxTouchPoints > 0, // 大致区分手机/电脑
       createdAt: db.serverDate(),
     });
+    // 写入成功才标记，失败下次刷新会重试
+    try { sessionStorage.setItem("lishiyou_visited", "1"); } catch { /* ignore */ }
   } catch { /* 集合未建或网络失败 — 静默 */ }
 }
 
