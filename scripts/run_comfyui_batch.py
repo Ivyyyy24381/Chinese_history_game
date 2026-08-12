@@ -21,6 +21,8 @@ Usage:
     #    --negative "..."    # negative prompt
     #    --seed 12345        # base seed (each row gets seed + index for reproducibility)
     #    --host 127.0.0.1:8188
+    #    --manifest scripts/assets_manifest_dante.csv   # alternate character line
+    #    --preset dante      # medieval style preset for the Dante line
 """
 import argparse
 import csv
@@ -47,6 +49,7 @@ TYPE_MODIFIER = {
     "bg":   "电影感构图, 16:9 横构图, 前景中部留白, 温暖典雅暮色调, 柔光",
     "npc":  "人物立绘居中, 半写实人物面部, 解剖准确",
     "dufu": "人物立绘居中, 半写实人物面部, 解剖准确",
+    "dante": "人物立绘居中, 半写实人物面部, 解剖准确",
     # Note: prop does NOT use BASE_STYLE_ZH (see PROP_FULL_STYLE_ZH below).
     # The "工笔重彩" wording in BASE_STYLE makes the model paint figures onto
     # objects (turning a wine jar into a decorated vase). At CFG=1 (Z-Image
@@ -83,6 +86,39 @@ CHAR_TRANSPARENT_TAIL = (
     ", 透明背景, transparent background, isolated character on alpha, no scenery, "
     "full-body portrait centered, feet visible, standing pose, full figure from head to toe"
 )
+
+# ---- Dante line: late-medieval Italian style (Giotto fresco × illuminated MS) --
+# Same layering logic as the Tang preset; selected via --preset dante.
+DANTE_BASE_STYLE_ZH = (
+    "中世纪晚期意大利画风, late medieval Italian painting, "
+    "乔托湿壁画与泥金手抄本混合风格, Giotto fresco and illuminated manuscript hybrid style, "
+    "蛋彩画质感, 细线勾勒, 平涂叠染, 群青朱红赭石金箔主色, "
+    "13至14世纪意大利服饰建筑器物严格考证, 半写实, 庄重典雅, "
+    "无文字水印, 无现代元素, 高质量, 8k"
+)
+DANTE_PROP_FULL_STYLE_ZH = (
+    "中世纪泥金手抄本器物插画风格, medieval illuminated manuscript object illustration, "
+    "平面2D插画, flat 2D illustration of a single medieval artifact, "
+    "黑色细线勾勒轮廓, fine ink line outlines, 平涂淡彩, flat light color wash, "
+    "no shading no gradient, no perspective no 3D rendering, no photo realism, "
+    "single object centered, plain parchment background, "
+    "无任何人物, 无场景, 无装饰边框, 无文字水印, 无现代元素"
+)
+DANTE_EXTRA_NEG = (
+    ", Chinese elements, Asian architecture, hanfu, kimono, ink wash painting, "
+    "Tang Dynasty style"
+)
+
+# Style presets: base style for characters/backgrounds, full style for props,
+# and preset-specific extra negatives.
+STYLE_PRESETS = {
+    "tang": {"base": None, "prop": None, "extra_neg": ""},  # filled below (defaults)
+    "dante": {
+        "base": DANTE_BASE_STYLE_ZH,
+        "prop": DANTE_PROP_FULL_STYLE_ZH,
+        "extra_neg": DANTE_EXTRA_NEG,
+    },
+}
 PROP_TRANSPARENT_TAIL = (
     ", 透明背景, transparent background, isolated single object on alpha, "
     "no scenery, no shadow, centered single object"
@@ -211,7 +247,9 @@ def patch_workflow(
 # ---- Driver ------------------------------------------------------------------
 def run(args):
     root = Path(__file__).resolve().parent.parent
-    manifest_path = root / "scripts" / "assets_manifest.csv"
+    manifest_path = Path(args.manifest)
+    if not manifest_path.is_absolute():
+        manifest_path = root / manifest_path
     workflow_path = Path(args.workflow)
     if not workflow_path.is_absolute():
         workflow_path = root / workflow_path
@@ -229,9 +267,13 @@ def run(args):
 
     client_id = str(uuid.uuid4())
     style_override = args.style  # None unless user passed --style
-    negative = args.negative or DEFAULT_NEG
+    preset = STYLE_PRESETS[args.preset]
+    base_style = preset["base"] or BASE_STYLE_ZH
+    prop_style = preset["prop"] or PROP_FULL_STYLE_ZH
+    negative = args.negative or (DEFAULT_NEG + preset["extra_neg"])
 
     print(f"[batch] {len(rows)} rows to generate")
+    print(f"[batch] Manifest: {manifest_path.name}   Preset: {args.preset}")
     print(f"[batch] ComfyUI at http://{args.host}")
     print(f"[batch] Workflow: {workflow_path.name}")
     print()
@@ -255,10 +297,10 @@ def run(args):
         if style_override:
             row_style = style_override
         elif is_prop:
-            row_style = PROP_FULL_STYLE_ZH
+            row_style = prop_style
         else:
             modifier = TYPE_MODIFIER.get(rtype, "")
-            row_style = f"{BASE_STYLE_ZH}, {modifier}" if modifier else BASE_STYLE_ZH
+            row_style = f"{base_style}, {modifier}" if modifier else base_style
         tail = PROP_TRANSPARENT_TAIL if is_prop else CHAR_TRANSPARENT_TAIL
         if row.get("transparent", "").lower() == "true":
             prompt = prompt + tail
@@ -332,7 +374,11 @@ def main():
     p.add_argument("--workflow", default="scripts/comfy_workflow.json",
                    help="Path to ComfyUI workflow JSON in API format (export via 'Save (API Format)')")
     p.add_argument("--host", default="127.0.0.1:8188", help="ComfyUI host:port")
-    p.add_argument("--only", choices=["npc", "bg", "prop", "dufu"], help="Filter by type")
+    p.add_argument("--manifest", default="scripts/assets_manifest.csv",
+                   help="CSV manifest to read (e.g. scripts/assets_manifest_dante.csv)")
+    p.add_argument("--preset", choices=list(STYLE_PRESETS), default="tang",
+                   help="Style preset: tang (杜甫线工笔重彩) / dante (中世纪湿壁画+泥金抄本)")
+    p.add_argument("--only", choices=["npc", "bg", "prop", "dufu", "dante"], help="Filter by type")
     p.add_argument("--filter", help="Substring filter on output_path (e.g. '736')")
     p.add_argument("--skip-existing", action="store_true",
                    help="Skip rows whose output file already exists")
