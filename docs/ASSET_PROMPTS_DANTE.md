@@ -63,17 +63,20 @@ Chinese elements, Asian architecture, hanfu, kimono
 - **主角同脸**：但丁 12 张立绘必须同一张脸。CSV 每条 dante 行已内嵌完整面部锚点（对照经典但丁像逐项写死）：
 
   ```
-  消瘦长脸，标志性的巨大鹰钩鼻：鼻梁自眉骨高挺直下、鼻背明显弓起、鼻尖长而下勾，
-  prominent aquiline hooked nose with high arched bridge and long downturned tip，
-  眉弓突出，眼窝深陷，目光沉郁俯视，双颊凹陷，颧骨高，下唇前突，下颌方长前翘，
+  消瘦长脸，鹰钩鼻但比例自然写实：鼻梁高挺，鼻背略微弓起，鼻尖稍稍下勾，正常人类鼻子大小，
+  realistic aquiline Roman nose with subtly arched bridge and slightly downturned tip，
+  anatomically correct natural-sized nose，
+  眉弓突出，眼窝深陷，目光沉郁，双颊微陷，颧骨高，下唇略前突，下颌方长，
   面部无须 clean-shaven，白色亚麻内帽 coif 贴头包裹双颊沿下颌系带，
   外罩红色尖顶连颈头巾帽 white linen coif under red cappuccio hood
   ```
 
-  鼻子是辨识核心：**眉骨—鼻梁近乎直线、鼻背弓起、鼻尖下勾**，出图后逐张检查这三点。
+  鼻子的度：**高挺 + 略弓 + 微勾**，但必须是正常人类比例——描述写得太狠模型会画成鸟嘴/瘟疫医生面具
+  （已踩坑）。`--preset dante` 的 negative 已加 `beak nose, plague doctor mask, oversized nose, caricature`
+  兜底。出图验收标准：侧脸能认出"但丁鼻"，正脸不出戏。
   armored（戴锁子甲头巾）与 dying（病榻只留白内帽）两张不戴红帽，锚点已相应调整。
   强烈建议第一批挑一张最像的做 face reference（IPAdapter）再跑全组。
-- 若鼻子出得不够挺，在该行 prompt 里把英文段加权重（SDXL 语法如 `(prominent aquiline hooked nose:1.3)`）。
+- 鼻子存在感微调：嫌弱 → 英文段加轻权重 `(aquiline Roman nose:1.15)`（超过 1.2 慎用）；嫌夸张 → 再降权重或把"略微/稍稍"改成"微微"。
 - 背景里不画可交互 NPC（立绘独立放置）。
 - 贝雅特丽切两张立绘（少女白衣 / 天堂华服）也必须同脸。
 
@@ -81,7 +84,7 @@ Chinese elements, Asian architecture, hanfu, kimono
 
 ## 一、主角但丁 · 分期立绘（12 张，type=`dante`）
 
-> 面部锚点（每条已含，全文见上方"重要约束"）：`消瘦长脸 + 巨大鹰钩鼻（眉骨直下/鼻背弓起/鼻尖下勾）+ 深陷眼窝 + 前突下唇下颌 + 白coif内帽 + 红cappuccio帽`
+> 面部锚点（每条已含，全文见上方"重要约束"）：`消瘦长脸 + 自然比例鹰钩鼻（高挺/略弓/微勾）+ 深陷眼窝 + 略前突下唇下颌 + 白coif内帽 + 红cappuccio帽`
 
 | 文件 | 阶段·姿态 | Prompt 要点（中） |
 |---|---|---|

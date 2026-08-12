@@ -106,7 +106,10 @@ DANTE_PROP_FULL_STYLE_ZH = (
 )
 DANTE_EXTRA_NEG = (
     ", Chinese elements, Asian architecture, hanfu, kimono, ink wash painting, "
-    "Tang Dynasty style"
+    "Tang Dynasty style, "
+    # keep the aquiline nose from ballooning into a beak (it happened)
+    "beak nose, bird beak, plague doctor mask, pinocchio nose, "
+    "oversized exaggerated nose, caricature, grotesque features"
 )
 
 # Style presets: base style for characters/backgrounds, full style for props,
