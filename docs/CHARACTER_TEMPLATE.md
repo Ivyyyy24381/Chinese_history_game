@@ -41,9 +41,11 @@ public/assets/
 状态标记：📝 草稿 / ✅ 已实现
 
 ### 设计意图
+
 一句话：本事件在人物弧线中负责什么（如"第一次看见政治黑暗"）。
 
 ### Phase N · <type> · <小标题>
+
 - **背景**：`<bg>.png`（一句画面描述，将来直接当生图 prompt）
 - **叙事 narrative**：开场旁白（可空）
 - **指示 instruction**：给玩家的一句操作提示
@@ -60,9 +62,11 @@ public/assets/
 - **nextPhase**: `<id>`
 
 ### 诗作
+
 本事件绑定的诗（出处 + 节选）。
 
 ### 资源需求
+
 背景 N 张（列名）、专属 NPC 立绘（列名）——这节就是资产清单。
 ```
 
@@ -77,31 +81,39 @@ public/assets/
 **地点**：长安　**时期**：困守长安　**状态**：第一次看见政治黑暗
 
 ### 设计意图
+
 第一次让杜甫看见「公平」是假的。考试本身是「难」的——但即便答对，
 也照样落榜。这是全剧的第一次结构性失败。
 
 ### Phase 1 · explore · 长安街头（6 NPC）
+
 > 天宝六载，皇帝下诏特办制举，「通一艺者」皆可来长安应考。
+
 - 商贩甲：「前时才科举，为何今秋又办？」
 - 士人乙：「制举多有觅举，唯恐有害士风，耿介羞与为伍。」
 - ……（6 个市井 NPC，每人一句侧面信息：制举多稀罕、谁会来考、士人怎么看）
 - 通过：与 3 人交谈 → 触发区域 (48,25)，进入考场。
 
 ### Phase 3 · exam · 制举考试（8 题）
+
 考官：李林甫。5 选择 + 3 补诗，全部是真实唐代文学考点：
+
 1. 「风雅」指哪部典籍？→《诗经》
-6. 贾谊《鵩鸟赋》：「万物为 ___」→ 铜
-……（玩家认真作答，且确实能答对——这是关键）
+2. 贾谊《鵩鸟赋》：「万物为 \_\_\_」→ 铜
+   ……（玩家认真作答，且确实能答对——这是关键）
 
 ### Phase 4 · transition · 揭榜
+
 > 一个月后……
 
 ### Phase 5 · explore · 长安市（5 条线索）
+
 - 🔑 榜单（点击）：「未上榜」+ 杜甫四段反应
 - 🔑 落榜书生：「这次制举及第人数颇少啊。」
 - 🔑 提文：「相国晋公林甫，以草野之士猥多……——元结」
 
 ### Phase 6 · forced_choice · 得出结论
+
 | 选项 | 反应 | 结果 |
 | 运气不好 | 「总感觉漏掉了什么？」 | ❌ 退回去继续找线索 |
 | 李林甫！ | 「平民无一人及第！这是『野无遗贤』把戏。」 | ✅ 真相 |
@@ -120,18 +132,18 @@ public/assets/
 
 ## phase 类型速查（引擎已支持，新人物零代码可用）
 
-| type | 用途 | 关键字段 |
-|---|---|---|
-| explore | 点 NPC/物件对话 | npcs[](可设 clickable:false / hideHint)、requiredTalks |
-| transition | 过场/诏书/反应 | transitionText、announcement{title,text}、dufu_reaction |
-| forced_choice | 单选分支 | question、options[]、conclusion |
-| exam | 考试 | examiner、questions[]（choice/poem_fill） |
-| poem_compose | 拼诗 | poemContext、poemCandidates、poemAnswer |
-| map_travel | 地图途经点 | background(路线图)、waypoints[]{id,name,x,y,dialogues} |
-| comic_reveal | 连环画分格 | panels[]{x,y,w,h,dialogues}、autoAdvanceSec |
-| click_points | 找茬触发点 | points[]、progressivePoem、unlockThreshold |
-| sliding_puzzle | 数字华容道 | puzzles[] |
-| escape_game | 追逐逃脱 | gridW/H、cells、guards、chaseRadius、start/end |
+| type           | 用途            | 关键字段                                                |
+| -------------- | --------------- | ------------------------------------------------------- |
+| explore        | 点 NPC/物件对话 | npcs[](可设 clickable:false / hideHint)、requiredTalks  |
+| transition     | 过场/诏书/反应  | transitionText、announcement{title,text}、dufu_reaction |
+| forced_choice  | 单选分支        | question、options[]、conclusion                         |
+| exam           | 考试            | examiner、questions[]（choice/poem_fill）               |
+| poem_compose   | 拼诗            | poemContext、poemCandidates、poemAnswer                 |
+| map_travel     | 地图途经点      | background(路线图)、waypoints[]{id,name,x,y,dialogues}  |
+| comic_reveal   | 连环画分格      | panels[]{x,y,w,h,dialogues}、autoAdvanceSec             |
+| click_points   | 找茬触发点      | points[]、progressivePoem、unlockThreshold              |
+| sliding_puzzle | 数字华容道      | puzzles[]                                               |
+| escape_game    | 追逐逃脱        | gridW/H、cells、guards、chaseRadius、start/end          |
 
 主人公分期立绘：在 `src/data/dufuPoses.js` 同款文件里登记 `<charId>Poses.js`
 （分期年份表 + 姿态清单），引擎按事件年份自动选默认立绘。
@@ -147,30 +159,36 @@ public/assets/
 ```markdown
 # 美工生成指南 · <人物名>
 
-## 通用风格指南          ← 全人物统一画风，每条 prompt 前都粘这段
-   - 画风正向 prompt（中 + 英两版，如"唐代工笔重彩…"）
-   - 反面 prompt（no text, no watermark, no modern elements…）
-   - 输出规格（见下表）
-   - 同一 seed / style reference 跑完整批，保证画风统一
+## 通用风格指南 ← 全人物统一画风，每条 prompt 前都粘这段
 
-## 一、背景图             ← 按事件分组，每事件 4–6 张
-## 二、NPC 立绘           ← 按圈层分组（家人/文人圈/市井/战乱/晚年…）
-## 三、主角分期姿态立绘    ← 按人生阶段分组，每期 2–5 个姿态
-## 四、道具               ← 可交互物件（卷轴/酒杯/兵器…）
-## 五、地图               ← 主地图 1 张 + 每个 map_travel 路线图 1 张
-## 六、BGM                ← 一时期一首（风格描述即可，见 audio/bgm/README）
+- 画风正向 prompt（中 + 英两版，如"唐代工笔重彩…"）
+- 反面 prompt（no text, no watermark, no modern elements…）
+- 输出规格（见下表）
+- 同一 seed / style reference 跑完整批，保证画风统一
+
+## 一、背景图 ← 按事件分组，每事件 4–6 张
+
+## 二、NPC 立绘 ← 按圈层分组（家人/文人圈/市井/战乱/晚年…）
+
+## 三、主角分期姿态立绘 ← 按人生阶段分组，每期 2–5 个姿态
+
+## 四、道具 ← 可交互物件（卷轴/酒杯/兵器…）
+
+## 五、地图 ← 主地图 1 张 + 每个 map_travel 路线图 1 张
+
+## 六、BGM ← 一时期一首（风格描述即可，见 audio/bgm/README）
 ```
 
 ### 每类的规格与写法
 
-| 类别 | 规格 | 路径 | prompt 要点 |
-|---|---|---|---|
-| 背景 | 1920×1080 PNG | `events/<事件>/backgrounds/` | 场景+时辰+光线+氛围；**不画可交互 NPC**（立绘独立放置，bubbleMode 例外） |
-| NPC 立绘 | 768×1024 透明底 | `characters/npcs/<speakerId>.png` | 年龄+服饰（朝代考证）+神情+姿态；视线朝画面中央偏左；需镜像的引擎 flip 处理，生成正向即可 |
-| 主角姿态 | 768×1024 透明底 | `characters/<charId>/<stage>/<pose>.png` | 同一张脸不同年龄段！写明岁数、体态变化（清瘦/佝偻）、服饰随境遇变化 |
-| 道具 | 1024×1024 透明底 | `props/<name>.png` | 单物居中、可平放可手持视角，古物考证 |
-| 地图 | ≥1600 宽，统一比例 | `maps/` | 手绘古地图风；路线图标注途经地名；留好图钉空间（避免文字挤在路线上） |
-| BGM | mp3 ≤2MB 可循环 | `audio/bgm/<stageId>.mp3` | 写"乐器+情绪+节奏"一句即可（交给作曲/AI 音乐工具） |
+| 类别     | 规格               | 路径                                     | prompt 要点                                                                               |
+| -------- | ------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 背景     | 1920×1080 PNG      | `events/<事件>/backgrounds/`             | 场景+时辰+光线+氛围；**不画可交互 NPC**（立绘独立放置，bubbleMode 例外）                  |
+| NPC 立绘 | 768×1024 透明底    | `characters/npcs/<speakerId>.png`        | 年龄+服饰（朝代考证）+神情+姿态；视线朝画面中央偏左；需镜像的引擎 flip 处理，生成正向即可 |
+| 主角姿态 | 768×1024 透明底    | `characters/<charId>/<stage>/<pose>.png` | 同一张脸不同年龄段！写明岁数、体态变化（清瘦/佝偻）、服饰随境遇变化                       |
+| 道具     | 1024×1024 透明底   | `props/<name>.png`                       | 单物居中、可平放可手持视角，古物考证                                                      |
+| 地图     | ≥1600 宽，统一比例 | `maps/`                                  | 手绘古地图风；路线图标注途经地名；留好图钉空间（避免文字挤在路线上）                      |
+| BGM      | mp3 ≤2MB 可循环    | `audio/bgm/<stageId>.mp3`                | 写"乐器+情绪+节奏"一句即可（交给作曲/AI 音乐工具）                                        |
 
 ### 单条 prompt 的固定字段（表格一行一张图）
 
