@@ -101,5 +101,5 @@ Chinese_history_game/
 
 | JSON 里写 | 实际文件位置 |
 |---|---|
-| `/assets/characters/dufu/portrait.png` | `public/assets/characters/dufu/portrait.png` |
-| `/assets/events/747_exam/backgrounds/exam_hall.png` | `public/assets/events/747_exam/backgrounds/exam_hall.png` |
+| `/assets/dufu/hero/portrait.png` | `public/assets/dufu/hero/portrait.png` |
+| `/assets/dufu/events/747_exam/backgrounds/exam_hall.png` | `public/assets/dufu/events/747_exam/backgrounds/exam_hall.png` |

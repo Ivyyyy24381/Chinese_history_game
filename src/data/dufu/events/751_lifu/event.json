@@ -7,7 +7,7 @@
     {
       "id": "street_ceremony_eve",
       "type": "explore",
-      "background": "/assets/events/751_lifu/backgrounds/changan_ceremony.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/changan_ceremony.png",
       "title": "长安街头·大礼前夕",
       "narrative": "天宝十载（751年），玄宗将行三大礼——朝献太清宫、朝享太庙、有事于南郊。长安万民同庆，张灯结彩。",
       "instruction": "和路人交谈，了解这场盛典与「献赋」的机会。",
@@ -15,7 +15,7 @@
         {
           "id": "merchant_a",
           "name": "商贩甲",
-          "portrait": "/assets/characters/npcs/merchant_a.png",
+          "portrait": "/assets/dufu/npcs/merchant_a.png",
           "position": {
             "x": 19,
             "y": 84
@@ -32,7 +32,7 @@
         {
           "id": "merchant_b",
           "name": "商贩乙",
-          "portrait": "/assets/characters/npcs/merchant_b.png",
+          "portrait": "/assets/dufu/npcs/merchant_b.png",
           "position": {
             "x": 79,
             "y": 79
@@ -55,7 +55,7 @@
         {
           "id": "waiter",
           "name": "酒店伙计",
-          "portrait": "/assets/characters/npcs/waiter.png",
+          "portrait": "/assets/dufu/npcs/waiter.png",
           "position": {
             "x": 45,
             "y": 64
@@ -78,7 +78,7 @@
         {
           "id": "scholar_a",
           "name": "士人甲",
-          "portrait": "/assets/characters/npcs/scholar_a.png",
+          "portrait": "/assets/dufu/npcs/scholar_a.png",
           "position": {
             "x": 63,
             "y": 73
@@ -95,7 +95,7 @@
         {
           "id": "scholar_b",
           "name": "士人乙",
-          "portrait": "/assets/characters/npcs/scholar_b.png",
+          "portrait": "/assets/dufu/npcs/scholar_b.png",
           "position": {
             "x": 54,
             "y": 73
@@ -117,7 +117,7 @@
         {
           "id": "elder",
           "name": "喝酒老人",
-          "portrait": "/assets/characters/npcs/elder.png",
+          "portrait": "/assets/dufu/npcs/elder.png",
           "position": {
             "x": 31,
             "y": 79
@@ -150,7 +150,7 @@
     {
       "id": "residence",
       "type": "explore",
-      "background": "/assets/events/751_lifu/backgrounds/dufu_home.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/dufu_home.png",
       "title": "杜甫居所·夜",
       "narrative": "夜深，油灯如豆。桌上散落着写废的稿纸与空酒壶。",
       "instruction": "点击桌案、纸团与杜甫，了解他的处境。",
@@ -180,7 +180,7 @@
         {
           "id": "paper_ball",
           "name": "纸团",
-          "portrait": "/assets/items/paper_ball.png",
+          "portrait": "/assets/shared/items/paper_ball.png",
           "position": {
             "x": 81,
             "y": 78
@@ -203,7 +203,7 @@
         {
           "id": "label_1778532955294",
           "name": "杜甫",
-          "portrait": "/assets/characters/dufu/official/kneeling.png",
+          "portrait": "/assets/dufu/hero/official/kneeling.png",
           "position": {
             "x": 49,
             "y": 65
@@ -226,7 +226,7 @@
         {
           "id": "label_1781300886754",
           "name": "文字标签",
-          "portrait": "/assets/items/paper_ball.png",
+          "portrait": "/assets/shared/items/paper_ball.png",
           "position": {
             "x": 85,
             "y": 81
@@ -246,7 +246,7 @@
         {
           "id": "label_1781300930700",
           "name": "文字标签",
-          "portrait": "/assets/props/book_wenxuan.png",
+          "portrait": "/assets/dufu/props/book_wenxuan.png",
           "position": {
             "x": 79,
             "y": 90
@@ -267,7 +267,7 @@
     {
       "id": "writing_puzzle",
       "type": "sliding_puzzle",
-      "background": "/assets/events/751_lifu/backgrounds/dufu_home.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/dufu_home.png",
       "title": "落笔之际 · 数字华容道",
       "narrative": "灯下，杜甫提起笔——三大礼赋的句子在脑中翻涌。请把它们重新拼齐。",
       "puzzles": [
@@ -291,7 +291,7 @@
     {
       "id": "palace_gate",
       "type": "explore",
-      "background": "/assets/events/751_lifu/backgrounds/yanen_gate.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/yanen_gate.png",
       "title": "宫门·献赋",
       "narrative": "宫门外，士子云集，皆为延恩匦而来。",
       "instruction": "和宫门外的士子交谈，看看献赋的情形。",
@@ -299,7 +299,7 @@
         {
           "id": "student_1",
           "name": "士子",
-          "portrait": "/assets/characters/npcs/student.png",
+          "portrait": "/assets/dufu/npcs/student.png",
           "position": {
             "x": 29,
             "y": 72
@@ -316,7 +316,7 @@
         {
           "id": "student_2",
           "name": "另一士子",
-          "portrait": "/assets/characters/npcs/scholar_a.png",
+          "portrait": "/assets/dufu/npcs/scholar_a.png",
           "position": {
             "x": 53,
             "y": 75
@@ -334,7 +334,7 @@
         {
           "id": "LinFu_Li",
           "name": "李林甫",
-          "portrait": "/assets/characters/npcs/LinFu_Li.png",
+          "portrait": "/assets/dufu/npcs/LinFu_Li.png",
           "position": {
             "x": 86,
             "y": 72
@@ -361,7 +361,7 @@
     {
       "id": "jixianyuan",
       "type": "transition",
-      "background": "/assets/events/751_lifu/backgrounds/jixianyuan.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/jixianyuan.png",
       "title": "集贤院",
       "transitionText": "数日后……",
       "narrative": "",
@@ -371,7 +371,7 @@
         "title": "诏"
       },
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/dufu/hero/portrait.png",
         "text": "终于……"
       },
       "nextPhase": "night_return"
@@ -379,7 +379,7 @@
     {
       "id": "night_return",
       "type": "explore",
-      "background": "/assets/events/751_lifu/backgrounds/changan_night.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/changan_night.png",
       "title": "长安夜",
       "narrative": "时间过去。没有后文。长安城中，人们仍在议论。",
       "instruction": "走在夜里的长安街上，听听人们怎么说。",
@@ -387,7 +387,7 @@
         {
           "id": "waiter_night",
           "name": "酒店伙计",
-          "portrait": "/assets/characters/npcs/waiter.png",
+          "portrait": "/assets/dufu/npcs/waiter.png",
           "position": {
             "x": 35,
             "y": 85
@@ -404,7 +404,7 @@
         {
           "id": "merchant_a_night",
           "name": "商贩甲",
-          "portrait": "/assets/characters/npcs/merchant_a.png",
+          "portrait": "/assets/dufu/npcs/merchant_a.png",
           "position": {
             "x": 56,
             "y": 69
@@ -421,7 +421,7 @@
         {
           "id": "elder_night",
           "name": "喝酒老人",
-          "portrait": "/assets/characters/npcs/elder.png",
+          "portrait": "/assets/dufu/npcs/elder.png",
           "position": {
             "x": 75,
             "y": 83
@@ -453,7 +453,7 @@
     {
       "id": "ending",
       "type": "transition",
-      "background": "/assets/events/751_lifu/backgrounds/changan_night.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/changan_night.png",
       "title": "夜归",
       "transitionText": "夜晚。\n杜甫站在长安街头。\n远处宫城灯火辉煌。",
       "narrative": ""

@@ -7,7 +7,7 @@
     {
       "id": "huazhou_yamen",
       "type": "explore",
-      "background": "/assets/events/759_qinzhou/backgrounds/huazhou_yamen.png",
+      "background": "/assets/dufu/events/759_qinzhou/backgrounds/huazhou_yamen.png",
       "title": "华州官衙",
       "narrative": "乾元二年（759）夏，华州大旱。杜甫任华州司功参军——一个管祭祀、礼仪、学校的小官。",
       "instruction": "在县衙里办你的事——但很快你会发现办不下去。",
@@ -15,7 +15,7 @@
         {
           "id": "clerk",
           "name": "小吏",
-          "portrait": "/assets/characters/npcs/clerk.png",
+          "portrait": "/assets/dufu/npcs/clerk.png",
           "position": {
             "x": 37,
             "y": 66
@@ -43,7 +43,7 @@
         {
           "id": "colleague",
           "name": "同僚",
-          "portrait": "/assets/characters/npcs/official.png",
+          "portrait": "/assets/dufu/npcs/official.png",
           "position": {
             "x": 52,
             "y": 65
@@ -92,7 +92,7 @@
     {
       "id": "shihao_village",
       "type": "comic_reveal",
-      "background": "/assets/events/759_qinzhou/backgrounds/shihao_night.png",
+      "background": "/assets/dufu/events/759_qinzhou/backgrounds/shihao_night.png",
       "title": "石壕村·夜",
       "narrative": "暮投石壕村，有吏夜捉人。\n夜里有动静。",
       "instruction": "点击画面，一格一格看下去。",
@@ -206,7 +206,7 @@
     {
       "id": "sanbie",
       "type": "explore",
-      "background": "/assets/events/759_qinzhou/backgrounds/yellow_road.png",
+      "background": "/assets/dufu/events/759_qinzhou/backgrounds/yellow_road.png",
       "title": "三别·一路上",
       "narrative": "华州一路上，杜甫遇到的不止石壕村。",
       "instruction": "和路上的三个人都说说话。",
@@ -214,7 +214,7 @@
         {
           "id": "xinhun",
           "name": "新婚女子",
-          "portrait": "/assets/characters/npcs/xinhun.png",
+          "portrait": "/assets/dufu/npcs/xinhun.png",
           "position": {
             "x": 34,
             "y": 69
@@ -242,7 +242,7 @@
         {
           "id": "wujia",
           "name": "无家的兵",
-          "portrait": "/assets/characters/npcs/wujia.png",
+          "portrait": "/assets/dufu/npcs/wujia.png",
           "position": {
             "x": 71,
             "y": 74
@@ -270,7 +270,7 @@
         {
           "id": "chuilao",
           "name": "垂老老兵",
-          "portrait": "/assets/characters/npcs/chuilao.png",
+          "portrait": "/assets/dufu/npcs/chuilao.png",
           "position": {
             "x": 80,
             "y": 65
@@ -302,7 +302,7 @@
     {
       "id": "resign_choice",
       "type": "forced_choice",
-      "background": "/assets/events/759_qinzhou/backgrounds/huazhou_yamen.png",
+      "background": "/assets/dufu/events/759_qinzhou/backgrounds/huazhou_yamen.png",
       "title": "弃官",
       "narrative": "杜甫回到华州，案上堆满征兵文书。一支笔。一张白纸。",
       "question": "这官，做还是不做？",
@@ -345,7 +345,7 @@
     {
       "id": "qinzhou_road",
       "type": "map_travel",
-      "background": "/assets/maps/route_759_qinzhou.png",
+      "background": "/assets/dufu/maps/route_759_qinzhou.png",
       "title": "秦州古道",
       "travelNarrative": "携家西行。每一站走一遍。",
       "instruction": "点击每一个停点，听一听途中的故事。",
@@ -436,11 +436,11 @@
     {
       "id": "ending",
       "type": "transition",
-      "background": "/assets/events/759_qinzhou/backgrounds/chengdu_winter.png",
+      "background": "/assets/dufu/events/759_qinzhou/backgrounds/chengdu_winter.png",
       "title": "此后漂泊",
       "transitionText": "秋去冬来。\n一家人风餐露宿，\n终于走到了浣花溪畔。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/drift/walking.png",
+        "portrait": "/assets/dufu/hero/drift/walking.png",
         "text": "这里，能不能停下？"
       },
       "narrative": ""

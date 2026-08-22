@@ -7,11 +7,11 @@
     {
       "id": "out_of_kuizhou",
       "type": "transition",
-      "background": "/assets/events/770_xiangjiang/backgrounds/jianjling_river.png",
+      "background": "/assets/dufu/events/770_xiangjiang/backgrounds/jianjling_river.png",
       "title": "出夔州后",
       "transitionText": "大历三年（768）春。\n杜甫携家出三峡。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/old/sitting.png",
+        "portrait": "/assets/dufu/hero/old/sitting.png",
         "text": "往哪里去呢？故乡是不能回了。"
       },
       "nextPhase": "yueyang_lou",
@@ -20,7 +20,7 @@
     {
       "id": "yueyang_lou",
       "type": "comic_reveal",
-      "background": "/assets/events/770_xiangjiang/backgrounds/yueyang_lou.png",
+      "background": "/assets/dufu/events/770_xiangjiang/backgrounds/yueyang_lou.png",
       "title": "岳阳楼",
       "narrative": "大历三年冬。杜甫终于登上久闻其名的岳阳楼。",
       "instruction": "登楼远望——四个方向，四种心情。",
@@ -80,7 +80,7 @@
     {
       "id": "drift_route",
       "type": "map_travel",
-      "background": "/assets/maps/route_770_xiangjiang.png",
+      "background": "/assets/dufu/maps/route_770_xiangjiang.png",
       "title": "漂泊路线",
       "travelNarrative": "大历四年（769）至大历五年（770）。杜甫携家漂泊于潭州、衡州、耒阳之间。",
       "instruction": "依次点击每一个停点。",
@@ -160,7 +160,7 @@
     {
       "id": "dream",
       "type": "comic_reveal",
-      "background": "/assets/events/770_xiangjiang/backgrounds/old_river_dream.png",
+      "background": "/assets/dufu/events/770_xiangjiang/backgrounds/old_river_dream.png",
       "title": "回忆",
       "narrative": "夜泊。江上起雾。杜甫在船舱里睡去，梦见了从前。",
       "instruction": "点开浮在江面上的影子。",
@@ -258,7 +258,7 @@
     {
       "id": "ending",
       "type": "transition",
-      "background": "/assets/events/770_xiangjiang/backgrounds/leiyang_boat.png",
+      "background": "/assets/dufu/events/770_xiangjiang/backgrounds/leiyang_boat.png",
       "title": "耒阳·终焉",
       "transitionText": "大历五年（770）冬。\n由潭州前往岳阳。\n途中遇大水，舟阻方田驿数日。\n县令送来酒肉。\n五十九岁的杜甫，已无法起身。",
       "announcement": {
@@ -266,7 +266,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/dufu/hero/portrait.png",
         "text": "战血流依旧，军声动至今……"
       },
       "nextPhase": "epilogue"
@@ -274,7 +274,7 @@
     {
       "id": "epilogue",
       "type": "transition",
-      "background": "/assets/events/770_xiangjiang/backgrounds/leiyang_boat.png",
+      "background": "/assets/dufu/events/770_xiangjiang/backgrounds/leiyang_boat.png",
       "title": "尾声·后世",
       "transitionText": "四十三年后，元和八年（813）。\n其孙杜嗣业奉杜甫灵柩归葬偃师，路过荆州时，请元稹作墓志。",
       "announcement": {
@@ -283,7 +283,7 @@
         "title": "后世之评"
       },
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/dufu/hero/portrait.png",
         "text": "（他生前未得名。死后一千两百年，他是诗圣。）"
       }
     }

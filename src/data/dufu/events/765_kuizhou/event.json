@@ -7,7 +7,7 @@
     {
       "id": "sanxia_route",
       "type": "map_travel",
-      "background": "/assets/maps/route_765_sanxia.png",
+      "background": "/assets/dufu/maps/route_765_sanxia.png",
       "title": "三峡水路",
       "travelNarrative": "永泰元年（765）秋。严武去世后，杜甫携家乘舟东下，沿长江过三峡。",
       "instruction": "点击每一站，听一段独白。",
@@ -73,7 +73,7 @@
     {
       "id": "gao_zhai",
       "type": "explore",
-      "background": "/assets/events/765_kuizhou/backgrounds/kuizhou_gao_zhai.png",
+      "background": "/assets/dufu/events/765_kuizhou/backgrounds/kuizhou_gao_zhai.png",
       "title": "高斋·晚秋",
       "narrative": "夔州都督柏茂琳供瀼西草屋，杜甫住下。秋。",
       "instruction": "点击窗外的景与桌前的物，感受这个秋天。",
@@ -133,7 +133,7 @@
         {
           "id": "local_boy",
           "name": "当地小厮",
-          "portrait": "/assets/characters/npcs/local_boy.png",
+          "portrait": "/assets/dufu/npcs/local_boy.png",
           "position": {
             "x": 10,
             "y": 80
@@ -160,7 +160,7 @@
         {
           "id": "wine_jar",
           "name": "酒坛",
-          "portrait": "/assets/props/wine_jar.png",
+          "portrait": "/assets/dufu/props/wine_jar.png",
           "position": {
             "x": 82,
             "y": 75
@@ -181,7 +181,7 @@
     {
       "id": "denggao_compose",
       "type": "poem_compose",
-      "background": "/assets/events/765_kuizhou/backgrounds/kuizhou_terrace.png",
+      "background": "/assets/dufu/events/765_kuizhou/backgrounds/kuizhou_terrace.png",
       "title": "《登高》",
       "poemContext": "九月九日。一个人。一座台。一江风。把诗句填回正确的位置——这首诗被后人称为「古今七律第一」。",
       "puzzle": "风急___，渚清___。\n无边落木___，不尽长江___。\n万里___，百年___。\n艰难苦恨___，潦倒新停___。",
@@ -208,7 +208,7 @@
     {
       "id": "qiu_xing",
       "type": "explore",
-      "background": "/assets/events/765_kuizhou/backgrounds/kuizhou_night.png",
+      "background": "/assets/dufu/events/765_kuizhou/backgrounds/kuizhou_night.png",
       "title": "秋兴八首·心象",
       "narrative": "这一年杜甫陆续写下《秋兴八首》《咏怀古迹》《诸将五首》。每一首都是政治寓言。",
       "instruction": "至少听两首组诗的独白。",
@@ -298,11 +298,11 @@
     {
       "id": "leave",
       "type": "transition",
-      "background": "/assets/events/765_kuizhou/backgrounds/kuizhou_boat.png",
+      "background": "/assets/dufu/events/765_kuizhou/backgrounds/kuizhou_boat.png",
       "title": "离开夔州",
       "transitionText": "大历三年（768）正月，\n杜甫终于决定出峡，乘舟东下。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/drift/walking.png",
+        "portrait": "/assets/dufu/hero/drift/walking.png",
         "text": "江湖再大，也还是要再走一走。"
       },
       "narrative": ""

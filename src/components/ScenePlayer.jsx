@@ -7,14 +7,15 @@ import { POINTS, timedScore } from "../utils/scoring";
 // ---- Portrait resolution -----------------------------------------------------
 // Convention: every NPC PNG lives at /assets/characters/npcs/<speaker_id>.png.
 // No hardcoded map needed — just derive the path from the speaker id.
-function npcPortraitPath(speakerId) {
-  return `/assets/characters/npcs/${speakerId}.png`;
+function npcPortraitPath(speakerId, eventId) {
+  const line = parseInt(eventId, 10) < 1000 ? "dufu" : "dante";
+  return `/assets/${line}/npcs/${speakerId}.png`;
 }
 
 // Du Fu portrait resolution lives in src/data/dufuPoses.js (shared with the
 // editor). Priority: line dufu_pose > phase dufu_pose > event dufu_pose >
 // stage default derived from the event year. The legacy
-// /assets/characters/dufu/portrait.png is a blank image and is remapped.
+// /assets/dufu/hero/portrait.png is a blank image and is remapped.
 
 /**
  * ScenePlayer - Interactive scene engine
@@ -404,7 +405,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               let portrait;
               if (isSelf) portrait = dufuPortraitPath(dufuPose, sceneData.year);
               else if (line.speaker === "narrator" || line.speaker === "portrait") portrait = "";
-              else portrait = npcPortraitPath(line.speaker) || activeNpc.portrait;
+              else portrait = npcPortraitPath(line.speaker, eventId) || activeNpc.portrait;
               const isLast = dialogueIndex >= activeNpc.dialogues.length - 1;
               // Bubble mode: NPC drawn into the background image, render speech
               // bubble pinned to NPC.position (the head area) instead of bottom bar.

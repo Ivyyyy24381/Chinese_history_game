@@ -303,9 +303,9 @@ no text, no watermark, no signature, no modern buildings, no anachronisms, no ch
 
 | 已有的 / 不用做 | 路径 |
 |---|---|
-| 主角立绘 | `/assets/characters/dufu/portrait.png` |
-| 卷轴道具 | `/assets/events/747_exam/backgrounds/scroll.png` |
-| 大地图 | `/assets/maps/dufu_general_map.png` |
+| 主角立绘 | `/assets/dufu/hero/portrait.png` |
+| 卷轴道具 | `/assets/dufu/events/747_exam/backgrounds/scroll.png` |
+| 大地图 | `/assets/dufu/maps/dufu_general_map.png` |
 
 ---
 

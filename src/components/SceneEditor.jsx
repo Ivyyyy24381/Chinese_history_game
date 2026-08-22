@@ -9,13 +9,13 @@ import { DUFU_POSES, dufuPortraitPath } from "../data/dufuPoses";
 
 // Auto-discover all background images from public/assets/events/ + legacy locations
 const bgGlob = import.meta.glob(
-  "/public/assets/events/**/*.{png,jpg,jpeg,webp}",
+  "/public/assets/*/events/**/*.{png,jpg,jpeg,webp}",
   { eager: true, query: "?url", import: "default" }
 );
 const BACKGROUNDS = Object.keys(bgGlob).map((k) => k.replace("/public", ""));
 
 // Auto-discover all character portraits (shared NPCs live under /assets/characters/npcs/)
-const charGlob = import.meta.glob("/public/assets/characters/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
+const charGlob = import.meta.glob("/public/assets/*/{hero,npcs}/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
 const NPC_PORTRAITS = Object.keys(charGlob).map((k) => {
   const file = k.replace("/public", "");
   const name = file.split("/").pop().replace(/\.\w+$/, "");
@@ -23,8 +23,8 @@ const NPC_PORTRAITS = Object.keys(charGlob).map((k) => {
 });
 
 // Auto-discover props/items (榜单、卷轴、酒坛……) — placeable like NPCs
-const propGlob = import.meta.glob("/public/assets/props/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
-const itemGlob = import.meta.glob("/public/assets/items/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
+const propGlob = import.meta.glob("/public/assets/*/props/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
+const itemGlob = import.meta.glob("/public/assets/shared/items/**/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" });
 const PROP_NAMES = {
   boat_oar: "船桨", book_wenxuan: "《文选》", brush_inkstone: "笔砚", dafu_scroll: "大赋卷轴",
   helmet_broken: "破盔", letter_jiashu: "家书", medicine_bowl: "药碗", military_dispatch: "军报",
@@ -1719,7 +1719,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
                 </div>
               ))}
               <button style={styles.btnAddDialogue}
-                onClick={() => setEgSoldierPortraits([...egSoldierPortraits, "/assets/characters/npcs/"])}>
+                onClick={() => setEgSoldierPortraits([...egSoldierPortraits, "/assets/dufu/npcs/"])}>
                 {"+ \u6DFB\u52A0\u7ACB\u7ED8"}
               </button>
 

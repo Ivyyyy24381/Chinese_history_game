@@ -7,7 +7,7 @@
     {
       "id": "luoyang_jiusi",
       "type": "explore",
-      "background": "/assets/events/744_libai/backgrounds/luoyang_jiusi.png",
+      "background": "/assets/dufu/events/744_libai/backgrounds/luoyang_jiusi.png",
       "title": "洛阳酒肆·听闻李白",
       "narrative": "天宝三载（744），春。洛阳市井疯传一个名字——李白。",
       "instruction": "在酒肆里转一圈，听人怎么说李白。",
@@ -15,7 +15,7 @@
         {
           "id": "drinker_a",
           "name": "酒客甲",
-          "portrait": "/assets/characters/npcs/drinker_a.png",
+          "portrait": "/assets/dufu/npcs/drinker_a.png",
           "position": {
             "x": 41,
             "y": 78
@@ -37,7 +37,7 @@
         {
           "id": "drinker_b",
           "name": "酒客乙",
-          "portrait": "/assets/characters/npcs/drinker_b.png",
+          "portrait": "/assets/dufu/npcs/drinker_b.png",
           "position": {
             "x": 61,
             "y": 60
@@ -60,7 +60,7 @@
         {
           "id": "huji",
           "name": "胡姬",
-          "portrait": "/assets/characters/npcs/huji.png",
+          "portrait": "/assets/dufu/npcs/huji.png",
           "position": {
             "x": 85,
             "y": 67
@@ -116,7 +116,7 @@
     {
       "id": "street_meet",
       "type": "forced_choice",
-      "background": "/assets/events/744_libai/backgrounds/luoyang_street.png",
+      "background": "/assets/dufu/events/744_libai/backgrounds/luoyang_street.png",
       "title": "街头相遇",
       "narrative": "转过街角，一个身披白裘、腰悬长剑的中年人正在驴上仰头大笑。",
       "question": "你怎么搭话？",
@@ -159,7 +159,7 @@
     {
       "id": "liangsong_tour",
       "type": "explore",
-      "background": "/assets/events/744_libai/backgrounds/liangsong_field.png",
+      "background": "/assets/dufu/events/744_libai/backgrounds/liangsong_field.png",
       "title": "梁宋同游",
       "narrative": "秋。三人相约同游梁宋、齐鲁。李白要去寻仙问道，高适来找老友，杜甫只想留住这段时光。",
       "instruction": "在田野和酒席间走动，听他们说话。",
@@ -167,7 +167,7 @@
         {
           "id": "libai_drunk",
           "name": "李白",
-          "portrait": "/assets/characters/npcs/libai.png",
+          "portrait": "/assets/dufu/npcs/libai.png",
           "position": {
             "x": 86,
             "y": 72
@@ -196,7 +196,7 @@
         {
           "id": "gaoshi",
           "name": "高适",
-          "portrait": "/assets/characters/npcs/gaoshi.png",
+          "portrait": "/assets/dufu/npcs/gaoshi.png",
           "position": {
             "x": 76,
             "y": 62
@@ -256,7 +256,7 @@
         {
           "id": "standing",
           "name": "杜甫",
-          "portrait": "/assets/characters/dufu/youth/standing.png",
+          "portrait": "/assets/dufu/hero/youth/standing.png",
           "position": {
             "x": 68,
             "y": 76
@@ -283,7 +283,7 @@
     {
       "id": "farewell",
       "type": "forced_choice",
-      "background": "/assets/events/744_libai/backgrounds/liangsong_field.png",
+      "background": "/assets/dufu/events/744_libai/backgrounds/liangsong_field.png",
       "title": "临别",
       "narrative": "李白要往吴越去游历。高适已先一步南下。只剩杜甫送他。\n李白：「莫作小儿女态。诗在，便不算别。」",
       "question": "你怎样送别？",
@@ -326,11 +326,11 @@
     {
       "id": "leave_luoyang",
       "type": "transition",
-      "background": "/assets/events/744_libai/backgrounds/luoyang_alone.png",
+      "background": "/assets/dufu/events/744_libai/backgrounds/luoyang_alone.png",
       "title": "一年之后",
       "transitionText": "天宝四载（745）秋。\n杜甫西入长安。\n从此一去十年。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/youth/standing.png",
+        "portrait": "/assets/dufu/hero/youth/standing.png",
         "text": "我也该走了。长安……"
       },
       "narrative": ""

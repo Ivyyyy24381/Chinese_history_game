@@ -194,7 +194,7 @@ export default function TimelineEditor({ onEditEvent }) {
             ref={mapRef}
             style={{
               ...styles.map,
-              backgroundImage: "url('/assets/maps/dufu_general_map.png')",
+              backgroundImage: "url('/assets/dufu/maps/dufu_general_map.png')",
               cursor: dragging ? "grabbing" : "default",
             }}
           >

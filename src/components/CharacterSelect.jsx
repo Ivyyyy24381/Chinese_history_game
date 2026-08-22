@@ -16,7 +16,7 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
     <div style={styles.selectScreen}>
       <h1 style={styles.mainTitle}>
         <img
-          src={asset("/assets/中国历史游.png")}
+          src={asset("/assets/shared/中国历史游.png")}
           alt="中国历史游"
           style={styles.titleImg}
         />
@@ -46,7 +46,7 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
             )}
             <h2 style={styles.charName}>
               <img
-                src={asset(`/assets/${char.name}.png`)}
+                src={asset(`/assets/shared/${char.name}.png`)}
                 alt={char.name}
                 style={styles.charNameImg}
                 onError={(e) => {
@@ -121,7 +121,7 @@ export default function CharacterSelect({ characters, onSelect, onRestart, saved
 const styles = {
   selectScreen: {
     minHeight: "100vh",
-    backgroundImage: `url('${asset("/assets/home_background.png")}')`,
+    backgroundImage: `url('${asset("/assets/shared/home_background.png")}')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",

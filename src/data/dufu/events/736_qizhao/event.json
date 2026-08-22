@@ -7,7 +7,7 @@
     {
       "id": "gongli_study",
       "type": "explore",
-      "background": "/assets/events/736_qizhao/backgrounds/gonglixian_study.png",
+      "background": "/assets/dufu/events/736_qizhao/backgrounds/gonglixian_study.png",
       "title": "巩县家中",
       "narrative": "公元712年，杜甫出生于河南巩县。祖父杜审言是初唐著名诗人。少年杜甫立志『读万卷书，行万里路』。",
       "instruction": "点击家中物件，了解少年杜甫的志向。",
@@ -54,7 +54,7 @@
         {
           "id": "mother",
           "name": "母亲",
-          "portrait": "/assets/characters/npcs/mother.png",
+          "portrait": "/assets/dufu/npcs/mother.png",
           "position": {
             "x": 68,
             "y": 56
@@ -86,7 +86,7 @@
     {
       "id": "failed_exam",
       "type": "transition",
-      "background": "/assets/events/736_qizhao/backgrounds/luoyang_gongyuan.png",
+      "background": "/assets/dufu/events/736_qizhao/backgrounds/luoyang_gongyuan.png",
       "title": "洛阳贡院·落第",
       "transitionText": "开元二十三年（735），杜甫赴洛阳应进士试……",
       "announcement": {
@@ -95,7 +95,7 @@
         "title": "放榜"
       },
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/youth/standing.png",
+        "portrait": "/assets/dufu/hero/youth/standing.png",
         "text": "不中便不中。天地之大，岂止一榜？"
       },
       "nextPhase": "grand_tour",
@@ -104,7 +104,7 @@
     {
       "id": "grand_tour",
       "type": "map_travel",
-      "background": "/assets/maps/route_736_qizhao.png",
+      "background": "/assets/dufu/maps/route_736_qizhao.png",
       "title": "齐赵壮游",
       "travelNarrative": "落第后，杜甫从洛阳出发，开始为期数年的齐赵之游。",
       "instruction": "点击每一站，听他在路上的话。",
@@ -162,7 +162,7 @@
     {
       "id": "wangyue_compose",
       "type": "poem_compose",
-      "background": "/assets/events/736_qizhao/backgrounds/taishan_summit.png",
+      "background": "/assets/dufu/events/736_qizhao/backgrounds/taishan_summit.png",
       "title": "《望岳》",
       "poemContext": "登临绝顶。心中诗句呼之欲出——请把候选词放回正确的空格。",
       "puzzle": "岱宗夫如何？___青未了。\n造化___神秀，___割昏晓。\n荡胸___曾云，决眦入归鸟。\n会当___，一览___。",
@@ -187,11 +187,11 @@
     {
       "id": "tour_end",
       "type": "transition",
-      "background": "/assets/events/736_qizhao/backgrounds/yellow_river.png",
+      "background": "/assets/dufu/events/736_qizhao/backgrounds/yellow_river.png",
       "title": "壮游归来",
       "transitionText": "五年之间，\n杜甫走遍齐赵吴越，\n结交豪杰，自比稷契。",
       "dufu_reaction": {
-        "portrait": "/assets/characters/dufu/portrait.png",
+        "portrait": "/assets/dufu/hero/portrait.png",
         "text": "李太白……他的诗，我读了十年。听说他也要来洛阳。"
       },
       "narrative": ""

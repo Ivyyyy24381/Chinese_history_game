@@ -174,7 +174,7 @@ export default function GameMap({
           style={{
             ...styles.mapBackground,
             ...(box.w ? (() => { const d = coverDims(box.w, box.h); return { width: d.cw, height: d.ch }; })() : { width: "100%", height: "100%" }),
-            backgroundImage: `url('${asset("/assets/maps/dufu_general_map.png")}')`,
+            backgroundImage: `url('${asset("/assets/dufu/maps/dufu_general_map.png")}')`,
             transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
             transition: animated ? "transform 0.7s cubic-bezier(0.25, 0.8, 0.35, 1)" : "none",
           }}

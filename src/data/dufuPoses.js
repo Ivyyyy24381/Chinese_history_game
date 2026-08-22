@@ -22,7 +22,7 @@ export const DUFU_POSES = [
 
 // The old all-purpose default. The file on disk is nearly blank, so the engine
 // treats any reference to it as "unset" and resolves a stage default instead.
-export const DUFU_LEGACY_PORTRAIT = "/assets/characters/dufu/portrait.png";
+export const DUFU_LEGACY_PORTRAIT = "/assets/dufu/hero/portrait.png";
 
 const STAGE_DEFAULT_POSE = {
   youth: "youth/standing",
@@ -50,5 +50,5 @@ export function dufuPortraitPath(pose, year) {
     const stage = dufuStageForYear(year) || "scholar";
     pose = STAGE_DEFAULT_POSE[stage];
   }
-  return `/assets/characters/dufu/${pose}.png`;
+  return `/assets/dufu/hero/${pose}.png`;
 }

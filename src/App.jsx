@@ -38,7 +38,7 @@ const CHARACTERS = [
     dynasty: "唐",
     description: "唐代最伟大的现实主义诗人，与李白并称「李杜」",
     avatar: "🖊",
-    portrait: "/assets/characters/dufu/portrait.png",
+    portrait: "/assets/dufu/hero/portrait.png",
     color: "#4A90A4",
   },
   {
@@ -166,7 +166,7 @@ export default function App() {
          || timelineData.stages[timelineData.stages.length - 1])?.id
       : null;
     if (!musicOn || !stageId) { a.pause(); return; }
-    const src = asset(`/assets/audio/bgm/${stageId}.mp3`);
+    const src = asset(`/assets/${character?.id || "dufu"}/bgm/${stageId}.mp3`);
     if (!a.src.endsWith(src)) a.src = src;
     a.play().catch(() => { /* autoplay blocked or missing file — ignore */ });
   }, [screen, currentYear, timelineData, musicOn]);
