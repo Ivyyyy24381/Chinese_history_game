@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { DUFU_POSES, dufuPortraitPath } from "../data/dufuPoses";
 import { DANTE_POSES, dantePortraitPath } from "../data/dantePoses";
+import { PHASE_TEMPLATES } from "../data/phaseTemplates";
 
 // 故事线判定：事件年份 <1000 → dufu，否则 → dante（与 ScenePlayer 约定一致）。
 const isDanteYear = (year) => parseInt(year, 10) >= 1000;
@@ -445,6 +446,32 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
       setCurrentPhaseIndex(newIdx);
       loadPhase(next, newIdx);
     }
+  };
+
+  // === 交互模板库：从模板插入一个填好占位内容的新 phase ===
+  const [showTemplates, setShowTemplates] = useState(false);
+  const insertTemplate = (tpl) => {
+    const newPhase = tpl.make();
+    if (!sceneData) {
+      const scene = {
+        id: "new_scene",
+        title: "新场景",
+        year: "",
+        type: "interactive",
+        phases: [newPhase],
+      };
+      setSceneData(scene);
+      setCurrentPhaseIndex(0);
+      loadPhase(scene, 0);
+    } else {
+      const base = saveCurrentPhaseToScene() || sceneData;
+      const next = { ...base, phases: [...base.phases, newPhase] };
+      setSceneData(next);
+      const idx = next.phases.length - 1;
+      setCurrentPhaseIndex(idx);
+      loadPhase(next, idx);
+    }
+    setShowTemplates(false);
   };
 
   // Delete current phase
@@ -942,6 +969,9 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
         )}
         <button style={styles.btnAddPhase} onClick={addPhase}>
           {"+ \u65B0\u589E\u9636\u6BB5"}
+        </button>
+        <button style={styles.btnTemplates} onClick={() => setShowTemplates(true)}>
+          {"\uD83E\uDDE9 \u63D2\u5165\u4EA4\u4E92\u6A21\u677F"}
         </button>
         {sceneData && sceneData.phases && sceneData.phases.length > 1 && (
           <button style={styles.btnDeletePhase} onClick={deletePhase}>
@@ -2334,7 +2364,144 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
         </div>
       </div>
 
+      {/* ── 交互模板库面板 ── */}
+      {showTemplates && (
+        <div style={styles.tplOverlay} onClick={() => setShowTemplates(false)}>
+          <div style={styles.tplPanel} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.tplHeader}>
+              <h3 style={{ margin: 0, fontSize: 16 }}>{"🧩 插入交互模板"}</h3>
+              <span style={styles.tplHint}>
+                {"每张卡是一种已跑通的交互；点一下即插入一个填好占位内容、可直接运行的新阶段。"}
+              </span>
+              <button style={styles.tplClose} onClick={() => setShowTemplates(false)}>{"✕"}</button>
+            </div>
+            <div style={styles.tplGrid}>
+              {PHASE_TEMPLATES.map((tpl) => (
+                <div key={tpl.type} style={styles.tplCard} onClick={() => insertTemplate(tpl)}>
+                  <TemplateSketch kind={tpl.sketch} />
+                  <div style={styles.tplName}>
+                    {tpl.name}
+                    <span style={styles.tplType}>{tpl.type}</span>
+                  </div>
+                  <div style={styles.tplDesc}>{tpl.desc}</div>
+                  <div style={styles.tplRef}>{"取材：" + tpl.ref}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+/**
+ * TemplateSketch — 模板卡片上的缩略示意（小线框图）。
+ * 之后可以换成真实事件截图；线框先把「玩家看到什么」表达出来。
+ */
+function TemplateSketch({ kind }) {
+  const W = 108, H = 64;
+  const bg = <rect x="0" y="0" width={W} height={H} rx="6" fill="#0F1626" stroke="#2C3E50" />;
+  const gold = "#F4D03F";
+  const dim = "#5A7290";
+  const line = "#AAB7C4";
+  const inner = (() => {
+    switch (kind) {
+      case "npcs": return (<>
+        <circle cx="34" cy="34" r="9" fill={dim} />
+        <rect x="27" y="44" width="14" height="12" rx="3" fill={dim} />
+        <circle cx="72" cy="38" r="7" fill={dim} opacity="0.7" />
+        <rect x="66" y="46" width="12" height="10" rx="3" fill={dim} opacity="0.7" />
+        <rect x="38" y="8" width="32" height="9" rx="4.5" fill={gold} opacity="0.85" />
+      </>);
+      case "quiz": return (<>
+        <rect x="10" y="8" width="88" height="12" rx="3" fill={line} opacity="0.5" />
+        {[0, 1, 2, 3].map((i) => (
+          <rect key={i} x={12 + (i % 2) * 45} y={28 + Math.floor(i / 2) * 16} width="40" height="11" rx="3"
+            fill={i === 1 ? gold : dim} opacity={i === 1 ? 0.9 : 0.55} />
+        ))}
+      </>);
+      case "curtain": return (<>
+        <rect x="0" y="0" width={W} height={H} rx="6" fill="#0A0F1A" />
+        <rect x="24" y="16" width="60" height="5" rx="2.5" fill={line} opacity="0.8" />
+        <rect x="18" y="28" width="72" height="5" rx="2.5" fill={line} opacity="0.6" />
+        <rect x="30" y="40" width="48" height="5" rx="2.5" fill={line} opacity="0.4" />
+      </>);
+      case "choice": return (<>
+        <rect x="14" y="10" width="80" height="9" rx="3" fill={line} opacity="0.55" />
+        <rect x="14" y="26" width="80" height="12" rx="6" fill={dim} />
+        <rect x="14" y="44" width="80" height="12" rx="6" fill={gold} opacity="0.85" />
+      </>);
+      case "poem": return (<>
+        <rect x="14" y="12" width="46" height="6" rx="3" fill={line} opacity="0.6" />
+        <rect x="64" y="12" width="18" height="6" rx="3" fill="none" stroke={gold} strokeDasharray="3 2" />
+        <rect x="14" y="26" width="30" height="6" rx="3" fill={line} opacity="0.6" />
+        <rect x="48" y="26" width="18" height="6" rx="3" fill="none" stroke={gold} strokeDasharray="3 2" />
+        {[0, 1, 2].map((i) => (
+          <rect key={i} x={18 + i * 28} y="46" width="22" height="10" rx="5" fill={dim} opacity="0.8" />
+        ))}
+      </>);
+      case "map": return (<>
+        <path d="M16 50 Q 38 20 56 34 T 94 22" fill="none" stroke={line} strokeWidth="2" strokeDasharray="4 3" opacity="0.7" />
+        <circle cx="16" cy="50" r="5" fill={gold} />
+        <circle cx="56" cy="34" r="5" fill={dim} />
+        <circle cx="94" cy="22" r="5" fill={dim} />
+      </>);
+      case "branch": return (<>
+        <circle cx="54" cy="14" r="6" fill={line} opacity="0.8" />
+        <path d="M54 20 L30 40 M54 20 L78 40" stroke={dim} strokeWidth="2" />
+        <circle cx="30" cy="44" r="6" fill={dim} />
+        <circle cx="78" cy="44" r="6" fill={gold} opacity="0.85" />
+      </>);
+      case "slides": return (<>
+        <rect x="30" y="18" width="58" height="36" rx="4" fill={dim} opacity="0.4" />
+        <rect x="24" y="13" width="58" height="36" rx="4" fill={dim} opacity="0.7" />
+        <rect x="18" y="8" width="58" height="36" rx="4" fill="#1F2A40" stroke={line} />
+        <rect x="24" y="16" width="34" height="5" rx="2.5" fill={line} opacity="0.7" />
+        <rect x="24" y="26" width="46" height="4" rx="2" fill={line} opacity="0.45" />
+      </>);
+      case "grid4": return (<>
+        {[0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((c) => (
+          (r !== 3 || c !== 3) && (
+            <rect key={r + "-" + c} x={30 + c * 13} y={7 + r * 13} width="11" height="11" rx="2"
+              fill={r * 4 + c === 5 ? gold : dim} opacity="0.8" />
+          )
+        )))}
+      </>);
+      case "spots": return (<>
+        <rect x="8" y="6" width="92" height="52" rx="4" fill="#1F2A40" />
+        <circle cx="34" cy="24" r="9" fill="none" stroke={gold} strokeWidth="2" strokeDasharray="3 2" />
+        <circle cx="72" cy="40" r="9" fill="none" stroke={gold} strokeWidth="2" strokeDasharray="3 2" opacity="0.6" />
+        <circle cx="58" cy="18" r="7" fill="none" stroke={dim} strokeWidth="2" strokeDasharray="3 2" opacity="0.5" />
+      </>);
+      case "panels": return (<>
+        <rect x="8" y="6" width="44" height="52" rx="3" fill="#1F2A40" stroke={line} opacity="0.9" />
+        <rect x="56" y="6" width="44" height="52" rx="3" fill={dim} opacity="0.5" />
+        <text x="78" y="38" textAnchor="middle" fontSize="16" fill={line} opacity="0.8">?</text>
+      </>);
+      case "maze": return (<>
+        {[0, 1, 2].map((i) => (
+          <rect key={i} x={18 + i * 30} y={i % 2 ? 34 : 12} width="18" height="14" rx="2" fill={dim} opacity="0.7" />
+        ))}
+        <path d="M100 52 L64 52 L64 30 L14 30" fill="none" stroke={gold} strokeWidth="2" strokeDasharray="4 3" />
+        <circle cx="100" cy="52" r="5" fill={gold} />
+        <circle cx="14" cy="30" r="5" fill="#E74C3C" />
+      </>);
+      case "pairs": return (<>
+        {[0, 1].map((i) => (<g key={i}>
+          <rect x="14" y={12 + i * 24} width="34" height="16" rx="4" fill={dim} opacity="0.8" />
+          <rect x="60" y={12 + i * 24} width="34" height="16" rx="4" fill={dim} opacity="0.5" />
+          <path d={`M48 ${20 + i * 24} L60 ${20 + i * 24}`} stroke={gold} strokeWidth="2" strokeDasharray="3 2" />
+        </g>))}
+      </>);
+      default: return null;
+    }
+  })();
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: "block", margin: "0 auto" }}>
+      {bg}
+      {inner}
+    </svg>
   );
 }
 
@@ -2376,6 +2543,63 @@ const styles = {
     padding: "6px 12px", backgroundColor: "#27AE60", color: "#FFF",
     border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: "bold",
   },
+  btnTemplates: {
+    padding: "6px 12px", backgroundColor: "#8E44AD", color: "#FFF",
+    border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: "bold",
+  },
+  // ── 交互模板库面板 ──
+  tplOverlay: {
+    position: "fixed", inset: 0, zIndex: 10050,
+    backgroundColor: "rgba(8,10,20,0.72)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    padding: 30,
+  },
+  tplPanel: {
+    backgroundColor: "#16213E",
+    border: "1px solid #2C3E50",
+    borderRadius: 10,
+    width: "min(1060px, 94vw)",
+    maxHeight: "88vh",
+    display: "flex", flexDirection: "column",
+    boxShadow: "0 18px 60px rgba(0,0,0,0.6)",
+  },
+  tplHeader: {
+    display: "flex", alignItems: "center", gap: 12,
+    padding: "14px 20px",
+    borderBottom: "1px solid #2C3E50",
+  },
+  tplHint: { flex: 1, fontSize: 12, color: "#AAB7C4" },
+  tplClose: {
+    width: 28, height: 28, border: "1px solid #2C3E50", borderRadius: 6,
+    backgroundColor: "transparent", color: "#AAB7C4", cursor: "pointer", fontSize: 13,
+  },
+  tplGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(215px, 1fr))",
+    gap: 12,
+    padding: 20,
+    overflowY: "auto",
+  },
+  tplCard: {
+    backgroundColor: "#1F2A40",
+    border: "1px solid #2C3E50",
+    borderRadius: 8,
+    padding: 12,
+    cursor: "pointer",
+    transition: "border-color 0.15s ease, transform 0.15s ease",
+  },
+  tplName: {
+    marginTop: 10, fontSize: 14, fontWeight: "bold", color: "#FFF",
+    display: "flex", alignItems: "center", gap: 8,
+  },
+  tplType: {
+    fontSize: 10, fontWeight: "normal", color: "#7FB3D5",
+    fontFamily: "monospace",
+    backgroundColor: "rgba(127,179,213,0.12)",
+    padding: "1px 6px", borderRadius: 4,
+  },
+  tplDesc: { marginTop: 6, fontSize: 12, color: "#AAB7C4", lineHeight: 1.55, minHeight: 36 },
+  tplRef: { marginTop: 6, fontSize: 10.5, color: "#6B7C93" },
   btnDeletePhase: {
     padding: "6px 12px", backgroundColor: "#E74C3C", color: "#FFF",
     border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12,
