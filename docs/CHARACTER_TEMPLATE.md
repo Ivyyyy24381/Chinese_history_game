@@ -20,16 +20,18 @@
 
 ```
 src/data/<charId>/
-├── timeline.json                # 人物 + stages[] + events[]（含 mapPosition）
+├── timeline.json                # 人物 + stages[] + events[]（含 location.mapX/mapY）
 └── events/<year>_<slug>/
     ├── event.json               # phases[]
     └── quiz.json                # quizzes[]（3 题）
-public/assets/
-├── characters/<charId>/         # 分期立绘 <stage>/<pose>.png + portrait.png
-├── characters/npcs/             # 共用 NPC（按 speaker id 命名）
-├── events/<year>_<slug>/backgrounds/
+public/assets/<charId>/          # 每条线一套素材（不要放进无前缀的旧目录）
+├── hero/                        # 分期立绘 <stage>/<pose>.png + portrait.png
+├── npcs/                        # 该线共用 NPC（按 speaker id 命名）
+├── props/                       # 道具
+├── events/<year>_<slug>/{backgrounds,npcs}/
 ├── maps/                        # <charId>_general_map.png + route_<event>.png
-└── audio/bgm/<stageId>.mp3      # 一时期一曲
+└── bgm/<stageId>.mp3            # 一时期一曲
+public/assets/home/              # 主页素材 hp_{background,portrait,name}_<charId>
 ```
 
 ## SCREENPLAY.md 模版（每个事件一节）
@@ -211,10 +213,13 @@ ComfyUI 批跑脚本和 CSV 清单模板见 `scripts/COMFYUI_SETUP.md`——
 
 ## 接入 checklist（新人物上线前）
 
-- [ ] App.jsx CHARACTERS 数组解锁该人物（去掉 locked）
-- [ ] ACHIEVEMENT_TITLES 加成就名（如 libai: "诗仙之路"）
+- [ ] `src/data/characters.js` 花名册解锁该人物（去掉 locked；achievementTitle /
+      completionLine / 主页三图 hp_* 一并配齐——成就名等都从这里读）
+- [ ] `characters.js` 配好该线的 **mapTheme**（行迹墨色 ink / 铅笔色 inkFaint /
+      印章色 seal / 地图符号 pin（cinnabar|tower）/ 底图减淡 scrimBoost）——
+      地图页的墨线、事件符号、雾都会自动跟随，`GameMap` 全线共用无需改代码
 - [ ] timeline.json 的 hasScene/hasQuiz 标记齐全
-- [ ] 大地图图钉 mapPosition 在 TimelineEditor 里校准
+- [ ] 大地图坐标 location.mapX/mapY 在 TimelineEditor 里拖过校准
 - [ ] bgm/<stageId>.mp3 就位（可后补）
-- [ ] 资产引用扫描 0 断链（脚本見 scripts/）
+- [ ] 资产引用扫描 0 断链（脚本见 scripts/）
 - [ ] 全流程通关一遍 → 成就 + 回顾正常

@@ -1,6 +1,6 @@
 # 历史长河 — 互动历史教育游戏
 
-一段话简介：这是一个面向中文教育场景的「以历史人物为主线，以可玩交互为载体」的浏览器游戏。玩家先选择一位历史人物（首发杜甫，后续接入李白、苏轼），随后在一张唐朝大地图 + 横向时间轴上自由探索他一生的关键事件 —— 每个事件都不是被动观看，而是一段可玩的小关卡：探索式 NPC 对话、史料选择题、补诗拼字、数字华容道（751 三大礼赋）、画面「找茬」式触发诗句（755 春望）、Pac-Man 风格的长安出城避守卫（755 安史之乱），以及多段穿越叛军/三峡/湘江的地图行走小游戏。整套引擎由 React + Vite + 纯 JSON 场景数据驱动，所有阶段、立绘、对话、触发点、棋盘地图都可以在内置的 `?editor=true` 可视化编辑器里调位置/大小/旋转/3D 透视/分支，配合一个 `/api/save-event` 本地后端可以直接落盘到对应 `event.json`。**杜甫人物线已全部完成**（10 事件 / 61 个互动场景 / 10 种交互类型 / 全事件配 quiz + 成就与人物回顾系统），详见下方制作总结。
+一段话简介：这是一个面向中文教育场景的「以历史人物为主线，以可玩交互为载体」的浏览器游戏。玩家先在主页选择一位历史人物（已有**杜甫**与**但丁**双故事线，鲁米线筹备中），随后在该文明的一张古地图 + 时间轴上自由探索他一生的关键事件——主角小人沿手绘感的墨线路径在地图上真实行走，走过的路留成实墨、未至之地覆着纸色薄雾，地图本身就是进度条。每个事件都不是被动观看，而是一段可玩的小关卡：探索式 NPC 对话、史料选择题、补诗拼字、数字华容道、画面「找茬」式触发诗句、Pac-Man 风格的出城避守卫，以及多段地图行走小游戏。整套引擎由 React + Vite + 纯 JSON 场景数据驱动，所有阶段、立绘、对话、触发点、棋盘地图都可以在内置的 `?editor=true` 可视化编辑器里调位置/大小/旋转/3D 透视/分支（支持按故事线切换、从 13 种交互模板一键插入、保存自动备份），配合 `/api/save-event` 本地 dev 中间件直接落盘到对应线的 `event.json`。**杜甫人物线已全部完成**（10 事件 / 61 个互动场景 / 10 种交互类型 / 全事件配 quiz + 成就与人物回顾系统），**但丁线 9 事件数据就绪**，详见下方制作总结。
 
 通过游戏方式学习中国历史人物的生平故事。选择不同角色，沿着时间轴探索他们走过的地点，体验视觉小说式对话，阅读历史叙事与经典诗篇，并通过问答挑战检验所学。
 
@@ -59,62 +59,66 @@ npm run build
 
 ```
 Chinese_history_game/
-├── index.html
-├── package.json
-├── vite.config.js
+├── index.html / package.json / vite.config.js   # vite.config 含编辑器 dev 保存中间件
 │
-├── public/assets/                    # 静态资源（Vite直接serve）
-│   ├── maps/
-│   │   └── tang_dynasty.png          # 唐朝疆域图
-│   ├── characters/
-│   │   ├── dufu/portrait.png         # 杜甫立绘
-│   │   └── npcs/                     # NPC立绘（小商贩、难民等）
-│   └── scenes/
-│       ├── 01_youth/bg.png           # 各场景背景图
-│       ├── 02_changan/bg.png
-│       └── ...
+├── public/assets/                    # 静态资源（Vite 直接 serve）
+│   ├── home/                         # 主页素材 hp_{title,background,portrait,name}_<line>
+│   ├── shared/{items,bgm}/           # 跨线共用
+│   └── <line>/                       # 每条故事线一套（dufu / dante / …）
+│       ├── hero/ · npcs/ · props/ · maps/ · bgm/
+│       └── events/<事件ID>/{backgrounds,npcs}/
 │
 ├── src/
-│   ├── main.jsx                      # React入口
-│   ├── App.jsx                       # 游戏主逻辑 & 状态管理
+│   ├── main.jsx                      # React 入口
+│   ├── App.jsx                       # 顶层：选人 / 游戏 / 编辑器路由
+│   │
+│   ├── styles/
+│   │   ├── game.css
+│   │   └── theme.js                  # 全局视觉 token（纸色/文字色阶/金线/字距/halo()/scrim()）
 │   │
 │   ├── components/
-│   │   ├── CharacterSelect.jsx       # 角色选择页
-│   │   ├── GameMap.jsx               # 真实唐朝地图 + 地点标记
-│   │   ├── Timeline.jsx              # 底部时间轴
-│   │   ├── ScenePlayer.jsx           # 互动场景引擎（对话、考试、选择等）
+│   │   ├── CharacterSelect.jsx       # 主页选人（全站视觉风格基准）
+│   │   ├── GameMap.jsx               # 古地图：旅人墨线路径 / 同时代符号 / 雾 / mapTheme
+│   │   ├── Timeline.jsx              # 底部时间轴细带（hover/focus 展开）
+│   │   ├── ScenePlayer.jsx           # 互动场景引擎（13 种交互类型）
 │   │   ├── SceneEditor.jsx           # 可视化场景编辑器
+│   │   ├── TimelineEditor.jsx        # 时间线编辑器（?editor=true 入口）
 │   │   ├── EventPanel.jsx            # 历史叙事 + 诗词面板
 │   │   ├── QuizPanel.jsx             # 问答系统
-│   │   └── ScoreBar.jsx              # 顶部得分/进度条
+│   │   └── ScoreBar.jsx              # 左上人物信息条（主页名牌排版）
 │   │
 │   ├── data/
-│   │   └── dufu/
-│   │       ├── timeline.json         # 时间轴总览 + 角色信息
-│   │       ├── scenes/
-│   │       │   ├── 01_youth.json     # 各阶段：叙事 + 诗词 + 对话
-│   │       │   ├── 02_changan.json
-│   │       │   ├── 03_anshi.json
-│   │       │   ├── 04_chengdu.json
-│   │       │   ├── 05_kuizhou.json
-│   │       │   └── 06_final.json
-│   │       └── quizzes/
-│   │           ├── 01_youth.json     # 各阶段问答题
-│   │           └── ...
+│   │   ├── characters.js             # 人物花名册（单一事实来源；含地图 mapTheme）
+│   │   ├── phaseTemplates.js         # 编辑器「插入交互模板」的 13 种模板
+│   │   ├── dufuPoses.js · dantePoses.js
+│   │   └── <line>/
+│   │       ├── timeline.json         # 时间轴总览 + 角色信息 + 地图坐标
+│   │       └── events/<事件ID>/
+│   │           ├── event.json        # 场景定义（phases、NPC、对话）
+│   │           └── quiz.json         # 答题题目（可选）
 │   │
-│   └── styles/
-│       └── game.css
+│   └── utils/                        # asset.js · usePrefersReducedMotion.js
+│
+└── .editor-backups/                  # 编辑器写盘前自动备份（gitignore）
 ```
+
+（更细的「东西放哪、为什么」见 [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md)，
+全流程见 [docs/PIPELINE.md](docs/PIPELINE.md)。）
 
 ## 场景编辑器
 
-浏览器打开 `http://localhost:5173/?editor=true` 进入可视化场景编辑器。
+浏览器打开 `http://localhost:5173/?editor=true` 进入编辑器：先落在**时间线编辑器**
+（拖 pin 调地图坐标、拖 tick 调年份、改事件元数据），从事件下钻进**场景编辑器**。
 
 ### 基本操作
 
-1. 顶部工具栏选择**场景文件**（如 `02_changan`），再通过**阶段标签**切换不同阶段。
-2. 点击 **+ 新增阶段** 创建新阶段，选择阶段类型（explore、exam、transition、forced_choice、poem_compose、map_travel 等）。
-3. 点击 **💾 保存到文件** 将修改写回 JSON（需要开发服务器的文件保存中间件）。
+1. 顶部先选**故事线**（dufu / dante / …），再选**场景文件**，通过**阶段标签**切换不同阶段。
+   顶栏始终显示当前编辑的完整落盘路径（如 `src/data/dante/events/1295_arte/event.json`）。
+2. 点击 **+ 新增阶段** 创建空白阶段；或点 **🧩 插入交互模板**——13 种交互类型每种一张卡
+   （示意图 + 一句话说明 + 取材事件），点卡即插入一个填好占位内容、可直接运行的新阶段。
+3. 点击 **💾 保存到文件** 将修改写回该故事线的 JSON（仅 dev 模式可用）。写盘前原文件自动
+   备份到 `.editor-backups/<line>/<事件ID>/`（保留最近 20 份），保存成功回显完整路径 + 字节数；
+   有未保存改动时关页面 / 返回 / 切线会弹确认。
 
 ### 左侧面板 — 资源 & 触发器
 
@@ -145,19 +149,19 @@ Chinese_history_game/
 
 ### 场景 JSON 结构
 
-每个场景文件包含多个阶段（phases），阶段间通过 `nextPhase` 字段串联：
+每个事件一个 `event.json`，包含多个阶段（phases），阶段间通过 `nextPhase` 字段串联：
 
 ```json
 {
-  "id": "02_changan",
-  "title": "制举科考",
-  "year": "746",
+  "id": "747_exam",
+  "title": "制举「野无遗贤」",
+  "year": "747",
   "type": "interactive",
   "phases": [
     {
       "id": "explore_outside",
       "type": "explore",
-      "background": "/assets/scenes/02_changan/changan_street_2.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/changan_street_2.png",
       "title": "长安街头",
       "narrative": "...",
       "instruction": "点击周围的人物与他们交谈",
@@ -178,17 +182,19 @@ Chinese_history_game/
 
 ## 添加新内容
 
-**添加新场景素材**：立绘放到 `public/assets/characters/npcs/`，背景图放到 `public/assets/scenes/XX_name/`。编辑器会自动发现新文件。
+**添加新场景素材**：该线共用立绘放 `public/assets/<line>/npcs/`，事件专属素材放
+`public/assets/<line>/events/<事件ID>/{backgrounds,npcs}/`。编辑器会自动发现新文件。
 
-**用编辑器创建/修改场景**：打开 `?editor=true`，选择场景文件或新建阶段，拖放人物、编辑对话、设置触发器，保存即可。
+**用编辑器创建/修改场景**：打开 `?editor=true`，选故事线和场景文件，从模板插入阶段或新建，
+拖放人物、编辑对话、设置触发器，保存即可（自动落到正确的线并备份）。
 
-**手动编辑 JSON**：修改 `src/data/dufu/scenes/XX_name.json`，NPC 对话格式：
+**手动编辑 JSON**：修改 `src/data/<line>/events/<事件ID>/event.json`，NPC 对话格式：
 
 ```json
 {
   "id": "merchant",
   "name": "小商贩",
-  "portrait": "/assets/characters/npcs/merchant.png",
+  "portrait": "/assets/dufu/npcs/merchant.png",
   "position": { "x": 30, "y": 60 },
   "dialogues": [
     { "speaker": "merchant", "speakerName": "小商贩", "text": "客官，来碗胡辣汤？" }
@@ -198,7 +204,9 @@ Chinese_history_game/
 
 无立绘的文字交互点将 `portrait` 设为空字符串即可。
 
-**添加新角色的完整故事线**：在 `src/data/` 下创建新文件夹（如 `libai/`），按照 `dufu/` 的结构创建 timeline.json 和 scenes。
+**添加新角色的完整故事线**：照 [docs/CHARACTER_TEMPLATE.md](docs/CHARACTER_TEMPLATE.md) 走——
+在 `src/data/characters.js` 花名册加一项（含地图 `mapTheme`），建 `src/data/<line>/`
+和 `public/assets/<line>/`，引擎与地图页零代码复用。
 
 ## 技术栈
 

@@ -185,6 +185,10 @@ npm run dev
        └─ 📝 编辑此事件的场景 (SceneEditor) ← 管 event.json
 ```
 
+两层顶部都有**故事线切换器**（dufu / dante / …，自动发现 `src/data/*/`），
+并且**始终显示当前正在编辑的完整落盘路径**（如 `src/data/dante/events/1295_arte/event.json`）——
+看一眼路径再保存，永远不会存错线。
+
 **第一层 · 时间线编辑器** 改的是 `src/data/<line>/timeline.json`：
 
 | 想改什么 | 怎么做 |
@@ -208,6 +212,7 @@ npm run dev
 | **加道具** | 左侧道具面板，用法同 NPC；不可点的装饰物勾"装饰"，不计入必谈数 |
 | **改必谈人数** | `所有NPC交谈后` 相关设置 —— 决定"继续"按钮什么时候亮 |
 | **加/删一屏（phase）** | 顶部 phase 列表；`显示类型` 下拉切 13 种交互类型 |
+| **从模板加一屏** | 顶部 **🧩 插入交互模板** → 13 种交互每种一张卡（示意图 + 一句话说明 + 取材事件），点卡即插入一个填好占位内容、可直接运行的新 phase，改文字即可用（模板定义在 `src/data/phaseTemplates.js`） |
 | **接下一屏** | `-- 按顺序下一个 --` 或指定 `目标阶段` |
 | **加触发点** | `+ 添加触发点` → 继续按钮 / 场景传送门 / 文字标签 |
 | **map_travel 路线** | 在画布上拖编号 waypoint，会自动连线 |
@@ -215,19 +220,18 @@ npm run dev
 
 改完点保存。
 
-### ⚠️ 三个已知的坑（修好之前 Ray 一定会撞上）
+### 保存链路的防线（2026-08 已修复三个数据坑）
 
-1. **保存会丢掉当前正在编辑的那一屏。**
-   `SceneEditor.jsx:814` 有闭包陈旧值 bug —— 改完当前 phase 直接点保存，写回去的是改之前的内容。
-   **绕开方法：改完先切到别的 phase 再切回来，然后再点保存。**
-2. **编辑但丁/鲁米的场景，保存会写进杜甫目录。**
-   `vite.config.js` 三个保存接口写死了 `src/data/dufu/`。
-   **在修好之前，非杜甫线不要用编辑器保存**，只用它来"看和量"，改动手写进正确的文件。
-3. **没有备份、没有脏数据提示。**
-   **每次进编辑器前先 `git status` 确认干净，改完立刻 `git diff` 看一眼再提交。**
-   一次只改一个事件，一个事件一个提交 —— 出错能单独回滚。
+早期版本有三个坑：保存丢当前屏（闭包陈旧值）、非杜甫线存进杜甫目录（保存接口写死 dufu）、
+无备份无提示。**现已全部修复**，当前保存链路的行为是：
 
-修复方案见 `docs/NEXT_STEPS_PROMPTS.md` 的 Prompt 1 · P0。**建议先把 P0 修了再交给 Ray。**
+1. **保存的就是你眼前的内容** —— 当前屏的编辑先同步拼进场景对象再写盘，改完直接点保存即可。
+2. **按故事线落盘** —— 保存接口按当前线拼路径，且对线名做白名单校验（必须是 `src/data/` 下真实目录）。
+3. **写盘前自动备份** —— 原文件先复制到 `.editor-backups/<line>/<事件ID>/<时间戳>.json`
+   （已 gitignore，每个文件保留最近 20 份）；写入前做 JSON 校验；保存成功回显完整路径 + 字节数。
+4. **未保存改动有确认** —— 关页面 / 返回 / 切换故事线 / 下钻场景编辑器时，如有未写盘的改动会弹确认。
+
+好习惯仍然保留：一次只改一个事件，一个事件一个提交，`git diff` 看一眼再提交。
 
 ### 精修的验收标准
 
@@ -314,12 +318,14 @@ Chinese_history_game/
 │   │   ├── TimelineEditor.jsx         # 时间线编辑器
 │   │   └── EventPanel · QuizPanel · DialogueBox · ScoreBar · …
 │   ├── data/
-│   │   ├── characters.js              # 人物花名册（新增人物只改这里）
+│   │   ├── characters.js              # 人物花名册（新增人物只改这里；含地图 mapTheme）
+│   │   ├── phaseTemplates.js          # 编辑器「插入交互模板」的 13 种模板
 │   │   ├── <line>Poses.js             # 主角姿态表
 │   │   └── <line>/
 │   │       ├── timeline.json
 │   │       └── events/<事件ID>/{event.json, quiz.json}
-│   └── utils/asset.js                 # 资源路径解析（处理子目录部署）
+│   ├── styles/theme.js                # 全局视觉 token（纸色/文字色阶/金线/字距/halo()/scrim()）
+│   └── utils/                         # asset.js（资源路径）· usePrefersReducedMotion.js
 │
 ├── public/assets/
 │   ├── home/                          # 主页素材 hp_{title,background,portrait,name}_*
@@ -327,7 +333,8 @@ Chinese_history_game/
 │   └── <line>/{hero,npcs,props,maps,bgm,events}/
 │
 ├── assets_src/                        # 原图存档（gitignore，不入库）
-└── vite.config.js                     # 含编辑器的 dev 保存中间件
+├── .editor-backups/                   # 编辑器写盘前的自动备份（gitignore，每文件留 20 份）
+└── vite.config.js                     # 含编辑器的 dev 保存中间件（按故事线落盘 + 备份 + 校验）
 ```
 
 **路径前缀规则**：json 里写 `/assets/...`，**不要写 `/public/assets/...`**。
