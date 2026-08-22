@@ -169,6 +169,9 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
     setSelectedNpc(newNpc.id);
   };
 
+  // 未保存改动守卫：记录「上次载入/保存时」的序列化内容，离开前比对
+  const lastSavedRef = useRef("");
+
   // Load a scene file（接受 "<line>/<eventId>" key；裸 eventId 兜底以兼容旧入口）
   const loadSceneFile = async (key) => {
     const entry =
@@ -183,6 +186,7 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
       setCurrentLine(entry.charId);
       setCurrentPhaseIndex(0);
       loadPhase(data, 0);
+      lastSavedRef.current = JSON.stringify(data, null, 2);
     } catch (err) {
       console.error("Failed to load scene:", err);
     }
@@ -870,6 +874,7 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
       });
       const data = await res.json();
       if (data.ok) {
+        lastSavedRef.current = content;
         setSaveStatus(`\u2705 \u5DF2\u4FDD\u5B58 \u2192 ${data.path}\uFF08${(data.bytes ?? 0).toLocaleString()} \u5B57\u8282\uFF09`);
         setTimeout(() => setSaveStatus(""), 6000);
       } else {
@@ -878,6 +883,34 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
     } catch (err) {
       setSaveStatus("\u274C " + err.message);
     }
+  };
+
+  // \u6709\u6CA1\u6709\u8FD8\u6CA1\u5199\u5165\u6587\u4EF6\u7684\u6539\u52A8\uFF08\u5F53\u524D\u5C4F\u7684\u7F16\u8F91\u4E5F\u7B97\u2014\u2014\u5148\u62FC\u8FDB scene \u518D\u6BD4\u5BF9\uFF09
+  const hasUnsavedChanges = () => {
+    if (!sceneData) return false;
+    const scene = saveCurrentPhaseToScene() || sceneData;
+    return JSON.stringify(scene, null, 2) !== lastSavedRef.current;
+  };
+
+  // \u5173\u95ED/\u5237\u65B0\u9875\u9762\u65F6\u63D0\u793A\u672A\u4FDD\u5B58\u6539\u52A8
+  useEffect(() => {
+    const onBeforeUnload = (e) => {
+      if (hasUnsavedChanges()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  });
+
+  // \u79BB\u5F00\u7F16\u8F91\u5668\uFF08\u8FD4\u56DE\u65F6\u95F4\u7EBF/\u6E38\u620F\uFF09\u524D\u786E\u8BA4
+  const guardedExit = (leave) => {
+    if (hasUnsavedChanges() &&
+        !window.confirm("\u6709\u672A\u4FDD\u5B58\u5230\u6587\u4EF6\u7684\u6539\u52A8\uFF0C\u786E\u5B9A\u79BB\u5F00\uFF1F\n\uFF08\u79BB\u5F00\u540E\u6539\u52A8\u4E0D\u4F1A\u5199\u5165 event.json\uFF09")) {
+      return;
+    }
+    leave();
   };
 
   // Import JSON
@@ -979,11 +1012,11 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
           </button>
         )}
         {onExit ? (
-          <button style={styles.btnBack} onClick={onExit}>
+          <button style={styles.btnBack} onClick={() => guardedExit(onExit)}>
             {"\u2190 \u8FD4\u56DE\u65F6\u95F4\u7EBF"}
           </button>
         ) : (
-          <button style={styles.btnBack} onClick={() => { window.location.search = ""; }}>
+          <button style={styles.btnBack} onClick={() => guardedExit(() => { window.location.search = ""; })}>
             {"\u2190 \u8FD4\u56DE\u6E38\u620F"}
           </button>
         )}

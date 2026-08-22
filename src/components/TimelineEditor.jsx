@@ -28,6 +28,32 @@ export default function TimelineEditor({ line = "dufu", onLineChange, onEditEven
 
   const timelinePath = `src/data/${line}/timeline.json`;
 
+  // 未保存改动守卫：记录「上次载入/保存时」的序列化内容
+  const lastSavedRef = useRef("");
+  const setLoaded = (d) => {
+    setData(d);
+    lastSavedRef.current = JSON.stringify(d, null, 2);
+  };
+  const hasUnsavedChanges = () =>
+    !!data && JSON.stringify(data, null, 2) !== lastSavedRef.current;
+  const guarded = (leave) => {
+    if (hasUnsavedChanges() &&
+        !window.confirm("时间线有未保存的改动，确定离开？\n（离开后改动不会写入 timeline.json）")) {
+      return;
+    }
+    leave();
+  };
+  useEffect(() => {
+    const onBeforeUnload = (e) => {
+      if (hasUnsavedChanges()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  });
+
   // Load timeline.json whenever the story line changes
   useEffect(() => {
     setLoading(true);
@@ -39,12 +65,13 @@ export default function TimelineEditor({ line = "dufu", onLineChange, onEditEven
     // another session show up. Fall back to the module import if fetch fails.
     fetch(`/${timelinePath}?t=` + Date.now())
       .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(setData)
+      .then(setLoaded)
       .catch(() => {
         const loader = TIMELINE_MODULES[`/src/data/${line}/timeline.json`];
-        if (loader) return loader().then((m) => setData(m.default));
+        if (loader) return loader().then((m) => setLoaded(m.default));
       })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [line]);
 
   // Flatten events with stage refs
@@ -159,6 +186,7 @@ export default function TimelineEditor({ line = "dufu", onLineChange, onEditEven
       });
       const result = await res.json();
       if (result.ok) {
+        lastSavedRef.current = JSON.stringify(data, null, 2);
         setSaveStatus(`✅ 已保存 → ${result.path}（${(result.bytes ?? 0).toLocaleString()} 字节）`);
         setTimeout(() => setSaveStatus(""), 6000);
       } else {
@@ -187,7 +215,10 @@ export default function TimelineEditor({ line = "dufu", onLineChange, onEditEven
           <label style={{ fontSize: 12, color: "#AAB7C4" }}>{"故事线:"}</label>
           <select
             value={line}
-            onChange={(e) => onLineChange && onLineChange(e.target.value)}
+            onChange={(e) => {
+              const next = e.target.value;
+              guarded(() => onLineChange && onLineChange(next));
+            }}
             style={styles.lineSelect}
           >
             {TIMELINE_LINES.map((l) => (
@@ -203,7 +234,7 @@ export default function TimelineEditor({ line = "dufu", onLineChange, onEditEven
         {saveStatus && <span style={styles.saveStatus}>{saveStatus}</span>}
         <button
           style={styles.gameBtn}
-          onClick={() => { window.location.search = ""; }}
+          onClick={() => guarded(() => { window.location.search = ""; })}
         >
           {"← 返回游戏"}
         </button>
@@ -282,7 +313,8 @@ export default function TimelineEditor({ line = "dufu", onLineChange, onEditEven
                   value
                 )
               }
-              onEditScene={() => onEditEvent && onEditEvent(selectedEvent.id)}
+              // 下钻场景编辑器会卸载本组件，时间线的未保存改动会丢——先确认
+              onEditScene={() => guarded(() => onEditEvent && onEditEvent(selectedEvent.id))}
             />
           ) : selectedStage ? (
             <StageDetailEditor
