@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DialogueBox from "./DialogueBox";
+import { nb } from "../utils/cjkText";
 
 export default function EventPanel({ stage, onStartQuiz, onClose }) {
   const [sceneData, setSceneData] = useState(null);
@@ -52,7 +53,7 @@ export default function EventPanel({ stage, onStartQuiz, onClose }) {
 
           {sceneData?.narrative && (
             <div style={styles.narrativeSection}>
-              <p style={styles.narrativeText}>{sceneData.narrative}</p>
+              <p style={styles.narrativeText}>{nb(sceneData.narrative)}</p>
             </div>
           )}
 

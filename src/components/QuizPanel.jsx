@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { nb } from "../utils/cjkText";
 import { POINTS } from "../utils/scoring";
 
 export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
@@ -118,7 +119,7 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
           </span>
         </div>
 
-        <h3 style={styles.quizQuestion}>{current.question}</h3>
+        <h3 style={styles.quizQuestion}>{nb(current.question)}</h3>
 
         {current.type === "choice" && (
           <div style={styles.optionsContainer}>
@@ -193,7 +194,7 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
 
         {showResult && (
           <div style={styles.explanationBox}>
-            <p style={styles.explanationText}>{current.explanation}</p>
+            <p style={styles.explanationText}>{nb(current.explanation)}</p>
           </div>
         )}
 

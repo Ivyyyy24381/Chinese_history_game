@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
 import { dantePortraitPath, DANTE_LEGACY_PORTRAIT } from "../data/dantePoses";
 import { Pin } from "./GameMap";
+import { nb } from "../utils/cjkText";
 import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
 
@@ -197,7 +198,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
         <div style={styles.transitionOverlay}>
           {!transitionDone ? (
             <div style={styles.transitionCard} onClick={handleTransitionClick}>
-              <p style={styles.transitionText}>{currentPhase.transitionText}</p>
+              <p style={styles.transitionText}>{nb(currentPhase.transitionText)}</p>
               <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
             </div>
           ) : !showConclusion && hasAnnouncement ? (
@@ -208,7 +209,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 {currentPhase.announcement.title && (
                   <h2 style={styles.scrollTitle}>{currentPhase.announcement.title}</h2>
                 )}
-                <p style={styles.scrollResult}>{currentPhase.announcement.text}</p>
+                <p style={styles.scrollResult}>{nb(currentPhase.announcement.text)}</p>
               </div>
               <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
             </div>
@@ -222,7 +223,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                       : heroPortraitPath(currentPhase.dufu_reaction.dufu_pose || currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year, eventId)
                   )}
                   alt="" style={styles.reactionPortrait} />
-                <p style={styles.reactionText}>{currentPhase.dufu_reaction.text}</p>
+                <p style={styles.reactionText}>{nb(currentPhase.dufu_reaction.text)}</p>
               </div>
               <button style={styles.proceedBtn} onClick={goToNextPhase}>
                 {"\u7EE7\u7EED \u2192"}
@@ -246,14 +247,14 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           }}>
             {/* Phase title & instruction */}
             <div style={styles.phaseHeader}>
-              <h2 style={styles.phaseTitle}>{currentPhase.title}</h2>
-              {currentPhase.narrative && <p style={styles.phaseNarrative}>{currentPhase.narrative}</p>}
+              <h2 style={styles.phaseTitle}>{nb(currentPhase.title)}</h2>
+              {currentPhase.narrative && <p style={styles.phaseNarrative}>{nb(currentPhase.narrative)}</p>}
             </div>
 
             {currentPhase.instruction && (
               <div style={styles.instructionBar}>
                 <span style={styles.instructionIcon}>{"\u{1F4AC}"}</span>
-                <span>{currentPhase.instruction}</span>
+                <span>{nb(currentPhase.instruction)}</span>
                 <span style={styles.talkCount}>
                   {"\u5DF2\u4EA4\u8C08: "}{talkedNpcs.size}/{currentPhase.npcs.length}
                 </span>
@@ -476,7 +477,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                         {line.speakerName || activeNpc.name}
                       </div>
                       <div style={styles.dialogueText}>
-                        {line.text}
+                        {nb(line.text)}
                       </div>
                       <div style={styles.dialogueContinue}>
                         {isLast ? "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED" : "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED"}
@@ -619,7 +620,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
 
             {examShowResult && q.explanation && (
               <div style={styles.explanationBox}>
-                <p>{q.explanation}</p>
+                <p>{nb(q.explanation)}</p>
               </div>
             )}
 
@@ -675,7 +676,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     style={styles.choiceBtn}
                     onClick={() => handleChoice(opt)}
                   >
-                    {opt.text}
+                    {nb(opt.text)}
                   </button>
                 ))}
               </div>
@@ -886,7 +887,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           }}>
             <div style={styles.phaseHeader}>
               <h2 style={styles.phaseTitle}>{currentPhase.title || "\u5730\u56FE\u884C\u65C5"}</h2>
-              {currentPhase.travelNarrative && <p style={styles.phaseNarrative}>{currentPhase.travelNarrative}</p>}
+              {currentPhase.travelNarrative && <p style={styles.phaseNarrative}>{nb(currentPhase.travelNarrative)}</p>}
             </div>
 
             {currentPhase.instruction && (
@@ -1031,7 +1032,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               <div key={i} style={{ marginBottom: 24, textAlign: "center" }}>
                 {slide.image && <img src={asset(slide.image)} alt="" style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }} />}
                 {slide.speaker && <div style={{ color: "#D4A574", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontWeight: "bold", marginBottom: 4 }}>{slide.speaker}</div>}
-                <p style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, margin: 0 }}>{slide.text}</p>
+                <p style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, margin: 0 }}>{nb(slide.text)}</p>
               </div>
             ))}
             <button style={{ ...styles.proceedBtn, marginTop: 20 }} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
@@ -1419,7 +1420,7 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
         >
           <div style={cpStyles.bubble} onClick={(e) => e.stopPropagation()}>
             {activePoint.label && <div style={cpStyles.bubbleLabel}>{activePoint.label}</div>}
-            <div style={cpStyles.bubbleText}>{activePoint.text}</div>
+            <div style={cpStyles.bubbleText}>{nb(activePoint.text)}</div>
             <button onClick={() => setActivePoint(null)} style={cpStyles.bubbleClose}>{"\u77E5\u9053\u4E86"}</button>
           </div>
         </div>
@@ -1506,7 +1507,7 @@ function ComicRevealPhase({ phase, onComplete }) {
               </div>
             )}
             <div style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif" }}>
-              {activeLine.text}
+              {nb(activeLine.text)}
             </div>
             <div style={{ color: "#A89968", fontSize: "clamp(8.8px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{"▼ 点击继续"}</div>
           </div>

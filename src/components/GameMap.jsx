@@ -776,6 +776,7 @@ const styles = {
     boxShadow: SHADOW.chip,
     letterSpacing: TRACKING.tight,
     cursor: "pointer",
+    whiteSpace: "nowrap",
   },
   zoomControls: {
     position: "absolute",

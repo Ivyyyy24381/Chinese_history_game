@@ -66,6 +66,7 @@ const styles = {
     fontWeight: 600,
     margin: "6px 0 0",
     textShadow: SHADOW.text,
+    whiteSpace: "nowrap",
   },
   readableTitle: {
     color: COLOR.secondary,
@@ -79,6 +80,7 @@ const styles = {
     letterSpacing: TRACKING.tight,
     margin: "3px 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
+    whiteSpace: "nowrap",
   },
   scoreValue: {
     color: COLOR.goldBrown,

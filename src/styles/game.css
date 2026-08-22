@@ -23,6 +23,23 @@ body,
   flex-direction: column;
 }
 
+/* ── 中文排版基线 ──
+   line-break: strict  → 避头尾：标点不孤悬行首（。、」》等不落到下一行开头）
+   标题 balance        → 两行标题长短均衡，不出「一行九个字 + 孤零零一个字」
+   段落 pretty         → 避免段落最后一行只剩一两个字（新浏览器渐进增强） */
+#root,
+#root * {
+  line-break: strict;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
 /* Animations */
 @keyframes pulse {
   0%,

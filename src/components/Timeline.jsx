@@ -288,6 +288,7 @@ const styles = {
     fontWeight: 600,
     letterSpacing: TRACKING.tight,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
+    whiteSpace: "nowrap",
   },
   currentDot: {
     width: 8,

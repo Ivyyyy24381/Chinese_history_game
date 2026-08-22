@@ -15,6 +15,7 @@ import { getCurrentUser, restoreSession, logout, submitScore, logVisit } from ".
 import { asset } from "./utils/asset";
 import { CHARACTERS, ACHIEVEMENT_TITLES, COMPLETION_LINES } from "./data/characters";
 import { FONT, COLOR, TRACKING, SHADOW, BUTTON, paperBtn, halo, scrim } from "./styles/theme";
+import { nb } from "./utils/cjkText";
 
 // Achievements persist across sessions.
 const ACH_KEY = "lishiyou_achievements";
@@ -455,7 +456,7 @@ export default function App() {
         </div>
         {/* 事件面板：不套框不铺底，halo() 把文字从地图里托出来 */}
         <div style={styles.floatingInfo}>
-          <h3 style={styles.eventTitle}>{currentEvent.name}</h3>
+          <h3 style={styles.eventTitle}>{nb(currentEvent.name)}</h3>
           <div style={styles.eventMeta}>
             <span
               aria-hidden="true"
@@ -464,7 +465,7 @@ export default function App() {
             {`${currentEvent.year} 年 · ${currentStage.period}`}
           </div>
           <p style={styles.eventSummary}>
-            {currentEvent.summary || currentStage.summary}
+            {nb(currentEvent.summary || currentStage.summary)}
           </p>
           <button
             style={{
@@ -557,7 +558,7 @@ export default function App() {
               {ACHIEVEMENT_TITLES[character?.id] || "人物传完成"}
             </div>
             <p style={styles.congratsText}>
-              {`你走完了${character?.name || ""}的一生——${COMPLETION_LINES[character?.id] || "一段历史长河中的人生。"}`}
+              {nb(`你走完了${character?.name || ""}的一生——${COMPLETION_LINES[character?.id] || "一段历史长河中的人生。"}`)}
             </p>
             <div style={styles.congratsScore}>
               {"本局总分 "}<strong style={{ fontSize: "clamp(20.8px, 1.806vw, 29.9px)" }}>{runScore}</strong>{" 分"}
@@ -769,8 +770,8 @@ const styles = {
     bottom: 116,
     // 让开右下角的缩放钮列（36px 圆钮 + 边距）
     right: 78,
-    width: 280,
-    padding: "20px 30px 22px",
+    width: 300,
+    padding: "20px 26px 22px",
     textAlign: "center",
     zIndex: 25,
     // 不套框：收得比内边距紧的暖光，把标题/年份/简介从地图上托出来
@@ -779,9 +780,10 @@ const styles = {
   eventTitle: {
     margin: 0,
     color: COLOR.inkStrong,
-    fontSize: "clamp(16px, 1.4vw, 22px)",
+    fontSize: "clamp(16px, 1.4vw, 21px)",
     letterSpacing: TRACKING.loose,
     textShadow: SHADOW.text,
+    // 标题尽量一行放下；放不下时 balance（全局 h3 规则）让两行均衡
   },
   eventMeta: {
     marginTop: 4,
@@ -789,6 +791,7 @@ const styles = {
     color: COLOR.secondary,
     letterSpacing: TRACKING.normal,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
+    whiteSpace: "nowrap",
   },
   stageDot: {
     display: "inline-block",

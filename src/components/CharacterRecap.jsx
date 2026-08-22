@@ -3,6 +3,7 @@
  * 纵向时间轴：分期 → 事件（年份/状态/概述/地点），首尾有人物总评。
  */
 import { asset } from "../utils/asset";
+import { nb } from "../utils/cjkText";
 
 export default function CharacterRecap({ character, stages, onClose }) {
   return (
@@ -19,7 +20,7 @@ export default function CharacterRecap({ character, stages, onClose }) {
             <div style={styles.meta}>
               {character.title}{" · "}{character.dynasty}{" · "}{character.years}
             </div>
-            <p style={styles.desc}>{character.description}</p>
+            <p style={styles.desc}>{nb(character.description)}</p>
           </div>
         </div>
 
@@ -33,7 +34,7 @@ export default function CharacterRecap({ character, stages, onClose }) {
               <span style={{ ...styles.stagePeriod, color: stage.color }}>{stage.period}</span>
               <span style={styles.stageYears}>{stage.yearStart}{"—"}{stage.yearEnd}</span>
             </div>
-            {stage.summary && <p style={styles.stageSummary}>{stage.summary}</p>}
+            {stage.summary && <p style={styles.stageSummary}>{nb(stage.summary)}</p>}
             {(stage.events || []).map((ev) => (
               <div key={ev.id} style={styles.eventRow}>
                 <div style={{ ...styles.eventYear, backgroundColor: stage.color }}>{ev.year}</div>
@@ -43,7 +44,7 @@ export default function CharacterRecap({ character, stages, onClose }) {
                     {ev.state && <span style={styles.eventState}>{ev.state}</span>}
                   </div>
                   {ev.location?.name && <div style={styles.eventLoc}>{"📍 " + ev.location.name}</div>}
-                  {ev.summary && <p style={styles.eventSummary}>{ev.summary}</p>}
+                  {ev.summary && <p style={styles.eventSummary}>{nb(ev.summary)}</p>}
                 </div>
               </div>
             ))}

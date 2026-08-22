@@ -5,6 +5,7 @@ import {
   FONT, COLOR, TRACKING, TRANSITION, SHADOW, BUTTON,
   paper, paperBtn, gold, halo, scrim,
 } from "../styles/theme";
+import { nb } from "../utils/cjkText";
 
 /**
  * 主页 · 选择主人公
@@ -162,7 +163,7 @@ export default function CharacterSelect({
                       marginTop: isSelected ? 8 : 0,
                     }}
                   >
-                    {char.description}
+                    {nb(char.description)}
                   </p>
                 </div>
               </div>
@@ -358,6 +359,7 @@ const styles = {
     fontWeight: 600,
     margin: "8px 0 0",
     textShadow: SHADOW.text,
+    whiteSpace: "nowrap",
   },
   readableTitle: {
     color: COLOR.secondary,
@@ -371,6 +373,7 @@ const styles = {
     letterSpacing: TRACKING.tight,
     margin: "3px 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
+    whiteSpace: "nowrap",
   },
   metaSep: { opacity: 0.45 },
   // 简介只在选中时展开，收起时高度为 0，三列不会因文字长短错位

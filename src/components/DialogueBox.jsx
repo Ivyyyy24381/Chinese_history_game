@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { asset } from "../utils/asset";
+import { nb } from "../utils/cjkText";
 
 export default function DialogueBox({ dialogues, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,7 +66,7 @@ export default function DialogueBox({ dialogues, onComplete }) {
               transition: "opacity 0.3s ease-in",
             }}
           >
-            {current.text}
+            {nb(current.text)}
           </div>
 
           {/* Continue indicator */}
