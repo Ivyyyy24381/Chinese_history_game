@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
 import { dantePortraitPath, DANTE_LEGACY_PORTRAIT } from "../data/dantePoses";
 import { Pin } from "./GameMap";
 import { nb } from "../utils/cjkText";
+import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
 import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
 
@@ -29,6 +30,59 @@ function isLegacyHeroPortrait(p) {
   return p === DUFU_LEGACY_PORTRAIT || p === DANTE_LEGACY_PORTRAIT;
 }
 
+// ---- 过场文字的动态进入 ------------------------------------------------------
+// 把一段过场文字切成逐句显影的单元：先按 \n 分行；超长的行再按句读切
+// （句号/叹号/问号/分号 + 可跟的引号或破折号），保留标点。
+function splitRevealUnits(text) {
+  if (!text) return [];
+  const units = [];
+  for (const line of String(text).split(/\n+/)) {
+    const t = line.trim();
+    if (!t) continue;
+    if (t.length <= 26) { units.push(t); continue; }
+    const parts = t.match(/[^。！？；]+[。！？；]?[」》]?(?:——)?/g) || [t];
+    units.push(...parts.map((p) => p.trim()).filter(Boolean));
+  }
+  return units;
+}
+
+/**
+ * RevealLines — 过场文字逐句「墨迹显影」进入（淡入 + 上浮 + 晕开变清晰）。
+ * skip=true 或系统减少动效时直接全部显示。onDone 在最后一句显完后触发一次。
+ */
+function RevealLines({ text, style, skip = false, unitDelay = 620, duration = 900, onDone }) {
+  const units = useMemo(() => splitRevealUnits(text), [text]);
+  const reduced = usePrefersReducedMotion();
+  const instant = skip || reduced;
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+  useEffect(() => {
+    if (instant) { onDoneRef.current && onDoneRef.current(); return; }
+    const total = duration + unitDelay * Math.max(0, units.length - 1) + 80;
+    const t = setTimeout(() => onDoneRef.current && onDoneRef.current(), total);
+    return () => clearTimeout(t);
+  }, [text, instant, units.length, unitDelay, duration]);
+  return (
+    <div style={style}>
+      {units.map((u, i) => (
+        <div
+          key={i}
+          style={
+            instant
+              ? undefined
+              : {
+                  animation: `inkReveal ${duration}ms cubic-bezier(.2,.7,.3,1) both`,
+                  animationDelay: `${i * unitDelay}ms`,
+                }
+          }
+        >
+          {nb(u)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /**
  * ScenePlayer - Interactive scene engine
  * Supports phase types: explore, exam, transition, forced_choice
@@ -50,6 +104,9 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
   const [fillDropped, setFillDropped] = useState(null);
   // Transition state
   const [transitionDone, setTransitionDone] = useState(false);
+  // 过场文字逐句显影是否已放完（没放完时点击 = 先补完，再点才前进）
+  const [revealDone, setRevealDone] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
   // Choice state
   const [choiceResponse, setChoiceResponse] = useState(null);
   const [choiceCorrect, setChoiceCorrect] = useState(false);
@@ -85,6 +142,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
       setExamFillInput("");
       setExamFinished(false);
       setTransitionDone(false);
+      setRevealDone(false);
       setChoiceResponse(null);
       setChoiceCorrect(false);
       setChoiceAttempted(false);
@@ -187,6 +245,11 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     const hasAnnouncement = !!currentPhase.announcement;
     const hasReaction = !!currentPhase.dufu_reaction;
     const handleTransitionClick = () => {
+      // \u6587\u5B57\u8FD8\u5728\u9010\u53E5\u663E\u5F71\uFF1A\u7B2C\u4E00\u4E0B\u70B9\u51FB\u5148\u8865\u5B8C\u6574\u6BB5\uFF0C\u518D\u70B9\u624D\u524D\u8FDB
+      if (!revealDone) {
+        setRevealDone(true);
+        return;
+      }
       if (!hasAnnouncement && !hasReaction) {
         goToNextPhase();
       } else {
@@ -198,14 +261,34 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
         <div style={styles.transitionOverlay}>
           {!transitionDone ? (
             <div style={styles.transitionCard} onClick={handleTransitionClick}>
-              <p style={styles.transitionText}>{nb(currentPhase.transitionText)}</p>
-              <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
+              <RevealLines
+                text={currentPhase.transitionText}
+                style={styles.transitionText}
+                skip={revealDone}
+                onDone={() => setRevealDone(true)}
+              />
+              <p
+                style={{
+                  ...styles.clickHint,
+                  opacity: revealDone ? 1 : 0,
+                  transition: "opacity 500ms ease",
+                }}
+              >
+                {"\u70B9\u51FB\u7EE7\u7EED"}
+              </p>
             </div>
           ) : !showConclusion && hasAnnouncement ? (
             <div style={styles.scrollContainer} onClick={() => hasReaction ? setShowConclusion(true) : goToNextPhase()}>
               {/* Self-contained parchment card \u2014 no image dependency (the old
                   scroll.png path was a 404, which collapsed the layout). */}
-              <div style={styles.scrollWrap}>
+              <div
+                style={{
+                  ...styles.scrollWrap,
+                  animation: prefersReducedMotion
+                    ? "none"
+                    : "announceIn 650ms cubic-bezier(.2,.7,.3,1) both",
+                }}
+              >
                 {currentPhase.announcement.title && (
                   <h2 style={styles.scrollTitle}>{currentPhase.announcement.title}</h2>
                 )}
@@ -215,7 +298,14 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             </div>
           ) : hasReaction ? (
             <div style={styles.announcementPanel}>
-              <div style={styles.reactionBox}>
+              <div
+                style={{
+                  ...styles.reactionBox,
+                  animation: prefersReducedMotion
+                    ? "none"
+                    : "inkReveal 700ms cubic-bezier(.2,.7,.3,1) both",
+                }}
+              >
                 <img
                   src={asset(
                     currentPhase.dufu_reaction.portrait && !isLegacyHeroPortrait(currentPhase.dufu_reaction.portrait)
@@ -245,8 +335,16 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             ...styles.sceneStageInner,
             backgroundImage: currentPhase.background ? `url(${asset(currentPhase.background)})` : "none",
           }}>
-            {/* Phase title & instruction */}
-            <div style={styles.phaseHeader}>
+            {/* Phase title & instruction — 换屏时标题/叙述显影进入，避免静态一屏拍上 */}
+            <div
+              key={currentPhase.id}
+              style={{
+                ...styles.phaseHeader,
+                animation: prefersReducedMotion
+                  ? "none"
+                  : "inkReveal 700ms cubic-bezier(.2,.7,.3,1) both",
+              }}
+            >
               <h2 style={styles.phaseTitle}>{nb(currentPhase.title)}</h2>
               {currentPhase.narrative && <p style={styles.phaseNarrative}>{nb(currentPhase.narrative)}</p>}
             </div>
@@ -1029,7 +1127,17 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             {slides.length === 0 ? (
               <p style={{ color: "#AAA", textAlign: "center" }}>{"\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09"}</p>
             ) : slides.map((slide, i) => (
-              <div key={i} style={{ marginBottom: 24, textAlign: "center" }}>
+              <div
+                key={i}
+                style={{
+                  marginBottom: 24,
+                  textAlign: "center",
+                  animation: prefersReducedMotion
+                    ? "none"
+                    : "inkReveal 800ms cubic-bezier(.2,.7,.3,1) both",
+                  animationDelay: prefersReducedMotion ? undefined : `${Math.min(i, 8) * 380}ms`,
+                }}
+              >
                 {slide.image && <img src={asset(slide.image)} alt="" style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }} />}
                 {slide.speaker && <div style={{ color: "#D4A574", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontWeight: "bold", marginBottom: 4 }}>{slide.speaker}</div>}
                 <p style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, margin: 0 }}>{nb(slide.text)}</p>
