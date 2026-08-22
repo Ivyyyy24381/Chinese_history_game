@@ -5,3 +5,5 @@ dist-test/
 *.local
 .env
 .vite/
+
+.claude/
