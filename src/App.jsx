@@ -26,7 +26,13 @@ const loadRun = () => {
 };
 const clearRunStorage = () => { try { localStorage.removeItem(RUN_KEY); } catch { /* ignore */ } };
 // Achievement title per character biography.
-const ACHIEVEMENT_TITLES = { dufu: "诗圣之路", libai: "诗仙之路", sushi: "东坡之路" };
+const ACHIEVEMENT_TITLES = { dufu: "诗圣之路", dante: "Divina Commedia", libai: "诗仙之路", sushi: "东坡之路" };
+
+// 通关结语（每人物一句；缺省用通用句）。
+const COMPLETION_LINES = {
+  dufu: "从裘马轻狂的少年，到湘江舟中的诗圣。",
+  dante: "从佛罗伦萨的婴儿，到拉文纳的桂冠诗人——是爱，推动太阳与群星。",
+};
 
 // Static character data
 const CHARACTERS = [
@@ -40,6 +46,17 @@ const CHARACTERS = [
     avatar: "🖊",
     portrait: "/assets/dufu/hero/portrait.png",
     color: "#4A90A4",
+  },
+  {
+    id: "dante",
+    name: "但丁",
+    title: "至高诗人",
+    years: "1265—1321",
+    dynasty: "意大利·中世纪晚期",
+    description: "《神曲》作者，欧洲文艺复兴的先声，「意大利语之父」",
+    avatar: "🌹",
+    portrait: "/assets/dante/hero/portrait.png",
+    color: "#A93226",
   },
   {
     id: "libai",
@@ -127,7 +144,7 @@ export default function App() {
   // Load timeline data when character is selected
   useEffect(() => {
     if (character && !timelineData) {
-      import("./data/dufu/timeline.json")
+      import(`./data/${character.id}/timeline.json`)
         .then((module) => {
           const data = module.default;
           setTimelineData(data);
@@ -257,7 +274,8 @@ export default function App() {
 
   const handleExplore = async () => {
     if (!currentEvent || !currentEvent.hasScene) return;
-    const load = () => import(`./data/dufu/events/${currentEvent.id}/event.json`);
+    const charId = character?.id || "dufu";
+    const load = () => import(`./data/${charId}/events/${currentEvent.id}/event.json`);
     try {
       let sceneModule;
       try {
@@ -317,13 +335,14 @@ export default function App() {
   };
 
   // Open the recap (from congrats dialog or from home page badge).
-  const openRecap = async () => {
-    if (timelineData) {
+  const openRecap = async (charId) => {
+    const id = typeof charId === "string" ? charId : character?.id || "dufu";
+    if (timelineData && timelineData.character?.id === id) {
       setRecapData({ character: timelineData.character, stages: timelineData.stages });
       return;
     }
     try {
-      const mod = await import("./data/dufu/timeline.json");
+      const mod = await import(`./data/${id}/timeline.json`);
       setRecapData({ character: mod.default.character, stages: mod.default.stages });
     } catch { /* ignore */ }
   };
@@ -536,7 +555,7 @@ export default function App() {
               {ACHIEVEMENT_TITLES[character?.id] || "人物传完成"}
             </div>
             <p style={styles.congratsText}>
-              {`你走完了${character?.name || ""}的一生——从裘马轻狂的少年，到湘江舟中的诗圣。`}
+              {`你走完了${character?.name || ""}的一生——${COMPLETION_LINES[character?.id] || "一段历史长河中的人生。"}`}
             </p>
             <div style={styles.congratsScore}>
               {"本局总分 "}<strong style={{ fontSize: "clamp(20.8px, 1.806vw, 29.9px)" }}>{runScore}</strong>{" 分"}

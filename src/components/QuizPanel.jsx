@@ -11,10 +11,11 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
   const [isFinished, setIsFinished] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Load quiz data (event-based path)
+  // Load quiz data (event-based path; 事件 id 年份 <1000 → dufu，否则 → dante)
   useEffect(() => {
     if (loading) {
-      import(`../data/dufu/events/${stage.id}/quiz.json`)
+      const line = parseInt(stage.id, 10) < 1000 ? "dufu" : "dante";
+      import(`../data/${line}/events/${stage.id}/quiz.json`)
         .then((module) => {
           setQuizData(module.default);
           setLoading(false);
