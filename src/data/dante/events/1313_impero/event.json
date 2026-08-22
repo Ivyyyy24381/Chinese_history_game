@@ -1,0 +1,337 @@
+{
+  "id": "1313_impero",
+  "title": "帝国之梦",
+  "year": "1313",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "lectern_intro",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "讲坛引子",
+      "transitionText": "讲坛上，薄伽丘展开三封信的抄件。",
+      "announcement": {
+        "title": "讲坛",
+        "text": "薄伽丘：「一生最后一次政治豪赌。他把全部的赌注——包括回家的可能——都押在一个德意志人身上。诸位看他怎么下注。」",
+        "style": "imperial_decree"
+      },
+      "narrative": "",
+      "nextPhase": "letters"
+    },
+    {
+      "id": "letters",
+      "type": "explore",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "title": "书房 · 三封公开信",
+      "narrative": "亨利七世率军翻过阿尔卑斯山。流亡者的书案上，三封公开信一夜写就，墨迹未干。",
+      "instruction": "读完三封信，再听听抄写员怎么说。",
+      "dufu_pose": "exile/writing",
+      "npcs": [
+        {
+          "id": "epistola_1",
+          "name": "信一 · 致意大利诸侯",
+          "portrait": "/assets/dante/props/epistole_letters.png",
+          "position": {
+            "x": 28,
+            "y": 56
+          },
+          "scale": 0.7,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "《致意大利诸王侯书》",
+              "text": "「看哪，现在是蒙恩的时候！新郎来了，意大利的新娘，擦干你的眼泪——罗马的皇帝来做万民的和平了！」"
+            }
+          ]
+        },
+        {
+          "id": "epistola_2",
+          "name": "信二 · 致佛罗伦萨",
+          "portrait": "",
+          "position": {
+            "x": 48,
+            "y": 62
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "《致佛罗伦萨城内恶徒书》",
+              "text": "「你们这些愚妄之徒！僭越一切神法与人法，贪婪驱使你们无恶不作——城墙救不了你们，鹰旗之下，你们必将颤抖！」"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "（笔锋未停）骂痛快了。也把自己钉死在流亡名单上了。"
+            }
+          ]
+        },
+        {
+          "id": "epistola_3",
+          "name": "信三 · 致亨利",
+          "portrait": "",
+          "position": {
+            "x": 66,
+            "y": 56
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "《致亨利书》",
+              "text": "「你为何迁延？你在米兰过冬，以为托斯卡纳不足虑？错了！先诛佛罗伦萨——这条毒蛇，这只病羊，它正在污染整个羊群！」"
+            }
+          ]
+        },
+        {
+          "id": "scribe",
+          "name": "抄写员",
+          "portrait": "/assets/dante/npcs/scribe.png",
+          "position": {
+            "x": 84,
+            "y": 68
+          },
+          "scale": 1.25,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "scribe",
+              "speakerName": "抄写员",
+              "text": "（手抖）先生，这些信……骂的是您自己的故乡。"
+            },
+            {
+              "speaker": "scribe",
+              "speakerName": "抄写员",
+              "text": "一旦寄出，传遍诸城——佛罗伦萨永远、永远不会赦免您了。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "send_choice"
+    },
+    {
+      "id": "send_choice",
+      "type": "forced_choice",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "title": "寄，还是不寄？",
+      "narrative": "抄写员捧着信，等最后一句话。",
+      "question": "这三封信，寄吗？",
+      "dufu_pose": "exile/writing",
+      "options": [
+        {
+          "id": "wait",
+          "text": "缓一缓。留一条退路。",
+          "correct": false,
+          "response": {
+            "speaker": "narrator",
+            "speakerName": "旁白",
+            "text": "他没有缓。历史不给这个选项——你面前的这个人，从不给自己留退路。"
+          }
+        },
+        {
+          "id": "send",
+          "text": "寄。全部寄出。",
+          "correct": true,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "正义在此一举。\n寄出去——让全意大利听见。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "三封信传遍意大利。佛罗伦萨的回应是把但丁永远排除在任何赦免之外。他押上了回家的路，去赌一个帝国的梦。"
+      },
+      "nextPhase": "march"
+    },
+    {
+      "id": "march",
+      "type": "map_travel",
+      "background": "/assets/dante/maps/route_1313_enrico.png",
+      "title": "皇帝的南征 · 1310–1313",
+      "travelNarrative": "亨利七世翻越阿尔卑斯山南下。情绪从沸点，一站一站冷下去。",
+      "instruction": "沿鹰旗的路线，点击每一站。",
+      "requireAll": true,
+      "waypoints": [
+        {
+          "id": "milano",
+          "name": "米兰 · 1311",
+          "x": 44,
+          "y": 17,
+          "isKey": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "圣安布罗焦教堂，亨利戴上伦巴第的铁王冠。观礼的人群里，一个流亡的诗人挤到御前——俯身，吻了皇帝的脚。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "我见到了他。正义的化身，活的。二十年了，我第一次觉得离家这么近。"
+            }
+          ]
+        },
+        {
+          "id": "brescia",
+          "name": "布雷西亚 · 围城",
+          "x": 47,
+          "y": 28,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "布雷西亚闭门抗拒。围城四个月，疫病横行，联军开始瓦解。贵尔夫诸城冷眼旁观——那不勒斯的罗贝托王已在集结军队。"
+            }
+          ]
+        },
+        {
+          "id": "roma",
+          "name": "罗马 · 1312",
+          "x": 57,
+          "y": 47,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "罗马巷战。圣彼得堂被敌军占据，加冕只能改在拉特兰教堂——一场残缺的加冕。新教皇远在阿维尼翁，连使节都显得敷衍。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "皇冠戴上了，可圣彼得的门是关着的。……不祥。"
+            }
+          ]
+        },
+        {
+          "id": "buonconvento",
+          "name": "布翁孔文托 · 1313.8.24",
+          "x": 65,
+          "y": 55,
+          "isKey": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "大军终于南指佛罗伦萨。8 月 24 日，锡耶纳附近的小镇布翁孔文托——"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "驿报",
+              "text": "「皇帝驾崩。疟疾。」"
+            }
+          ]
+        }
+      ],
+      "nextPhase": "dream_end"
+    },
+    {
+      "id": "dream_end",
+      "type": "transition",
+      "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.png",
+      "title": "梦碎",
+      "transitionText": "灵帐前，鹰旗倒卷。\n亨利死后，但丁再未对现世政治抱任何希望。\n他把皇帝写进了《天堂》。",
+      "announcement": {
+        "title": "天堂 · 第三十歌",
+        "text": "「在至高玫瑰的座席之中，有一把空椅，上面放着一顶王冠——等着高贵的亨利，他来匡正意大利，可惜意大利尚未准备好。」",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/hero/exile/bitter.png",
+        "text": "人间容不下的，天堂给他留了座。"
+      },
+      "narrative": "",
+      "nextPhase": "monarchia_exam"
+    },
+    {
+      "id": "monarchia_exam",
+      "type": "exam",
+      "background": "/assets/dante/events/1313_impero/backgrounds/milano_incoronazione.png",
+      "title": "《帝制论》问答",
+      "narrative": "数年后，一位博洛尼亚学者慕名来访，就先生的《帝制论》与那场南征逐条求教。",
+      "examiner": {
+        "name": "博洛尼亚学者",
+        "portrait": "/assets/dante/events/1313_impero/npcs/bologna_scholar.png"
+      },
+      "questions": [
+        {
+          "type": "choice",
+          "question": "1311 年，亨利七世在米兰加冕时戴上的是什么王冠？",
+          "options": [
+            "金玫瑰冠",
+            "伦巴第铁王冠",
+            "月桂冠",
+            "三重冕"
+          ],
+          "answer": 1,
+          "explanation": "米兰圣安布罗焦教堂的加冕用的是伦巴第诸王的铁王冠——相传冠内的铁环由基督受难的圣钉打成。观礼的但丁俯身吻了皇帝的脚。"
+        },
+        {
+          "type": "choice",
+          "question": "1312 年亨利在罗马的皇帝加冕，为何改在拉特兰教堂举行？",
+          "options": [
+            "拉特兰是历代惯例",
+            "圣彼得堂正在修缮",
+            "圣彼得堂被敌军占据",
+            "教皇指定拉特兰"
+          ],
+          "answer": 2,
+          "explanation": "罗马巷战中，圣彼得堂一带被那不勒斯与贵尔夫联军占据，加冕只能退而在拉特兰教堂举行——一场残缺的加冕，凶兆已现。"
+        },
+        {
+          "type": "choice",
+          "question": "《帝制论》中，但丁主张政权与教权的关系是？",
+          "options": [
+            "皇帝受教皇册封，如月亮借太阳之光",
+            "教会应服从帝国",
+            "帝国与教会如两个太阳，各自直接受命于神",
+            "政教应合为一体"
+          ],
+          "answer": 2,
+          "explanation": "但丁反对「日月说」（皇权如月亮借教皇的光），主张「两个太阳」：帝国掌尘世幸福，教会掌永恒救赎，各自直接受命于神，互不隶属。"
+        },
+        {
+          "type": "choice",
+          "question": "《帝制论》后来的命运是？",
+          "options": [
+            "被教会列为禁书，公开焚毁",
+            "成为帝国官学教材",
+            "散佚失传",
+            "被译成拉丁文百年后才刊行"
+          ],
+          "answer": 0,
+          "explanation": "但丁死后，《帝制论》因否定教皇的世俗权威被教会谴责焚毁，16 世纪被列入《禁书目录》。骨灰未冷，书先上了火堆。"
+        },
+        {
+          "type": "choice",
+          "question": "亨利七世的南征，最终结束于何事？",
+          "options": [
+            "兵败佛罗伦萨城下",
+            "1313 年在布翁孔文托染疟疾暴病而亡",
+            "与教皇和解后北返",
+            "被那不勒斯军俘虏"
+          ],
+          "answer": 1,
+          "explanation": "1313 年 8 月 24 日，大军南指之际，亨利七世在锡耶纳附近的布翁孔文托死于疟疾。帝国梦碎——但丁自此再未对现世政治抱任何希望。"
+        }
+      ],
+      "nextPhase": "echo"
+    },
+    {
+      "id": "echo",
+      "type": "transition",
+      "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.png",
+      "title": "后世回声",
+      "transitionText": "讲坛上，薄伽丘停了很久。",
+      "announcement": {
+        "title": "后世回声",
+        "text": "薄伽丘：「他赌输了。可诸位——正因为人间的宝座空了，他才把整座天堂修成了法庭。《神曲》的裁决，比任何皇帝的都长久。」",
+        "style": "imperial_decree"
+      },
+      "narrative": ""
+    }
+  ]
+}
