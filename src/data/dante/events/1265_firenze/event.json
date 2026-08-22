@@ -1,0 +1,351 @@
+{
+  "id": "1265_firenze",
+  "title": "佛罗伦萨之子",
+  "year": "1265",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "lectern_intro",
+      "type": "explore",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "1373 · 后世讲坛",
+      "narrative": "1373 年，佛罗伦萨，圣斯特凡诺教堂。史上第一个「但丁讲席」开讲——主讲人：乔万尼·薄伽丘。",
+      "instruction": "点击讲坛上的薄伽丘，听他开讲。",
+      "npcs": [
+        {
+          "id": "boccaccio",
+          "name": "薄伽丘",
+          "portrait": "/assets/dante/npcs/boccaccio.png",
+          "position": {
+            "x": 50,
+            "y": 66
+          },
+          "scale": 1.8,
+          "dialogues": [
+            {
+              "speaker": "boccaccio",
+              "speakerName": "薄伽丘",
+              "text": "1265 年，双子座下，这座城里生下一个婴儿。"
+            },
+            {
+              "speaker": "boccaccio",
+              "speakerName": "薄伽丘",
+              "text": "五十年后，同一座城判他火刑。"
+            },
+            {
+              "speaker": "boccaccio",
+              "speakerName": "薄伽丘",
+              "text": "今天，城里付钱请我来讲他。诸位——我们从头讲。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 1,
+      "nextPhase": "battistero"
+    },
+    {
+      "id": "battistero",
+      "type": "explore",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/firenze_battistero.png",
+      "title": "圣乔万尼洗礼堂前",
+      "narrative": "1265 年 5 月，佛罗伦萨。阿利吉耶里家添丁，取名杜兰特，小名——但丁。",
+      "instruction": "在洗礼堂前的市集走动，听听这座城的人都在说什么。",
+      "npcs": [
+        {
+          "id": "vendor_florence",
+          "name": "商贩",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.png",
+          "position": {
+            "x": 20,
+            "y": 72
+          },
+          "scale": 1.2,
+          "dialogues": [
+            {
+              "speaker": "vendor_florence",
+              "speakerName": "商贩",
+              "text": "行会的旗子比领主的剑管用，这就是佛罗伦萨。"
+            },
+            {
+              "speaker": "vendor_florence",
+              "speakerName": "商贩",
+              "text": "呢绒、钱庄、香料——我们靠生意吃饭，不靠城堡。"
+            }
+          ]
+        },
+        {
+          "id": "veteran_montaperti",
+          "name": "老兵",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/veteran_montaperti.png",
+          "position": {
+            "x": 66,
+            "y": 74
+          },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "veteran_montaperti",
+              "speakerName": "老兵",
+              "text": "五年前，蒙塔佩尔蒂。吉伯林党借西耶纳的兵杀回来……"
+            },
+            {
+              "speaker": "veteran_montaperti",
+              "speakerName": "老兵",
+              "text": "阿尔比亚河的水，都染红了。"
+            },
+            {
+              "speaker": "veteran_montaperti",
+              "speakerName": "老兵",
+              "text": "皇帝党、教皇党——这座城的孩子生下来，就得选一边。"
+            }
+          ]
+        },
+        {
+          "id": "neighbor_woman",
+          "name": "邻妇",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/neighbor_woman.png",
+          "position": {
+            "x": 82,
+            "y": 70
+          },
+          "scale": 1.15,
+          "flip": true,
+          "dialogues": [
+            {
+              "speaker": "neighbor_woman",
+              "speakerName": "邻妇",
+              "text": "阿利吉耶里家？小贵族，贵尔夫党的——就是教皇党。"
+            },
+            {
+              "speaker": "neighbor_woman",
+              "speakerName": "邻妇",
+              "text": "听说孩子他母亲有孕时，梦见自己在月桂树下产子呢。"
+            }
+          ]
+        },
+        {
+          "id": "priest_baptistery",
+          "name": "教士",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/priest_baptistery.png",
+          "position": {
+            "x": 38,
+            "y": 68
+          },
+          "scale": 1.2,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "priest_baptistery",
+              "speakerName": "教士",
+              "text": "看见那座八角的洗礼堂了吗？圣乔万尼——我们「美丽的圣约翰」。"
+            },
+            {
+              "speaker": "priest_baptistery",
+              "speakerName": "教士",
+              "text": "洗礼堂的圣水池——这城里每一个孩子，都从这里开始。"
+            }
+          ]
+        },
+        {
+          "id": "battistero_door",
+          "name": "洗礼堂金门",
+          "portrait": "",
+          "position": {
+            "x": 51,
+            "y": 34
+          },
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "八角形的洗礼堂立在广场中央，青铜的门在晨光里发亮。几天后，那个叫但丁的婴儿将在这里受洗。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "cacciaguida"
+    },
+    {
+      "id": "cacciaguida",
+      "type": "comic_reveal",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.png",
+      "image": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.png",
+      "title": "卡恰圭达的佛罗伦萨",
+      "narrative": "讲坛上，薄伽丘翻开《天堂》第十五歌——但丁的高祖、十字军烈士卡恰圭达，追忆古老纯朴的佛罗伦萨。",
+      "instruction": "点击画面，一格一格看下去。",
+      "panels": [
+        {
+          "id": "p1_bell",
+          "x": 0.5,
+          "y": 2,
+          "w": 32,
+          "h": 51,
+          "dialogues": [
+            {
+              "speaker": "cacciaguida",
+              "speakerName": "卡恰圭达",
+              "text": "「佛罗伦萨，在古老的城墙之内，安于朴素与贞静。钟声报着晨祷与午祷，一如往昔。」"
+            }
+          ]
+        },
+        {
+          "id": "p2_spindle",
+          "x": 33,
+          "y": 2,
+          "w": 32.5,
+          "h": 51,
+          "dialogues": [
+            {
+              "speaker": "cacciaguida",
+              "speakerName": "卡恰圭达",
+              "text": "「主妇守着纺锤和纱线，在摇篮边用古老的故事，讲特洛伊、菲埃索莱和罗马。」"
+            }
+          ]
+        },
+        {
+          "id": "p3_marriage",
+          "x": 66.5,
+          "y": 2,
+          "w": 33,
+          "h": 51,
+          "dialogues": [
+            {
+              "speaker": "cacciaguida",
+              "speakerName": "卡恰圭达",
+              "text": "「我的妻子从波河谷来，你们的姓氏——阿利吉耶里——就是从她而来。」"
+            }
+          ]
+        },
+        {
+          "id": "p4_crusade",
+          "x": 0.5,
+          "y": 55,
+          "w": 32,
+          "h": 43.5,
+          "dialogues": [
+            {
+              "speaker": "cacciaguida",
+              "speakerName": "卡恰圭达",
+              "text": "「后来我随皇帝康拉德东征，在圣地为信仰而死，从殉道来到这平安之境。」"
+            }
+          ]
+        },
+        {
+          "id": "p5_baptism",
+          "x": 66.5,
+          "y": 55,
+          "w": 33,
+          "h": 43.5,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "1265 年。婴儿在圣乔万尼洗礼堂受洗，取名杜兰特·阿利吉耶里。"
+            },
+            {
+              "speaker": "cacciaguida",
+              "speakerName": "卡恰圭达",
+              "text": "「我的血脉里，将出一个走遍三界的人。」"
+            }
+          ]
+        }
+      ],
+      "nextPhase": "study"
+    },
+    {
+      "id": "study",
+      "type": "explore",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/casa_alighieri.png",
+      "title": "少年书房 · 1274",
+      "narrative": "九年过去。阿利吉耶里家的少年在羊皮纸和抄本之间长大。母亲早逝，父亲做着放贷的小生意。",
+      "instruction": "点击书房里的物件与家人。",
+      "npcs": [
+        {
+          "id": "aeneid_codex",
+          "name": "维吉尔抄本",
+          "portrait": "/assets/dante/props/aeneid_codex.png",
+          "position": {
+            "x": 34,
+            "y": 58
+          },
+          "scale": 0.75,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "案上摊着一部《埃涅阿斯纪》抄本——曼图亚人维吉尔的史诗。书页边写满了稚拙的批注。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "这位曼图亚人……我的老师。"
+            }
+          ]
+        },
+        {
+          "id": "spindle_wool",
+          "name": "亡母的纺锤",
+          "portrait": "/assets/dante/props/spindle_wool.png",
+          "position": {
+            "x": 64,
+            "y": 62
+          },
+          "scale": 0.6,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "角落里放着一支落了灰的纺锤。母亲贝拉在他五岁那年去世了。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "……月桂树下的梦，是真的吗，母亲？"
+            }
+          ]
+        },
+        {
+          "id": "father_alighieri",
+          "name": "父亲",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/father_alighieri.png",
+          "position": {
+            "x": 82,
+            "y": 72
+          },
+          "scale": 1.25,
+          "flip": true,
+          "dialogues": [
+            {
+              "speaker": "father_alighieri",
+              "speakerName": "父亲",
+              "text": "又在看书？也好。我们这样的小门户，笔比剑稳妥。"
+            },
+            {
+              "speaker": "father_alighieri",
+              "speakerName": "父亲",
+              "text": "明日贵人家有宴席，你随我去。穿体面些。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "echo"
+    },
+    {
+      "id": "echo",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "后世回声",
+      "transitionText": "九岁那年五月，他在宴席上看见一个穿绯红衣裙的女孩。\n他后来写道：\n「看哪，一个比我更强的神，来主宰我了。」",
+      "announcement": {
+        "title": "后世回声",
+        "text": "薄伽丘：「诸位，请记住那件绯红的衣裙。一个九岁孩子的心动，将变成基督教世界最庞大的一首诗。」",
+        "style": "imperial_decree"
+      },
+      "narrative": ""
+    }
+  ]
+}
