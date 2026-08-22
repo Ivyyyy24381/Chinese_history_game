@@ -477,16 +477,19 @@ export default function App() {
             {currentEvent.hasScene ? "📖 探索此事件" : "📖 暂无场景"}
           </button>
         </div>
+        {/* 时间轴：细带挂在地图底部（hover/focus 展开），底是 scrim 渐变非实色 */}
+        <div style={styles.timelineDock}>
+          <Timeline
+            stages={stages}
+            events={allEvents}
+            currentYear={currentYear}
+            currentEventId={currentEvent.id}
+            progressYear={progressYear}
+            onYearChange={setCurrentYear}
+            onEventSelect={(ev) => setCurrentYear(ev.year)}
+          />
+        </div>
       </div>
-      <Timeline
-        stages={stages}
-        events={allEvents}
-        currentYear={currentYear}
-        currentEventId={currentEvent.id}
-        progressYear={progressYear}
-        onYearChange={setCurrentYear}
-        onEventSelect={(ev) => setCurrentYear(ev.year)}
-      />
       <button
         style={styles.musicBtn}
         title={musicOn ? "关闭背景音乐" : "开启背景音乐"}
@@ -754,9 +757,16 @@ const styles = {
     left: 10,
     zIndex: 30,
   },
+  timelineDock: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 40,
+  },
   floatingInfo: {
     position: "absolute",
-    bottom: 72,
+    bottom: 116,
     // 让开右下角的缩放钮列（36px 圆钮 + 边距）
     right: 78,
     width: 280,

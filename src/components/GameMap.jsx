@@ -734,7 +734,8 @@ const styles = {
   stepControls: {
     position: "absolute",
     left: "50%",
-    bottom: 16,
+    // 让开挂在地图底部的时间轴细带
+    bottom: 74,
     transform: "translateX(-50%)",
     display: "flex",
     gap: 10,
@@ -755,7 +756,8 @@ const styles = {
   zoomControls: {
     position: "absolute",
     right: 26,
-    bottom: 18,
+    // 让开挂在地图底部的时间轴细带
+    bottom: 74,
     display: "flex",
     flexDirection: "column",
     gap: 7,
