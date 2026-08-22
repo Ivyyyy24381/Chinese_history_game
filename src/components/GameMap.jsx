@@ -507,11 +507,11 @@ export default function GameMap({
                     d={segD(pts, i)}
                     fill="none"
                     stroke={paper(1)}
-                    strokeWidth={walked ? 6 : 4.5}
+                    strokeWidth={walked ? 8 : 6.5}
                     strokeLinecap="round"
                     vectorEffect="non-scaling-stroke"
                     style={{
-                      opacity: walked ? 0.5 : 0.38,
+                      opacity: walked ? 0.8 : 0.6,
                       transition: "opacity 320ms ease",
                     }}
                   />
@@ -525,12 +525,12 @@ export default function GameMap({
                     d={segD(pts, i)}
                     fill="none"
                     stroke={walked ? mapTheme.ink : mapTheme.inkFaint}
-                    strokeWidth={walked ? 2.4 : 1.5}
+                    strokeWidth={walked ? 3.2 : 2.2}
                     strokeLinecap="round"
                     strokeDasharray={walked ? undefined : "7 9"}
                     vectorEffect="non-scaling-stroke"
                     style={{
-                      opacity: walked ? 0.72 : 0.5,
+                      opacity: walked ? 0.9 : 0.68,
                       transition: "opacity 320ms ease, stroke 320ms ease",
                     }}
                   />
@@ -547,8 +547,8 @@ export default function GameMap({
                         transition: "opacity 260ms ease",
                       }}
                     >
-                      <circle cx={d.x} cy={d.y} r={4.2} fill={paper(1)} opacity={0.55} />
-                      <circle cx={d.x} cy={d.y} r={2.3} fill={mapTheme.ink} opacity={0.72} />
+                      <circle cx={d.x} cy={d.y} r={5.4} fill={paper(1)} opacity={0.7} />
+                      <circle cx={d.x} cy={d.y} r={3} fill={mapTheme.ink} opacity={0.85} />
                     </g>
                   ))}
                 </>
@@ -611,7 +611,10 @@ export default function GameMap({
                   ...styles.walker,
                   left: walkerPos.x,
                   top: walkerPos.y,
-                  transform: `translate(-50%, -96%) scale(${1 / Math.sqrt(scale)})`,
+                  // 补偿指数用 0.35（比 sqrt 缓）：放大地图时旅人不至于缩得太小；
+                  // 行走途中再放大一点，让"人在走"看得清
+                  transform: `translate(-50%, -96%) scale(${(travel ? 1.18 : 1) / Math.pow(scale, 0.35)})`,
+                  transition: "transform 320ms ease",
                 }}
               />
             </>
@@ -735,7 +738,7 @@ const styles = {
   },
   walker: {
     position: "absolute",
-    height: 64,
+    height: 90,
     zIndex: 8,
     pointerEvents: "none",
     transformOrigin: "50% 100%",
@@ -745,8 +748,8 @@ const styles = {
   // 旅人脚下的呼吸暖光（当前地点的高亮）
   walkerHalo: {
     position: "absolute",
-    width: 52,
-    height: 20,
+    width: 70,
+    height: 26,
     borderRadius: "50%",
     transform: "translate(-50%, -50%)",
     zIndex: 7,

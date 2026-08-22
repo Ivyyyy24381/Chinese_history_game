@@ -50,7 +50,7 @@ export const CHARACTERS = [
       inkFaint: "#7A6A50",
       seal: "#A63A2E",
       pin: "cinnabar",
-      scrimBoost: 0,
+      scrimBoost: 0.14,
     },
   },
   {
@@ -79,7 +79,7 @@ export const CHARACTERS = [
       inkFaint: "#7A6A50",
       seal: "#A63A2E",
       pin: "tower",
-      scrimBoost: 0.05,
+      scrimBoost: 0.18,
     },
   },
   {
@@ -108,7 +108,7 @@ export const CHARACTERS = [
       inkFaint: "#7A6A50",
       seal: "#B4762F",
       pin: "cinnabar",
-      scrimBoost: 0.12,
+      scrimBoost: 0.2,
     },
   },
 ];
