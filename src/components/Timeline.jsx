@@ -254,6 +254,8 @@ const styles = {
     padding: "8px 26px 6px",
     userSelect: "none",
     outline: "none",
+    // 首尾事件标签居中定位可能超出两端 2-3px，裁掉以免整页出现横向滚动
+    overflowX: "clip",
   },
   headerRow: {
     display: "flex",
