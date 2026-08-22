@@ -22,7 +22,7 @@
       "id": "ponte",
       "type": "explore",
       "background": "/assets/dante/events/1283_beatrice/backgrounds/ponte_arno.png",
-      "title": "阿诺河桥头 · 1283",
+      "title": "圣三一桥头 · 1283",
       "narrative": "十八岁。晨光里的阿诺河。一位白衣的女子与两名女伴从桥上走来。",
       "instruction": "点击桥头的人，把这一刻记下来。",
       "dufu_pose": "youth/gazing",
@@ -102,7 +102,7 @@
             {
               "speaker": "lady_companion",
               "speakerName": "女伴",
-              "text": "那位是波尔蒂纳里家的碧丝——如今该称德·巴尔迪夫人了。"
+              "text": "那位是波尔蒂纳里家的碧丝——已许给巴尔迪家的人了。"
             },
             {
               "speaker": "lady_companion",
@@ -412,7 +412,7 @@
         }
       ],
       "conclusion": {
-        "narrative": "《新生》就此收束。他真的停笔了。这个誓言要等二十年、等他失去一切之后，才以一万四千余行的规模兑现——《神曲》的终点，是她在炼狱山顶等他：「看着我，我正是，正是贝雅特丽切。」"
+        "narrative": "《新生》就此收束。他真的停笔了。这个誓言要等二十年、等他失去一切之后，才以一万四千余行的规模兑现——誓言的兑现，从她在炼狱山顶等他开始：「看着我，我正是，正是贝雅特丽切。」"
       },
       "nextPhase": "echo"
     },

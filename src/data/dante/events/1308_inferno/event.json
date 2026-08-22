@@ -185,7 +185,7 @@
       "background": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.png",
       "image": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.png",
       "title": "地狱之门",
-      "narrative": "语言定了。第一卷，从一扇门开始。",
+      "narrative": "语言定了。第一卷《地狱》。他先刻下那扇门。",
       "instruction": "点亮门上的暗刻——铭文将逐行显现。",
       "unlockThreshold": 3,
       "poemTitle": "地狱之门铭文",
@@ -218,7 +218,7 @@
             "y": 44
           },
           "size": 130,
-          "text": "「在我之前，无造物，除了永恒之物；而我与天地同久。」"
+          "text": "「在我之前，无造物，除了永恒之物；而我永世长存。」"
         },
         {
           "id": "oro",
