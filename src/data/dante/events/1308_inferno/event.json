@@ -1,0 +1,280 @@
+{
+  "id": "1308_inferno",
+  "title": "异乡的面包",
+  "year": "1308",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "lectern_intro",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "讲坛引子",
+      "transitionText": "讲坛上，薄伽丘念《飨宴》里的一句自述。",
+      "announcement": {
+        "title": "讲坛 · 《飨宴》",
+        "text": "「我是一条无帆无舵的船，被干燥的贫穷之风，吹往各处的港口、河口与海岸。」——薄伽丘：「流亡第六年。接下来诸位要看的，是一个人沉到底，然后在底上动笔。」",
+        "style": "imperial_decree"
+      },
+      "narrative": "",
+      "nextPhase": "scala_court"
+    },
+    {
+      "id": "scala_court",
+      "type": "explore",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/verona_scala_court.png",
+      "title": "维罗纳 · 斯卡拉宫廊下",
+      "narrative": "寄人篱下的日子。维罗纳，斯卡拉家的宫廷——恩主的面包，末席的座位。",
+      "instruction": "在廊下走一走，看看寄食者的处境。",
+      "dufu_pose": "exile/cloak",
+      "npcs": [
+        {
+          "id": "steward_scala",
+          "name": "管家",
+          "portrait": "/assets/dante/events/1308_inferno/npcs/steward_scala.png",
+          "position": {
+            "x": 22,
+            "y": 68
+          },
+          "scale": 1.25,
+          "dialogues": [
+            {
+              "speaker": "steward_scala",
+              "speakerName": "管家",
+              "text": "阿利吉耶里先生，今晚宴席您坐末席——靠门那头。"
+            },
+            {
+              "speaker": "steward_scala",
+              "speakerName": "管家",
+              "text": "别见怪，座次按身份排。您如今……嗯。"
+            }
+          ]
+        },
+        {
+          "id": "jester_scala",
+          "name": "弄臣",
+          "portrait": "/assets/dante/events/1308_inferno/npcs/jester_scala.png",
+          "position": {
+            "x": 44,
+            "y": 72
+          },
+          "scale": 1.2,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "jester_scala",
+              "speakerName": "弄臣",
+              "text": "宫里人人有用处：我逗大人笑，厨子喂饱大人，兵护着大人。"
+            },
+            {
+              "speaker": "jester_scala",
+              "speakerName": "弄臣",
+              "text": "诗人？哈！诗人是饭后的果盘——有你不多，没你不少。"
+            }
+          ]
+        },
+        {
+          "id": "white_envoy",
+          "name": "流亡白党使者",
+          "portrait": "/assets/dante/events/1308_inferno/npcs/white_envoy.png",
+          "position": {
+            "x": 66,
+            "y": 70
+          },
+          "scale": 1.25,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "white_envoy",
+              "speakerName": "白党使者",
+              "text": "阿利吉耶里！弟兄们在集结，联合吉伯林党，武力打回佛罗伦萨！"
+            },
+            {
+              "speaker": "white_envoy",
+              "speakerName": "白党使者",
+              "text": "你的名字还在我们的名册上。你不来——就是叛徒。"
+            }
+          ]
+        },
+        {
+          "id": "cangrande_young",
+          "name": "少年坎格兰德",
+          "portrait": "/assets/dante/npcs/cangrande_young.png",
+          "position": {
+            "x": 84,
+            "y": 66
+          },
+          "scale": 1.2,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "cangrande_young",
+              "speakerName": "少年坎格兰德",
+              "text": "先生，别理他们。给我讲讲维吉尔吧——昨天讲到第六卷，埃涅阿斯下到冥界……"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（斯卡拉家的小公子，全宫廷唯一拿他当老师敬的人。多年后，《天堂》将题献给成年的坎格兰德。）"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "parte_choice"
+    },
+    {
+      "id": "parte_choice",
+      "type": "forced_choice",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/verona_scala_court.png",
+      "title": "随他们回去吗？",
+      "narrative": "白党使者站在廊下等答复。武力还乡——回家的路，还是死路？",
+      "question": "随流亡白党武力还乡吗？",
+      "dufu_pose": "exile/bitter",
+      "options": [
+        {
+          "id": "go",
+          "text": "去。打回佛罗伦萨！",
+          "correct": false,
+          "response": {
+            "speaker": "narrator",
+            "speakerName": "旁白",
+            "text": "1304 年 7 月 20 日，拉斯特拉。流亡白党联军兵败如山倒，尸横遍野。你若在场，已经死了。——再想想。"
+          }
+        },
+        {
+          "id": "alone",
+          "text": "不去。",
+          "correct": true,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "你们的仇恨和他们的仇恨，是同一种东西。\n与其与愚人同行——我自成一党（parte per te stesso）。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "1304 年拉斯特拉惨败后，但丁与流亡白党彻底决裂，从此「自成一党」。他失去了最后一个阵营——也第一次真正自由了。没有党派可以代言的人，只能对全人类说话。"
+      },
+      "nextPhase": "volgare"
+    },
+    {
+      "id": "volgare",
+      "type": "sliding_puzzle",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "title": "锻造俗语 · 数字华容道",
+      "narrative": "烛下。要写一部大书了——用什么语言写？拉丁文是学者的体面，可他心里的句子是另一种。把它们拼出来。",
+      "puzzles": [
+        {
+          "label": "《论俗语》· 为谁而写",
+          "solution": "让面包坊的女工们也能读懂的语言",
+          "timeoutSec": 300
+        },
+        {
+          "label": "《飨宴》· 流亡自述",
+          "solution": "我是一条无帆无舵漂泊四方的小船",
+          "timeoutSec": 300
+        }
+      ],
+      "nextPhase": "gate"
+    },
+    {
+      "id": "gate",
+      "type": "click_points",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.png",
+      "image": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.png",
+      "title": "地狱之门",
+      "narrative": "语言定了。第一卷，从一扇门开始。",
+      "instruction": "点亮门上的暗刻——铭文将逐行显现。",
+      "unlockThreshold": 3,
+      "poemTitle": "地狱之门铭文",
+      "points": [
+        {
+          "id": "stella",
+          "label": "门楣上的星",
+          "position": {
+            "x": 50,
+            "y": 4
+          },
+          "size": 90,
+          "text": "一颗金星悬在门楣之上。他还不知道，三部曲的最后一个词，都会是「群星」。"
+        },
+        {
+          "id": "archivolto",
+          "label": "环拱铭文",
+          "position": {
+            "x": 50,
+            "y": 17
+          },
+          "size": 150,
+          "text": "拱环上刻满小字：「正义推动了至高的造我者；神圣的权能、至高的智慧与本初的爱，造了我。」"
+        },
+        {
+          "id": "pilastro",
+          "label": "左门柱刻字",
+          "position": {
+            "x": 34,
+            "y": 44
+          },
+          "size": 130,
+          "text": "「在我之前，无造物，除了永恒之物；而我与天地同久。」"
+        },
+        {
+          "id": "oro",
+          "label": "金色铭版",
+          "position": {
+            "x": 66,
+            "y": 21
+          },
+          "size": 120,
+          "text": "金底上的黑字，像审判书的落款。他想起 1302 年那道以火为印的判决。"
+        },
+        {
+          "id": "rosso",
+          "label": "门内的红光",
+          "position": {
+            "x": 49,
+            "y": 62
+          },
+          "size": 130,
+          "text": "门后深处透出炉膛般的红光。叹息、哭喊与咒骂的声音，隐隐从里面传来。"
+        },
+        {
+          "id": "poeta",
+          "label": "门前执笔的人",
+          "position": {
+            "x": 74,
+            "y": 64
+          },
+          "size": 150,
+          "text": "他把自己的绝望刻在了门上。然后——他推门进去了。"
+        }
+      ],
+      "progressivePoem": [
+        "由我进入愁苦之城，",
+        "由我进入永劫之痛，",
+        "由我进入万劫不复的人群。",
+        "入此门者，当舍弃一切希望。"
+      ],
+      "nextPhase": "henry_news"
+    },
+    {
+      "id": "henry_news",
+      "type": "transition",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "title": "一个消息",
+      "transitionText": "《地狱》一歌一歌地写着，在各个宫廷之间传抄。\n1308 年深秋，一名信使闯进廊下——",
+      "announcement": {
+        "title": "阿尔卑斯山北的消息",
+        "text": "「卢森堡的亨利伯爵，当选罗马人的国王！他说要南下意大利，接受加冕，做真正的皇帝——做万民的和平！」",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/hero/exile/writing.png",
+        "text": "（猛然抬头）\n……也许，还有希望。"
+      },
+      "narrative": ""
+    }
+  ]
+}
