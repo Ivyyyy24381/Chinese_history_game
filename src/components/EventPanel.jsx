@@ -6,10 +6,11 @@ export default function EventPanel({ stage, onStartQuiz, onClose }) {
   const [showDialogue, setShowDialogue] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Load scene data when stage changes (event-based path)
+  // Load scene data when stage changes (event-based path; 事件 id 年份 <1000 → dufu，否则 → dante)
   if (!sceneData && loading) {
     setLoading(false);
-    import(`../data/dufu/events/${stage.id}/event.json`)
+    const line = parseInt(stage.id, 10) < 1000 ? "dufu" : "dante";
+    import(`../data/${line}/events/${stage.id}/event.json`)
       .then((module) => {
         setSceneData(module.default);
         setShowDialogue(true);

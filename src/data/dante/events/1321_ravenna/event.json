@@ -1,0 +1,379 @@
+{
+  "id": "1321_ravenna",
+  "title": "拉文纳·天堂",
+  "year": "1321",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "lectern_intro",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "最后一讲",
+      "transitionText": "圣斯特凡诺教堂。烛火比往常多点了一倍。\n薄伽丘翻开讲义的最后一册。",
+      "announcement": {
+        "title": "讲坛",
+        "text": "薄伽丘：「故事讲到头了。一座海边的城收留了他——拉文纳。诸位会看到：一个失去一切的人，怎样把一切写完。」",
+        "style": "imperial_decree"
+      },
+      "narrative": "",
+      "nextPhase": "pineta"
+    },
+    {
+      "id": "pineta",
+      "type": "explore",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_pineta.png",
+      "title": "拉文纳 · 海松林",
+      "narrative": "1318 年前后，拉文纳领主圭多·诺韦洛·达·波伦塔遣使相邀。海松林沙沙作响，子女前来团聚——流亡的最后一站，竟像个家。",
+      "instruction": "在松林与宫廷之间走走，见见这里的人。",
+      "dufu_pose": "old/laurel",
+      "npcs": [
+        {
+          "id": "guido_novello",
+          "name": "圭多·诺韦洛",
+          "portrait": "/assets/dante/npcs/guido_novello.png",
+          "position": {
+            "x": 26,
+            "y": 68
+          },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "guido_novello",
+              "speakerName": "圭多·诺韦洛",
+              "text": "先生肯来，是拉文纳之幸。宅子备好了，束脩从优——不，不是门客。是先生。"
+            },
+            {
+              "speaker": "guido_novello",
+              "speakerName": "圭多·诺韦洛",
+              "text": "我也写诗。改日……可否请先生斧正？（领主执弟子礼。）"
+            }
+          ]
+        },
+        {
+          "id": "antonia_nun",
+          "name": "女儿安东妮娅",
+          "portrait": "/assets/dante/npcs/antonia_nun.png",
+          "position": {
+            "x": 56,
+            "y": 70
+          },
+          "scale": 1.2,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "antonia_nun",
+              "speakerName": "安东妮娅",
+              "text": "父亲。我在城里的圣斯特凡诺修院做了修女。"
+            },
+            {
+              "speaker": "antonia_nun",
+              "speakerName": "安东妮娅",
+              "text": "我的法号——贝雅特丽切修女。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "……"
+            }
+          ]
+        },
+        {
+          "id": "scribe",
+          "name": "抄写员",
+          "portrait": "/assets/dante/npcs/scribe.png",
+          "position": {
+            "x": 80,
+            "y": 68
+          },
+          "scale": 1.25,
+          "flip": true,
+          "dialogues": [
+            {
+              "speaker": "scribe",
+              "speakerName": "抄写员",
+              "text": "《地狱》《炼狱》的抄本，各城都在传。先生——《天堂》还差最后几歌。"
+            },
+            {
+              "speaker": "scribe",
+              "speakerName": "抄写员",
+              "text": "写完它。全意大利都在等。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "mosaic"
+    },
+    {
+      "id": "mosaic",
+      "type": "explore",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_mosaic.png",
+      "title": "金色马赛克",
+      "narrative": "圣阿波利纳雷教堂。六世纪的金色马赛克，已经燃烧了八百年。",
+      "instruction": "点击教堂里打动他的东西。",
+      "dufu_pose": "old/laurel",
+      "npcs": [
+        {
+          "id": "mosaic_fragment",
+          "name": "金色穹顶",
+          "portrait": "/assets/dante/props/mosaic_fragment.png",
+          "position": {
+            "x": 42,
+            "y": 40
+          },
+          "scale": 0.75,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "金箔嵌片在烛光里明明灭灭，像凝固的光的海洋。圣徒们立在永恒的金色里。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "金色的穹顶……天堂的光，原来人间见过。"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（《天堂》篇里那些光的漩涡、光的玫瑰、光的河流——视觉的底稿，就在拉文纳的穹顶上。）"
+            }
+          ]
+        },
+        {
+          "id": "virgilio_letter",
+          "name": "德尔·维吉利奥的信",
+          "portrait": "",
+          "position": {
+            "x": 70,
+            "y": 62
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "博洛尼亚的学者乔万尼·德尔·维吉利奥来信：「用俗语写传世之作，可惜了。改用拉丁文重写吧，我为你在博洛尼亚谋桂冠。」"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "（提笔，以拉丁牧歌体回赠了他两首田园诗——诗艺无可挑剔，答案只有一个字：不。）"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "面包坊的女工读不懂拉丁文。俗语的胜利，就差最后十三歌了。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 2,
+      "nextPhase": "paradiso_exam"
+    },
+    {
+      "id": "paradiso_exam",
+      "type": "exam",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/heaven_exam.png",
+      "title": "三使徒之考",
+      "narrative": "《天堂》第二十四至二十六歌：在群星之上，贝雅特丽切把但丁引到三位使徒面前——圣彼得考「信」，圣雅各考「望」，圣约翰考「爱」。那场制举人间作弊；这场考试，天堂公正。",
+      "examiner": {
+        "name": "贝雅特丽切",
+        "portrait": "/assets/dante/npcs/beatrice_paradiso.png"
+      },
+      "questions": [
+        {
+          "type": "choice",
+          "question": "圣彼得问：「信」是什么？",
+          "options": [
+            "教会颁布的一切教义",
+            "所望之事的实底，未见之事的确证",
+            "对奇迹的亲眼见证",
+            "先贤书中的一切记载"
+          ],
+          "answer": 1,
+          "explanation": "但丁引《希伯来书》作答：「信是所望之事的实底，是未见之事的确证。」圣彼得称善——这枚「钱币」的成色与分量，都对。"
+        },
+        {
+          "type": "choice",
+          "question": "圣彼得追问：你的这枚「钱币」从何而来？",
+          "options": [
+            "新旧约圣经如雨露降下的圣灵启示",
+            "亚里士多德的逻辑",
+            "教皇的敕令",
+            "先祖卡恰圭达的家训"
+          ],
+          "answer": 0,
+          "explanation": "但丁答：信来自「降在新旧约羊皮纸上的圣灵之雨」。通过后，圣彼得绕他三匝，如光环流转，为他祝福。"
+        },
+        {
+          "type": "choice",
+          "question": "圣雅各问：「望」是什么？",
+          "options": [
+            "对命运好转的侥幸",
+            "对尘世功名的期许",
+            "对未来荣耀的确定期待，出于神恩与前功",
+            "对仇敌败亡的等待"
+          ],
+          "answer": 2,
+          "explanation": "但丁援引彼得·伦巴第作答：望是「对未来荣耀的确定期待，生于神的恩典与先前的功德」。一个失去一切的流亡者，谈「确定的期待」——这正是全书的奇迹。"
+        },
+        {
+          "type": "choice",
+          "question": "圣约翰问：「爱」——引你向善的一切之中，最早的是什么？",
+          "options": [
+            "维吉尔的诗行",
+            "母亲梦中的月桂树",
+            "佛罗伦萨的钟声",
+            "九岁那年，一件绯红的衣裙"
+          ],
+          "answer": 3,
+          "explanation": "神学的答案是「善本身」，但这场考试的私人答案写在《新生》第一页：九岁那年宴席上穿绯红衣裙的女孩——「看哪，一个比我更强的神。」引路向善的一切，从她开始。"
+        },
+        {
+          "type": "poem_fill",
+          "question": "补全但丁的「信」之答（《天堂》XXIV）：\n「信是所望之事的___，是未见之事的确证」",
+          "answer": "实底",
+          "distractors": [
+            "影子",
+            "回声",
+            "凭据"
+          ],
+          "explanation": "「fede è sustanza di cose sperate / e argomento de le non parventi」——信是所望之事的实底，是未见之事的确证。"
+        },
+        {
+          "type": "choice",
+          "question": "三场考试通过后，发生了什么？",
+          "options": [
+            "圣彼得绕但丁三匝，如光环流转，为他祝福",
+            "但丁被授予桂冠",
+            "维吉尔重新现身",
+            "天堂之门开启"
+          ],
+          "answer": 0,
+          "explanation": "《天堂》XXIV：「使徒之光绕我三匝，歌唱着为我祝福。」——「他答对了。给他戴上冠冕。」与 747 年那场人间作弊的制举遥遥相对：这场考试，天堂公正。"
+        }
+      ],
+      "nextPhase": "venezia"
+    },
+    {
+      "id": "venezia",
+      "type": "transition",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_pineta.png",
+      "title": "威尼斯使命 · 病榻",
+      "transitionText": "1321 年夏，拉文纳与威尼斯起了争端。\n但丁为圭多出使威尼斯斡旋，归途取道沼泽水路——\n蚊虫，热病。疟疾。",
+      "announcement": {
+        "title": "1321 · 九月十三日夜",
+        "text": "五十六岁的但丁·阿利吉耶里，在拉文纳去世。子女守在榻前。《天堂》的最后十三歌，遍寻书房——无人找到。",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/hero/old/dying.png",
+        "text": "面包，哪里都不会缺……\n只是《天堂》……还差十三歌。"
+      },
+      "narrative": "",
+      "nextPhase": "tredici"
+    },
+    {
+      "id": "tredici",
+      "type": "comic_reveal",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/comic_tredici_canti.png",
+      "image": "/assets/dante/events/1321_ravenna/backgrounds/comic_tredici_canti.png",
+      "title": "失落的十三歌",
+      "narrative": "八个月后。一个流传至今的传说——",
+      "autoAdvanceSec": 2.5,
+      "panels": [
+        {
+          "id": "p1_dream",
+          "x": 1.5,
+          "y": 2,
+          "w": 30,
+          "h": 51,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "儿子雅各波梦中见父。白衣，微笑，周身有光。"
+            }
+          ]
+        },
+        {
+          "id": "p2_point",
+          "x": 66,
+          "y": 2,
+          "w": 33,
+          "h": 96,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "「你要找的东西，」父亲抬手，指向生前卧室的墙壁，「在那里。」"
+            }
+          ]
+        },
+        {
+          "id": "p3_niche",
+          "x": 1.5,
+          "y": 55,
+          "w": 30,
+          "h": 43,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "掀开壁毯——墙上有一个小壁龛，里面是一叠受潮发霉的手稿。"
+            }
+          ]
+        },
+        {
+          "id": "p4_lift",
+          "x": 32.5,
+          "y": 2,
+          "w": 32,
+          "h": 51,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "拂去霉斑，字迹尚可辨认——正是《天堂》的最后十三歌。"
+            }
+          ]
+        },
+        {
+          "id": "p5_last_line",
+          "x": 32.5,
+          "y": 55,
+          "w": 32,
+          "h": 43,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "最后一页 · 最后一行",
+              "text": "l'amor che move il sole e l'altre stelle——\n是爱，推动太阳与群星。"
+            }
+          ]
+        }
+      ],
+      "nextPhase": "finale"
+    },
+    {
+      "id": "finale",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "讲坛落幕",
+      "transitionText": "薄伽丘合上讲义。教堂里很静。",
+      "announcement": {
+        "title": "后世回声 · 终",
+        "text": "薄伽丘：「这是传说。但《天堂》确实是完整的——这才是奇迹本身。1373 年的今天，佛罗伦萨付钱请我讲但丁；拉文纳至今不肯归还他的遗骨。他说过的：面包，哪里都不会缺。安息吧，诗人。这部《喜剧》，请允许我们后人擅自替它加一个字——神圣的（Divina）。」",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/hero/old/laurel.png",
+        "text": "是爱，推动太阳与群星。"
+      },
+      "narrative": ""
+    }
+  ]
+}

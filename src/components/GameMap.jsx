@@ -14,16 +14,19 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { asset } from "../utils/asset";
 import { dufuPortraitPath } from "../data/dufuPoses";
+import { dantePortraitPath } from "../data/dantePoses";
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 4;
 const FOCUS_SCALE = 2.1; // 自动聚焦时的放大倍数
-const IMG_RATIO = 1752 / 1245; // 地图原图宽高比
+// 兜底（人物 timeline 未提供 generalMap/mapRatio 时按杜甫地图处理）
+const DEFAULT_MAP = "/assets/dufu/maps/dufu_general_map.png";
+const DEFAULT_RATIO = 1752 / 1245; // 地图原图宽高比
 
 // 视口任意比例下，底图以 cover 方式铺满（宽或高撑满，可平移看其余部分）
-function coverDims(W, H) {
-  if (W / H >= IMG_RATIO) return { cw: W, ch: W / IMG_RATIO };
-  return { cw: H * IMG_RATIO, ch: H };
+function coverDims(W, H, ratio) {
+  if (W / H >= ratio) return { cw: W, ch: W / ratio };
+  return { cw: H * ratio, ch: H };
 }
 
 export default function GameMap({
@@ -32,7 +35,12 @@ export default function GameMap({
   currentEventId,
   progressYear,
   onEventClick,
+  character,
 }) {
+  // 总图与宽高比从 timeline.json 的 character 块读取（每条故事线一张图）
+  const mapUrl = character?.generalMap || DEFAULT_MAP;
+  const imgRatio = character?.mapRatio || DEFAULT_RATIO;
+  const heroWalkerPath = character?.id === "dante" ? dantePortraitPath : dufuPortraitPath;
   const events = (allEvents || []).slice().sort((a, b) => a.year - b.year);
 
   const viewportRef = useRef(null);
@@ -59,25 +67,25 @@ export default function GameMap({
     const s = Math.min(MAX_SCALE, Math.max(MIN_SCALE, v.scale));
     if (!el) return { scale: s, tx: 0, ty: 0 };
     const { width: W, height: H } = el.getBoundingClientRect();
-    const { cw, ch } = coverDims(W, H);
+    const { cw, ch } = coverDims(W, H, imgRatio);
     const tx = Math.min(0, Math.max(W - cw * s, v.tx));
     const ty = Math.min(0, Math.max(H - ch * s, v.ty));
     return { scale: s, tx, ty };
-  }, []);
+  }, [imgRatio]);
 
   // 把地图上 (xPct, yPct) 的点平滑移动到视口中心
   const focusOn = useCallback((xPct, yPct, scale = FOCUS_SCALE) => {
     const el = viewportRef.current;
     if (!el) return;
     const { width: W, height: H } = el.getBoundingClientRect();
-    const { cw, ch } = coverDims(W, H);
+    const { cw, ch } = coverDims(W, H, imgRatio);
     setAnimated(true);
     setView(clampView({
       scale,
       tx: W / 2 - (xPct / 100) * cw * scale,
       ty: H / 2 - (yPct / 100) * ch * scale,
     }));
-  }, [clampView]);
+  }, [clampView, imgRatio]);
 
   // 切换事件 → 自动聚焦该地点
   const currentEvent = events.find((e) => e.id === currentEventId);
@@ -173,8 +181,8 @@ export default function GameMap({
         <div
           style={{
             ...styles.mapBackground,
-            ...(box.w ? (() => { const d = coverDims(box.w, box.h); return { width: d.cw, height: d.ch }; })() : { width: "100%", height: "100%" }),
-            backgroundImage: `url('${asset("/assets/dufu/maps/dufu_general_map.png")}')`,
+            ...(box.w ? (() => { const d = coverDims(box.w, box.h, imgRatio); return { width: d.cw, height: d.ch }; })() : { width: "100%", height: "100%" }),
+            backgroundImage: `url('${asset(mapUrl)}')`,
             transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
             transition: animated ? "transform 0.7s cubic-bezier(0.25, 0.8, 0.35, 1)" : "none",
           }}
@@ -221,10 +229,10 @@ export default function GameMap({
             );
           })}
 
-          {/* 小杜甫：站在当前事件位置，切换事件时走过去 */}
+          {/* 小主角：站在当前事件位置，切换事件时走过去 */}
           {currentEvent?.location && (
             <img
-              src={asset(dufuPortraitPath(null, currentEvent.year))}
+              src={asset(heroWalkerPath(null, currentEvent.year))}
               alt=""
               style={{
                 ...styles.walker,

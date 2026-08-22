@@ -8,3 +8,4 @@ dist-test/
 
 # 主页素材原图（本地存档，不入库；发布用的压缩版在 public/assets/home/）
 assets_src/
+.claude/

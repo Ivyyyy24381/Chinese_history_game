@@ -11,6 +11,8 @@
 //   background  主页背景（选中/悬停时淡入）
 //   portrait    主页立绘 —— 已含该文明的窗框，窗内镂空透明，背景会透出来
 //   name        名字书法/花体图；nameHeight 控制显示高度（各语种字形比例差别大）
+//   heroPortrait 游戏内主角头像（沿用各故事线的 hero/portrait.png）
+//   completionLine 走完一生后的结语
 //   locked      true = 显示 🔒，不可进入
 
 export const CHARACTERS = [
@@ -24,6 +26,8 @@ export const CHARACTERS = [
     dynasty: "唐 · 中国",
     description: "以诗为史，走过盛唐的绚烂与崩塌",
     achievementTitle: "诗圣之路",
+    completionLine: "从裘马轻狂的少年，到湘江舟中的诗圣。",
+    heroPortrait: "/assets/dufu/hero/portrait.png",
     avatar: "🖊",
     color: "#4A90A4",
     background: "/assets/home/hp_background_dufu.jpg",
@@ -40,8 +44,10 @@ export const CHARACTERS = [
     title: "至高诗人",
     years: "1265—1321",
     dynasty: "佛罗伦萨 · 意大利",
-    description: "从流亡之路走进地狱、炼狱与天堂",
-    achievementTitle: "神曲之路",
+    description: "《神曲》作者，欧洲文艺复兴的先声，「意大利语之父」",
+    achievementTitle: "Divina Commedia",
+    completionLine: "从佛罗伦萨的婴儿，到拉文纳的桂冠诗人——是爱，推动太阳与群星。",
+    heroPortrait: "/assets/dante/hero/portrait.png",
     avatar: "📕",
     color: "#A63A2E",
     background: "/assets/home/hp_background_dante.jpg",
@@ -60,6 +66,8 @@ export const CHARACTERS = [
     dynasty: "呼罗珊 · 科尼亚",
     description: "在旋舞与诗行之间追寻神圣之爱",
     achievementTitle: "旋舞之路",
+    completionLine: "",
+    heroPortrait: null,
     avatar: "🌀",
     color: "#2F6F6B",
     background: "/assets/home/hp_background_rumi.jpg",
@@ -75,6 +83,11 @@ export const TITLE_IMG = "/assets/home/hp_title.png";
 
 export const ACHIEVEMENT_TITLES = Object.fromEntries(
   CHARACTERS.map((c) => [c.id, c.achievementTitle])
+);
+
+// 走完一生后的结语；没写的人物由 App 兜底成通用句
+export const COMPLETION_LINES = Object.fromEntries(
+  CHARACTERS.filter((c) => c.completionLine).map((c) => [c.id, c.completionLine])
 );
 
 export const getCharacter = (id) => CHARACTERS.find((c) => c.id === id) || null;

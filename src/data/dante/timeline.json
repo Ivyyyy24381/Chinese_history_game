@@ -1,0 +1,181 @@
+{
+  "character": {
+    "id": "dante",
+    "name": "但丁",
+    "title": "至高诗人",
+    "years": "1265—1321",
+    "dynasty": "意大利·中世纪晚期",
+    "description": "《神曲》作者，欧洲文艺复兴的先声，「意大利语之父」",
+    "portrait": "/assets/dante/hero/portrait.png",
+    "generalMap": "/assets/dante/maps/dante_general_map.png",
+    "mapRatio": 1.7778
+  },
+  "stages": [
+    {
+      "id": "firenze",
+      "period": "旧佛罗伦萨",
+      "yearStart": 1265,
+      "yearEnd": 1294,
+      "color": "#C0392B",
+      "summary": "但丁生于佛罗伦萨小贵族之家，九岁初见贝雅特丽切，青年时代写下《新生》。",
+      "events": [
+        {
+          "id": "1265_firenze",
+          "year": 1265,
+          "name": "佛罗伦萨之子",
+          "state": "起点·被祝福的城",
+          "summary": "双子座下，阿利吉耶里家添丁。先祖卡恰圭达的旧佛罗伦萨，与两党相争的火种。",
+          "location": {
+            "name": "佛罗伦萨",
+            "mapX": 38,
+            "mapY": 38
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        },
+        {
+          "id": "1283_beatrice",
+          "year": 1283,
+          "name": "贝雅特丽切与《新生》",
+          "state": "初恋即信仰",
+          "summary": "桥头的致意、坎帕尔迪诺的战场、1290 年的丧钟——《新生》终章的誓言。",
+          "location": {
+            "name": "佛罗伦萨/坎帕尔迪诺",
+            "mapX": 40,
+            "mapY": 36
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        }
+      ]
+    },
+    {
+      "id": "comune",
+      "period": "自由的公社",
+      "yearStart": 1295,
+      "yearEnd": 1301,
+      "color": "#F39C12",
+      "summary": "但丁注册医药行会步入政坛，当上执政官，也亲手放逐了自己的挚友。",
+      "events": [
+        {
+          "id": "1295_arte",
+          "year": 1295,
+          "name": "步入政坛",
+          "state": "天真的公民理想",
+          "summary": "《正义法规》之下，诗人注册医药行会取得参政资格；白党黑党的暗流已经涌动。",
+          "location": {
+            "name": "佛罗伦萨",
+            "mapX": 37,
+            "mapY": 40
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        },
+        {
+          "id": "1300_priore",
+          "year": 1300,
+          "name": "执政官·禧年",
+          "state": "权力的代价",
+          "summary": "禧年的罗马与执政官的佛罗伦萨；放逐名单上写着挚友的名字。《神曲》的故事时间从这一年开始。",
+          "location": {
+            "name": "罗马/佛罗伦萨",
+            "mapX": 44,
+            "mapY": 52
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        }
+      ]
+    },
+    {
+      "id": "esilio",
+      "period": "流亡",
+      "yearStart": 1302,
+      "yearEnd": 1315,
+      "color": "#2C3E50",
+      "summary": "缺席审判、终身流放、火刑令。但丁在异乡的屋檐下动笔写《神曲》。",
+      "events": [
+        {
+          "id": "1302_esilio",
+          "year": 1302,
+          "name": "放逐令",
+          "state": "一切崩塌",
+          "summary": "教皇扣使、黑党政变、缺席审判：罚款、流放，拒不认罪则火焚之。他此生再未踏进佛罗伦萨。",
+          "location": {
+            "name": "罗马→佛罗伦萨城外",
+            "mapX": 41,
+            "mapY": 45
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        },
+        {
+          "id": "1308_inferno",
+          "year": 1308,
+          "name": "异乡的面包",
+          "state": "在废墟上动笔",
+          "summary": "寄食权门的屈辱，与流亡白党的决裂；用俗语写作的决定，与地狱之门的铭文。",
+          "location": {
+            "name": "维罗纳",
+            "mapX": 33,
+            "mapY": 22
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        },
+        {
+          "id": "1313_impero",
+          "year": 1313,
+          "name": "帝国之梦",
+          "state": "最后的政治希望",
+          "summary": "亨利七世南下，但丁连写公开信押上一切；1313 年布翁孔文托，皇帝暴病而亡，梦碎。",
+          "location": {
+            "name": "米兰→布翁孔文托",
+            "mapX": 28,
+            "mapY": 19
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        },
+        {
+          "id": "1315_amnistia",
+          "year": 1315,
+          "name": "拒绝赦免",
+          "state": "尊严高于归乡",
+          "summary": "缴罚金、穿悔罪服、游街到洗礼堂——就能回家。他拒绝了：「以此道返乡，绝不。」",
+          "location": {
+            "name": "卢卡/维罗纳",
+            "mapX": 33,
+            "mapY": 33
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        }
+      ]
+    },
+    {
+      "id": "ravenna",
+      "period": "拉文纳",
+      "yearStart": 1316,
+      "yearEnd": 1321,
+      "color": "#8E44AD",
+      "summary": "圭多·诺韦洛的礼遇，子女团聚，《天堂》完稿。1321 年 9 月，诗人在拉文纳安息。",
+      "events": [
+        {
+          "id": "1321_ravenna",
+          "year": 1321,
+          "name": "拉文纳·天堂",
+          "state": "完成与安息",
+          "summary": "松林与金色马赛克，三使徒之考，威尼斯归途的疟疾，与失落十三歌的传说。",
+          "location": {
+            "name": "拉文纳",
+            "mapX": 44,
+            "mapY": 27
+          },
+          "hasScene": true,
+          "hasQuiz": true
+        }
+      ]
+    }
+  ]
+}

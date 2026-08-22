@@ -1,0 +1,315 @@
+{
+  "id": "1295_arte",
+  "title": "步入政坛",
+  "year": "1295",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "lectern_intro",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "讲坛引子",
+      "transitionText": "讲坛上，薄伽丘合上《新生》，换了一册城邦档案。",
+      "announcement": {
+        "title": "讲坛",
+        "text": "薄伽丘：「要害死一个诗人，先让他从政。1295 年，他去登记了行会——医生和药剂师的行会。别笑：书在当时，按药材归类。」",
+        "style": "imperial_decree"
+      },
+      "narrative": "",
+      "nextPhase": "guild_hall"
+    },
+    {
+      "id": "guild_hall",
+      "type": "explore",
+      "background": "/assets/dante/events/1295_arte/backgrounds/arte_medici.png",
+      "title": "医药行会大厅",
+      "narrative": "《正义法规》颁布：豪族不得任公职，参政须注册行会。三十岁的但丁走进药柜与天平之间，来办一件改变命运的手续。",
+      "instruction": "在行会大厅里办登记，顺便听听佛罗伦萨的新党争。",
+      "dufu_pose": "citizen/robe",
+      "npcs": [
+        {
+          "id": "guild_clerk",
+          "name": "行会书记",
+          "portrait": "/assets/dante/events/1295_arte/npcs/guild_clerk.png",
+          "position": {
+            "x": 30,
+            "y": 66
+          },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "guild_clerk",
+              "speakerName": "行会书记",
+              "text": "姓名？杜兰特·阿利吉耶里。职业？……诗人。"
+            },
+            {
+              "speaker": "guild_clerk",
+              "speakerName": "行会书记",
+              "text": "新颁的《正义法规》您知道吧？针对的就是那些跋扈的豪族——平民做官，须入行会。"
+            },
+            {
+              "speaker": "guild_clerk",
+              "speakerName": "行会书记",
+              "text": "登记医生与药剂师行会，年费缴讫。恭喜，您现在有参政资格了。"
+            }
+          ]
+        },
+        {
+          "id": "apothecary",
+          "name": "药剂师",
+          "portrait": "/assets/dante/events/1295_arte/npcs/apothecary.png",
+          "position": {
+            "x": 50,
+            "y": 70
+          },
+          "scale": 1.25,
+          "dialogues": [
+            {
+              "speaker": "apothecary",
+              "speakerName": "药剂师",
+              "text": "诗人？归我们管。"
+            },
+            {
+              "speaker": "apothecary",
+              "speakerName": "药剂师",
+              "text": "别皱眉——香料、药材、颜料、书籍，都是稀罕的舶来品，同一条商路运来的。"
+            }
+          ]
+        },
+        {
+          "id": "bookseller",
+          "name": "书商",
+          "portrait": "/assets/dante/events/1295_arte/npcs/bookseller.png",
+          "position": {
+            "x": 70,
+            "y": 68
+          },
+          "scale": 1.25,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "bookseller",
+              "speakerName": "书商",
+              "text": "维吉尔的新抄本，波隆那来的，要吗？给您算便宜。"
+            },
+            {
+              "speaker": "bookseller",
+              "speakerName": "书商",
+              "text": "如今识字的人多了，佛罗伦萨的算学学校比修道院还热闹。书，是门好生意。"
+            }
+          ]
+        },
+        {
+          "id": "vendor_florence",
+          "name": "市民",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.png",
+          "position": {
+            "x": 86,
+            "y": 72
+          },
+          "scale": 1.2,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "vendor_florence",
+              "speakerName": "市民",
+              "text": "多纳蒂家的科尔索大人，今早又在广场骂人了——他们那伙人如今叫「黑党」。"
+            },
+            {
+              "speaker": "vendor_florence",
+              "speakerName": "市民",
+              "text": "切尔基家做买卖发的家，有钱，新贵，一伙人称「白党」。同是贵尔夫党，狗咬狗。"
+            },
+            {
+              "speaker": "vendor_florence",
+              "speakerName": "市民",
+              "text": "吉伯林党——拥皇帝的那一派？早赶出城啦。如今满城都是拥教皇的贵尔夫党。没了外敌，自家人斗自家人。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "civic_exam"
+    },
+    {
+      "id": "civic_exam",
+      "type": "exam",
+      "background": "/assets/dante/events/1295_arte/backgrounds/arte_medici.png",
+      "title": "公民资格问答",
+      "narrative": "行会书记敲了敲登记簿：「例行问答。答得上来，才算明白自己进的是什么局。」",
+      "examiner": {
+        "name": "行会书记",
+        "portrait": "/assets/dante/events/1295_arte/npcs/guild_clerk.png"
+      },
+      "questions": [
+        {
+          "type": "choice",
+          "question": "新颁的《正义法规》，针对的是哪类人？",
+          "options": [
+            "外邦商人",
+            "跋扈的豪族",
+            "行会工匠",
+            "神职人员"
+          ],
+          "answer": 1,
+          "explanation": "1293 年《正义法规》剥夺豪族任公职的权利，把政权交给行会市民——平民参政须注册行会。"
+        },
+        {
+          "type": "choice",
+          "question": "诗人但丁为取得参政资格，注册了哪个行会？",
+          "options": [
+            "呢绒行会",
+            "钱庄行会",
+            "医生与药剂师行会",
+            "石匠行会"
+          ],
+          "answer": 2,
+          "explanation": "书籍当时按药材归类贩售，书商挂靠医药行会之下——于是诗人注册了医生与药剂师行会。"
+        },
+        {
+          "type": "choice",
+          "question": "贵尔夫党与吉伯林党，各自拥护谁？",
+          "options": [
+            "教皇 / 神圣罗马皇帝",
+            "皇帝 / 教皇",
+            "佛罗伦萨 / 西耶纳",
+            "白党 / 黑党"
+          ],
+          "answer": 0,
+          "explanation": "贵尔夫党拥护教皇，吉伯林党拥护神圣罗马皇帝。此时吉伯林党已被逐出佛罗伦萨，贵尔夫党内部又裂为白党与黑党。"
+        },
+        {
+          "type": "choice",
+          "question": "佛罗伦萨新起的「黑党」，以哪个家族为首？",
+          "options": [
+            "切尔基家",
+            "阿利吉耶里家",
+            "波尔蒂纳里家",
+            "多纳蒂家"
+          ],
+          "answer": 3,
+          "explanation": "黑党以老贵族多纳蒂家的科尔索为首，白党以新贵切尔基家为首——同属贵尔夫党的两派内讧。"
+        },
+        {
+          "type": "choice",
+          "question": "「白党」的领袖家族切尔基家，靠什么起家？",
+          "options": [
+            "世袭封地",
+            "经商致富的新贵",
+            "军功",
+            "教会恩俸"
+          ],
+          "answer": 1,
+          "explanation": "切尔基家是靠经商暴富的新贵，与老牌贵族多纳蒂家互相看不顺眼——财富与门第之争，正是白黑分裂的底色。"
+        }
+      ],
+      "nextPhase": "ponte_vecchio"
+    },
+    {
+      "id": "ponte_vecchio",
+      "type": "explore",
+      "background": "/assets/dante/events/1295_arte/backgrounds/ponte_vecchio_dusk.png",
+      "title": "老桥暮色",
+      "narrative": "手续办完。暮色里的老桥上，同侪们等着他。",
+      "instruction": "和桥上的朋友说说话，再听听自己的心。",
+      "dufu_pose": "citizen/robe",
+      "npcs": [
+        {
+          "id": "cavalcanti",
+          "name": "圭多·卡瓦尔坎蒂",
+          "portrait": "/assets/dante/npcs/cavalcanti.png",
+          "position": {
+            "x": 28,
+            "y": 68
+          },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "cavalcanti",
+              "speakerName": "卡瓦尔坎蒂",
+              "text": "登记行会？你？"
+            },
+            {
+              "speaker": "cavalcanti",
+              "speakerName": "卡瓦尔坎蒂",
+              "text": "政治是烂泥，杜兰特。你我是写诗的。"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（说这话的圭多，自己正是白党的大人物。）"
+            }
+          ]
+        },
+        {
+          "id": "forese",
+          "name": "福雷塞·多纳蒂",
+          "portrait": "/assets/dante/npcs/forese.png",
+          "position": {
+            "x": 72,
+            "y": 70
+          },
+          "scale": 1.3,
+          "flip": true,
+          "dialogues": [
+            {
+              "speaker": "forese",
+              "speakerName": "福雷塞",
+              "text": "哟，「阁下」！医药行会的大人物！以后抓药找你打折吗？"
+            },
+            {
+              "speaker": "forese",
+              "speakerName": "福雷塞",
+              "text": "回头再跟你对骂几首十四行——上回你损我的那首，我还没还嘴呢。"
+            },
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "（福雷塞是科尔索的弟弟，也是但丁的酒友。两人互写打油诗互损，字字见血，情谊也是真的。）"
+            }
+          ]
+        },
+        {
+          "id": "dante_monologue",
+          "name": "凭栏的心事",
+          "portrait": "",
+          "position": {
+            "x": 50,
+            "y": 46
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "圭多说政治是烂泥。可是——"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "城应当像诗一样有秩序。我要去给它写秩序。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "echo"
+    },
+    {
+      "id": "echo",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "后世回声",
+      "transitionText": "讲坛上换了一个声音——彼得罗·阿利吉耶里，但丁之子，《神曲》最早的注疏人之一。",
+      "announcement": {
+        "title": "后世回声 · 彼得罗注疏",
+        "text": "「父亲相信城邦可以被理性治理。后来在《地狱》第六歌，他让暴食者恰科预言这座城的撕裂——两党相争，血流成河。那预言，其实是回忆。他还借恰科之口点破病根：傲慢、嫉妒和贪婪，是燃烧人心的三粒火星。」",
+        "style": "imperial_decree"
+      },
+      "narrative": ""
+    }
+  ]
+}

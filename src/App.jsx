@@ -13,7 +13,7 @@ import AuthPanel from "./components/AuthPanel";
 import Leaderboard from "./components/Leaderboard";
 import { getCurrentUser, restoreSession, logout, submitScore, logVisit } from "./services/backend";
 import { asset } from "./utils/asset";
-import { CHARACTERS, ACHIEVEMENT_TITLES } from "./data/characters";
+import { CHARACTERS, ACHIEVEMENT_TITLES, COMPLETION_LINES } from "./data/characters";
 
 // Achievements persist across sessions.
 const ACH_KEY = "lishiyou_achievements";
@@ -26,11 +26,12 @@ const loadRun = () => {
   try { return JSON.parse(localStorage.getItem(RUN_KEY)); } catch { return null; }
 };
 const clearRunStorage = () => { try { localStorage.removeItem(RUN_KEY); } catch { /* ignore */ } };
-// 主人公花名册与成就名的单一事实来源在 src/data/characters.js —— 新增人物只改那个文件。
+// 主人公花名册、成就名、通关结语的单一事实来源在 src/data/characters.js
+// —— 新增人物只改那个文件，App 这里不用动。
 //
-// 剧本数据按人物目录懒加载。这里用 import.meta.glob 而不是写死 "./data/dufu/…"：
+// 剧本数据按人物目录懒加载。这里用 import.meta.glob 而不是写死 "./data/<id>/…"：
 // 某个人物的 src/data/<dataDir>/ 还没建好时构建不会报错，主页照常显示，
-// 真进游戏时再兜底成「建设中」提示。但丁线正在另一台机器上写，就靠这个解耦。
+// 真进游戏时再兜底成「建设中」页。
 const TIMELINE_MODULES = import.meta.glob("./data/*/timeline.json");
 const EVENT_MODULES = import.meta.glob("./data/*/events/*/event.json");
 const dataDirOf = (char) => (char && (char.dataDir || char.id)) || "dufu";
@@ -314,10 +315,11 @@ export default function App() {
     }
   };
 
-  // Open the recap (from congrats dialog, or from the home page where only an id is known).
+  // Open the recap（结算弹窗调用时无参；主页成就徽章只传得到 charId）
   const openRecap = async (charId) => {
-    const target = charId ? CHARACTERS.find((c) => c.id === charId) : character;
-    if (timelineData && (!charId || charId === character?.id)) {
+    const id = typeof charId === "string" ? charId : character?.id || "dufu";
+    const target = CHARACTERS.find((c) => c.id === id) || character;
+    if (timelineData && timelineData.character?.id === id) {
       setRecapData({ character: timelineData.character, stages: timelineData.stages });
       return;
     }
@@ -443,6 +445,7 @@ export default function App() {
           currentEventId={currentEvent.id}
           progressYear={progressYear}
           onEventClick={handleEventClick}
+          character={timelineData.character}
         />
         <div style={{ ...styles.floatingInfo, borderLeftColor: currentStage.color }}>
           <h3 style={{ margin: "0 0 4px", color: currentStage.color }}>
@@ -544,7 +547,7 @@ export default function App() {
               {ACHIEVEMENT_TITLES[character?.id] || "人物传完成"}
             </div>
             <p style={styles.congratsText}>
-              {`你走完了${character?.name || ""}的一生——从裘马轻狂的少年，到湘江舟中的诗圣。`}
+              {`你走完了${character?.name || ""}的一生——${COMPLETION_LINES[character?.id] || "一段历史长河中的人生。"}`}
             </p>
             <div style={styles.congratsScore}>
               {"本局总分 "}<strong style={{ fontSize: "clamp(20.8px, 1.806vw, 29.9px)" }}>{runScore}</strong>{" 分"}

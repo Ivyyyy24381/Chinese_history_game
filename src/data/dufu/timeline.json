@@ -6,7 +6,9 @@
     "years": "712—770",
     "dynasty": "唐",
     "description": "唐代最伟大的现实主义诗人，与李白并称「李杜」",
-    "portrait": "/assets/dufu/hero/portrait.png"
+    "portrait": "/assets/dufu/hero/portrait.png",
+    "generalMap": "/assets/dufu/maps/dufu_general_map.png",
+    "mapRatio": 1.4072
   },
   "stages": [
     {

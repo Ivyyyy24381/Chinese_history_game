@@ -1,0 +1,170 @@
+{
+  "id": "1315_amnistia",
+  "title": "拒绝赦免",
+  "year": "1315",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "morning",
+      "type": "explore",
+      "background": "/assets/dante/events/1315_amnistia/backgrounds/lodging_courtyard.png",
+      "title": "客居的清晨",
+      "narrative": "流亡第十三年。佛罗伦萨颁布大赦令——一封信送到了客居的小院。快五十岁的但丁，想家想了十三年。",
+      "instruction": "读完大赦令的条款，再听听身边人的话。",
+      "dufu_pose": "exile/cloak",
+      "npcs": [
+        {
+          "id": "friar_messenger",
+          "name": "送信修士",
+          "portrait": "/assets/dante/npcs/friar_messenger.png",
+          "position": {
+            "x": 26,
+            "y": 68
+          },
+          "scale": 1.25,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "friar_messenger",
+              "speakerName": "送信修士",
+              "text": "阿利吉耶里先生，好消息！城里大赦流亡者。条件念给您听——"
+            },
+            {
+              "speaker": "friar_messenger",
+              "speakerName": "送信修士",
+              "text": "「其一，缴纳罚金。其二，着悔罪服，头戴纸帽。其三，随游街队伍至圣乔万尼洗礼堂，向主保圣人献祭赎罪。」"
+            },
+            {
+              "speaker": "friar_messenger",
+              "speakerName": "送信修士",
+              "text": "走完这一遭，就能回家了。先生，多少人求都求不来啊。"
+            }
+          ]
+        },
+        {
+          "id": "amnistia_scroll",
+          "name": "大赦令",
+          "portrait": "/assets/dante/props/amnistia_scroll.png",
+          "position": {
+            "x": 50,
+            "y": 56
+          },
+          "scale": 0.7,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "大赦令",
+              "text": "羊皮纸上是熟悉的公社印鉴。「悔罪」「献祭」几个词，写得格外端正。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "圣乔万尼洗礼堂……我受洗的地方。他们要我以罪人的身份，游街回到我人生开始的地方。"
+            }
+          ]
+        },
+        {
+          "id": "landlady_girl",
+          "name": "房东女儿",
+          "portrait": "/assets/dante/events/1315_amnistia/npcs/landlady_girl.png",
+          "position": {
+            "x": 70,
+            "y": 70
+          },
+          "scale": 1.15,
+          "dialogues": [
+            {
+              "speaker": "landlady_girl",
+              "speakerName": "房东女儿",
+              "text": "先生，爷爷说您天天朝南边看。"
+            },
+            {
+              "speaker": "landlady_girl",
+              "speakerName": "房东女儿",
+              "text": "南边有什么呀？"
+            }
+          ]
+        },
+        {
+          "id": "pietro_adult",
+          "name": "儿子彼得罗",
+          "portrait": "/assets/dante/npcs/pietro_adult.png",
+          "position": {
+            "x": 86,
+            "y": 68
+          },
+          "scale": 1.25,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "pietro_adult",
+              "speakerName": "彼得罗",
+              "text": "父亲。判决株连诸子——我和雅各波，也在流亡名单上。"
+            },
+            {
+              "speaker": "pietro_adult",
+              "speakerName": "彼得罗",
+              "text": "认了吧。纸帽子戴一天就摘了。我想回家。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 4,
+      "nextPhase": "reply"
+    },
+    {
+      "id": "reply",
+      "type": "forced_choice",
+      "background": "/assets/dante/events/1315_amnistia/backgrounds/lodging_courtyard.png",
+      "title": "回信",
+      "narrative": "笔和纸摆在院中的石桌上。修士在等，儿子也在等。",
+      "question": "怎么回复佛罗伦萨？",
+      "dufu_pose": "exile/refusing",
+      "options": [
+        {
+          "id": "accept",
+          "text": "缴罚金、游街、回家——妻儿团聚，落叶归根",
+          "correct": false,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "（修士松了口气。但丁提笔——又停住。）\n难道我在别人的屋檐下，就看不见日月星辰吗？\n难道不向故乡自辱，我就无法思索最甜美的真理吗？\n……不。重写。"
+          }
+        },
+        {
+          "id": "refuse",
+          "text": "拒绝。以此道返乡，绝不。",
+          "correct": true,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "「这不是我返乡之路（Non est haec via redeundi ad patriam）。\n若另有一条无损但丁名誉与尊严之路，我将不迟疑地踏上。\n若无此路——则我永不入佛罗伦萨。\n面包，哪里都不会缺。」"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "这封信（《书信》第十二）流传了下来。他拒绝了唯一一次回家的机会——不是不想家，而是不肯以罪人的身份走回自己受洗的洗礼堂。尊严高于归乡。"
+      },
+      "nextPhase": "price"
+    },
+    {
+      "id": "price",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "代价 · 后世回声",
+      "transitionText": "数月后，佛罗伦萨改判：\n但丁及诸子，斩首。\n（此前为火刑。）",
+      "announcement": {
+        "title": "后世回声",
+        "text": "薄伽丘合上讲义，沉默良久：「诸位同乡。我们的城把最好的儿子拒之门外两次——第一次用火刑，第二次用纸帽子。而他用一整部《天堂》回答：他只接受一种加冕。若有朝一日《神曲》让他返乡，他愿在自己受洗的池边，戴上桂冠。」",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/hero/exile/refusing.png",
+        "text": "「若这圣诗能战胜将我拒于羊栏之外的残忍——\n我将以另一种嗓音、另一身羊毛归来，\n在我受洗的池边，接受桂冠。」（《天堂》XXV）"
+      },
+      "narrative": ""
+    }
+  ]
+}
