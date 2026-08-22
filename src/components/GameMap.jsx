@@ -92,6 +92,62 @@ function travelD(pts, fromIdx, toIdx) {
   return parts.join(" ");
 }
 
+// 印章朱砂色（⑥ 会抽进每条线的 mapTheme；先用一个共同的朱砂）
+const SEAL = "#A63A2E";
+const sealA = (a) => `rgba(166,58,46,${a})`; // SEAL 的透明变体
+
+/**
+ * 同时代的地图符号（不用水滴 pin，用这张地图自己的语汇）：
+ *   - 但丁线：红顶城塔剪影，与泥金手抄本底图上的城市符号同族
+ *   - 杜甫线：朱砂圈点，像舆图上的批注圈
+ * 三态一眼分清：已至 = 实墨 + 一枚小印章；未至 = 淡铅笔稿；
+ * 当前 = 旅人立绘替代符号 + 呼吸高亮（在 GameMap 内渲染）。
+ */
+function MapSymbol({ kind, state, size = 26 }) {
+  const pencil = COLOR.secondary;
+  const visited = state === "visited";
+  // 纸色微光把符号从密的底图里托出来（halo 手法在小符号上的对应）
+  const lift = visited
+    ? `drop-shadow(0 0 2.5px ${paper(0.95)}) drop-shadow(0 2px 3px rgba(40,25,10,0.35))`
+    : `drop-shadow(0 0 2px ${paper(0.8)})`;
+  if (kind === "tower") {
+    return (
+      <svg width={size} height={(size * 30) / 24} viewBox="0 0 24 30" style={{ display: "block", filter: lift }}>
+        {visited ? (
+          <>
+            <rect x="7.5" y="12" width="9" height="15.5" fill={COLOR.ink} />
+            <path d="M5.2 12.5 L12 3.2 L18.8 12.5 Z" fill={SEAL} />
+            <rect x="10.8" y="17" width="2.4" height="4" fill={paper(0.92)} />
+            {/* 已至的小印章 */}
+            <g transform="rotate(-8 18.5 23.5)">
+              <rect x="15" y="20" width="7" height="7" rx="1.2" fill={SEAL} />
+              <text x="18.5" y="25.4" textAnchor="middle" fontSize="5.4" fontWeight="bold" fill={paper(0.95)}>{"至"}</text>
+            </g>
+          </>
+        ) : (
+          <>
+            <rect x="7.5" y="12" width="9" height="15.5" fill={paper(0.25)} stroke={pencil} strokeWidth="1.6" />
+            <path d="M5.2 12.5 L12 3.2 L18.8 12.5 Z" fill={paper(0.25)} stroke={pencil} strokeWidth="1.6" strokeLinejoin="round" />
+          </>
+        )}
+      </svg>
+    );
+  }
+  // cinnabar：朱砂圈点
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={{ display: "block", filter: lift }}>
+      {visited ? (
+        <>
+          <circle cx="12" cy="12" r="8" fill={paper(0.28)} stroke={SEAL} strokeWidth="2.6" />
+          <circle cx="12" cy="12" r="2.7" fill={COLOR.ink} />
+        </>
+      ) : (
+        <circle cx="12" cy="12" r="7.5" fill={paper(0.22)} stroke={pencil} strokeWidth="1.8" strokeDasharray="3 2.6" />
+      )}
+    </svg>
+  );
+}
+
 export default function GameMap({
   allEvents,
   currentYear,
@@ -104,6 +160,7 @@ export default function GameMap({
   const mapUrl = character?.generalMap || DEFAULT_MAP;
   const imgRatio = character?.mapRatio || DEFAULT_RATIO;
   const heroWalkerPath = character?.id === "dante" ? dantePortraitPath : dufuPortraitPath;
+  const symbolKind = character?.id === "dante" ? "tower" : "cinnabar";
   const events = useMemo(
     () => (allEvents || []).slice().sort((a, b) => a.year - b.year),
     [allEvents]
@@ -428,11 +485,9 @@ export default function GameMap({
 
           {events.map((event) => {
             const isCurrent = event.id === currentEventId;
-            const isPast = !isCurrent && progressYear != null && event.year <= progressYear;
-            const isFuture = progressYear != null && event.year > progressYear && !isCurrent;
-            const pinColor = event.stageColor || "#4A90A4";
-            const pinSize = isCurrent ? 44 : 26;
-            // 放大时图钉/文字按比例缩小一些，避免遮住地图（保留一点增大感）
+            // 已至/未至跟随墨线的口径：旅人走到过（或存档解锁）即为已至
+            const isVisited = !isCurrent && event.year <= maxInkYear;
+            // 放大时符号按比例缩小一些，避免遮住地图（保留一点增大感）
             const counter = 1 / Math.sqrt(scale);
 
             return (
@@ -442,9 +497,7 @@ export default function GameMap({
                   ...styles.pinWrap,
                   left: `${event.location.mapX}%`,
                   top: `${event.location.mapY}%`,
-                  zIndex: isCurrent ? 5 : isPast ? 3 : 2,
-                  opacity: isFuture ? 0.55 : 1,
-                  filter: isFuture ? "saturate(0.5)" : "none",
+                  zIndex: isCurrent ? 5 : isVisited ? 3 : 2,
                   transform: `translate(-50%, -100%) scale(${counter})`,
                   transformOrigin: "50% 100%",
                 }}
@@ -455,13 +508,10 @@ export default function GameMap({
                 onMouseDown={(e) => e.stopPropagation()}
                 title={`${event.year} 年 · ${event.name}`}
               >
-                {isCurrent && (
-                  <span style={{ ...styles.pulseRing, backgroundColor: pinColor }} />
-                )}
                 {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示。
-                    当前事件不画图钉，由小主角立绘代替。 */}
+                    当前事件不画符号，由旅人立绘 + 呼吸高亮代替。 */}
                 {!isCurrent && (
-                  <Pin color={pinColor} size={pinSize} glow={false} badge={isPast ? "✓" : null} />
+                  <MapSymbol kind={symbolKind} state={isVisited ? "visited" : "future"} />
                 )}
               </button>
             );
@@ -469,16 +519,28 @@ export default function GameMap({
 
           {/* 小主角：站在当前事件位置，切换事件时沿墨线走过去 */}
           {walkerPos && (
-            <img
-              src={asset(heroWalkerPath(null, currentEvent?.year))}
-              alt=""
-              style={{
-                ...styles.walker,
-                left: walkerPos.x,
-                top: walkerPos.y,
-                transform: `translate(-50%, -96%) scale(${1 / Math.sqrt(scale)})`,
-              }}
-            />
+            <>
+              {/* 当前地点的呼吸高亮：脚下一圈朱砂暖光 */}
+              <span
+                aria-hidden="true"
+                style={{
+                  ...styles.walkerHalo,
+                  left: walkerPos.x,
+                  top: walkerPos.y,
+                  animation: prefersReducedMotion ? "none" : "walkerBreath 2.6s ease-in-out infinite",
+                }}
+              />
+              <img
+                src={asset(heroWalkerPath(null, currentEvent?.year))}
+                alt=""
+                style={{
+                  ...styles.walker,
+                  left: walkerPos.x,
+                  top: walkerPos.y,
+                  transform: `translate(-50%, -96%) scale(${1 / Math.sqrt(scale)})`,
+                }}
+              />
+            </>
           )}
         </div>
       </div>
@@ -592,25 +654,25 @@ const styles = {
     alignItems: "center",
     transition: "opacity 0.25s ease",
   },
-  pulseRing: {
-    position: "absolute",
-    top: 0,
-    left: "50%",
-    transform: "translate(-50%, 0)",
-    width: 30,
-    height: 30,
-    borderRadius: "50%",
-    opacity: 0.35,
-    animation: "mapPinPulse 1.6s ease-out infinite",
-    pointerEvents: "none",
-  },
   walker: {
     position: "absolute",
     height: 64,
     zIndex: 8,
     pointerEvents: "none",
     transformOrigin: "50% 100%",
-    filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.35))",
+    // 当前态的落影比普通符号更重
+    filter: "drop-shadow(0 6px 12px rgba(40,25,10,0.45))",
+  },
+  // 旅人脚下的呼吸暖光（当前地点的高亮）
+  walkerHalo: {
+    position: "absolute",
+    width: 52,
+    height: 20,
+    borderRadius: "50%",
+    transform: "translate(-50%, -50%)",
+    background: `radial-gradient(ellipse at center, ${sealA(0.4)} 0%, ${sealA(0.16)} 55%, ${sealA(0)} 78%)`,
+    zIndex: 7,
+    pointerEvents: "none",
   },
   stepControls: {
     position: "absolute",
@@ -655,7 +717,8 @@ const styles = {
   },
 };
 
-// Inject keyframes for pin pulse (once)
+// Inject keyframes once：mapPinPulse 供 ScenePlayer 的 map_travel 沿用，
+// walkerBreath 是地图页当前地点的呼吸高亮
 if (typeof document !== "undefined" && !document.getElementById("map-pin-pulse-keyframes")) {
   const style = document.createElement("style");
   style.id = "map-pin-pulse-keyframes";
@@ -663,6 +726,10 @@ if (typeof document !== "undefined" && !document.getElementById("map-pin-pulse-k
     @keyframes mapPinPulse {
       0% { transform: translate(-50%, 0) scale(0.6); opacity: 0.5; }
       100% { transform: translate(-50%, 0) scale(2.2); opacity: 0; }
+    }
+    @keyframes walkerBreath {
+      0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.95; transform: translate(-50%, -50%) scale(1.14); }
     }
   `;
   document.head.appendChild(style);
