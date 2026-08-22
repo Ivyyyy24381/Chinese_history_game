@@ -23,7 +23,7 @@ import { asset } from "../utils/asset";
 import { dufuPortraitPath } from "../data/dufuPoses";
 import { dantePortraitPath } from "../data/dantePoses";
 import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
-import { COLOR, paper } from "../styles/theme";
+import { FONT, COLOR, TRACKING, SHADOW, paper, paperBtn } from "../styles/theme";
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 4;
@@ -686,13 +686,14 @@ const styles = {
   stepBtn: {
     padding: "8px 16px",
     borderRadius: 18,
-    border: "1px solid #C9B08A",
-    backgroundColor: "rgba(252,248,238,0.92)",
-    color: "#5A4A32",
+    border: `1px solid ${COLOR.goldLineSoft}`,
+    backgroundColor: paperBtn(0.92),
+    color: COLOR.btnTextSub,
     fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
-    letterSpacing: 1,
+    fontFamily: FONT,
+    boxShadow: SHADOW.chip,
+    letterSpacing: TRACKING.tight,
+    cursor: "pointer",
   },
   zoomControls: {
     position: "absolute",
@@ -700,20 +701,22 @@ const styles = {
     bottom: 18,
     display: "flex",
     flexDirection: "column",
-    gap: 6,
+    gap: 7,
     zIndex: 20,
   },
+  // 主页同款小胶囊：纸底 + 金线描边的圆钮
   zoomBtn: {
     width: 36,
     height: 36,
-    borderRadius: 8,
-    border: "1px solid #D8CDB8",
-    backgroundColor: "rgba(255,255,255,0.92)",
+    borderRadius: "50%",
+    border: `1px solid ${COLOR.goldLineSoft}`,
+    backgroundColor: paperBtn(0.92),
     fontSize: "clamp(13.6px, 1.181vw, 19.5px)",
     cursor: "pointer",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-    color: "#5A4A32",
+    boxShadow: SHADOW.chip,
+    color: COLOR.btnTextSub,
     lineHeight: 1,
+    fontFamily: FONT,
   },
 };
 

@@ -1,99 +1,88 @@
+import { asset } from "../utils/asset";
+import { getCharacter } from "../data/characters";
+import { COLOR, TRACKING, SHADOW, halo } from "../styles/theme";
+
+/**
+ * 地图页左上角的人物信息条 —— 用主页名牌的排版：
+ * 书法名字图 + 一行可读中文名 + 次级信息（积分/进度），
+ * 不套框不铺底，只靠 halo() 的暖光从地图里托出来。
+ */
 export default function ScoreBar({ character, progress, totalStages, score = 0 }) {
-  const progressPercent = (progress / totalStages) * 100;
+  // 书法名字图等主页素材从花名册取（timeline.json 的 character 块没有这些字段）
+  const home = getCharacter(character.id);
 
   return (
-    <div style={styles.scoreBar}>
-      <div style={styles.scoreBarLeft}>
-        <div style={{ fontSize: "clamp(14.4px, 1.25vw, 20.7px)", fontWeight: "bold" }}>
-          {character.avatar}
-        </div>
-        <div>
-          <div style={styles.scoreCharName}>{character.name}</div>
-          <div style={styles.scoreCharTitle}>{character.title}</div>
-        </div>
-      </div>
-      <div style={styles.scoreBarRight}>
-        <div style={styles.statItem}>
-          <div style={styles.statLabel}>{"\u79ef\u5206"}</div>
-          <div style={{ ...styles.statValue, color: "#B8860B" }}>{score}</div>
-        </div>
-        <div style={styles.statItem}>
-          <div style={styles.statLabel}>{"\u8fdb\u5ea6"}</div>
-          <div style={styles.statValue}>
-            {progress} / {totalStages}
-          </div>
-        </div>
-        <div style={styles.progressBarOuter}>
-          <div
-            style={{
-              ...styles.progressBarInner,
-              width: `${progressPercent}%`,
-              backgroundColor: character.color,
-            }}
-          />
-        </div>
-      </div>
+    <div style={styles.plate}>
+      {home?.name_img ? (
+        <img
+          src={asset(home.name_img)}
+          alt={character.name}
+          style={{ ...styles.nameImg, height: (home.nameHeight || 34) * 0.82 }}
+        />
+      ) : (
+        <span style={styles.nameText}>{character.name}</span>
+      )}
+      <p style={styles.readableName}>
+        {character.name}
+        <span style={styles.metaSep}>{" · "}</span>
+        <span style={styles.readableTitle}>{character.title}</span>
+      </p>
+      <p style={styles.meta}>
+        {"积分 "}
+        <strong style={styles.scoreValue}>{score}</strong>
+        <span style={styles.metaSep}>{" · "}</span>
+        {`进度 ${progress} / ${totalStages}`}
+      </p>
     </div>
   );
 }
 
 const styles = {
-  scoreBar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "10px 20px",
-    backgroundColor: "#FFF",
-    borderBottom: "1px solid #E8E0D0",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  plate: {
+    textAlign: "center",
+    padding: "14px 34px 14px",
+    // 收得比内边距紧的暖光托底（同主页名牌），不出现方块边
+    background: halo({ w: 88, h: 86, core: 0.9, mid: 0.55, midStop: 42, edge: 70 }),
   },
-  scoreBarLeft: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
+  nameImg: {
+    width: "auto",
+    maxWidth: "100%",
+    objectFit: "contain",
+    display: "block",
+    margin: "0 auto",
+    filter: "drop-shadow(0 1px 2px rgba(255,255,255,0.7))",
   },
-  scoreCharName: {
-    fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
-    fontWeight: "bold",
-    color: "#333",
+  nameText: {
+    display: "block",
+    color: COLOR.inkStrong,
+    fontSize: "clamp(17px, 2.4vh, 24px)",
+    letterSpacing: TRACKING.wide,
+    fontWeight: 600,
   },
-  scoreCharTitle: {
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
-    color: "#999",
-    backgroundColor: "#F0EBE0",
-    padding: "2px 8px",
-    borderRadius: 4,
-    display: "inline-block",
+  readableName: {
+    color: COLOR.ink,
+    fontSize: "clamp(12.5px, 1.6vh, 17px)",
+    letterSpacing: TRACKING.loose,
+    fontWeight: 600,
+    margin: "6px 0 0",
+    textShadow: SHADOW.text,
   },
-  scoreBarRight: {
-    display: "flex",
-    alignItems: "center",
-    gap: 16,
+  readableTitle: {
+    color: COLOR.secondary,
+    fontSize: "0.78em",
+    fontWeight: 400,
+    letterSpacing: TRACKING.normal,
   },
-  statItem: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+  meta: {
+    color: COLOR.secondary,
+    fontSize: "clamp(10px, 1.25vh, 13.5px)",
+    letterSpacing: TRACKING.tight,
+    margin: "3px 0 0",
+    textShadow: "0 1px 2px rgba(255,255,255,0.55)",
   },
-  statLabel: {
-    fontSize: "clamp(8.8px, 0.764vw, 12.6px)",
-    color: "#999",
+  scoreValue: {
+    color: COLOR.goldBrown,
+    fontWeight: 600,
   },
-  statValue: {
-    fontSize: "clamp(12.8px, 1.111vw, 18.4px)",
-    fontWeight: "bold",
-    color: "#333",
-  },
-  progressBarOuter: {
-    width: 120,
-    height: 8,
-    backgroundColor: "#E8E0D0",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressBarInner: {
-    height: "100%",
-    borderRadius: 4,
-    transition: "width 0.5s ease",
-  },
+  metaSep: { opacity: 0.45 },
 };

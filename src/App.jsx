@@ -14,6 +14,7 @@ import Leaderboard from "./components/Leaderboard";
 import { getCurrentUser, restoreSession, logout, submitScore, logVisit } from "./services/backend";
 import { asset } from "./utils/asset";
 import { CHARACTERS, ACHIEVEMENT_TITLES, COMPLETION_LINES } from "./data/characters";
+import { FONT, COLOR, TRACKING, SHADOW, BUTTON, paperBtn, halo, scrim } from "./styles/theme";
 
 // Achievements persist across sessions.
 const ACH_KEY = "lishiyou_achievements";
@@ -432,12 +433,6 @@ export default function App() {
   return (
     <div style={styles.gameContainer}>
       <OrientationHint />
-      <ScoreBar
-        character={timelineData.character}
-        progress={reachedEvents}
-        totalStages={totalEvents}
-        score={runScore}
-      />
       <div style={styles.mapContainer}>
         <GameMap
           allEvents={allEvents}
@@ -447,22 +442,34 @@ export default function App() {
           onEventClick={handleEventClick}
           character={timelineData.character}
         />
-        <div style={{ ...styles.floatingInfo, borderLeftColor: currentStage.color }}>
-          <h3 style={{ margin: "0 0 4px", color: currentStage.color }}>
-            {currentEvent.name}
-          </h3>
+        {/* 蒙版分层：顶带护人物信息条（底带在时间轴瘦身时再上） */}
+        <div aria-hidden="true" style={styles.mapScrim} />
+        {/* 左上角人物信息条：主页名牌排版，只靠暖光托底 */}
+        <div style={styles.charStrip}>
+          <ScoreBar
+            character={timelineData.character}
+            progress={reachedEvents}
+            totalStages={totalEvents}
+            score={runScore}
+          />
+        </div>
+        {/* 事件面板：不套框不铺底，halo() 把文字从地图里托出来 */}
+        <div style={styles.floatingInfo}>
+          <h3 style={styles.eventTitle}>{currentEvent.name}</h3>
           <div style={styles.eventMeta}>
+            <span
+              aria-hidden="true"
+              style={{ ...styles.stageDot, backgroundColor: currentStage.color }}
+            />
             {`${currentEvent.year} 年 · ${currentStage.period}`}
           </div>
-          <p style={{ margin: "8px 0 0", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#666" }}>
+          <p style={styles.eventSummary}>
             {currentEvent.summary || currentStage.summary}
           </p>
           <button
             style={{
               ...styles.exploreBtn,
-              backgroundColor: currentStage.color,
-              opacity: currentEvent.hasScene ? 1 : 0.6,
-              cursor: currentEvent.hasScene ? "pointer" : "not-allowed",
+              ...(currentEvent.hasScene ? {} : styles.exploreBtnDisabled),
             }}
             onClick={handleExplore}
             disabled={!currentEvent.hasScene}
@@ -715,7 +722,7 @@ const styles = {
   gameContainer: {
     minHeight: "100vh",
     backgroundColor: "#F5F0E8",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: FONT,
     display: "flex",
     flexDirection: "column",
     position: "relative",
@@ -729,33 +736,77 @@ const styles = {
     padding: 0,
     minHeight: 400,
   },
+  // 顶带护人物信息条的纸色蒙版（底带极轻，为时间轴瘦身预留）
+  mapScrim: {
+    position: "absolute",
+    inset: 0,
+    background: scrim({
+      top: 0.5, topFade: 0.16, topStop: 9, topEnd: 20,
+      bottomStart: 86, bottomFade: 0.1, bottom: 0.22,
+      veil: 0, center: 0,
+    }),
+    pointerEvents: "none",
+    zIndex: 10,
+  },
+  charStrip: {
+    position: "absolute",
+    top: 4,
+    left: 10,
+    zIndex: 30,
+  },
   floatingInfo: {
     position: "absolute",
-    bottom: 80,
-    right: 20,
-    backgroundColor: "#FFF",
-    borderRadius: 8,
-    padding: 16,
-    width: 240,
-    borderLeft: "4px solid",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+    bottom: 72,
+    // 让开右下角的缩放钮列（36px 圆钮 + 边距）
+    right: 78,
+    width: 280,
+    padding: "20px 30px 22px",
+    textAlign: "center",
+    zIndex: 25,
+    // 不套框：收得比内边距紧的暖光，把标题/年份/简介从地图上托出来
+    background: halo({ w: 94, h: 90, y: 48, core: 0.93, mid: 0.6, midStop: 46, edge: 76 }),
+  },
+  eventTitle: {
+    margin: 0,
+    color: COLOR.inkStrong,
+    fontSize: "clamp(16px, 1.4vw, 22px)",
+    letterSpacing: TRACKING.loose,
+    textShadow: SHADOW.text,
   },
   eventMeta: {
-    fontSize: "clamp(8.8px, 0.764vw, 12.6px)",
-    color: "#999",
-    letterSpacing: 1,
+    marginTop: 4,
+    fontSize: "clamp(9.6px, 0.83vw, 13.2px)",
+    color: COLOR.secondary,
+    letterSpacing: TRACKING.normal,
+    textShadow: "0 1px 2px rgba(255,255,255,0.55)",
+  },
+  stageDot: {
+    display: "inline-block",
+    width: 7,
+    height: 7,
+    borderRadius: "50%",
+    marginRight: 6,
+    verticalAlign: "1px",
+  },
+  eventSummary: {
+    margin: "8px 0 0",
+    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    color: COLOR.body,
+    lineHeight: 1.7,
+    textShadow: "0 1px 2px rgba(255,255,255,0.55)",
   },
   exploreBtn: {
+    ...BUTTON.pill,
     marginTop: 12,
-    width: "100%",
-    padding: "8px 12px",
-    border: "none",
-    borderRadius: 4,
-    color: "white",
-    fontWeight: "bold",
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
-    cursor: "pointer",
-    transition: "all 0.2s",
+    padding: "9px 26px",
+    fontSize: "clamp(11.2px, 0.972vw, 15px)",
+  },
+  exploreBtnDisabled: {
+    border: `1px solid ${COLOR.goldLineDisabled}`,
+    color: COLOR.lockedText,
+    backgroundColor: paperBtn(0.6),
+    boxShadow: "none",
+    cursor: "not-allowed",
   },
   sceneExitBtn: {
     position: "fixed",
@@ -780,12 +831,12 @@ const styles = {
     bottom: 20,
     right: 20,
     width: 44, height: 44,
-    backgroundColor: "#FFF",
-    border: "1px solid #DDD",
+    backgroundColor: paperBtn(0.92),
+    border: `1px solid ${COLOR.goldLineSoft}`,
     borderRadius: "50%",
     cursor: "pointer",
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+    boxShadow: SHADOW.chip,
     zIndex: 60,
   },
   congratsOverlay: {
@@ -839,13 +890,16 @@ const styles = {
     position: "fixed",
     bottom: 20,
     left: 20,
-    padding: "10px 16px",
-    backgroundColor: "#FFF",
-    border: "1px solid #DDD",
-    borderRadius: 6,
+    padding: "9px 18px",
+    backgroundColor: paperBtn(0.92),
+    border: `1px solid ${COLOR.goldLineSoft}`,
+    borderRadius: 20,
+    color: COLOR.btnTextSub,
+    letterSpacing: TRACKING.tight,
     cursor: "pointer",
     fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
     fontFamily: "inherit",
+    boxShadow: SHADOW.chip,
     transition: "all 0.2s",
   },
 };
