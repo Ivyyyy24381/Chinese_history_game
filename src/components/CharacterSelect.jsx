@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { asset } from "../utils/asset";
 import { TITLE_IMG } from "../data/characters";
-
-const FONT = "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif";
+import {
+  FONT, COLOR, TRACKING, TRANSITION, SHADOW, BUTTON,
+  paper, paperBtn, gold, halo, scrim,
+} from "../styles/theme";
 
 /**
  * 主页 · 选择主人公
@@ -55,7 +57,7 @@ export default function CharacterSelect({
             ...styles.bgLayer,
             // 画面密的背景（如鲁米的宫殿）自带一层减淡，跟着背景一起淡入淡出
             backgroundImage:
-              `linear-gradient(rgba(250,246,238,${c.scrimBoost || 0}), rgba(250,246,238,${c.scrimBoost || 0})),` +
+              `linear-gradient(${paper(c.scrimBoost || 0)}, ${paper(c.scrimBoost || 0)}),` +
               ` url('${asset(c.background)}')`,
             opacity: activeBgId === c.id ? 1 : 0,
           }}
@@ -112,8 +114,8 @@ export default function CharacterSelect({
                       filter: char.locked && !isSelected
                         ? "grayscale(0.72) brightness(1.04) drop-shadow(0 10px 22px rgba(70,55,35,0.20))"
                         : isSelected
-                        ? `${char.locked ? "grayscale(0.35) " : ""}drop-shadow(0 18px 34px rgba(70,55,35,0.34))`
-                        : "drop-shadow(0 10px 22px rgba(70,55,35,0.22))",
+                        ? `${char.locked ? "grayscale(0.35) " : ""}${SHADOW.artSelected}`
+                        : SHADOW.art,
                       opacity: dimmed ? (char.locked ? 0.6 : 0.68) : char.locked ? 0.82 : 1,
                     }}
                   />
@@ -235,27 +237,21 @@ const styles = {
     minHeight: "100vh",
     overflow: "hidden",
     fontFamily: FONT,
-    backgroundColor: "#EFE7D8",
+    backgroundColor: COLOR.paperSolid,
   },
   bgLayer: {
     position: "absolute",
     inset: 0,
     backgroundSize: "cover",
     backgroundPosition: "center",
-    transition: "opacity 700ms ease",
+    transition: `opacity ${TRANSITION.bg}`,
     willChange: "opacity",
   },
-  // 背景压一层暖白：整屏薄雾 + 中央更浓，保证立绘和文字在三张画上都读得清
+  // 背景压一层暖白：顶带护标题、底带护按钮与成就栏，中间 radial 护立绘与名牌
   scrim: {
     position: "absolute",
     inset: 0,
-    background:
-      // 顶带护标题、底带护按钮与成就栏，中间radial 护立绘与名牌
-      "linear-gradient(to bottom, rgba(250,246,238,0.66) 0%, rgba(250,246,238,0.26) 20%," +
-      " rgba(250,246,238,0) 36%, rgba(250,246,238,0) 60%, rgba(250,246,238,0.30) 79%," +
-      " rgba(250,246,238,0.70) 100%)," +
-      "linear-gradient(rgba(250,246,238,0.16), rgba(250,246,238,0.16))," +
-      "radial-gradient(ellipse 80% 72% at 50% 56%, rgba(250,246,238,0.46) 0%, rgba(250,246,238,0.22) 55%, rgba(250,246,238,0) 84%)",
+    background: scrim(),
     pointerEvents: "none",
   },
   content: {
@@ -271,8 +267,7 @@ const styles = {
   header: {
     textAlign: "center",
     padding: "clamp(10px, 2vh, 24px) clamp(40px, 6vw, 110px) clamp(6px, 1.2vh, 14px)",
-    background:
-      "radial-gradient(ellipse 76% 78% at 50% 48%, rgba(250,246,238,0.82) 0%, rgba(250,246,238,0.46) 44%, rgba(250,246,238,0) 70%)",
+    background: halo({ w: 76, h: 78, y: 48, core: 0.82, mid: 0.46, midStop: 44, edge: 70 }),
   },
   titleWrap: { margin: 0, lineHeight: 0 },
   titleImg: {
@@ -280,11 +275,11 @@ const styles = {
     filter: "drop-shadow(0 1px 3px rgba(255,255,255,0.65))",
   },
   subtitle: {
-    color: "#6B5A44",
+    color: COLOR.subtitle,
     fontSize: "clamp(12px, 1.5vh, 16px)",
-    letterSpacing: 8,
+    letterSpacing: TRACKING.hero,
     margin: "clamp(8px, 1.4vh, 16px) 0 0",
-    textShadow: "0 1px 2px rgba(255,255,255,0.6)",
+    textShadow: SHADOW.text,
   },
   row: {
     marginTop: "clamp(10px, 2vh, 26px)",
@@ -310,26 +305,26 @@ const styles = {
     maxWidth: "100%",
     objectFit: "contain",
     display: "block",
-    transition: "transform 320ms cubic-bezier(.2,.7,.3,1), filter 320ms ease, opacity 320ms ease",
+    transition: `transform ${TRANSITION.element}, filter 320ms ease, opacity 320ms ease`,
   },
   // 「即将开放」不常驻贴脸，选中锁定人物时才在开始区出现
   comingSoon: {
     whiteSpace: "nowrap",
-    backgroundColor: "rgba(252,248,238,0.9)",
-    color: "#8A7A5E",
+    backgroundColor: paperBtn(0.9),
+    color: COLOR.muted,
     padding: "9px 24px",
     borderRadius: 24,
-    border: "1px dashed #C9B08A",
+    border: `1px dashed ${COLOR.goldLineSoft}`,
     fontSize: "clamp(12px, 1.6vh, 16px)",
-    letterSpacing: 3,
-    boxShadow: "0 2px 10px rgba(90,70,40,0.12)",
+    letterSpacing: TRACKING.loose,
+    boxShadow: SHADOW.chip,
   },
   achBadge: {
     position: "absolute",
     top: 4,
     right: "6%",
     fontSize: "clamp(18px, 2.4vh, 26px)",
-    filter: "drop-shadow(0 0 5px rgba(201,168,106,0.95))",
+    filter: `drop-shadow(0 0 5px ${gold(0.95)})`,
   },
   // 名牌自带一圈柔和暖光：三张背景里都有建筑/树压在这一段，没有它文字会糊掉
   plate: {
@@ -338,8 +333,7 @@ const styles = {
     padding: "clamp(8px, 1.5vh, 16px) 30px clamp(10px, 1.8vh, 18px)",
     transition: "opacity 320ms ease",
     // 收得比内边距更紧，让暖光在触到方框四角前就淡尽，不会露出方块边
-    background:
-      "radial-gradient(ellipse 82% 72% at 50% 46%, rgba(250,246,238,0.88) 0%, rgba(250,246,238,0.52) 40%, rgba(250,246,238,0) 66%)",
+    background: halo(),
   },
   nameImg: {
     width: "auto",
@@ -351,37 +345,37 @@ const styles = {
   },
   nameText: {
     display: "block",
-    color: "#2B2118",
+    color: COLOR.inkStrong,
     fontSize: "clamp(19px, 2.8vh, 28px)",
-    letterSpacing: 6,
+    letterSpacing: TRACKING.wide,
     fontWeight: 600,
   },
   // 可读的中文名 —— 名字图是书法/花体，这行保证一眼认得出是谁
   readableName: {
-    color: "#3A2E20",
+    color: COLOR.ink,
     fontSize: "clamp(14px, 1.9vh, 20px)",
-    letterSpacing: 3,
+    letterSpacing: TRACKING.loose,
     fontWeight: 600,
     margin: "8px 0 0",
-    textShadow: "0 1px 2px rgba(255,255,255,0.6)",
+    textShadow: SHADOW.text,
   },
   readableTitle: {
-    color: "#7A6A50",
+    color: COLOR.secondary,
     fontSize: "0.78em",
     fontWeight: 400,
-    letterSpacing: 2,
+    letterSpacing: TRACKING.normal,
   },
   meta: {
-    color: "#7A6A50",
+    color: COLOR.secondary,
     fontSize: "clamp(10px, 1.3vh, 14px)",
-    letterSpacing: 1,
+    letterSpacing: TRACKING.tight,
     margin: "3px 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
   },
   metaSep: { opacity: 0.45 },
   // 简介只在选中时展开，收起时高度为 0，三列不会因文字长短错位
   desc: {
-    color: "#5A4A38",
+    color: COLOR.body,
     fontSize: "clamp(10.5px, 1.35vh, 14px)",
     lineHeight: 1.6,
     margin: 0,
@@ -399,27 +393,12 @@ const styles = {
     marginTop: "clamp(8px, 1.6vh, 18px)",
   },
   startBtn: {
-    padding: "10px 30px",
-    border: "1px solid #C9A86A",
-    borderRadius: 24,
-    backgroundColor: "rgba(252,248,238,0.92)",
-    color: "#7A5C2E",
-    cursor: "pointer",
-    fontFamily: "inherit",
+    ...BUTTON.pill,
     fontSize: "clamp(13px, 1.7vh, 17px)",
-    letterSpacing: 3,
-    boxShadow: "0 4px 16px rgba(90,70,40,0.18)",
   },
   ghostBtn: {
-    padding: "8px 16px",
-    border: "1px solid #C9B08A",
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.62)",
-    color: "#8A7A5E",
-    cursor: "pointer",
-    fontFamily: "inherit",
+    ...BUTTON.ghost,
     fontSize: "clamp(10.5px, 1.35vh, 13.5px)",
-    letterSpacing: 1,
   },
   achievementBar: {
     marginTop: "clamp(6px, 1.6vh, 18px)",
@@ -430,9 +409,9 @@ const styles = {
     justifyContent: "center",
   },
   achievementHeading: {
-    color: "#8A6D3B",
+    color: COLOR.goldBrown,
     fontSize: "clamp(10.5px, 1.3vh, 14px)",
-    letterSpacing: 2,
+    letterSpacing: TRACKING.normal,
     fontWeight: 600,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
   },
@@ -440,14 +419,14 @@ const styles = {
     padding: "3px 12px",
     borderRadius: 14,
     fontSize: "clamp(9.5px, 1.15vh, 12.5px)",
-    letterSpacing: 1,
-    backgroundColor: "rgba(201,168,106,0.22)",
-    color: "#8A6D3B",
-    border: "1px solid #C9A86A",
+    letterSpacing: TRACKING.tight,
+    backgroundColor: gold(0.22),
+    color: COLOR.goldBrown,
+    border: `1px solid ${COLOR.goldLine}`,
   },
   achievementChipLocked: {
     backgroundColor: "rgba(255,255,255,0.5)",
-    color: "#A2957F",
-    border: "1px solid #D8CDB8",
+    color: COLOR.lockedText,
+    border: `1px solid ${COLOR.goldLineDisabled}`,
   },
 };
