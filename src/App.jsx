@@ -13,6 +13,7 @@ import AuthPanel from "./components/AuthPanel";
 import Leaderboard from "./components/Leaderboard";
 import { getCurrentUser, restoreSession, logout, submitScore, logVisit } from "./services/backend";
 import { asset } from "./utils/asset";
+import { CHARACTERS, ACHIEVEMENT_TITLES } from "./data/characters";
 
 // Achievements persist across sessions.
 const ACH_KEY = "lishiyou_achievements";
@@ -25,52 +26,24 @@ const loadRun = () => {
   try { return JSON.parse(localStorage.getItem(RUN_KEY)); } catch { return null; }
 };
 const clearRunStorage = () => { try { localStorage.removeItem(RUN_KEY); } catch { /* ignore */ } };
-// Achievement title per character biography.
-const ACHIEVEMENT_TITLES = { dufu: "诗圣之路", libai: "诗仙之路", sushi: "东坡之路" };
-
-// Static character data
-const CHARACTERS = [
-  {
-    id: "dufu",
-    name: "杜甫",
-    title: "诗圣",
-    years: "712—770",
-    dynasty: "唐",
-    description: "唐代最伟大的现实主义诗人，与李白并称「李杜」",
-    avatar: "🖊",
-    portrait: "/assets/dufu/hero/portrait.png",
-    color: "#4A90A4",
-  },
-  {
-    id: "libai",
-    name: "李白",
-    title: "诗仙",
-    years: "701—762",
-    dynasty: "唐",
-    description: "即将推出...",
-    avatar: "🍷",
-    portrait: null,
-    color: "#C0392B",
-    locked: true,
-  },
-  {
-    id: "sushi",
-    name: "苏轼",
-    title: "东坡居士",
-    years: "1037—1101",
-    dynasty: "宋",
-    description: "即将推出...",
-    avatar: "📜",
-    portrait: null,
-    color: "#8E44AD",
-    locked: true,
-  },
-];
+// 主人公花名册与成就名的单一事实来源在 src/data/characters.js —— 新增人物只改那个文件。
+//
+// 剧本数据按人物目录懒加载。这里用 import.meta.glob 而不是写死 "./data/dufu/…"：
+// 某个人物的 src/data/<dataDir>/ 还没建好时构建不会报错，主页照常显示，
+// 真进游戏时再兜底成「建设中」提示。但丁线正在另一台机器上写，就靠这个解耦。
+const TIMELINE_MODULES = import.meta.glob("./data/*/timeline.json");
+const EVENT_MODULES = import.meta.glob("./data/*/events/*/event.json");
+const dataDirOf = (char) => (char && (char.dataDir || char.id)) || "dufu";
+const timelineLoader = (dir) => TIMELINE_MODULES[`./data/${dir}/timeline.json`] || null;
+const eventLoader = (dir, eventId) =>
+  EVENT_MODULES[`./data/${dir}/events/${eventId}/event.json`] || null;
 
 export default function App() {
   const [screen, setScreen] = useState("select");
   const [character, setCharacter] = useState(null);
   const [timelineData, setTimelineData] = useState(null);
+  // 选中的人物还没有剧本数据（目录未建 / 加载失败）
+  const [dataMissing, setDataMissing] = useState(false);
   // Current year is the source of truth for slider position.
   const [currentYear, setCurrentYear] = useState(null);
   // Highest year the player has unlocked (set when an event scene is completed).
@@ -126,28 +99,35 @@ export default function App() {
 
   // Load timeline data when character is selected
   useEffect(() => {
-    if (character && !timelineData) {
-      import("./data/dufu/timeline.json")
-        .then((module) => {
-          const data = module.default;
-          setTimelineData(data);
-          const resume = pendingResumeRef.current;
-          pendingResumeRef.current = null;
-          if (resume) {
-            // 继续上局：恢复到上次的年份和进度
-            setCurrentYear(resume.currentYear);
-            setProgressYear(resume.progressYear);
-          } else {
-            const firstEvent = data.stages[0]?.events?.[0];
-            const firstYear = firstEvent?.year ?? data.stages[0].yearStart;
-            setCurrentYear(firstYear);
-            setProgressYear(firstYear);
-          }
-        })
-        .catch(() => {
-          console.error("Failed to load timeline data");
-        });
+    if (!character || timelineData) return;
+    const load = timelineLoader(dataDirOf(character));
+    if (!load) {
+      // 这个人物的剧本目录还没建（例如但丁线还在另一台机器上写）→ 走「建设中」页
+      setDataMissing(true);
+      return;
     }
+    setDataMissing(false);
+    load()
+      .then((module) => {
+        const data = module.default;
+        setTimelineData(data);
+        const resume = pendingResumeRef.current;
+        pendingResumeRef.current = null;
+        if (resume) {
+          // 继续上局：恢复到上次的年份和进度
+          setCurrentYear(resume.currentYear);
+          setProgressYear(resume.progressYear);
+        } else {
+          const firstEvent = data.stages[0]?.events?.[0];
+          const firstYear = firstEvent?.year ?? data.stages[0].yearStart;
+          setCurrentYear(firstYear);
+          setProgressYear(firstYear);
+        }
+      })
+      .catch(() => {
+        console.error("Failed to load timeline data");
+        setDataMissing(true);
+      });
   }, [character, timelineData]);
 
   // BGM: play /assets/audio/bgm/<stageId>.mp3 for the current stage.
@@ -209,6 +189,7 @@ export default function App() {
 
   const handleCharacterSelect = (char) => {
     setCharacter(char);
+    setDataMissing(false);
     setScreen("game");
     const saved = loadRun();
     if (saved && saved.characterId === char.id) {
@@ -222,6 +203,17 @@ export default function App() {
       resetRun(); // 新的一局，从 0 分开始
     }
   };
+
+  // 返回选人页：进度已自动保存，可随时「继续上局」
+  const backToHome = useCallback(() => {
+    setScreen("select");
+    setCharacter(null);
+    setTimelineData(null);
+    setDataMissing(false);
+    setCurrentYear(null);
+    setProgressYear(null);
+    setSavedRun(loadRun());
+  }, []);
 
   // 重新开始（清掉存档，从头玩）
   const handleRestart = (char) => {
@@ -257,7 +249,13 @@ export default function App() {
 
   const handleExplore = async () => {
     if (!currentEvent || !currentEvent.hasScene) return;
-    const load = () => import(`./data/dufu/events/${currentEvent.id}/event.json`);
+    const load = eventLoader(dataDirOf(character), currentEvent.id);
+    if (!load) {
+      // 该事件没有独立场景文件 → 旧版图文+答题面板
+      setPendingEvent(currentEvent);
+      setShowEvent(true);
+      return;
+    }
     try {
       let sceneModule;
       try {
@@ -316,14 +314,17 @@ export default function App() {
     }
   };
 
-  // Open the recap (from congrats dialog or from home page badge).
-  const openRecap = async () => {
-    if (timelineData) {
+  // Open the recap (from congrats dialog, or from the home page where only an id is known).
+  const openRecap = async (charId) => {
+    const target = charId ? CHARACTERS.find((c) => c.id === charId) : character;
+    if (timelineData && (!charId || charId === character?.id)) {
       setRecapData({ character: timelineData.character, stages: timelineData.stages });
       return;
     }
     try {
-      const mod = await import("./data/dufu/timeline.json");
+      const load = timelineLoader(dataDirOf(target));
+      if (!load) return;
+      const mod = await load();
       setRecapData({ character: mod.default.character, stages: mod.default.stages });
     } catch { /* ignore */ }
   };
@@ -387,6 +388,21 @@ export default function App() {
           />
         )}
       </>
+    );
+  }
+
+  // 剧本还没就位：给个体面的占位页而不是永远转圈
+  if (dataMissing) {
+    return (
+      <div style={styles.placeholderScreen}>
+        <p style={styles.placeholderTitle}>
+          {`${character?.name || "这条故事线"}的旅程正在建设中`}
+        </p>
+        <p style={styles.placeholderHint}>{"剧本与地图还在绘制，敬请期待。"}</p>
+        <button style={styles.placeholderBtn} onClick={backToHome}>
+          {"← 返回主页"}
+        </button>
+      </div>
     );
   }
 
@@ -470,15 +486,7 @@ export default function App() {
       </button>
       <button
         style={styles.backBtn}
-        onClick={() => {
-          // 返回选人页：进度已自动保存，可随时"继续上局"
-          setScreen("select");
-          setCharacter(null);
-          setTimelineData(null);
-          setCurrentYear(null);
-          setProgressYear(null);
-          setSavedRun(loadRun());
-        }}
+        onClick={backToHome}
       >
         {"← 返回选择"}
       </button>
@@ -557,14 +565,7 @@ export default function App() {
               </button>
               <button
                 style={styles.congratsBtn}
-                onClick={() => {
-                  setShowCongrats(false);
-                  setScreen("select");
-                  setCharacter(null);
-                  setTimelineData(null);
-                  setCurrentYear(null);
-                  setProgressYear(null);
-                }}>
+                onClick={() => { setShowCongrats(false); backToHome(); }}>
                 {"返回主页"}
               </button>
               <button style={styles.congratsBtn} onClick={() => setShowCongrats(false)}>
@@ -665,6 +666,40 @@ function EditorShell() {
 }
 
 const styles = {
+  placeholderScreen: {
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 14,
+    backgroundColor: "#F5F0E8",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+  },
+  placeholderTitle: {
+    color: "#5A4A38",
+    fontSize: "clamp(18px, 2.4vw, 28px)",
+    letterSpacing: 4,
+    margin: 0,
+  },
+  placeholderHint: {
+    color: "#9A8B72",
+    fontSize: "clamp(12px, 1.2vw, 16px)",
+    letterSpacing: 2,
+    margin: 0,
+  },
+  placeholderBtn: {
+    marginTop: 12,
+    padding: "9px 24px",
+    border: "1px solid #C9A86A",
+    borderRadius: 22,
+    backgroundColor: "rgba(252,248,238,0.92)",
+    color: "#7A5C2E",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    fontSize: "clamp(12px, 1.2vw, 15px)",
+    letterSpacing: 2,
+  },
   gameContainer: {
     minHeight: "100vh",
     backgroundColor: "#F5F0E8",
