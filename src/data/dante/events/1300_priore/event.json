@@ -1,0 +1,361 @@
+{
+  "id": "1300_priore",
+  "title": "执政官·禧年",
+  "year": "1300",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "lectern_intro",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "讲坛引子",
+      "transitionText": "讲坛上，薄伽丘写下一个年份：1300。",
+      "announcement": {
+        "title": "讲坛",
+        "text": "薄伽丘：「记住这一年。史实里，他在这一年当上执政官；而《神曲》的故事，也被他放在这一年——人生的中点。为什么？听完你们就懂了。」",
+        "style": "imperial_decree"
+      },
+      "narrative": "",
+      "nextPhase": "giubileo"
+    },
+    {
+      "id": "giubileo",
+      "type": "map_travel",
+      "background": "/assets/dante/maps/route_1300_giubileo.png",
+      "title": "禧年朝圣",
+      "travelNarrative": "教皇卜尼法斯八世首创「禧年」：凡今年至罗马朝圣者，罪愆全赦。二十万人涌向罗马——但丁也在其中。",
+      "instruction": "沿路线点击每一站。",
+      "requireAll": true,
+      "waypoints": [
+        {
+          "id": "firenze_partenza",
+          "name": "佛罗伦萨·出发",
+          "x": 23,
+          "y": 24,
+          "dialogues": [
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "满城的人都在收拾行装。去罗马！去禧年！"
+            }
+          ]
+        },
+        {
+          "id": "strada",
+          "name": "法兰奇纳古道",
+          "x": 44,
+          "y": 45,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "古道上人流不断：香客、商贩、乞丐、贵妇的轿子。所有语言都在说同一个词——罗马。"
+            }
+          ]
+        },
+        {
+          "id": "roma_porta",
+          "name": "罗马城门",
+          "x": 60,
+          "y": 62,
+          "isKey": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "城门内外，人流如蚁。桥上的人群被分成两列对向而行，才不至于踩踏。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "像军队渡桥，分两列……这个画面，我记下了。"
+            }
+          ]
+        }
+      ],
+      "nextPhase": "porta"
+    },
+    {
+      "id": "porta",
+      "type": "explore",
+      "background": "/assets/dante/events/1300_priore/backgrounds/roma_porta_giubileo.png",
+      "title": "禧年的罗马",
+      "narrative": "罗马。二十万朝圣者把街道挤成河流。",
+      "instruction": "点击画面中的人与景。",
+      "dufu_pose": "citizen/robe",
+      "npcs": [
+        {
+          "id": "crowd_columns",
+          "name": "分成两列的人流",
+          "portrait": "",
+          "position": {
+            "x": 40,
+            "y": 60
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "维持秩序的兵丁把桥面从中隔开：去圣彼得堂的靠一边，回程的靠另一边。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "多年以后，我写地狱第八层的恶囊：罪人分两列对向而行——「就像禧年时罗马桥上的人流」。"
+            }
+          ]
+        },
+        {
+          "id": "pilgrim_song",
+          "name": "香客的歌声",
+          "portrait": "",
+          "position": {
+            "x": 68,
+            "y": 52
+          },
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "各地口音的圣歌混在一处。有人一路膝行，膝盖磨出了血。"
+            }
+          ]
+        },
+        {
+          "id": "coin_chest",
+          "name": "祭坛边的钱箱",
+          "portrait": "/assets/dante/props/florin_coin.png",
+          "position": {
+            "x": 84,
+            "y": 66
+          },
+          "scale": 0.55,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "祭坛边，教士用长耙把如山的献金拢进箱里，昼夜不停。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "赦罪与金币，在同一张祭坛上交割。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "san_pietro"
+    },
+    {
+      "id": "san_pietro",
+      "type": "transition",
+      "background": "/assets/dante/events/1300_priore/backgrounds/san_pietro_old.png",
+      "title": "圣彼得堂 · 教皇的影子",
+      "transitionText": "圣彼得堂前。远处的高台上，一个金冠的身影接受着二十万人的欢呼。\n没有对话。只有威压。",
+      "announcement": {
+        "title": "禧年诏书",
+        "text": "卜尼法斯八世：「凡于此圣年虔诚朝觐使徒之墓者，罪愆全赦。」",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/hero/citizen/robe.png",
+        "text": "他把天堂的钥匙，铸成了人间的权杖。记住这个人——卜尼法斯。"
+      },
+      "narrative": "",
+      "nextPhase": "priori"
+    },
+    {
+      "id": "priori",
+      "type": "explore",
+      "background": "/assets/dante/events/1300_priore/backgrounds/palazzo_priori.png",
+      "title": "执政官厅 · 六月",
+      "narrative": "回城即上任。1300 年 6 月，但丁当选佛罗伦萨六执政官之一，任期两个月。上任第一件事，就是一场火并的善后。",
+      "instruction": "听取同僚与书记的禀报。",
+      "dufu_pose": "citizen/robe",
+      "npcs": [
+        {
+          "id": "fellow_prior",
+          "name": "同僚执政官",
+          "portrait": "/assets/dante/events/1300_priore/npcs/fellow_prior.png",
+          "position": {
+            "x": 28,
+            "y": 66
+          },
+          "scale": 1.3,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "fellow_prior",
+              "speakerName": "同僚执政官",
+              "text": "五月节，白黑两党在圣三一广场火并，见了血。"
+            },
+            {
+              "speaker": "fellow_prior",
+              "speakerName": "同僚执政官",
+              "text": "必须各逐首恶，两边一起逐——否则就是内战。"
+            }
+          ]
+        },
+        {
+          "id": "scribe",
+          "name": "书记官",
+          "portrait": "/assets/dante/npcs/scribe.png",
+          "position": {
+            "x": 52,
+            "y": 70
+          },
+          "scale": 1.25,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "scribe",
+              "speakerName": "书记官",
+              "text": "放逐名单拟好了。黑党之首：科尔索·多纳蒂。"
+            },
+            {
+              "speaker": "scribe",
+              "speakerName": "书记官",
+              "text": "白党名单上……执政官大人，有圭多·卡瓦尔坎蒂。您的……朋友。"
+            }
+          ]
+        },
+        {
+          "id": "corso_donati",
+          "name": "科尔索·多纳蒂",
+          "portrait": "/assets/dante/npcs/corso_donati.png",
+          "position": {
+            "x": 78,
+            "y": 68
+          },
+          "scale": 1.35,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "corso_donati",
+              "speakerName": "科尔索·多纳蒂",
+              "text": "放逐我？好，我走。"
+            },
+            {
+              "speaker": "corso_donati",
+              "speakerName": "科尔索·多纳蒂",
+              "text": "记住今天，诗人。我会回来的——带着教皇，和法兰西人。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "exile_choice"
+    },
+    {
+      "id": "exile_choice",
+      "type": "forced_choice",
+      "background": "/assets/dante/events/1300_priore/backgrounds/palazzo_priori.png",
+      "title": "放逐名单上有你的挚友",
+      "narrative": "笔悬在名单上方。白党首恶一栏，写着圭多·卡瓦尔坎蒂——教你写诗的人，你的「第一好友」。",
+      "question": "你签吗？",
+      "dufu_pose": "citizen/signing",
+      "options": [
+        {
+          "id": "spare",
+          "text": "划掉他的名字",
+          "correct": false,
+          "response": {
+            "speaker": "fellow_prior",
+            "speakerName": "同僚执政官",
+            "text": "那黑党的放逐令也得作废——科尔索留在城里，圣三一广场的血就白流了。城就烧起来了。"
+          }
+        },
+        {
+          "id": "sign",
+          "text": "签。一视同仁。",
+          "correct": true,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "（低声）圭多，原谅我。\n城，在人之上。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "卡瓦尔坎蒂被逐往瘴气弥漫的萨尔扎纳，染上疟疾；虽获准归来，当年八月即死。但丁后来在地狱第十层遇见他的父亲——老人从火棺中坐起：「我儿呢？为什么他不与你同行？」但丁迟疑的一瞬，老人以为儿子已死，仰面倒回棺中。他没能答完这句话。"
+      },
+      "nextPhase": "selva"
+    },
+    {
+      "id": "selva",
+      "type": "comic_reveal",
+      "background": "/assets/dante/events/1300_priore/backgrounds/comic_selva.png",
+      "image": "/assets/dante/events/1300_priore/backgrounds/comic_selva.png",
+      "title": "幽暗森林",
+      "narrative": "",
+      "autoAdvanceSec": 2.5,
+      "panels": [
+        {
+          "id": "p1_desk",
+          "x": 1.5,
+          "y": 2.5,
+          "w": 35,
+          "h": 46,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "执政官但丁伏案。烛火摇晃。"
+            }
+          ]
+        },
+        {
+          "id": "p2_dark",
+          "x": 1.5,
+          "y": 50,
+          "w": 35,
+          "h": 47,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "画面渐暗。案头的文书，慢慢化作藤蔓与枝条。"
+            }
+          ]
+        },
+        {
+          "id": "p3_selva",
+          "x": 37,
+          "y": 2.5,
+          "w": 62,
+          "h": 95,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "旁白",
+              "text": "多年以后他动笔，把故事的时间放回这一年——他人生的中点，一切还未失去、却已开始失去的一年。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "Nel mezzo del cammin di nostra vita——\n人生旅程过半，我发现自己身处一座幽暗的森林，因为正确的道路已经迷失。"
+            }
+          ]
+        }
+      ],
+      "nextPhase": "echo"
+    },
+    {
+      "id": "echo",
+      "type": "transition",
+      "background": "/assets/dante/events/1300_priore/backgrounds/dark_forest.png",
+      "title": "后世回声",
+      "transitionText": "山顶有光。三头野兽挡在路上。\n这是《神曲》的第一页——写的正是 1300 年的他自己。",
+      "announcement": {
+        "title": "后世回声",
+        "text": "薄伽丘：「史实的 1300 年，他签下了放逐挚友的名字；虚构的 1300 年，他在幽暗森林里迷路。诸位——这两件事，是同一件事。」",
+        "style": "imperial_decree"
+      },
+      "narrative": ""
+    }
+  ]
+}
