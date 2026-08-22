@@ -6,15 +6,24 @@
  * - 右下角 ＋/－/⟲ 按钮
  * - 切换事件（时间轴或点图钉）时自动放大并居中该事件地点
  *
+ * 旅人与墨线路径：
+ * - 主角 token 站在当前事件位置；年份推进时沿手绘感的墨线路径走过去，
+ *   配一串渐次点亮的足迹，走完落定
+ * - 已走过的路段是实墨线，未来的路段是极淡的铅笔稿（虚线）
+ * - 路径用 Catmull-Rom 转三次贝塞尔 + 垂直向确定性抖动，画在地图坐标系里，
+ *   跟随 pan/zoom 变换；prefers-reduced-motion 时不做行走动画，直接落定
+ *
  * Pin states:
- *   - Current event:   full color, glow, pulsing ring, larger pin
+ *   - Current event:   walker 立绘站在该点
  *   - Past events:     full color, smaller pin, ✓ inside the pin
  *   - Future events:   muted color, smaller pin, no badge
  */
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { asset } from "../utils/asset";
 import { dufuPortraitPath } from "../data/dufuPoses";
 import { dantePortraitPath } from "../data/dantePoses";
+import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
+import { COLOR, paper } from "../styles/theme";
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 4;
@@ -29,6 +38,60 @@ function coverDims(W, H, ratio) {
   return { cw: H * ratio, ch: H };
 }
 
+// ── 旅程墨线 ─────────────────────────────────────────────
+// 确定性伪随机：同一条线每次渲染的「手绘抖动」必须一致（不用 Math.random）
+const jitter = (i) => {
+  const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
+  return (x - Math.floor(x)) * 2 - 1; // -1 .. 1
+};
+
+// Catmull-Rom → 第 i 段（pts[i] → pts[i+1]）的三次贝塞尔控制点，
+// 再沿段的垂直方向加一点抖动，让线像手上画出来的而不是几何拟合
+function segmentControls(pts, i) {
+  const p0 = pts[Math.max(0, i - 1)];
+  const p1 = pts[i];
+  const p2 = pts[i + 1];
+  const p3 = pts[Math.min(pts.length - 1, i + 2)];
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const nx = -dy / len;
+  const ny = dx / len;
+  const amp = Math.min(len * 0.14, 13);
+  return {
+    c1: {
+      x: p1.x + (p2.x - p0.x) / 6 + nx * jitter(i * 2 + 1) * amp,
+      y: p1.y + (p2.y - p0.y) / 6 + ny * jitter(i * 2 + 1) * amp,
+    },
+    c2: {
+      x: p2.x - (p3.x - p1.x) / 6 + nx * jitter(i * 2 + 2) * amp,
+      y: p2.y - (p3.y - p1.y) / 6 + ny * jitter(i * 2 + 2) * amp,
+    },
+  };
+}
+
+const segD = (pts, i) => {
+  const { c1, c2 } = segmentControls(pts, i);
+  return `M ${pts[i].x} ${pts[i].y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${pts[i + 1].x} ${pts[i + 1].y}`;
+};
+
+// 旅程路径：fromIdx → toIdx（可倒走），拼接沿途各段；倒走时交换控制点次序
+function travelD(pts, fromIdx, toIdx) {
+  const parts = [`M ${pts[fromIdx].x} ${pts[fromIdx].y}`];
+  if (toIdx > fromIdx) {
+    for (let i = fromIdx; i < toIdx; i++) {
+      const { c1, c2 } = segmentControls(pts, i);
+      parts.push(`C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${pts[i + 1].x} ${pts[i + 1].y}`);
+    }
+  } else {
+    for (let i = fromIdx - 1; i >= toIdx; i--) {
+      const { c1, c2 } = segmentControls(pts, i);
+      parts.push(`C ${c2.x} ${c2.y}, ${c1.x} ${c1.y}, ${pts[i].x} ${pts[i].y}`);
+    }
+  }
+  return parts.join(" ");
+}
+
 export default function GameMap({
   allEvents,
   currentYear,
@@ -41,7 +104,11 @@ export default function GameMap({
   const mapUrl = character?.generalMap || DEFAULT_MAP;
   const imgRatio = character?.mapRatio || DEFAULT_RATIO;
   const heroWalkerPath = character?.id === "dante" ? dantePortraitPath : dufuPortraitPath;
-  const events = (allEvents || []).slice().sort((a, b) => a.year - b.year);
+  const events = useMemo(
+    () => (allEvents || []).slice().sort((a, b) => a.year - b.year),
+    [allEvents]
+  );
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const viewportRef = useRef(null);
   const [view, setView] = useState({ scale: 1, tx: 0, ty: 0 });
@@ -61,6 +128,17 @@ export default function GameMap({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  const dims = box.w ? coverDims(box.w, box.h, imgRatio) : null;
+
+  // 事件坐标换算到底图像素坐标系（墨线的抖动/虚线在这个空间里不会被拉伸变形）
+  const pts = useMemo(() => {
+    if (!dims) return null;
+    return events.map((e) => ({
+      x: ((e.location?.mapX ?? 50) / 100) * dims.cw,
+      y: ((e.location?.mapY ?? 50) / 100) * dims.ch,
+    }));
+  }, [events, dims?.cw, dims?.ch]);
 
   const clampView = useCallback((v) => {
     const el = viewportRef.current;
@@ -97,6 +175,101 @@ export default function GameMap({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEventId]);
+
+  // ── 旅人行走状态 ──
+  const [walkerPos, setWalkerPos] = useState(null);     // 底图像素坐标
+  const [arrivedYear, setArrivedYear] = useState(null); // 旅人实际走到过的最远年份
+  const [travel, setTravel] = useState(null);           // {d, key, toIdx, steps, dots, len, progress}
+  const walkerIdxRef = useRef(null);
+  const rafRef = useRef(null);
+  const measureRef = useRef(null);
+
+  // 实墨范围：走到过的 + 存档解锁的进度，取更远者
+  const maxInkYear = Math.max(arrivedYear ?? -Infinity, progressYear ?? -Infinity);
+
+  // 事件切换 → 旅人出发（或在无动画场景下直接落定）
+  useEffect(() => {
+    if (!pts || !pts.length) return;
+    const toIdx = events.findIndex((e) => e.id === currentEventId);
+    if (toIdx < 0) return;
+    const fromIdx = walkerIdxRef.current;
+    if (fromIdx === toIdx) return;
+    const settle = () => {
+      walkerIdxRef.current = toIdx;
+      setWalkerPos(pts[toIdx]);
+      setArrivedYear((y) => Math.max(y ?? -Infinity, events[toIdx].year));
+      setTravel(null);
+    };
+    if (fromIdx == null || prefersReducedMotion) { settle(); return; }
+    // 上一段行走未完成就切换：视作已到达上个目标，从那里继续走
+    cancelAnimationFrame(rafRef.current);
+    setTravel({
+      d: travelD(pts, fromIdx, toIdx),
+      key: `${fromIdx}->${toIdx}`,
+      toIdx,
+      steps: Math.abs(toIdx - fromIdx),
+      dots: [],
+      len: 0,
+      progress: 0,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentEventId, pts]);
+
+  // 窗口尺寸变化时（未在行走中）把旅人钉回当前事件点
+  useEffect(() => {
+    if (!pts || travel || walkerIdxRef.current == null) return;
+    if (walkerIdxRef.current < pts.length) setWalkerPos(pts[walkerIdxRef.current]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pts]);
+
+  // 行走动画：沿隐藏的旅程路径取点推进，足迹按里程渐次点亮
+  useEffect(() => {
+    if (!travel || travel.len) return;
+    const el = measureRef.current;
+    if (!el) return;
+    const len = el.getTotalLength();
+    if (!len) return;
+    const spacing = 26; // 足迹间距（底图像素）
+    const dots = [];
+    for (let d = spacing * 0.6; d < len - 6; d += spacing) {
+      const p = el.getPointAtLength(d);
+      dots.push({ x: p.x, y: p.y, at: d / len });
+    }
+    const duration = Math.min(2600, 900 + 420 * travel.steps);
+    const start = performance.now();
+    const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - ((2 - 2 * t) ** 2) / 2);
+    const toIdx = travel.toIdx;
+    let done = false;
+    // 进度按真实时间推导（幂等）：rAF 负责丝滑；标签页转后台时 rAF 会被浏览器
+    // 冻结，用 interval 兜底继续推进，避免旅人卡在半路、回到前台再瞬移。
+    const advance = () => {
+      if (done) return;
+      const t = Math.min(1, (performance.now() - start) / duration);
+      const p = ease(t);
+      const pt = el.getPointAtLength(p * len);
+      setWalkerPos({ x: pt.x, y: pt.y });
+      setTravel((tr) => (tr ? { ...tr, dots, len, progress: p } : tr));
+      if (t >= 1) {
+        // 走完落定：这段路留成实墨
+        done = true;
+        walkerIdxRef.current = toIdx;
+        setArrivedYear((y) => Math.max(y ?? -Infinity, events[toIdx].year));
+        setTravel(null);
+      }
+    };
+    const tick = () => {
+      advance();
+      if (!done) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    const fallback = setInterval(advance, 250);
+    return () => {
+      done = true;
+      cancelAnimationFrame(rafRef.current);
+      clearInterval(fallback);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [travel?.key]);
 
   // 滚轮缩放（手动加非 passive 监听，React 的 onWheel 是 passive 的没法 preventDefault）
   useEffect(() => {
@@ -181,13 +354,78 @@ export default function GameMap({
         <div
           style={{
             ...styles.mapBackground,
-            ...(box.w ? (() => { const d = coverDims(box.w, box.h, imgRatio); return { width: d.cw, height: d.ch }; })() : { width: "100%", height: "100%" }),
+            ...(dims ? { width: dims.cw, height: dims.ch } : { width: "100%", height: "100%" }),
             backgroundImage: `url('${asset(mapUrl)}')`,
             transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
             transition: animated ? "transform 0.7s cubic-bezier(0.25, 0.8, 0.35, 1)" : "none",
           }}
         >
-          {/* 事件连线已移除——地图底图上已绘有行迹路线，叠加线反而杂乱 */}
+          {/* ── 旅程墨线：已走 = 实墨，未走 = 极淡铅笔稿；行走时足迹渐次点亮 ── */}
+          {pts && pts.length >= 2 && dims && (
+            <svg
+              width="100%"
+              height="100%"
+              viewBox={`0 0 ${dims.cw} ${dims.ch}`}
+              style={styles.routeLayer}
+            >
+              {/* 衬线层：底图画面很满，墨线下垫一条纸色亮边才能读出来（制图学 casing） */}
+              {pts.slice(0, -1).map((_, i) => {
+                const walked = events[i + 1].year <= maxInkYear;
+                return (
+                  <path
+                    key={events[i].id + "-casing"}
+                    d={segD(pts, i)}
+                    fill="none"
+                    stroke={paper(1)}
+                    strokeWidth={walked ? 6 : 4.5}
+                    strokeLinecap="round"
+                    vectorEffect="non-scaling-stroke"
+                    style={{
+                      opacity: walked ? 0.5 : 0.38,
+                      transition: "opacity 320ms ease",
+                    }}
+                  />
+                );
+              })}
+              {pts.slice(0, -1).map((_, i) => {
+                const walked = events[i + 1].year <= maxInkYear;
+                return (
+                  <path
+                    key={events[i].id + "-seg"}
+                    d={segD(pts, i)}
+                    fill="none"
+                    stroke={walked ? COLOR.ink : COLOR.secondary}
+                    strokeWidth={walked ? 2.4 : 1.5}
+                    strokeLinecap="round"
+                    strokeDasharray={walked ? undefined : "7 9"}
+                    vectorEffect="non-scaling-stroke"
+                    style={{
+                      opacity: walked ? 0.72 : 0.5,
+                      transition: "opacity 320ms ease, stroke 320ms ease",
+                    }}
+                  />
+                );
+              })}
+              {travel && (
+                <>
+                  {/* 隐藏的旅程路径：只用来量长度/取点 */}
+                  <path ref={measureRef} d={travel.d} fill="none" stroke="none" />
+                  {travel.dots.map((d, i) => (
+                    <g key={travel.key + "-dot-" + i}
+                      style={{
+                        opacity: d.at <= travel.progress ? 1 : 0,
+                        transition: "opacity 260ms ease",
+                      }}
+                    >
+                      <circle cx={d.x} cy={d.y} r={4.2} fill={paper(1)} opacity={0.55} />
+                      <circle cx={d.x} cy={d.y} r={2.3} fill={COLOR.ink} opacity={0.72} />
+                    </g>
+                  ))}
+                </>
+              )}
+            </svg>
+          )}
+
           {events.map((event) => {
             const isCurrent = event.id === currentEventId;
             const isPast = !isCurrent && progressYear != null && event.year <= progressYear;
@@ -221,7 +459,7 @@ export default function GameMap({
                   <span style={{ ...styles.pulseRing, backgroundColor: pinColor }} />
                 )}
                 {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示。
-                    当前事件不画图钉，由小杜甫立绘代替。 */}
+                    当前事件不画图钉，由小主角立绘代替。 */}
                 {!isCurrent && (
                   <Pin color={pinColor} size={pinSize} glow={false} badge={isPast ? "✓" : null} />
                 )}
@@ -229,15 +467,15 @@ export default function GameMap({
             );
           })}
 
-          {/* 小主角：站在当前事件位置，切换事件时走过去 */}
-          {currentEvent?.location && (
+          {/* 小主角：站在当前事件位置，切换事件时沿墨线走过去 */}
+          {walkerPos && (
             <img
-              src={asset(heroWalkerPath(null, currentEvent.year))}
+              src={asset(heroWalkerPath(null, currentEvent?.year))}
               alt=""
               style={{
                 ...styles.walker,
-                left: `${currentEvent.location.mapX}%`,
-                top: `${currentEvent.location.mapY}%`,
+                left: walkerPos.x,
+                top: walkerPos.y,
                 transform: `translate(-50%, -96%) scale(${1 / Math.sqrt(scale)})`,
               }}
             />
@@ -336,6 +574,13 @@ const styles = {
     transformOrigin: "0 0",
     willChange: "transform",
   },
+  routeLayer: {
+    position: "absolute",
+    inset: 0,
+    pointerEvents: "none",
+    overflow: "visible",
+    zIndex: 1,
+  },
   pinWrap: {
     position: "absolute",
     background: "none",
@@ -359,33 +604,12 @@ const styles = {
     animation: "mapPinPulse 1.6s ease-out infinite",
     pointerEvents: "none",
   },
-  pinLabel: {
-    marginTop: 2,
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
-    padding: "2px 9px",
-    borderRadius: 10,
-    whiteSpace: "nowrap",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
-    transition: "all 0.25s ease",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 4,
-  },
-  pinYear: {
-    fontSize: "clamp(8.0px, 0.694vw, 11.5px)",
-    opacity: 0.75,
-  },
-  pinName: {
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
-  },
   walker: {
     position: "absolute",
     height: 64,
     zIndex: 8,
     pointerEvents: "none",
     transformOrigin: "50% 100%",
-    transition: "left 0.9s ease-in-out, top 0.9s ease-in-out",
     filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.35))",
   },
   stepControls: {
