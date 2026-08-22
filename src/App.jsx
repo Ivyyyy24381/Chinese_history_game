@@ -446,6 +446,7 @@ export default function App() {
           currentEventId={currentEvent.id}
           progressYear={progressYear}
           onEventClick={handleEventClick}
+          character={timelineData.character}
         />
         <div style={{ ...styles.floatingInfo, borderLeftColor: currentStage.color }}>
           <h3 style={{ margin: "0 0 4px", color: currentStage.color }}>
