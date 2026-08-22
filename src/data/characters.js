@@ -13,6 +13,7 @@
 //   name        名字书法/花体图；nameHeight 控制显示高度（各语种字形比例差别大）
 //   heroPortrait 游戏内主角头像（沿用各故事线的 hero/portrait.png）
 //   completionLine 走完一生后的结语
+//   scrimBoost  背景减淡系数 0–1：画面越密越需要（不填=0），保证标题/文字读得清
 //   locked      true = 显示 🔒，不可进入
 
 export const CHARACTERS = [
@@ -31,6 +32,7 @@ export const CHARACTERS = [
     avatar: "🖊",
     color: "#4A90A4",
     background: "/assets/home/hp_background_dufu.jpg",
+    scrimBoost: 0,
     portrait: "/assets/home/hp_portrait_dufu.png",
     name_img: "/assets/home/hp_name_dufu.png",
     nameHeight: 44,
@@ -51,6 +53,7 @@ export const CHARACTERS = [
     avatar: "📕",
     color: "#A63A2E",
     background: "/assets/home/hp_background_dante.jpg",
+    scrimBoost: 0.08,
     portrait: "/assets/home/hp_portrait_dante.png",
     name_img: "/assets/home/hp_name_dante.png",
     nameHeight: 26,
@@ -71,6 +74,7 @@ export const CHARACTERS = [
     avatar: "🌀",
     color: "#2F6F6B",
     background: "/assets/home/hp_background_rumi.jpg",
+    scrimBoost: 0.3,
     portrait: "/assets/home/hp_portrait_rumi.png",
     name_img: "/assets/home/hp_name_rumi.png",
     nameHeight: 34,

@@ -33,7 +33,9 @@ export default function CharacterSelect({
   const earnedCount = characters.filter((c) => achievements[c.id]).length;
 
   const handleClick = (char) => {
-    if (char.locked) return;
+    // 锁定的人物照样能选中：背景要切过去，让玩家先看见那个世界，
+    // 「即将开放」的话写在下方开始区，而不是常驻贴在脸上。
+    if (char.locked) { setSelectedId(char.id); return; }
     // 再点一次已选中的立绘 = 直接开始（老玩家不用绕到按钮）
     if (selectedId === char.id) onSelect(char);
     else setSelectedId(char.id);
@@ -51,7 +53,10 @@ export default function CharacterSelect({
           aria-hidden="true"
           style={{
             ...styles.bgLayer,
-            backgroundImage: `url('${asset(c.background)}')`,
+            // 画面密的背景（如鲁米的宫殿）自带一层减淡，跟着背景一起淡入淡出
+            backgroundImage:
+              `linear-gradient(rgba(250,246,238,${c.scrimBoost || 0}), rgba(250,246,238,${c.scrimBoost || 0})),` +
+              ` url('${asset(c.background)}')`,
             opacity: activeBgId === c.id ? 1 : 0,
           }}
         />
@@ -59,10 +64,13 @@ export default function CharacterSelect({
       <div aria-hidden="true" style={styles.scrim} />
 
       <div style={styles.content}>
-        <h1 style={styles.titleWrap}>
-          <img src={asset(TITLE_IMG)} alt="历史长河" style={styles.titleImg} />
-        </h1>
-        <p style={styles.subtitle}>{"选择你的主人公"}</p>
+        {/* 标题区自带暖光，和名牌同一套做法（鲁米那张宫殿背景顶部很满）*/}
+        <div style={styles.header}>
+          <h1 style={styles.titleWrap}>
+            <img src={asset(TITLE_IMG)} alt="历史长河" style={styles.titleImg} />
+          </h1>
+          <p style={styles.subtitle}>{"选择你的主人公"}</p>
+        </div>
 
         {/* ── 立绘排 ── */}
         <div style={styles.row}>
@@ -73,13 +81,10 @@ export default function CharacterSelect({
               <div
                 key={char.id}
                 role="button"
-                tabIndex={char.locked ? -1 : 0}
+                tabIndex={0}
                 aria-pressed={isSelected}
                 aria-label={`${char.name} · ${char.title}`}
-                style={{
-                  ...styles.item,
-                  cursor: char.locked ? "not-allowed" : "pointer",
-                }}
+                style={styles.item}
                 onClick={() => handleClick(char)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -87,9 +92,9 @@ export default function CharacterSelect({
                     handleClick(char);
                   }
                 }}
-                onMouseEnter={() => !char.locked && setHoverId(char.id)}
+                onMouseEnter={() => setHoverId(char.id)}
                 onMouseLeave={() => setHoverId(null)}
-                onFocus={() => !char.locked && setHoverId(char.id)}
+                onFocus={() => setHoverId(char.id)}
                 onBlur={() => setHoverId(null)}
               >
                 <div style={styles.portraitWrap}>
@@ -104,17 +109,14 @@ export default function CharacterSelect({
                         : hoverId === char.id
                         ? "translateY(-4px) scale(1.02)"
                         : "none",
-                      filter: char.locked
-                        ? "grayscale(0.9) brightness(1.06) drop-shadow(0 8px 18px rgba(70,55,35,0.18))"
+                      filter: char.locked && !isSelected
+                        ? "grayscale(0.72) brightness(1.04) drop-shadow(0 10px 22px rgba(70,55,35,0.20))"
                         : isSelected
-                        ? "drop-shadow(0 18px 34px rgba(70,55,35,0.34))"
+                        ? `${char.locked ? "grayscale(0.35) " : ""}drop-shadow(0 18px 34px rgba(70,55,35,0.34))`
                         : "drop-shadow(0 10px 22px rgba(70,55,35,0.22))",
-                      opacity: char.locked ? 0.55 : dimmed ? 0.68 : 1,
+                      opacity: dimmed ? (char.locked ? 0.6 : 0.68) : char.locked ? 0.82 : 1,
                     }}
                   />
-                  {char.locked && (
-                    <span style={styles.lockPill}>{"🔒 即将开放"}</span>
-                  )}
                   {achievements[char.id] && (
                     <span
                       style={styles.achBadge}
@@ -139,12 +141,17 @@ export default function CharacterSelect({
                   ) : (
                     <span style={styles.nameText}>{char.name}</span>
                   )}
-                  <p style={styles.meta}>
-                    {char.title}
+                  {/* 书法图/花体字未必读得出来，中文名单独写一行 */}
+                  <p style={styles.readableName}>
+                    {char.name}
                     <span style={styles.metaSep}>{" · "}</span>
-                    {char.years}
+                    <span style={styles.readableTitle}>{char.title}</span>
                   </p>
-                  <p style={styles.dynasty}>{char.dynasty}</p>
+                  <p style={styles.meta}>
+                    {char.years}
+                    <span style={styles.metaSep}>{" · "}</span>
+                    {char.dynasty}
+                  </p>
                   <p
                     style={{
                       ...styles.desc,
@@ -163,7 +170,12 @@ export default function CharacterSelect({
 
         {/* ── 开始区：高度固定，选中与否都不抖动 ── */}
         <div style={styles.actionBar}>
-          {selected && (
+          {selected && selected.locked && (
+            <span style={styles.comingSoon}>
+              {`🔒 ${selected.name}的旅程即将开放`}
+            </span>
+          )}
+          {selected && !selected.locked && (
             <>
               <button
                 style={styles.startBtn}
@@ -238,8 +250,12 @@ const styles = {
     position: "absolute",
     inset: 0,
     background:
-      "linear-gradient(rgba(250,246,238,0.20), rgba(250,246,238,0.20))," +
-      "radial-gradient(ellipse 80% 72% at 50% 56%, rgba(250,246,238,0.52) 0%, rgba(250,246,238,0.24) 55%, rgba(250,246,238,0) 84%)",
+      // 顶带护标题、底带护按钮与成就栏，中间radial 护立绘与名牌
+      "linear-gradient(to bottom, rgba(250,246,238,0.66) 0%, rgba(250,246,238,0.26) 20%," +
+      " rgba(250,246,238,0) 36%, rgba(250,246,238,0) 60%, rgba(250,246,238,0.30) 79%," +
+      " rgba(250,246,238,0.70) 100%)," +
+      "linear-gradient(rgba(250,246,238,0.16), rgba(250,246,238,0.16))," +
+      "radial-gradient(ellipse 80% 72% at 50% 56%, rgba(250,246,238,0.46) 0%, rgba(250,246,238,0.22) 55%, rgba(250,246,238,0) 84%)",
     pointerEvents: "none",
   },
   content: {
@@ -252,19 +268,26 @@ const styles = {
     padding: "clamp(16px, 3vh, 36px) 24px",
     gap: 0,
   },
+  header: {
+    textAlign: "center",
+    padding: "clamp(10px, 2vh, 24px) clamp(40px, 6vw, 110px) clamp(6px, 1.2vh, 14px)",
+    background:
+      "radial-gradient(ellipse 76% 78% at 50% 48%, rgba(250,246,238,0.82) 0%, rgba(250,246,238,0.46) 44%, rgba(250,246,238,0) 70%)",
+  },
   titleWrap: { margin: 0, lineHeight: 0 },
   titleImg: {
-    height: "clamp(46px, 7.6vh, 88px)",
+    height: "clamp(58px, 11vh, 132px)",
     filter: "drop-shadow(0 1px 3px rgba(255,255,255,0.65))",
   },
   subtitle: {
     color: "#6B5A44",
     fontSize: "clamp(12px, 1.5vh, 16px)",
     letterSpacing: 8,
-    margin: "clamp(8px, 1.4vh, 16px) 0 clamp(12px, 2.4vh, 28px)",
+    margin: "clamp(8px, 1.4vh, 16px) 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.6)",
   },
   row: {
+    marginTop: "clamp(10px, 2vh, 26px)",
     display: "grid",
     gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
     alignItems: "end",
@@ -289,20 +312,17 @@ const styles = {
     display: "block",
     transition: "transform 320ms cubic-bezier(.2,.7,.3,1), filter 320ms ease, opacity 320ms ease",
   },
-  lockPill: {
-    position: "absolute",
-    left: "50%",
-    top: "74%",
-    transform: "translate(-50%, -50%)",
+  // 「即将开放」不常驻贴脸，选中锁定人物时才在开始区出现
+  comingSoon: {
     whiteSpace: "nowrap",
-    backgroundColor: "rgba(252,248,238,0.92)",
+    backgroundColor: "rgba(252,248,238,0.9)",
     color: "#8A7A5E",
-    padding: "6px 16px",
-    borderRadius: 20,
-    border: "1px solid #D8CDB8",
-    fontSize: "clamp(11px, 1.3vh, 14px)",
-    letterSpacing: 2,
-    boxShadow: "0 2px 8px rgba(90,70,40,0.16)",
+    padding: "9px 24px",
+    borderRadius: 24,
+    border: "1px dashed #C9B08A",
+    fontSize: "clamp(12px, 1.6vh, 16px)",
+    letterSpacing: 3,
+    boxShadow: "0 2px 10px rgba(90,70,40,0.12)",
   },
   achBadge: {
     position: "absolute",
@@ -336,21 +356,29 @@ const styles = {
     letterSpacing: 6,
     fontWeight: 600,
   },
+  // 可读的中文名 —— 名字图是书法/花体，这行保证一眼认得出是谁
+  readableName: {
+    color: "#3A2E20",
+    fontSize: "clamp(14px, 1.9vh, 20px)",
+    letterSpacing: 3,
+    fontWeight: 600,
+    margin: "8px 0 0",
+    textShadow: "0 1px 2px rgba(255,255,255,0.6)",
+  },
+  readableTitle: {
+    color: "#7A6A50",
+    fontSize: "0.78em",
+    fontWeight: 400,
+    letterSpacing: 2,
+  },
   meta: {
     color: "#7A6A50",
     fontSize: "clamp(10px, 1.3vh, 14px)",
     letterSpacing: 1,
-    margin: "6px 0 0",
+    margin: "3px 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
   },
-  metaSep: { opacity: 0.5 },
-  dynasty: {
-    color: "#9A8B72",
-    fontSize: "clamp(9px, 1.15vh, 12.5px)",
-    letterSpacing: 1,
-    margin: "2px 0 0",
-    textShadow: "0 1px 2px rgba(255,255,255,0.55)",
-  },
+  metaSep: { opacity: 0.45 },
   // 简介只在选中时展开，收起时高度为 0，三列不会因文字长短错位
   desc: {
     color: "#5A4A38",
