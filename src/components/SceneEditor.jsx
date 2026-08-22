@@ -39,12 +39,13 @@ const PROP_PORTRAITS = Object.keys({ ...propGlob, ...itemGlob }).map((k) => {
   return { id, name: PROP_NAMES[id] || id, file };
 });
 
-// Auto-discover event scenes from new folder structure: events/<id>/event.json
-const sceneGlob = import.meta.glob("/src/data/dufu/events/*/event.json");
+// Auto-discover event scenes across all story lines: <charId>/events/<id>/event.json
+const sceneGlob = import.meta.glob("/src/data/*/events/*/event.json");
 const SCENE_FILES = Object.keys(sceneGlob).map((k) => {
   // k like "/src/data/dufu/events/747_exam/event.json"
   const eventId = k.split("/").slice(-2, -1)[0];
-  return { label: eventId, file: eventId, loader: sceneGlob[k], eventId };
+  const charId = k.split("/").slice(-4, -3)[0];
+  return { label: `${charId} · ${eventId}`, file: eventId, loader: sceneGlob[k], eventId };
 });
 
 export default function SceneEditor({ initialEventId, onExit }) {
