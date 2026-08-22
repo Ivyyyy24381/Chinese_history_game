@@ -1,0 +1,321 @@
+{
+  "id": "1302_esilio",
+  "title": "放逐令",
+  "year": "1302",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "papal_hall",
+      "type": "explore",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/papal_hall.png",
+      "title": "罗马 · 教皇接见厅 · 1301 秋",
+      "narrative": "黑党要借法兰西王弟瓦卢瓦的查理「调停」佛罗伦萨。城里派出三名使节赴罗马向教皇陈情——但丁是其中之一。",
+      "instruction": "在接见厅里听清楚：留下的是谁，放走的是谁。",
+      "dufu_pose": "citizen/robe",
+      "npcs": [
+        {
+          "id": "boniface",
+          "name": "卜尼法斯八世",
+          "portrait": "/assets/dante/npcs/boniface.png",
+          "position": {
+            "x": 48,
+            "y": 60
+          },
+          "scale": 1.6,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "boniface",
+              "speakerName": "卜尼法斯八世",
+              "text": "佛罗伦萨的孩子们，何必多虑？朕只要你们的城顺服。"
+            },
+            {
+              "speaker": "boniface",
+              "speakerName": "卜尼法斯八世",
+              "text": "其余使节回去吧，替朕传话。这位诗人——留下陪朕。"
+            }
+          ]
+        },
+        {
+          "id": "papal_attendant",
+          "name": "侍从",
+          "portrait": "/assets/dante/events/1302_esilio/npcs/papal_attendant.png",
+          "position": {
+            "x": 74,
+            "y": 68
+          },
+          "scale": 1.2,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "papal_attendant",
+              "speakerName": "侍从",
+              "text": "（低声）瓦卢瓦的查理殿下已带兵北上，去佛罗伦萨「调停」了。"
+            },
+            {
+              "speaker": "papal_attendant",
+              "speakerName": "侍从",
+              "text": "圣父说了，您急什么呢。多住几日。"
+            }
+          ]
+        },
+        {
+          "id": "dante_monologue",
+          "name": "但丁的心事",
+          "portrait": "",
+          "position": {
+            "x": 24,
+            "y": 52
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "调停？不带一兵一卒才叫调停。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "把我留在罗马……城里要出事了。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "ritorno"
+    },
+    {
+      "id": "ritorno",
+      "type": "map_travel",
+      "background": "/assets/dante/maps/route_1302_ritorno.png",
+      "title": "归途 · 一路坏消息",
+      "travelNarrative": "教皇终于放行。归途上，消息一站比一站坏。",
+      "instruction": "沿路点击每一站。",
+      "requireAll": true,
+      "waypoints": [
+        {
+          "id": "news_charles",
+          "name": "道上驿站",
+          "x": 38,
+          "y": 22,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "驿站传闻",
+              "text": "「查理进城了！不费一兵一卒——城门是自己开的。」"
+            }
+          ]
+        },
+        {
+          "id": "news_fire",
+          "name": "锡耶纳道上",
+          "x": 48,
+          "y": 42,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "南来的商队",
+              "text": "「黑党开门迎了查理，科尔索·多纳蒂回城了。城里在烧白党的房子，抢白党的铺子。」"
+            }
+          ]
+        },
+        {
+          "id": "news_trial",
+          "name": "佛罗伦萨地界",
+          "x": 62,
+          "y": 63,
+          "isKey": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "逃出来的白党人",
+              "text": "「新政府在缺席审判白党的人……阿利吉耶里先生——名单上，有你。」"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "……我不能进城了。"
+            }
+          ]
+        }
+      ],
+      "nextPhase": "inn_investigate"
+    },
+    {
+      "id": "inn_investigate",
+      "type": "explore",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.png",
+      "title": "城外驿站 · 雪夜查案",
+      "narrative": "佛罗伦萨城外的驿站。雪夜。判决书的抄件在白党难民手里传阅。到底发生了什么——把线索拼起来。",
+      "instruction": "收集全部 5 条线索，弄清这场审判的真相。",
+      "dufu_pose": "exile/cloak",
+      "npcs": [
+        {
+          "id": "sentenza_scroll",
+          "name": "判决书抄件",
+          "portrait": "/assets/dante/props/sentenza_scroll.png",
+          "position": {
+            "x": 38,
+            "y": 56
+          },
+          "scale": 0.7,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "判决书 · 1302 年 1 月 27 日",
+              "text": "「但丁·阿利吉耶里，贪污受贿、勒索不义之财、反对教皇与查理殿下——罚金五千弗罗林，流放两年，终身不得任公职。」"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "贪污？我在执政团的每一笔账都经得起查。这罪名是编的。"
+            }
+          ]
+        },
+        {
+          "id": "white_refugee",
+          "name": "白党难民",
+          "portrait": "/assets/dante/events/1302_esilio/npcs/white_refugee.png",
+          "position": {
+            "x": 18,
+            "y": 70
+          },
+          "scale": 1.25,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "white_refugee",
+              "speakerName": "白党难民",
+              "text": "限期认罪缴款就能减刑——可认罪，就是承认黑党那个政府是合法的。"
+            },
+            {
+              "speaker": "white_refugee",
+              "speakerName": "白党难民",
+              "text": "认，就是自己给自己定罪；不认，他们正好要你的命。两头都是死路。"
+            }
+          ]
+        },
+        {
+          "id": "second_sentence",
+          "name": "第二道判决",
+          "portrait": "",
+          "position": {
+            "x": 57,
+            "y": 44
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "第二道判决 · 1302 年 3 月 10 日",
+              "text": "「上列诸人，拒不到庭——若其落入公社之手，火焚之，至死。（igne comburatur sic quod moriatur）」"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "火刑。他们要烧死我。"
+            }
+          ]
+        },
+        {
+          "id": "courier",
+          "name": "信使",
+          "portrait": "/assets/dante/npcs/friar_messenger.png",
+          "position": {
+            "x": 80,
+            "y": 68
+          },
+          "scale": 1.25,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "courier",
+              "speakerName": "信使",
+              "text": "夫人托我带口信：「杰玛带着孩子留在城内。她是多纳蒂家的女儿，黑党不会动她。」"
+            },
+            {
+              "speaker": "courier",
+              "speakerName": "信使",
+              "text": "「别回来。」——夫人只说了这三个字。"
+            }
+          ]
+        },
+        {
+          "id": "namelist",
+          "name": "同案名单",
+          "portrait": "",
+          "position": {
+            "x": 66,
+            "y": 74
+          },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "同案名单",
+              "text": "与但丁同判的还有十四人。再看第二批、第三批判决——凡在名单上的，全是白党骨干。无一例外。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 5,
+      "nextPhase": "conclusion_choice"
+    },
+    {
+      "id": "conclusion_choice",
+      "type": "forced_choice",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.png",
+      "title": "得出结论",
+      "narrative": "炉火将熄。把所有线索放在一起——这场审判的实质是什么？",
+      "question": "这场审判的实质是什么？",
+      "dufu_pose": "exile/bitter",
+      "options": [
+        {
+          "id": "bad_luck",
+          "text": "我运气不好，赶上了政变",
+          "correct": false,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "……不对。再看看：判决的时机、罪名、名单。谁在背后签发这一切？"
+          }
+        },
+        {
+          "id": "purge",
+          "text": "教皇借查理之刀清洗白党——我是被「依法」处理的政敌",
+          "correct": true,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "卜尼法斯把我扣在罗马，好让查理的剑没有阻拦地进城。\n黑党执刀，法兰西人开路，教皇执棋。\n罪名是假的，审判是真的——因为审判本身就是武器。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "1302 年 1 月 27 日罚金流放，3 月 10 日加判火刑。罪名「贪污」从未有过任何证据。这是一场以法律为武器的政治清洗——教皇借瓦卢瓦的查理之刀，把白党连根拔出佛罗伦萨。但丁此生，再没有踏进佛罗伦萨一步。"
+      },
+      "nextPhase": "prophecy"
+    },
+    {
+      "id": "prophecy",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "title": "卡恰圭达的预言",
+      "transitionText": "讲坛上，薄伽丘翻到《天堂》第十七歌——写作时间的倒装：流亡多年的但丁，让 1300 年的先祖「预言」这一切。",
+      "announcement": {
+        "title": "天堂 · 第十七歌",
+        "text": "卡恰圭达：「你将抛下一切最心爱之物——这是流亡之弓射出的第一支箭。你将尝到别人的面包多么咸，走别人的楼梯多么陡。」",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/hero/exile/cloak.png",
+        "text": "别人的面包，有多咸。\n——我将用余生，亲口尝到。"
+      },
+      "narrative": ""
+    }
+  ]
+}
