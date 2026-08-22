@@ -1,21 +1,32 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
+import { dantePortraitPath, DANTE_LEGACY_PORTRAIT } from "../data/dantePoses";
 import { Pin } from "./GameMap";
 import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
 
 // ---- Portrait resolution -----------------------------------------------------
-// Convention: every NPC PNG lives at /assets/characters/npcs/<speaker_id>.png.
+// Convention: shared NPC PNGs live at /assets/<line>/npcs/<speaker_id>.png.
 // No hardcoded map needed — just derive the path from the speaker id.
 function npcPortraitPath(speakerId, eventId) {
   const line = parseInt(eventId, 10) < 1000 ? "dufu" : "dante";
   return `/assets/${line}/npcs/${speakerId}.png`;
 }
 
-// Du Fu portrait resolution lives in src/data/dufuPoses.js (shared with the
+// Hero portrait resolution lives in src/data/<charId>Poses.js (shared with the
 // editor). Priority: line dufu_pose > phase dufu_pose > event dufu_pose >
-// stage default derived from the event year. The legacy
-// /assets/dufu/hero/portrait.png is a blank image and is remapped.
+// stage default derived from the event year. (键名 dufu_pose/dufu_reaction 为
+// 引擎历史键名，各故事线沿用。) The legacy hero portrait.png is remapped to the
+// stage default.
+const HERO_SPEAKERS = new Set(["dufu", "dante", "self"]);
+function heroPortraitPath(pose, year, eventId) {
+  const line = parseInt(eventId, 10) < 1000 ? "dufu" : "dante";
+  if (line === "dante") return dantePortraitPath(pose === DANTE_LEGACY_PORTRAIT ? null : pose, year);
+  return dufuPortraitPath(pose, year);
+}
+function isLegacyHeroPortrait(p) {
+  return p === DUFU_LEGACY_PORTRAIT || p === DANTE_LEGACY_PORTRAIT;
+}
 
 /**
  * ScenePlayer - Interactive scene engine
@@ -206,9 +217,9 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               <div style={styles.reactionBox}>
                 <img
                   src={asset(
-                    currentPhase.dufu_reaction.portrait && currentPhase.dufu_reaction.portrait !== DUFU_LEGACY_PORTRAIT
+                    currentPhase.dufu_reaction.portrait && !isLegacyHeroPortrait(currentPhase.dufu_reaction.portrait)
                       ? currentPhase.dufu_reaction.portrait
-                      : dufuPortraitPath(currentPhase.dufu_reaction.dufu_pose || currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year)
+                      : heroPortraitPath(currentPhase.dufu_reaction.dufu_pose || currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year, eventId)
                   )}
                   alt="" style={styles.reactionPortrait} />
                 <p style={styles.reactionText}>{currentPhase.dufu_reaction.text}</p>
@@ -399,12 +410,15 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.dialogueOverlay} onClick={handleDialogueNext}>
             {(() => {
               const line = activeNpc.dialogues[dialogueIndex];
-              const isSelf = line.speaker === "dufu" || line.speaker === "self";
-              // Du Fu pose: per-line override > per-phase > per-event > stage default by year.
+              const isSelf = HERO_SPEAKERS.has(line.speaker);
+              // Hero pose: per-line override > per-phase > per-event > stage default by year.
               const dufuPose = line.dufu_pose || currentPhase.dufu_pose || sceneData.dufu_pose;
               let portrait;
-              if (isSelf) portrait = dufuPortraitPath(dufuPose, sceneData.year);
+              if (isSelf) portrait = heroPortraitPath(dufuPose, sceneData.year, eventId);
               else if (line.speaker === "narrator" || line.speaker === "portrait") portrait = "";
+              // 说话者就是当前 NPC 且写了显式立绘 → 直接用，避免事件级 NPC 走
+              // 共用目录约定路径造成 404（onError 兜底仍在，但不再触发）。
+              else if (line.speaker === activeNpc.id && activeNpc.portrait) portrait = activeNpc.portrait;
               else portrait = npcPortraitPath(line.speaker, eventId) || activeNpc.portrait;
               const isLast = dialogueIndex >= activeNpc.dialogues.length - 1;
               // Bubble mode: NPC drawn into the background image, render speech
@@ -927,7 +941,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               if (!at) return null;
               return (
                 <img
-                  src={asset(dufuPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year))}
+                  src={asset(heroPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year, eventId))}
                   alt=""
                   style={{
                     position: "absolute",
@@ -1054,7 +1068,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
       <div style={bgStyle}>
         <EscapeGamePhase
           phase={currentPhase}
-          defaultPlayerPortrait={dufuPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year)}
+          defaultPlayerPortrait={heroPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year, eventId)}
           onScore={award}
           onComplete={goToNextPhase} />
       </div>
@@ -1369,7 +1383,7 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
         {/* Progressive 春望 reveal */}
         {visibleLines > 0 && (
           <div style={cpStyles.poemBox}>
-            <div style={cpStyles.poemTitle}>{"\u300A\u6625\u671B\u300B"}</div>
+            <div style={cpStyles.poemTitle}>{phase.poemTitle || "\u300A\u6625\u671B\u300B"}</div>
             {poemLines.slice(0, visibleLines).map((ln, i) => (
               <div key={i} style={cpStyles.poemLine}>{ln}</div>
             ))}
@@ -1391,7 +1405,7 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
         ) : (
           <div style={cpStyles.hint}>
             {clicked.size < threshold
-              ? `\u518D\u70B9 ${threshold - clicked.size} \u5904\uFF0C\u300A\u6625\u671B\u300B\u5C06\u7F13\u7F13\u6D6E\u73B0\u2026`
+              ? `\u518D\u70B9 ${threshold - clicked.size} \u5904\uFF0C${phase.poemTitle || "\u300A\u6625\u671B\u300B"}\u5C06\u7F13\u7F13\u6D6E\u73B0\u2026`
               : "\u7EE7\u7EED\u70B9\u51FB\u672A\u53D1\u73B0\u7684\u4F4D\u7F6E\u2026"}
           </div>
         )}
@@ -1628,9 +1642,9 @@ const cpStyles = {
 // }
 function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) {
   const startRef = useRef(Date.now());
-  // The legacy dufu/portrait.png is blank — remap it to the stage default.
+  // The legacy hero portrait.png is remapped to the stage default.
   const playerPortrait =
-    phase.playerPortrait && phase.playerPortrait !== DUFU_LEGACY_PORTRAIT
+    phase.playerPortrait && !isLegacyHeroPortrait(phase.playerPortrait)
       ? phase.playerPortrait
       : defaultPlayerPortrait;
   const gridW = phase.gridW || 13;

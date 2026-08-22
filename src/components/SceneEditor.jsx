@@ -1,5 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { DUFU_POSES, dufuPortraitPath } from "../data/dufuPoses";
+import { DANTE_POSES, dantePortraitPath } from "../data/dantePoses";
+
+// 故事线判定：事件年份 <1000 → dufu，否则 → dante（与 ScenePlayer 约定一致）。
+const isDanteYear = (year) => parseInt(year, 10) >= 1000;
+const heroPortraitPath = (pose, year) =>
+  isDanteYear(year) ? dantePortraitPath(pose, year) : dufuPortraitPath(pose, year);
+const heroPoses = (year) => (isDanteYear(year) ? DANTE_POSES : DUFU_POSES);
 
 /**
  * SceneEditor - Visual drag-and-drop scene designer
@@ -323,7 +330,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
       if (phaseType === "transition") {
         phase.transitionText = transitionText;
         if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree", ...(announcementTitle ? { title: announcementTitle } : {}) };
-        if (dufuReactionText) phase.dufu_reaction = { portrait: dufuPortraitPath(phaseDufuPose, updated.year), text: dufuReactionText };
+        if (dufuReactionText) phase.dufu_reaction = { portrait: heroPortraitPath(phaseDufuPose, updated.year), text: dufuReactionText };
       }
       if (phaseType === "forced_choice") {
         phase.question = choiceQuestion;
@@ -739,7 +746,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
     if (phaseType === "transition") {
       phase.transitionText = transitionText;
       if (announcementText) phase.announcement = { text: announcementText, style: "imperial_decree", ...(announcementTitle ? { title: announcementTitle } : {}) };
-      if (dufuReactionText) phase.dufu_reaction = { portrait: dufuPortraitPath(phaseDufuPose, sceneData?.year), text: dufuReactionText };
+      if (dufuReactionText) phase.dufu_reaction = { portrait: heroPortraitPath(phaseDufuPose, sceneData?.year), text: dufuReactionText };
     }
     if (phaseType === "forced_choice") {
       phase.question = choiceQuestion;
@@ -970,7 +977,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
               <span style={styles.paletteName}>{"文字标签"}</span>
             </div>
             {NPC_PORTRAITS.map((p) => (
-              <div key={p.id} style={styles.paletteItem} onClick={() => addNpc(p)} title={p.name}>
+              <div key={p.file} style={styles.paletteItem} onClick={() => addNpc(p)} title={p.name}>
                 <img src={p.file} alt={p.name} style={styles.paletteImg} />
                 <span style={styles.paletteName}>{p.name}</span>
               </div>
@@ -1024,9 +1031,9 @@ export default function SceneEditor({ initialEventId, onExit }) {
               <select style={{ ...styles.fieldInput, flex: 1 }} value={phaseDufuPose}
                 onChange={(e) => setPhaseDufuPose(e.target.value)}>
                 <option value="">{"\u81EA\u52A8\uFF08\u6309\u4E8B\u4EF6\u5E74\u4EE3" + (sceneData?.year ? " \u00B7 " + sceneData.year : "") + "\uFF09"}</option>
-                {DUFU_POSES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
+                {heroPoses(sceneData?.year).map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
               </select>
-              <img src={dufuPortraitPath(phaseDufuPose, sceneData?.year)} alt=""
+              <img src={heroPortraitPath(phaseDufuPose, sceneData?.year)} alt=""
                 style={{ width: 44, height: 60, objectFit: "cover", objectPosition: "center top", borderRadius: 4, border: "1px solid #555", backgroundColor: "#FFF" }}
                 onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
             </div>
@@ -1452,19 +1459,20 @@ export default function SceneEditor({ initialEventId, onExit }) {
                         onChange={(e) => updateDialogue(selected.id, i, "speaker", e.target.value)}>
                         <option value="">--speaker--</option>
                         <option value="dufu">{"dufu（杜甫）"}</option>
+                        <option value="dante">{"dante（但丁）"}</option>
                         <option value="narrator">{"narrator（旁白）"}</option>
                         {NPC_PORTRAITS.map((p) => (<option key={p.file} value={p.id}>{p.id}</option>))}
                       </select>
                       <button style={styles.btnRemoveDialogue} onClick={() => removeDialogue(selected.id, i)}>{"\u2715"}</button>
                     </div>
-                    {(d.speaker === "dufu" || d.speaker === "self") && (
+                    {(d.speaker === "dufu" || d.speaker === "dante" || d.speaker === "self") && (
                       <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 4 }}>
                         <select style={{ ...styles.dialogueSpeakerSelect, flex: 1 }} value={d.dufu_pose || ""}
                           onChange={(e) => updateDialogue(selected.id, i, "dufu_pose", e.target.value)}>
-                          <option value="">{"\u675c\u752b\u7acb\u7ed8\uff1a\u8ddf\u968f\u672c\u6bb5"}</option>
-                          {DUFU_POSES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
+                          <option value="">{"\u4e3b\u89d2\u7acb\u7ed8\uff1a\u8ddf\u968f\u672c\u6bb5"}</option>
+                          {heroPoses(sceneData?.year).map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
                         </select>
-                        <img src={dufuPortraitPath(d.dufu_pose || phaseDufuPose, sceneData?.year)} alt=""
+                        <img src={heroPortraitPath(d.dufu_pose || phaseDufuPose, sceneData?.year)} alt=""
                           style={{ width: 28, height: 38, objectFit: "cover", objectPosition: "center top", borderRadius: 3, border: "1px solid #555", backgroundColor: "#FFF" }}
                           onError={(e) => { e.currentTarget.style.visibility = "hidden"; }} />
                       </div>
@@ -1727,7 +1735,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
               <label style={{ ...styles.fieldLabel, marginTop: 8, display: "block" }}>{"\u73A9\u5BB6\u7ACB\u7ED8 URL\uFF08\u7559\u7A7A = \u81EA\u52A8\u7528\u5BF9\u5E94\u65F6\u671F\u675C\u752B\uFF09"}</label>
               <input style={styles.fieldInput}
                 value={egPlayerPortrait}
-                placeholder={dufuPortraitPath(phaseDufuPose, sceneData?.year)}
+                placeholder={heroPortraitPath(phaseDufuPose, sceneData?.year)}
                 onChange={(e) => setEgPlayerPortrait(e.target.value)} />
             </div>
           )}
@@ -1851,7 +1859,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
                   onChange={(e) => setExaminerPortrait(e.target.value)}>
                   <option value="">{"-- \u65E0\u8003\u5B98 --"}</option>
                   {NPC_PORTRAITS.map((p) => (
-                    <option key={p.id} value={p.file}>{p.name}</option>
+                    <option key={p.file} value={p.file}>{p.name}</option>
                   ))}
                 </select>
               </div>
@@ -2132,10 +2140,11 @@ export default function SceneEditor({ initialEventId, onExit }) {
                         onChange={(e) => {
                           const nd = [...destinations]; const dlg = [...nd[di].dialogues];
                           const sp = e.target.value;
-                          dlg[dli] = { ...dlg[dli], speaker: sp, speakerName: sp === "dufu" ? "\u675C\u752B" : sp === "narrator" ? "\u65C1\u767D" : (dlg[dli].speakerName || sp) };
+                          dlg[dli] = { ...dlg[dli], speaker: sp, speakerName: sp === "dufu" ? "\u675C\u752B" : sp === "dante" ? "\u4F46\u4E01" : sp === "narrator" ? "\u65C1\u767D" : (dlg[dli].speakerName || sp) };
                           nd[di] = { ...nd[di], dialogues: dlg }; setDestinations(nd);
                         }}>
                         <option value="dufu">{"\u675C\u752B"}</option>
+                        <option value="dante">{"\u4F46\u4E01"}</option>
                         <option value="narrator">{"\u65C1\u767D"}</option>
                       </select>
                       <textarea style={{ ...styles.dialogueText, flex: 1, marginTop: 0 }} value={dl.text || ""} rows={2}
