@@ -43,6 +43,12 @@ export const COLOR = {
   paperSolid: "#EFE7D8",
 };
 
+// #RRGGBB → rgba(...)，给任意 token 色做透明变体
+export const alpha = (hex, a) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+};
+
 // ── 字距梯度（按层级 1 / 2 / 3 / 6 / 8）──
 export const TRACKING = { tight: 1, normal: 2, loose: 3, wide: 6, hero: 8 };
 

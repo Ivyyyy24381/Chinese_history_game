@@ -23,7 +23,8 @@ import { asset } from "../utils/asset";
 import { dufuPortraitPath } from "../data/dufuPoses";
 import { dantePortraitPath } from "../data/dantePoses";
 import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
-import { FONT, COLOR, TRACKING, SHADOW, paper, paperBtn } from "../styles/theme";
+import { FONT, COLOR, TRACKING, SHADOW, paper, paperBtn, alpha } from "../styles/theme";
+import { getCharacter } from "../data/characters";
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 4;
@@ -92,9 +93,14 @@ function travelD(pts, fromIdx, toIdx) {
   return parts.join(" ");
 }
 
-// 印章朱砂色（⑥ 会抽进每条线的 mapTheme；先用一个共同的朱砂）
-const SEAL = "#A63A2E";
-const sealA = (a) => `rgba(166,58,46,${a})`; // SEAL 的透明变体
+// 每条线的地图主题：在全局 token 之上做偏移（src/data/characters.js 的 mapTheme）
+const DEFAULT_MAP_THEME = {
+  ink: COLOR.ink,
+  inkFaint: COLOR.secondary,
+  seal: "#A63A2E",
+  pin: "cinnabar",
+  scrimBoost: 0,
+};
 
 /**
  * 同时代的地图符号（不用水滴 pin，用这张地图自己的语汇）：
@@ -103,8 +109,9 @@ const sealA = (a) => `rgba(166,58,46,${a})`; // SEAL 的透明变体
  * 三态一眼分清：已至 = 实墨 + 一枚小印章；未至 = 淡铅笔稿；
  * 当前 = 旅人立绘替代符号 + 呼吸高亮（在 GameMap 内渲染）。
  */
-function MapSymbol({ kind, state, size = 26 }) {
-  const pencil = COLOR.secondary;
+function MapSymbol({ kind, state, theme, size = 26 }) {
+  const { ink, seal } = theme;
+  const pencil = theme.inkFaint;
   const visited = state === "visited";
   // 纸色微光把符号从密的底图里托出来（halo 手法在小符号上的对应）
   const lift = visited
@@ -115,12 +122,12 @@ function MapSymbol({ kind, state, size = 26 }) {
       <svg width={size} height={(size * 30) / 24} viewBox="0 0 24 30" style={{ display: "block", filter: lift }}>
         {visited ? (
           <>
-            <rect x="7.5" y="12" width="9" height="15.5" fill={COLOR.ink} />
-            <path d="M5.2 12.5 L12 3.2 L18.8 12.5 Z" fill={SEAL} />
+            <rect x="7.5" y="12" width="9" height="15.5" fill={ink} />
+            <path d="M5.2 12.5 L12 3.2 L18.8 12.5 Z" fill={seal} />
             <rect x="10.8" y="17" width="2.4" height="4" fill={paper(0.92)} />
             {/* 已至的小印章 */}
             <g transform="rotate(-8 18.5 23.5)">
-              <rect x="15" y="20" width="7" height="7" rx="1.2" fill={SEAL} />
+              <rect x="15" y="20" width="7" height="7" rx="1.2" fill={seal} />
               <text x="18.5" y="25.4" textAnchor="middle" fontSize="5.4" fontWeight="bold" fill={paper(0.95)}>{"至"}</text>
             </g>
           </>
@@ -138,8 +145,8 @@ function MapSymbol({ kind, state, size = 26 }) {
     <svg width={size} height={size} viewBox="0 0 24 24" style={{ display: "block", filter: lift }}>
       {visited ? (
         <>
-          <circle cx="12" cy="12" r="8" fill={paper(0.28)} stroke={SEAL} strokeWidth="2.6" />
-          <circle cx="12" cy="12" r="2.7" fill={COLOR.ink} />
+          <circle cx="12" cy="12" r="8" fill={paper(0.28)} stroke={seal} strokeWidth="2.6" />
+          <circle cx="12" cy="12" r="2.7" fill={ink} />
         </>
       ) : (
         <circle cx="12" cy="12" r="7.5" fill={paper(0.22)} stroke={pencil} strokeWidth="1.8" strokeDasharray="3 2.6" />
@@ -160,7 +167,8 @@ export default function GameMap({
   const mapUrl = character?.generalMap || DEFAULT_MAP;
   const imgRatio = character?.mapRatio || DEFAULT_RATIO;
   const heroWalkerPath = character?.id === "dante" ? dantePortraitPath : dufuPortraitPath;
-  const symbolKind = character?.id === "dante" ? "tower" : "cinnabar";
+  // 每条线的墨色/印章/符号语汇/底图减淡：花名册 mapTheme 在全局 token 之上做偏移
+  const mapTheme = { ...DEFAULT_MAP_THEME, ...(getCharacter(character?.id)?.mapTheme || {}) };
   const events = useMemo(
     () => (allEvents || []).slice().sort((a, b) => a.year - b.year),
     [allEvents]
@@ -417,6 +425,19 @@ export default function GameMap({
             transition: animated ? "transform 0.7s cubic-bezier(0.25, 0.8, 0.35, 1)" : "none",
           }}
         >
+          {/* 底图密就减淡：每张古地图自带一个减淡系数（mapTheme.scrimBoost） */}
+          {mapTheme.scrimBoost > 0 && (
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundColor: paper(mapTheme.scrimBoost),
+                pointerEvents: "none",
+              }}
+            />
+          )}
+
           {/* ── 未至之地的雾：纸色薄雾盖住还没走到的区域，走到就化开 ──
                雾要淡（氛围不是遮挡）；洞用径向渐变羽化，新至之地 700ms 化开；
                旅人脚下带一个随行的化雾圈，走到哪里哪里就亮 ── */}
@@ -503,7 +524,7 @@ export default function GameMap({
                     key={events[i].id + "-seg"}
                     d={segD(pts, i)}
                     fill="none"
-                    stroke={walked ? COLOR.ink : COLOR.secondary}
+                    stroke={walked ? mapTheme.ink : mapTheme.inkFaint}
                     strokeWidth={walked ? 2.4 : 1.5}
                     strokeLinecap="round"
                     strokeDasharray={walked ? undefined : "7 9"}
@@ -527,7 +548,7 @@ export default function GameMap({
                       }}
                     >
                       <circle cx={d.x} cy={d.y} r={4.2} fill={paper(1)} opacity={0.55} />
-                      <circle cx={d.x} cy={d.y} r={2.3} fill={COLOR.ink} opacity={0.72} />
+                      <circle cx={d.x} cy={d.y} r={2.3} fill={mapTheme.ink} opacity={0.72} />
                     </g>
                   ))}
                 </>
@@ -563,7 +584,7 @@ export default function GameMap({
                 {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示。
                     当前事件不画符号，由旅人立绘 + 呼吸高亮代替。 */}
                 {!isCurrent && (
-                  <MapSymbol kind={symbolKind} state={isVisited ? "visited" : "future"} />
+                  <MapSymbol kind={mapTheme.pin} theme={mapTheme} state={isVisited ? "visited" : "future"} />
                 )}
               </button>
             );
@@ -579,6 +600,7 @@ export default function GameMap({
                   ...styles.walkerHalo,
                   left: walkerPos.x,
                   top: walkerPos.y,
+                  background: `radial-gradient(ellipse at center, ${alpha(mapTheme.seal, 0.4)} 0%, ${alpha(mapTheme.seal, 0.16)} 55%, ${alpha(mapTheme.seal, 0)} 78%)`,
                   animation: prefersReducedMotion ? "none" : "walkerBreath 2.6s ease-in-out infinite",
                 }}
               />
@@ -727,7 +749,6 @@ const styles = {
     height: 20,
     borderRadius: "50%",
     transform: "translate(-50%, -50%)",
-    background: `radial-gradient(ellipse at center, ${sealA(0.4)} 0%, ${sealA(0.16)} 55%, ${sealA(0)} 78%)`,
     zIndex: 7,
     pointerEvents: "none",
   },

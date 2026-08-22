@@ -15,6 +15,13 @@
 //   completionLine 走完一生后的结语
 //   scrimBoost  背景减淡系数 0–1：画面越密越需要（不填=0），保证标题/文字读得清
 //   locked      true = 显示 🔒，不可进入
+//   mapTheme    地图页的每线偏移（在 src/styles/theme.js 全局 token 之上做偏移，
+//               不是另一套体系）：
+//     ink         行迹实墨色（跟这张古地图自己的线稿一族）
+//     inkFaint    未至路段/铅笔稿色
+//     seal        印章朱砂色（已至印记、当前呼吸高亮）
+//     pin         地图符号语汇："cinnabar" 朱砂圈点 / "tower" 红顶城塔
+//     scrimBoost  地图底图减淡系数 0–1（同主页 scrimBoost 思路，密图才需要）
 
 export const CHARACTERS = [
   {
@@ -37,6 +44,14 @@ export const CHARACTERS = [
     name_img: "/assets/home/hp_name_dufu.png",
     nameHeight: 44,
     locked: false,
+    // 青绿山水舆图：墨线 + 朱砂圈点
+    mapTheme: {
+      ink: "#3A2E20",
+      inkFaint: "#7A6A50",
+      seal: "#A63A2E",
+      pin: "cinnabar",
+      scrimBoost: 0,
+    },
   },
   {
     id: "dante",
@@ -58,6 +73,14 @@ export const CHARACTERS = [
     name_img: "/assets/home/hp_name_dante.png",
     nameHeight: 26,
     locked: false,
+    // 15 世纪泥金手抄本世界地图：深棕墨线 + 红顶城塔；画面密，底图略减淡
+    mapTheme: {
+      ink: "#3B2517",
+      inkFaint: "#7A6A50",
+      seal: "#A63A2E",
+      pin: "tower",
+      scrimBoost: 0.05,
+    },
   },
   {
     id: "rumi",
@@ -79,6 +102,14 @@ export const CHARACTERS = [
     name_img: "/assets/home/hp_name_rumi.png",
     nameHeight: 34,
     locked: true,
+    // 波斯细密画（占位，待鲁米线地图落地再调）：青金墨线 + 赭金印记
+    mapTheme: {
+      ink: "#33415C",
+      inkFaint: "#7A6A50",
+      seal: "#B4762F",
+      pin: "cinnabar",
+      scrimBoost: 0.12,
+    },
   },
 ];
 
