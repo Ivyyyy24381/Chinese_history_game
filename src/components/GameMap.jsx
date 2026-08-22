@@ -417,6 +417,58 @@ export default function GameMap({
             transition: animated ? "transform 0.7s cubic-bezier(0.25, 0.8, 0.35, 1)" : "none",
           }}
         >
+          {/* ── 未至之地的雾：纸色薄雾盖住还没走到的区域，走到就化开 ──
+               雾要淡（氛围不是遮挡）；洞用径向渐变羽化，新至之地 700ms 化开；
+               旅人脚下带一个随行的化雾圈，走到哪里哪里就亮 ── */}
+          {pts && dims && (
+            <svg
+              width="100%"
+              height="100%"
+              viewBox={`0 0 ${dims.cw} ${dims.ch}`}
+              style={styles.fogLayer}
+              aria-hidden="true"
+            >
+              <defs>
+                <radialGradient id="gm-fog-hole">
+                  <stop offset="0%" stopColor="#000" />
+                  <stop offset="62%" stopColor="#000" stopOpacity="0.85" />
+                  <stop offset="100%" stopColor="#000" stopOpacity="0" />
+                </radialGradient>
+                <mask id="gm-fog-mask">
+                  <rect width={dims.cw} height={dims.ch} fill="#FFF" />
+                  {pts.map((p, i) => (
+                    <circle
+                      key={events[i].id + "-hole"}
+                      cx={p.x}
+                      cy={p.y}
+                      r={Math.min(dims.cw, dims.ch) * 0.17}
+                      fill="url(#gm-fog-hole)"
+                      style={{
+                        opacity: events[i].year <= maxInkYear ? 1 : 0,
+                        transition: "opacity 700ms ease",
+                      }}
+                    />
+                  ))}
+                  {walkerPos && (
+                    <circle
+                      cx={walkerPos.x}
+                      cy={walkerPos.y}
+                      r={Math.min(dims.cw, dims.ch) * 0.2}
+                      fill="url(#gm-fog-hole)"
+                    />
+                  )}
+                </mask>
+              </defs>
+              <rect
+                width={dims.cw}
+                height={dims.ch}
+                fill={paper(1)}
+                opacity={0.4}
+                mask="url(#gm-fog-mask)"
+              />
+            </svg>
+          )}
+
           {/* ── 旅程墨线：已走 = 实墨，未走 = 极淡铅笔稿；行走时足迹渐次点亮 ── */}
           {pts && pts.length >= 2 && dims && (
             <svg
@@ -635,6 +687,11 @@ const styles = {
     position: "relative",
     transformOrigin: "0 0",
     willChange: "transform",
+  },
+  fogLayer: {
+    position: "absolute",
+    inset: 0,
+    pointerEvents: "none",
   },
   routeLayer: {
     position: "absolute",
