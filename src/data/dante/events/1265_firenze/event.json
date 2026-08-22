@@ -17,10 +17,10 @@
           "name": "薄伽丘",
           "portrait": "/assets/dante/npcs/boccaccio.png",
           "position": {
-            "x": 50,
-            "y": 66
+            "x": 67,
+            "y": 85
           },
-          "scale": 1.8,
+          "scale": 3,
           "dialogues": [
             {
               "speaker": "boccaccio",
@@ -56,8 +56,8 @@
           "name": "商贩",
           "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.png",
           "position": {
-            "x": 20,
-            "y": 72
+            "x": 33,
+            "y": 83
           },
           "scale": 1.2,
           "dialogues": [
@@ -78,10 +78,10 @@
           "name": "老兵",
           "portrait": "/assets/dante/events/1265_firenze/npcs/veteran_montaperti.png",
           "position": {
-            "x": 66,
-            "y": 74
+            "x": 59,
+            "y": 83
           },
-          "scale": 1.3,
+          "scale": 0.9,
           "isClue": true,
           "dialogues": [
             {
@@ -106,8 +106,8 @@
           "name": "邻妇",
           "portrait": "/assets/dante/events/1265_firenze/npcs/neighbor_woman.png",
           "position": {
-            "x": 82,
-            "y": 70
+            "x": 91,
+            "y": 92
           },
           "scale": 1.15,
           "flip": true,
@@ -129,8 +129,8 @@
           "name": "教士",
           "portrait": "/assets/dante/events/1265_firenze/npcs/priest_baptistery.png",
           "position": {
-            "x": 38,
-            "y": 68
+            "x": 42,
+            "y": 82
           },
           "scale": 1.2,
           "isClue": true,
@@ -152,8 +152,8 @@
           "name": "洗礼堂大门",
           "portrait": "",
           "position": {
-            "x": 51,
-            "y": 34
+            "x": 85,
+            "y": 65
           },
           "dialogues": [
             {
@@ -178,9 +178,9 @@
       "panels": [
         {
           "id": "p1_bell",
-          "x": 0.5,
-          "y": 2,
-          "w": 32,
+          "x": 0,
+          "y": 0,
+          "w": 33.5,
           "h": 51,
           "dialogues": [
             {
@@ -193,8 +193,8 @@
         {
           "id": "p2_spindle",
           "x": 33,
-          "y": 2,
-          "w": 32.5,
+          "y": 0,
+          "w": 33.5,
           "h": 51,
           "dialogues": [
             {
@@ -206,10 +206,10 @@
         },
         {
           "id": "p3_marriage",
-          "x": 66.5,
-          "y": 2,
-          "w": 33,
-          "h": 51,
+          "x": 66,
+          "y": 0,
+          "w": 34.3,
+          "h": 51.5,
           "dialogues": [
             {
               "speaker": "cacciaguida",
@@ -220,10 +220,10 @@
         },
         {
           "id": "p4_crusade",
-          "x": 0.5,
-          "y": 55,
-          "w": 32,
-          "h": 43.5,
+          "x": 0,
+          "y": 51,
+          "w": 33,
+          "h": 49.7,
           "dialogues": [
             {
               "speaker": "cacciaguida",
@@ -234,10 +234,10 @@
         },
         {
           "id": "p5_baptism",
-          "x": 66.5,
-          "y": 55,
-          "w": 33,
-          "h": 43.5,
+          "x": 33,
+          "y": 51,
+          "w": 67.5,
+          "h": 49.4,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -265,10 +265,10 @@
         {
           "id": "aeneid_codex",
           "name": "维吉尔抄本",
-          "portrait": "/assets/dante/props/aeneid_codex.png",
+          "portrait": "",
           "position": {
-            "x": 34,
-            "y": 58
+            "x": 44,
+            "y": 75
           },
           "scale": 0.75,
           "isClue": true,
@@ -290,10 +290,11 @@
           "name": "亡母的纺锤",
           "portrait": "/assets/dante/props/spindle_wool.png",
           "position": {
-            "x": 64,
+            "x": 12,
             "y": 62
           },
-          "scale": 0.6,
+          "scale": 1.2,
+          "rotate": 72,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -312,10 +313,10 @@
           "name": "父亲",
           "portrait": "/assets/dante/events/1265_firenze/npcs/father_alighieri.png",
           "position": {
-            "x": 82,
-            "y": 72
+            "x": 97,
+            "y": 68
           },
-          "scale": 1.25,
+          "scale": 3,
           "flip": true,
           "dialogues": [
             {
@@ -341,9 +342,9 @@
       "title": "后世回声",
       "transitionText": "九岁那年五月，他在宴席上看见一个穿绯红衣裙的女孩。\n他后来写道：\n「看哪，一个比我更强的神，来主宰我了。」",
       "announcement": {
-        "title": "后世回声",
         "text": "薄伽丘：「诸位，请记住那件绯红的衣裙。一个九岁孩子的心动，将变成基督教世界最庞大的一首诗。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "后世回声"
       },
       "narrative": ""
     }
