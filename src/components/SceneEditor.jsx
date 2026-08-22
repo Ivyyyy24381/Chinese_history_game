@@ -452,6 +452,23 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
     }
   };
 
+  // === 本屏全部对话：平铺列表视图（P2）===
+  const [showDialogueBoard, setShowDialogueBoard] = useState(false);
+  // 拖动排序：同一 NPC 内部移动一条对白
+  const dragDialogueRef = useRef(null); // {npcId, index}
+  const moveDialogue = (npcId, from, to) => {
+    if (from === to) return;
+    setNpcs((prev) =>
+      prev.map((n) => {
+        if (n.id !== npcId) return n;
+        const d = [...n.dialogues];
+        const [item] = d.splice(from, 1);
+        d.splice(to, 0, item);
+        return { ...n, dialogues: d };
+      })
+    );
+  };
+
   // === 交互模板库：从模板插入一个填好占位内容的新 phase ===
   const [showTemplates, setShowTemplates] = useState(false);
   const insertTemplate = (tpl) => {
@@ -1059,6 +1076,15 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
           <input type="range" min="60" max="420" value={npcSize} onChange={(e) => setNpcSize(Number(e.target.value))} />
           <span style={styles.sizeLabel}>{npcSize}px</span>
         </div>
+        <button
+          style={{
+            ...styles.btnDialogueBoard,
+            ...(showDialogueBoard ? { backgroundColor: "#F4D03F", color: "#1a1a2e" } : {}),
+          }}
+          onClick={() => setShowDialogueBoard((v) => !v)}
+        >
+          {"\uD83D\uDCAC \u672C\u5C4F\u5168\u90E8\u5BF9\u8BDD"}
+        </button>
         <button style={styles.btnSave} onClick={saveToFile}>
           {"\u{1F4BE} \u4FDD\u5B58\u5230\u6587\u4EF6"}
         </button>
@@ -2397,6 +2423,94 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
         </div>
       </div>
 
+      {/* ── 本屏全部对话：平铺列表（P2）──
+           一屏之内所有 NPC 的所有对白按顺序平铺：直接改、拖动排序、看总字数；
+           悬停/聚焦某条 → 画布上对应 NPC 高亮（复用 selectedNpc 的选中描边） */}
+      {showDialogueBoard && (
+        <div style={styles.dlgDrawer}>
+          <div style={styles.dlgHeader}>
+            <h3 style={{ margin: 0, fontSize: 15 }}>{"💬 本屏全部对话"}</h3>
+            <span style={styles.dlgCount}>
+              {(() => {
+                const total = npcs.reduce(
+                  (s, n) => s + n.dialogues.reduce((t, d) => t + (d.text || "").length, 0),
+                  0
+                );
+                const lines = npcs.reduce((s, n) => s + n.dialogues.length, 0);
+                return `${npcs.length} 人 · ${lines} 条 · 共 ${total} 字`;
+              })()}
+            </span>
+            <button style={styles.tplClose} onClick={() => setShowDialogueBoard(false)}>{"✕"}</button>
+          </div>
+          <div style={styles.dlgList}>
+            {npcs.length === 0 && (
+              <div style={styles.dlgEmpty}>
+                {"当前阶段没有 NPC 对白。"}
+                <br />
+                {"（对白平铺视图针对 explore 阶段的 NPC / 道具 / 文字标签）"}
+              </div>
+            )}
+            {npcs.map((n) => (
+              <div
+                key={n.id}
+                style={{
+                  ...styles.dlgNpcBlock,
+                  outline: selectedNpc === n.id ? "2px solid #F4D03F" : "none",
+                }}
+                onMouseEnter={() => setSelectedNpc(n.id)}
+              >
+                <div style={styles.dlgNpcName}>
+                  {n.portrait ? (
+                    <img src={n.portrait} alt="" style={styles.dlgNpcThumb} />
+                  ) : (
+                    <span style={styles.dlgNpcThumbText}>{"Aa"}</span>
+                  )}
+                  {n.name}
+                  <span style={styles.dlgNpcMeta}>
+                    {n.dialogues.reduce((t, d) => t + (d.text || "").length, 0) + " 字"}
+                  </span>
+                </div>
+                {n.dialogues.map((d, di) => (
+                  <div
+                    key={di}
+                    style={styles.dlgRow}
+                    draggable
+                    onDragStart={() => { dragDialogueRef.current = { npcId: n.id, index: di }; }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const src = dragDialogueRef.current;
+                      if (src && src.npcId === n.id) moveDialogue(n.id, src.index, di);
+                      dragDialogueRef.current = null;
+                    }}
+                  >
+                    <span style={styles.dlgDragHandle} title={"拖动排序（同一人物内）"}>{"⠿"}</span>
+                    <textarea
+                      style={styles.dlgText}
+                      value={d.text}
+                      rows={Math.max(1, Math.ceil((d.text || "").length / 22))}
+                      placeholder={"（空台词）"}
+                      onFocus={() => setSelectedNpc(n.id)}
+                      onChange={(e) => updateDialogue(n.id, di, "text", e.target.value)}
+                    />
+                    <button
+                      style={styles.dlgRemove}
+                      title={"删除这条"}
+                      onClick={() => removeDialogue(n.id, di)}
+                    >
+                      {"✕"}
+                    </button>
+                  </div>
+                ))}
+                <button style={styles.dlgAdd} onClick={() => addDialogue(n.id)}>
+                  {"+ 台词"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ── 交互模板库面板 ── */}
       {showTemplates && (
         <div style={styles.tplOverlay} onClick={() => setShowTemplates(false)}>
@@ -2579,6 +2693,65 @@ const styles = {
   btnTemplates: {
     padding: "6px 12px", backgroundColor: "#8E44AD", color: "#FFF",
     border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: "bold",
+  },
+  btnDialogueBoard: {
+    padding: "6px 12px", backgroundColor: "#2C3E50", color: "#EAEFF5",
+    border: "1px solid #46627F", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: "bold",
+  },
+  // ── 本屏全部对话抽屉 ──
+  dlgDrawer: {
+    position: "fixed", top: 0, right: 0, bottom: 0, width: 400, zIndex: 10040,
+    backgroundColor: "#16213E",
+    borderLeft: "1px solid #2C3E50",
+    display: "flex", flexDirection: "column",
+    boxShadow: "-12px 0 40px rgba(0,0,0,0.45)",
+  },
+  dlgHeader: {
+    display: "flex", alignItems: "center", gap: 10,
+    padding: "12px 16px",
+    borderBottom: "1px solid #2C3E50",
+  },
+  dlgCount: { flex: 1, fontSize: 11.5, color: "#7FE2A8", fontFamily: "monospace" },
+  dlgList: { flex: 1, overflowY: "auto", padding: 14 },
+  dlgEmpty: { color: "#8899AA", fontSize: 13, lineHeight: 1.8, padding: 12 },
+  dlgNpcBlock: {
+    backgroundColor: "#1F2A40",
+    border: "1px solid #2C3E50",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+  },
+  dlgNpcName: {
+    display: "flex", alignItems: "center", gap: 8,
+    fontSize: 13, fontWeight: "bold", color: "#FFF", marginBottom: 8,
+  },
+  dlgNpcThumb: {
+    width: 26, height: 26, objectFit: "cover", objectPosition: "center top",
+    borderRadius: 4, backgroundColor: "#FFF",
+  },
+  dlgNpcThumbText: {
+    width: 26, height: 26, display: "inline-flex", alignItems: "center", justifyContent: "center",
+    borderRadius: 4, border: "1px dashed #888", color: "#F4D03F", fontSize: 12,
+  },
+  dlgNpcMeta: { marginLeft: "auto", fontSize: 10.5, color: "#6B7C93", fontWeight: "normal" },
+  dlgRow: { display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 6 },
+  dlgDragHandle: {
+    color: "#556677", cursor: "grab", fontSize: 14, lineHeight: "26px", userSelect: "none",
+  },
+  dlgText: {
+    flex: 1, padding: "5px 9px",
+    backgroundColor: "#12192B", color: "#FFF",
+    border: "1px solid #2C3E50", borderRadius: 4,
+    fontSize: 13, lineHeight: 1.6, fontFamily: "inherit",
+    resize: "vertical", boxSizing: "border-box",
+  },
+  dlgRemove: {
+    width: 24, height: 26, border: "none", borderRadius: 4,
+    backgroundColor: "transparent", color: "#E74C3C", cursor: "pointer", fontSize: 12,
+  },
+  dlgAdd: {
+    padding: "4px 10px", border: "1px dashed #46627F", borderRadius: 4,
+    backgroundColor: "transparent", color: "#7FB3D5", cursor: "pointer", fontSize: 12,
   },
   // ── 交互模板库面板 ──
   tplOverlay: {
