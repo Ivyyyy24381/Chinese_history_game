@@ -52,10 +52,19 @@ const SCENE_FILES = Object.keys(sceneGlob).map((k) => {
   // k like "/src/data/dufu/events/747_exam/event.json"
   const eventId = k.split("/").slice(-2, -1)[0];
   const charId = k.split("/").slice(-4, -3)[0];
-  return { label: `${charId} · ${eventId}`, file: eventId, loader: sceneGlob[k], eventId };
+  // key 带上故事线：两条线可能出现同名 eventId，只用 eventId 会撞车。
+  return {
+    key: `${charId}/${eventId}`,
+    label: `${charId} · ${eventId}`,
+    file: eventId,
+    loader: sceneGlob[k],
+    eventId,
+    charId,
+  };
 });
+const SCENE_LINES = [...new Set(SCENE_FILES.map((s) => s.charId))];
 
-export default function SceneEditor({ initialEventId, onExit }) {
+export default function SceneEditor({ initialEventId, initialLine, onExit }) {
   const [bg, setBg] = useState(BACKGROUNDS[0]);
   const [npcs, setNpcs] = useState([]);
   const [selectedNpc, setSelectedNpc] = useState(null);
@@ -70,8 +79,9 @@ export default function SceneEditor({ initialEventId, onExit }) {
   const [phaseDufuPose, setPhaseDufuPose] = useState("");
   const [npcSize, setNpcSize] = useState(140);
   const sceneRef = useRef(null);
-  // Scene/phase selection
+  // Scene/phase selection — currentSceneFile 存 SCENE_FILES 的 key（"<line>/<eventId>"）
   const [currentSceneFile, setCurrentSceneFile] = useState("");
+  const [currentLine, setCurrentLine] = useState(initialLine || SCENE_LINES[0] || "dufu");
   const [sceneData, setSceneData] = useState(null);
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   // Trigger zones (continue buttons, scene portals)
@@ -158,15 +168,18 @@ export default function SceneEditor({ initialEventId, onExit }) {
     setSelectedNpc(newNpc.id);
   };
 
-  // Load a scene file
-  const loadSceneFile = async (filename) => {
-    const entry = SCENE_FILES.find((s) => s.file === filename);
+  // Load a scene file（接受 "<line>/<eventId>" key；裸 eventId 兜底以兼容旧入口）
+  const loadSceneFile = async (key) => {
+    const entry =
+      SCENE_FILES.find((s) => s.key === key) ||
+      SCENE_FILES.find((s) => s.eventId === key);
     if (!entry) return;
     try {
       const mod = await entry.loader();
       const data = mod.default;
       setSceneData(data);
-      setCurrentSceneFile(filename);
+      setCurrentSceneFile(entry.key);
+      setCurrentLine(entry.charId);
       setCurrentPhaseIndex(0);
       loadPhase(data, 0);
     } catch (err) {
@@ -177,7 +190,7 @@ export default function SceneEditor({ initialEventId, onExit }) {
   // Auto-load when an initial event is passed in from the timeline editor.
   useEffect(() => {
     if (initialEventId && !currentSceneFile) {
-      loadSceneFile(initialEventId);
+      loadSceneFile(initialLine ? `${initialLine}/${initialEventId}` : initialEventId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialEventId]);
@@ -255,16 +268,18 @@ export default function SceneEditor({ initialEventId, onExit }) {
   const switchPhase = (idx) => {
     if (!sceneData) return;
     // Save current edits back to sceneData before switching
-    saveCurrentPhaseToScene();
+    const updated = saveCurrentPhaseToScene() || sceneData;
     setCurrentPhaseIndex(idx);
-    loadPhase(sceneData, idx);
+    loadPhase(updated, idx);
   };
 
-  // Save current editor state back into sceneData.phases[currentPhaseIndex]
+  // Save current editor state back into sceneData.phases[currentPhaseIndex].
+  // 同步拼好并【返回】更新后的 scene 对象（同时 setState）。
+  // 保存/导出必须用返回值：setSceneData 是异步的，闭包里的 sceneData 仍是旧值。
   const saveCurrentPhaseToScene = () => {
-    if (!sceneData) return;
-    setSceneData((prev) => {
-      const updated = { ...prev, phases: [...prev.phases] };
+    if (!sceneData) return null;
+    {
+      const updated = { ...sceneData, phases: [...sceneData.phases] };
       const phase = {
         ...updated.phases[currentPhaseIndex],
         id: phaseId || updated.phases[currentPhaseIndex].id,
@@ -394,8 +409,9 @@ export default function SceneEditor({ initialEventId, onExit }) {
         phase.minigameInstruction = minigameInstruction;
       }
       updated.phases[currentPhaseIndex] = phase;
+      setSceneData(updated);
       return updated;
-    });
+    }
   };
 
   // Add a new phase
@@ -422,14 +438,12 @@ export default function SceneEditor({ initialEventId, onExit }) {
       setCurrentPhaseIndex(0);
       loadPhase({ phases: [newPhase] }, 0);
     } else {
-      saveCurrentPhaseToScene();
-      setSceneData((prev) => ({
-        ...prev,
-        phases: [...prev.phases, newPhase],
-      }));
-      const newIdx = sceneData.phases.length;
+      const base = saveCurrentPhaseToScene() || sceneData;
+      const next = { ...base, phases: [...base.phases, newPhase] };
+      setSceneData(next);
+      const newIdx = next.phases.length - 1;
       setCurrentPhaseIndex(newIdx);
-      loadPhase({ phases: [...sceneData.phases, newPhase] }, newIdx);
+      loadPhase(next, newIdx);
     }
   };
 
@@ -445,11 +459,10 @@ export default function SceneEditor({ initialEventId, onExit }) {
     });
   };
 
-  // Export full scene (all phases)
+  // Export full scene (all phases) — 用 saveCurrentPhaseToScene 的返回值，不读异步 state
   const exportFullScene = () => {
-    saveCurrentPhaseToScene();
-    // Need to use a timeout to let state settle
-    return sceneData ? JSON.stringify(sceneData, null, 2) : "{}";
+    const scene = saveCurrentPhaseToScene();
+    return scene ? JSON.stringify(scene, null, 2) : "{}";
   };
 
   // Drag handling — only starts dragging after mouse moves 5px
@@ -809,24 +822,29 @@ export default function SceneEditor({ initialEventId, onExit }) {
     return JSON.stringify(phase, null, 2);
   };
 
-  // Save directly to file \u2014 writes to events/<eventId>/event.json
+  // Save directly to file \u2014 writes to src/data/<line>/events/<eventId>/event.json
   const [saveStatus, setSaveStatus] = useState("");
   const saveToFile = async () => {
-    saveCurrentPhaseToScene();
-    const eventId = currentSceneFile || (sceneData && sceneData.id) || "new_event";
-    // Wait a tick for state to settle
-    await new Promise((r) => setTimeout(r, 50));
-    const content = JSON.stringify(sceneData, null, 2);
+    // \u76F4\u63A5\u7528\u8FD4\u56DE\u7684\u6700\u65B0\u5BF9\u8C61\uFF0C\u4E0D\u7B49 setState \u2014\u2014 \u5426\u5219\u4FDD\u5B58\u7684\u662F\u4E0A\u4E00\u7248
+    const scene = saveCurrentPhaseToScene();
+    if (!scene) {
+      setSaveStatus("\u274C \u8FD8\u6CA1\u6709\u52A0\u8F7D\u4EFB\u4F55\u573A\u666F");
+      return;
+    }
+    const entry = SCENE_FILES.find((s) => s.key === currentSceneFile);
+    const eventId = entry?.eventId || scene.id || "new_event";
+    const line = entry?.charId || currentLine;
+    const content = JSON.stringify(scene, null, 2);
     try {
       const res = await fetch("/api/save-event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, content }),
+        body: JSON.stringify({ line, eventId, content }),
       });
       const data = await res.json();
       if (data.ok) {
-        setSaveStatus("\u2705 \u5DF2\u4FDD\u5B58 \u2192 " + data.path.split("/").slice(-3).join("/"));
-        setTimeout(() => setSaveStatus(""), 3000);
+        setSaveStatus(`\u2705 \u5DF2\u4FDD\u5B58 \u2192 ${data.path}\uFF08${(data.bytes ?? 0).toLocaleString()} \u5B57\u8282\uFF09`);
+        setTimeout(() => setSaveStatus(""), 6000);
       } else {
         setSaveStatus("\u274C " + data.error);
       }
@@ -866,12 +884,29 @@ export default function SceneEditor({ initialEventId, onExit }) {
   };
 
   const selected = npcs.find((n) => n.id === selectedNpc);
+  // 当前编辑目标的完整落盘路径 —— 始终可见，防止改 A 线存进 B 线
+  const currentEntry = SCENE_FILES.find((s) => s.key === currentSceneFile);
+  const editingPath = sceneData
+    ? `src/data/${currentEntry?.charId || currentLine}/events/${currentEntry?.eventId || sceneData.id || "new_event"}/event.json`
+    : null;
 
   return (
     <div style={styles.editor}>
       {/* Top toolbar row 1: scene/phase selection */}
       <div style={styles.toolbar}>
         <h2 style={styles.toolbarTitle}>{"\u{1F3A8} \u573A\u666F\u7F16\u8F91\u5668"}</h2>
+        <div style={styles.toolbarGroup}>
+          <label style={styles.label}>{"\u6545\u4E8B\u7EBF:"}</label>
+          <select
+            value={currentLine}
+            onChange={(e) => setCurrentLine(e.target.value)}
+            style={{ ...styles.select, fontWeight: "bold" }}
+          >
+            {SCENE_LINES.map((l) => (
+              <option key={l} value={l}>{l}</option>
+            ))}
+          </select>
+        </div>
         <div style={styles.toolbarGroup}>
           <label style={styles.label}>{"\u573A\u666F\u6587\u4EF6:"}</label>
           <select
@@ -880,8 +915,8 @@ export default function SceneEditor({ initialEventId, onExit }) {
             style={{ ...styles.select, fontWeight: "bold", minWidth: 160 }}
           >
             <option value="">{"-- \u9009\u62E9\u573A\u666F --"}</option>
-            {SCENE_FILES.map((s) => (
-              <option key={s.file} value={s.file}>{s.label}</option>
+            {SCENE_FILES.filter((s) => s.charId === currentLine).map((s) => (
+              <option key={s.key} value={s.key}>{s.label}</option>
             ))}
           </select>
         </div>
@@ -926,9 +961,9 @@ export default function SceneEditor({ initialEventId, onExit }) {
 
       {/* Top toolbar row 2: editing tools */}
       <div style={styles.toolbar2}>
-        {currentSceneFile && (
-          <span style={styles.editingLabel}>
-            {"\u{1F4DD} \u6B63\u5728\u7F16\u8F91: "}{currentSceneFile}{" \u2192 "}{phaseTitle || "(untitled)"}
+        {editingPath && (
+          <span style={styles.editingLabel} title={editingPath}>
+            {"\u{1F4DD} \u6B63\u5728\u7F16\u8F91: "}{editingPath}{" \u2192 "}{phaseTitle || "(untitled)"}
           </span>
         )}
         <div style={styles.toolbarGroup}>

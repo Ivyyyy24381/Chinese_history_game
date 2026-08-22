@@ -654,18 +654,27 @@ if (typeof document !== "undefined" && !document.getElementById("rotate-hint-key
 /**
  * EditorShell — entry point for ?editor=true.
  * Starts on the timeline editor; lets the user drill into per-event scene editor.
+ * 当前故事线（dufu / dante / …）在这里管理，两个编辑器共用，保存时随请求下发。
  */
 function EditorShell() {
+  const [editorLine, setEditorLine] = useState("dufu");
   const [editingEventId, setEditingEventId] = useState(null);
   if (editingEventId) {
     return (
       <SceneEditor
         initialEventId={editingEventId}
+        initialLine={editorLine}
         onExit={() => setEditingEventId(null)}
       />
     );
   }
-  return <TimelineEditor onEditEvent={setEditingEventId} />;
+  return (
+    <TimelineEditor
+      line={editorLine}
+      onLineChange={setEditorLine}
+      onEditEvent={setEditingEventId}
+    />
+  );
 }
 
 const styles = {

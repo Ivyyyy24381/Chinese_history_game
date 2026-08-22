@@ -1,15 +1,21 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 
+// 自动发现所有故事线（src/data/<line>/timeline.json）——新增 rumi 等目录后无需改代码
+const TIMELINE_MODULES = import.meta.glob("/src/data/*/timeline.json");
+const TIMELINE_LINES = Object.keys(TIMELINE_MODULES)
+  .map((k) => k.split("/")[3])
+  .sort();
+
 /**
  * TimelineEditor — edit timeline.json directly:
  *   - Drag event pins on the map to update mapX / mapY
  *   - Drag event ticks on the timeline to update year
  *   - Edit event metadata (name, summary, state, location.name, hasScene, hasQuiz)
  *   - Edit stage metadata (period, yearStart, yearEnd, color)
- *   - "Save" → POSTs to /api/save-timeline
+ *   - "Save" → POSTs to /api/save-timeline (with story line)
  *   - "Edit scene" → drills into <SceneEditor initialEventId=...>
  */
-export default function TimelineEditor({ onEditEvent }) {
+export default function TimelineEditor({ line = "dufu", onLineChange, onEditEvent }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState("");
@@ -20,23 +26,26 @@ export default function TimelineEditor({ onEditEvent }) {
   const mapRef = useRef(null);
   const trackRef = useRef(null);
 
-  // Load timeline.json on mount
+  const timelinePath = `src/data/${line}/timeline.json`;
+
+  // Load timeline.json whenever the story line changes
   useEffect(() => {
-    import("../data/dufu/timeline.json?import")
-      .then((m) => {
-        // Vite caches imports; force fresh fetch with cache-bust query.
-        return fetch("/src/data/dufu/timeline.json?t=" + Date.now())
-          .then((r) => r.json())
-          .then(setData)
-          .catch(() => setData(m.default));
-      })
+    setLoading(true);
+    setData(null);
+    setSelectedEventId(null);
+    setSelectedStageId(null);
+    setSaveStatus("");
+    // Vite caches module imports; fetch with cache-bust so edits saved from
+    // another session show up. Fall back to the module import if fetch fails.
+    fetch(`/${timelinePath}?t=` + Date.now())
+      .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(setData)
       .catch(() => {
-        fetch("/src/data/dufu/timeline.json?t=" + Date.now())
-          .then((r) => r.json())
-          .then(setData);
+        const loader = TIMELINE_MODULES[`/src/data/${line}/timeline.json`];
+        if (loader) return loader().then((m) => setData(m.default));
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [line]);
 
   // Flatten events with stage refs
   const allEvents = useMemo(() => {
@@ -146,12 +155,12 @@ export default function TimelineEditor({ onEditEvent }) {
       const res = await fetch("/api/save-timeline", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: JSON.stringify(data, null, 2) }),
+        body: JSON.stringify({ line, content: JSON.stringify(data, null, 2) }),
       });
       const result = await res.json();
       if (result.ok) {
-        setSaveStatus("✅ 已保存");
-        setTimeout(() => setSaveStatus(""), 2500);
+        setSaveStatus(`✅ 已保存 → ${result.path}（${(result.bytes ?? 0).toLocaleString()} 字节）`);
+        setTimeout(() => setSaveStatus(""), 6000);
       } else {
         setSaveStatus("❌ " + result.error);
       }
@@ -174,6 +183,19 @@ export default function TimelineEditor({ onEditEvent }) {
     <div style={styles.root}>
       <div style={styles.topBar}>
         <h2 style={styles.title}>{"🗺 时间线编辑器"}</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <label style={{ fontSize: 12, color: "#AAB7C4" }}>{"故事线:"}</label>
+          <select
+            value={line}
+            onChange={(e) => onLineChange && onLineChange(e.target.value)}
+            style={styles.lineSelect}
+          >
+            {TIMELINE_LINES.map((l) => (
+              <option key={l} value={l}>{l}</option>
+            ))}
+          </select>
+        </div>
+        <span style={styles.pathLabel} title={timelinePath}>{"📝 " + timelinePath}</span>
         <span style={styles.hint}>
           {"在地图上拖动 pin → 调整 mapX/mapY；在时间线上拖动 tick → 调整年份。"}
         </span>
@@ -194,7 +216,7 @@ export default function TimelineEditor({ onEditEvent }) {
             ref={mapRef}
             style={{
               ...styles.map,
-              backgroundImage: "url('/assets/dufu/maps/dufu_general_map.png')",
+              backgroundImage: `url('${data.character?.generalMap || `/assets/${line}/maps/${line}_general_map.png`}')`,
               cursor: dragging ? "grabbing" : "default",
             }}
           >
@@ -519,6 +541,22 @@ const styles = {
     borderBottom: "1px solid #2C3E50",
   },
   title: { margin: 0, fontSize: 18 },
+  lineSelect: {
+    padding: "5px 8px",
+    backgroundColor: "#1F2A40",
+    color: "#FFF",
+    border: "1px solid #2C3E50",
+    borderRadius: 4,
+    fontSize: 13,
+    fontWeight: "bold",
+    fontFamily: "inherit",
+  },
+  pathLabel: {
+    fontSize: 12,
+    color: "#7FE2A8",
+    fontFamily: "monospace",
+    whiteSpace: "nowrap",
+  },
   hint: { fontSize: 12, color: "#AAB7C4", flex: 1 },
   saveBtn: {
     padding: "8px 16px",
