@@ -7,7 +7,7 @@
     {
       "id": "explore_outside",
       "type": "explore",
-      "background": "/assets/dufu/events/747_exam/backgrounds/changan_street_2.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/changan_street_2.webp",
       "title": "长安街头",
       "narrative": "天宝六载（747年），皇帝下诏特办制举，「通一艺者」皆可来长安应考。杜甫满怀希望来到了长安。",
       "instruction": "点击周围的人物与他们交谈，了解这次特别的科举。",
@@ -15,7 +15,7 @@
         {
           "id": "merchant_a",
           "name": "商贩甲",
-          "portrait": "/assets/dufu/npcs/merchant_a.png",
+          "portrait": "/assets/dufu/npcs/merchant_a.webp",
           "position": {
             "x": 58,
             "y": 63
@@ -32,7 +32,7 @@
         {
           "id": "waiter",
           "name": "酒店伙计",
-          "portrait": "/assets/dufu/npcs/waiter.png",
+          "portrait": "/assets/dufu/npcs/waiter.webp",
           "position": {
             "x": 71,
             "y": 65
@@ -50,7 +50,7 @@
         {
           "id": "scholar_a",
           "name": "士人甲",
-          "portrait": "/assets/dufu/npcs/scholar_a.png",
+          "portrait": "/assets/dufu/npcs/scholar_a.webp",
           "position": {
             "x": 50,
             "y": 71
@@ -67,7 +67,7 @@
         {
           "id": "scholar_b",
           "name": "士人乙",
-          "portrait": "/assets/dufu/npcs/scholar_b.png",
+          "portrait": "/assets/dufu/npcs/scholar_b.webp",
           "position": {
             "x": 16,
             "y": 83
@@ -83,7 +83,7 @@
         {
           "id": "merchant_c",
           "name": "商贩丙",
-          "portrait": "/assets/dufu/npcs/merchant_c.png",
+          "portrait": "/assets/dufu/npcs/merchant_c.webp",
           "position": {
             "x": 85,
             "y": 73
@@ -100,7 +100,7 @@
         {
           "id": "merchant_b",
           "name": "商贩乙",
-          "portrait": "/assets/dufu/npcs/merchant_b.png",
+          "portrait": "/assets/dufu/npcs/merchant_b.webp",
           "position": {
             "x": 36,
             "y": 80
@@ -144,7 +144,7 @@
     {
       "id": "exam_intro",
       "type": "explore",
-      "background": "/assets/dufu/events/747_exam/backgrounds/exam_hall.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/exam_hall.webp",
       "title": "进入考场",
       "narrative": "杜甫正了正衣冠，走进了庄严的考场。",
       "instruction": "点击李林甫了解考试安排。",
@@ -153,7 +153,7 @@
         {
           "id": "LinFu_Li",
           "name": "李林甫",
-          "portrait": "/assets/dufu/npcs/LinFu_Li.png",
+          "portrait": "/assets/dufu/npcs/LinFu_Li.webp",
           "position": {
             "x": 40,
             "y": 65
@@ -173,11 +173,11 @@
     {
       "id": "exam",
       "type": "exam",
-      "background": "/assets/dufu/events/747_exam/backgrounds/exam_hall.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/exam_hall.webp",
       "title": "制举考试",
       "narrative": "",
       "examiner": {
-        "portrait": "/assets/dufu/npcs/LinFu_Li.png",
+        "portrait": "/assets/dufu/npcs/LinFu_Li.webp",
         "name": "李林甫"
       },
       "questions": [
@@ -279,7 +279,7 @@
     {
       "id": "results",
       "type": "transition",
-      "background": "/assets/dufu/events/747_exam/backgrounds/result_release.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/result_release.webp",
       "title": "揭榜",
       "transitionText": "一个月后……",
       "narrative": "",
@@ -288,7 +288,7 @@
     {
       "id": "investigate",
       "type": "explore",
-      "background": "/assets/dufu/events/747_exam/backgrounds/result_release.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/result_release.webp",
       "title": "长安市",
       "narrative": "杜甫决定在长安城中打听消息，弄清楚这次科举的真相。",
       "instruction": "和市民交谈，收集线索，弄清科举的真相。",
@@ -296,7 +296,7 @@
         {
           "id": "failed_student",
           "name": "落榜书生",
-          "portrait": "/assets/dufu/npcs/student.png",
+          "portrait": "/assets/dufu/npcs/student.webp",
           "position": {
             "x": 16,
             "y": 79
@@ -314,7 +314,7 @@
         {
           "id": "merchant_info",
           "name": "商贩甲",
-          "portrait": "/assets/dufu/npcs/merchant_a.png",
+          "portrait": "/assets/dufu/npcs/merchant_a.webp",
           "position": {
             "x": 56,
             "y": 80
@@ -332,7 +332,7 @@
         {
           "id": "innkeeper",
           "name": "旅店伙计",
-          "portrait": "/assets/dufu/npcs/innkeeper.png",
+          "portrait": "/assets/dufu/npcs/innkeeper.webp",
           "position": {
             "x": 39,
             "y": 76
@@ -416,7 +416,7 @@
         {
           "id": "official",
           "name": "落榜书生乙",
-          "portrait": "/assets/dufu/npcs/official.png",
+          "portrait": "/assets/dufu/npcs/official.webp",
           "position": {
             "x": 46,
             "y": 61
@@ -432,7 +432,7 @@
         {
           "id": "local_boy",
           "name": "local_boy",
-          "portrait": "/assets/dufu/npcs/local_boy.png",
+          "portrait": "/assets/dufu/npcs/local_boy.webp",
           "position": {
             "x": 71,
             "y": 90
@@ -449,7 +449,7 @@
         {
           "id": "officer_night",
           "name": "officer_night",
-          "portrait": "/assets/dufu/npcs/officer_night.png",
+          "portrait": "/assets/dufu/npcs/officer_night.webp",
           "position": {
             "x": 98,
             "y": 73
@@ -466,7 +466,7 @@
         {
           "id": "libai",
           "name": "libai",
-          "portrait": "/assets/dufu/npcs/libai.png",
+          "portrait": "/assets/dufu/npcs/libai.webp",
           "position": {
             "x": 82,
             "y": 79
@@ -487,7 +487,7 @@
     {
       "id": "choice",
       "type": "forced_choice",
-      "background": "/assets/dufu/events/747_exam/backgrounds/changan_street.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/changan_street.webp",
       "title": "得出结论",
       "narrative": "杜甫陈思良久，综合所有线索，对这次科举的结果有了自己的判断……",
       "question": "你认为这次科举落第的真正原因是什么？",
@@ -509,7 +509,7 @@
           "response": {
             "speaker": "dufu",
             "speakerName": "杜甫",
-            "portrait": "/assets/dufu/hero/portrait.png",
+            "portrait": "/assets/dufu/hero/portrait.webp",
             "text": "整场科考，平民百姓无一人及第！\n这显然不对。\n种种迹象表明，这是李林甫刻意搞出的「野无遗贤」的把戏。\n只有这样，他才能阻塞忠言，蒙蔽圣听。\n只是可惜，我无能为力。"
           }
         }

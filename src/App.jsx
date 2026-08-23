@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback, lazy, Suspense } from "react";
 import CharacterSelect from "./components/CharacterSelect";
 import GameMap from "./components/GameMap";
 import Timeline from "./components/Timeline";
@@ -6,8 +6,6 @@ import ScoreBar from "./components/ScoreBar";
 import EventPanel from "./components/EventPanel";
 import QuizPanel from "./components/QuizPanel";
 import ScenePlayer from "./components/ScenePlayer";
-import SceneEditor from "./components/SceneEditor";
-import TimelineEditor from "./components/TimelineEditor";
 import CharacterRecap from "./components/CharacterRecap";
 import AuthPanel from "./components/AuthPanel";
 import Leaderboard from "./components/Leaderboard";
@@ -16,6 +14,12 @@ import { asset } from "./utils/asset";
 import { CHARACTERS, ACHIEVEMENT_TITLES, COMPLETION_LINES } from "./data/characters";
 import { FONT, COLOR, TRACKING, SHADOW, BUTTON, paperBtn, halo, scrim } from "./styles/theme";
 import { nb } from "./utils/cjkText";
+
+// 编辑器只在本地 dev 存在（保存走 vite 中间件）。生产构建里彻底排除：
+// SceneEditor 的素材自动发现 glob 会把 /public/assets 的全部图片重复打包进 dist。
+const EditorShell = import.meta.env.DEV
+  ? lazy(() => import("./components/EditorShell"))
+  : null;
 
 // Achievements persist across sessions.
 const ACH_KEY = "lishiyou_achievements";
@@ -335,7 +339,18 @@ export default function App() {
 
   // Editor mode via ?editor=true (entry: timeline editor; drill into scene editor per event)
   if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("editor") === "true") {
-    return <EditorShell />;
+    if (!EditorShell) {
+      return (
+        <div style={styles.placeholderScreen}>
+          <p>{"编辑器仅在本地开发模式（npm run dev）下可用。"}</p>
+        </div>
+      );
+    }
+    return (
+      <Suspense fallback={null}>
+        <EditorShell />
+      </Suspense>
+    );
   }
 
   if (screen === "select") {
@@ -660,32 +675,6 @@ if (typeof document !== "undefined" && !document.getElementById("rotate-hint-key
     }
   `;
   document.head.appendChild(style);
-}
-
-/**
- * EditorShell — entry point for ?editor=true.
- * Starts on the timeline editor; lets the user drill into per-event scene editor.
- * 当前故事线（dufu / dante / …）在这里管理，两个编辑器共用，保存时随请求下发。
- */
-function EditorShell() {
-  const [editorLine, setEditorLine] = useState("dufu");
-  const [editingEventId, setEditingEventId] = useState(null);
-  if (editingEventId) {
-    return (
-      <SceneEditor
-        initialEventId={editingEventId}
-        initialLine={editorLine}
-        onExit={() => setEditingEventId(null)}
-      />
-    );
-  }
-  return (
-    <TimelineEditor
-      line={editorLine}
-      onLineChange={setEditorLine}
-      onEditEvent={setEditingEventId}
-    />
-  );
 }
 
 const styles = {

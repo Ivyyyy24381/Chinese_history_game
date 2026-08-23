@@ -7,13 +7,13 @@
     {
       "id": "lectern_intro",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "讲坛引子",
       "transitionText": "讲坛上，薄伽丘展开三封信的抄件。",
       "announcement": {
-        "title": "讲坛",
         "text": "薄伽丘：「一生最后一次政治豪赌。他把全部的赌注——包括回家的可能——都押在一个德意志人身上。诸位看他怎么下注。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "讲坛"
       },
       "narrative": "",
       "nextPhase": "letters"
@@ -21,7 +21,7 @@
     {
       "id": "letters",
       "type": "explore",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.webp",
       "title": "书房 · 三封公开信",
       "narrative": "亨利七世率军翻过阿尔卑斯山。流亡者的书案上，三封公开信陆续写就，摊在案上。",
       "instruction": "读完三封信，再听听抄写员怎么说。",
@@ -30,10 +30,10 @@
         {
           "id": "epistola_1",
           "name": "信一 · 致意大利诸侯",
-          "portrait": "/assets/dante/props/epistole_letters.png",
+          "portrait": "",
           "position": {
-            "x": 28,
-            "y": 56
+            "x": 32,
+            "y": 62
           },
           "scale": 0.7,
           "isClue": true,
@@ -50,8 +50,8 @@
           "name": "信二 · 致佛罗伦萨",
           "portrait": "",
           "position": {
-            "x": 48,
-            "y": 62
+            "x": 12,
+            "y": 63
           },
           "isClue": true,
           "dialogues": [
@@ -72,9 +72,10 @@
           "name": "信三 · 致亨利",
           "portrait": "",
           "position": {
-            "x": 66,
-            "y": 56
+            "x": 51,
+            "y": 76
           },
+          "scale": 1.3,
           "isClue": true,
           "dialogues": [
             {
@@ -87,12 +88,12 @@
         {
           "id": "scribe",
           "name": "抄写员",
-          "portrait": "/assets/dante/npcs/scribe.png",
+          "portrait": "/assets/dante/npcs/scribe.webp",
           "position": {
-            "x": 84,
-            "y": 68
+            "x": 11,
+            "y": 89
           },
-          "scale": 1.25,
+          "scale": 3,
           "flip": true,
           "isClue": true,
           "dialogues": [
@@ -109,13 +110,13 @@
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "send_choice"
     },
     {
       "id": "send_choice",
       "type": "forced_choice",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.webp",
       "title": "寄，还是不寄？",
       "narrative": "抄写员捧着信，等最后一句话。",
       "question": "这三封信，寄吗？",
@@ -150,7 +151,7 @@
     {
       "id": "march",
       "type": "map_travel",
-      "background": "/assets/dante/maps/route_1313_enrico.png",
+      "background": "/assets/dante/maps/route_1313_enrico.webp",
       "title": "皇帝的南征 · 1310–1313",
       "travelNarrative": "亨利七世翻越阿尔卑斯山南下。情绪从沸点，一站一站冷下去。",
       "instruction": "沿鹰旗的路线，点击每一站。",
@@ -226,21 +227,22 @@
           ]
         }
       ],
-      "nextPhase": "dream_end"
+      "nextPhase": "dream_end",
+      "narrative": ""
     },
     {
       "id": "dream_end",
       "type": "transition",
-      "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.png",
+      "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.webp",
       "title": "梦碎",
       "transitionText": "灵帐前，鹰旗倒卷。\n亨利死后，但丁再未对现世政治抱任何希望。\n他把皇帝写进了《天堂》。",
       "announcement": {
-        "title": "天堂 · 第三十歌",
         "text": "「在至高玫瑰的座席之中，有一把空椅，上面放着一顶王冠——等着高贵的亨利，他来匡正意大利，可惜意大利尚未准备好。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "天堂 · 第三十歌"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/exile/bitter.png",
+        "portrait": "/assets/dante/hero/exile/cloak.webp",
         "text": "人间容不下的，天堂给他留了座。"
       },
       "narrative": "",
@@ -249,12 +251,12 @@
     {
       "id": "monarchia_exam",
       "type": "exam",
-      "background": "/assets/dante/events/1313_impero/backgrounds/milano_incoronazione.png",
+      "background": "/assets/dante/events/1313_impero/backgrounds/milano_incoronazione.webp",
       "title": "《帝制论》问答",
       "narrative": "数年后，一位博洛尼亚学者慕名来访，就先生的《帝制论》与那场南征逐条求教。",
       "examiner": {
         "name": "博洛尼亚学者",
-        "portrait": "/assets/dante/events/1313_impero/npcs/bologna_scholar.png"
+        "portrait": "/assets/dante/events/1313_impero/npcs/bologna_scholar.webp"
       },
       "questions": [
         {
@@ -323,7 +325,7 @@
     {
       "id": "echo",
       "type": "transition",
-      "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.png",
+      "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.webp",
       "title": "后世回声",
       "transitionText": "讲坛上，薄伽丘停了很久。",
       "announcement": {

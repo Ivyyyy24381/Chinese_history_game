@@ -1874,7 +1874,7 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
                   style={styles.fieldInput}
                   value={clickPointImage}
                   onChange={(e) => setClickPointImage(e.target.value)}
-                  placeholder={"/assets/events/.../scene.png"}
+                  placeholder={"/assets/events/.../scene.webp"}
                 />
               </div>
               <div style={styles.fieldGroup}>

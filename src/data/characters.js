@@ -11,7 +11,7 @@
 //   background  主页背景（选中/悬停时淡入）
 //   portrait    主页立绘 —— 已含该文明的窗框，窗内镂空透明，背景会透出来
 //   name        名字书法/花体图；nameHeight 控制显示高度（各语种字形比例差别大）
-//   heroPortrait 游戏内主角头像（沿用各故事线的 hero/portrait.png）
+//   heroPortrait 游戏内主角头像（沿用各故事线的 hero/portrait.webp）
 //   completionLine 走完一生后的结语
 //   scrimBoost  背景减淡系数 0–1：画面越密越需要（不填=0），保证标题/文字读得清
 //   locked      true = 显示 🔒，不可进入
@@ -35,13 +35,13 @@ export const CHARACTERS = [
     description: "以诗为史，走过盛唐的绚烂与崩塌",
     achievementTitle: "诗圣之路",
     completionLine: "从裘马轻狂的少年，到湘江舟中的诗圣。",
-    heroPortrait: "/assets/dufu/hero/portrait.png",
+    heroPortrait: "/assets/dufu/hero/portrait.webp",
     avatar: "🖊",
     color: "#4A90A4",
-    background: "/assets/home/hp_background_dufu.jpg",
+    background: "/assets/home/hp_background_dufu.webp",
     scrimBoost: 0,
-    portrait: "/assets/home/hp_portrait_dufu.png",
-    name_img: "/assets/home/hp_name_dufu.png",
+    portrait: "/assets/home/hp_portrait_dufu.webp",
+    name_img: "/assets/home/hp_name_dufu.webp",
     nameHeight: 44,
     locked: false,
     // 青绿山水舆图：墨线 + 朱砂圈点
@@ -64,13 +64,13 @@ export const CHARACTERS = [
     description: "《神曲》作者，欧洲文艺复兴的先声，「意大利语之父」",
     achievementTitle: "Divina Commedia",
     completionLine: "从佛罗伦萨的婴儿，到拉文纳的桂冠诗人——是爱，推动太阳与群星。",
-    heroPortrait: "/assets/dante/hero/portrait.png",
+    heroPortrait: "/assets/dante/hero/portrait.webp",
     avatar: "📕",
     color: "#A63A2E",
-    background: "/assets/home/hp_background_dante.jpg",
+    background: "/assets/home/hp_background_dante.webp",
     scrimBoost: 0.08,
-    portrait: "/assets/home/hp_portrait_dante.png",
-    name_img: "/assets/home/hp_name_dante.png",
+    portrait: "/assets/home/hp_portrait_dante.webp",
+    name_img: "/assets/home/hp_name_dante.webp",
     nameHeight: 26,
     locked: false,
     // 15 世纪泥金手抄本世界地图：深棕墨线 + 红顶城塔；画面密，底图略减淡
@@ -96,10 +96,10 @@ export const CHARACTERS = [
     heroPortrait: null,
     avatar: "🌀",
     color: "#2F6F6B",
-    background: "/assets/home/hp_background_rumi.jpg",
+    background: "/assets/home/hp_background_rumi.webp",
     scrimBoost: 0.3,
-    portrait: "/assets/home/hp_portrait_rumi.png",
-    name_img: "/assets/home/hp_name_rumi.png",
+    portrait: "/assets/home/hp_portrait_rumi.webp",
+    name_img: "/assets/home/hp_name_rumi.webp",
     nameHeight: 34,
     locked: true,
     // 波斯细密画（占位，待鲁米线地图落地再调）：青金墨线 + 赭金印记
@@ -114,7 +114,7 @@ export const CHARACTERS = [
 ];
 
 // 主页标题（篆书「歷史長河」）
-export const TITLE_IMG = "/assets/home/hp_title.png";
+export const TITLE_IMG = "/assets/home/hp_title.webp";
 
 export const ACHIEVEMENT_TITLES = Object.fromEntries(
   CHARACTERS.map((c) => [c.id, c.achievementTitle])

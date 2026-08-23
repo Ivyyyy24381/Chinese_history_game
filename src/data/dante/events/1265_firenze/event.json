@@ -7,7 +7,7 @@
     {
       "id": "lectern_intro",
       "type": "explore",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "1373 · 后世讲坛",
       "narrative": "1373 年，佛罗伦萨，圣斯特凡诺教堂。史上第一个「但丁讲席」开讲——主讲人：乔万尼·薄伽丘。",
       "instruction": "点击讲坛上的薄伽丘，听他开讲。",
@@ -15,7 +15,7 @@
         {
           "id": "boccaccio",
           "name": "薄伽丘",
-          "portrait": "/assets/dante/npcs/boccaccio.png",
+          "portrait": "/assets/dante/npcs/boccaccio.webp",
           "position": {
             "x": 67,
             "y": 85
@@ -46,7 +46,7 @@
     {
       "id": "battistero",
       "type": "explore",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/firenze_battistero.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/firenze_battistero.webp",
       "title": "圣乔万尼洗礼堂前",
       "narrative": "1265 年 5 月，佛罗伦萨。阿利吉耶里家添丁，取名杜兰特，小名——但丁。",
       "instruction": "在洗礼堂前的市集走动，听听这座城的人都在说什么。",
@@ -54,7 +54,7 @@
         {
           "id": "vendor_florence",
           "name": "商贩",
-          "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.png",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.webp",
           "position": {
             "x": 33,
             "y": 83
@@ -76,7 +76,7 @@
         {
           "id": "veteran_montaperti",
           "name": "老兵",
-          "portrait": "/assets/dante/events/1265_firenze/npcs/veteran_montaperti.png",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/veteran_montaperti.webp",
           "position": {
             "x": 59,
             "y": 83
@@ -104,7 +104,7 @@
         {
           "id": "neighbor_woman",
           "name": "邻妇",
-          "portrait": "/assets/dante/events/1265_firenze/npcs/neighbor_woman.png",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/neighbor_woman.webp",
           "position": {
             "x": 91,
             "y": 92
@@ -127,7 +127,7 @@
         {
           "id": "priest_baptistery",
           "name": "教士",
-          "portrait": "/assets/dante/events/1265_firenze/npcs/priest_baptistery.png",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/priest_baptistery.webp",
           "position": {
             "x": 42,
             "y": 82
@@ -170,8 +170,8 @@
     {
       "id": "cacciaguida",
       "type": "comic_reveal",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.png",
-      "image": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.webp",
+      "image": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.webp",
       "title": "卡恰圭达的佛罗伦萨",
       "narrative": "讲坛上，薄伽丘翻开《天堂》第十五歌——但丁的高祖、十字军烈士卡恰圭达，追忆古老纯朴的佛罗伦萨。",
       "instruction": "点击画面，一格一格看下去。",
@@ -257,7 +257,7 @@
     {
       "id": "study",
       "type": "explore",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/casa_alighieri.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/casa_alighieri.webp",
       "title": "少年书房 · 1274",
       "narrative": "九年过去。阿利吉耶里家的少年在羊皮纸和抄本之间长大。母亲早逝，父亲做着放贷的小生意。",
       "instruction": "点击书房里的物件与家人。",
@@ -288,7 +288,7 @@
         {
           "id": "spindle_wool",
           "name": "亡母的纺锤",
-          "portrait": "/assets/dante/props/spindle_wool.png",
+          "portrait": "/assets/dante/props/spindle_wool.webp",
           "position": {
             "x": 12,
             "y": 62
@@ -311,7 +311,7 @@
         {
           "id": "father_alighieri",
           "name": "父亲",
-          "portrait": "/assets/dante/events/1265_firenze/npcs/father_alighieri.png",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/father_alighieri.webp",
           "position": {
             "x": 97,
             "y": 68
@@ -338,7 +338,7 @@
     {
       "id": "echo",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "后世回声",
       "transitionText": "九岁那年五月，他在宴席上看见一个穿绯红衣裙的女孩。\n他后来写道：\n「看哪，一个比我更强的神，来主宰我了。」",
       "announcement": {

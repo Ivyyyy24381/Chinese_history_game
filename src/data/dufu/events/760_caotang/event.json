@@ -7,7 +7,7 @@
     {
       "id": "huanhuaxi",
       "type": "explore",
-      "background": "/assets/dufu/events/760_caotang/backgrounds/huanhuaxi.png",
+      "background": "/assets/dufu/events/760_caotang/backgrounds/huanhuaxi.webp",
       "title": "浣花溪畔",
       "narrative": "乾元三年春（760）。成都西郊浣花溪畔。",
       "instruction": "在溪边走一走，决定把草堂建在哪里。",
@@ -69,7 +69,7 @@
         {
           "id": "yanwu",
           "name": "严武",
-          "portrait": "/assets/dufu/npcs/yanwu.png",
+          "portrait": "/assets/dufu/npcs/yanwu.webp",
           "position": {
             "x": 74,
             "y": 57
@@ -101,7 +101,7 @@
     {
       "id": "build",
       "type": "explore",
-      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_building.png",
+      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_building.webp",
       "title": "起屋",
       "narrative": "春末，草堂初成。",
       "instruction": "依次点击四个建筑要素，把家安顿下来。",
@@ -191,7 +191,7 @@
     {
       "id": "daily_life",
       "type": "explore",
-      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_yard.png",
+      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_yard.webp",
       "title": "草堂的客人",
       "narrative": "草堂落成，故人陆续到访。",
       "instruction": "和两位客人聊聊。",
@@ -199,7 +199,7 @@
         {
           "id": "yanwu_visit",
           "name": "严武再访",
-          "portrait": "/assets/dufu/npcs/yanwu.png",
+          "portrait": "/assets/dufu/npcs/yanwu.webp",
           "position": {
             "x": 16,
             "y": 75
@@ -221,7 +221,7 @@
         {
           "id": "gaoshi_visit",
           "name": "高适",
-          "portrait": "/assets/dufu/npcs/gaoshi.png",
+          "portrait": "/assets/dufu/npcs/gaoshi.webp",
           "position": {
             "x": 69,
             "y": 68
@@ -249,7 +249,7 @@
         {
           "id": "farmer",
           "name": "邻翁",
-          "portrait": "/assets/dufu/npcs/farmer.png",
+          "portrait": "/assets/dufu/npcs/farmer.webp",
           "position": {
             "x": 91,
             "y": 74
@@ -272,7 +272,7 @@
         {
           "id": "boy",
           "name": "邻家小儿",
-          "portrait": "/assets/dufu/npcs/boy.png",
+          "portrait": "/assets/dufu/npcs/boy.webp",
           "position": {
             "x": 46,
             "y": 68
@@ -298,7 +298,7 @@
     {
       "id": "storm",
       "type": "transition",
-      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_storm.png",
+      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_storm.webp",
       "title": "秋风",
       "transitionText": "八月秋高风怒号，\n卷我屋上三重茅。\n茅飞渡江洒江郊，\n高者挂罥长林梢。",
       "announcement": {
@@ -306,7 +306,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dufu/hero/drift/walking.png",
+        "portrait": "/assets/dufu/hero/drift/walking.webp",
         "text": "归来倚杖自叹息。"
       },
       "nextPhase": "maowu_compose",
@@ -315,7 +315,7 @@
     {
       "id": "maowu_compose",
       "type": "poem_compose",
-      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_rain.png",
+      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_rain.webp",
       "title": "《茅屋为秋风所破歌》末段",
       "poemContext": "冷雨入床。布衾多年冷似铁。心中却升起一个念头——把候选词填到正确的位置。",
       "puzzle": "安得___，大庇天下___！\n风雨___！\n呜呼！何时眼前突兀见此屋，吾庐___！",
@@ -338,11 +338,11 @@
     {
       "id": "leave_caotang",
       "type": "transition",
-      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_empty.png",
+      "background": "/assets/dufu/events/760_caotang/backgrounds/caotang_empty.webp",
       "title": "离开草堂",
       "transitionText": "广德二年（764），严武再镇蜀，杜甫一度任工部员外郎。\n永泰元年（765）严武病逝。\n杜甫失去依靠，乘船东下。",
       "dufu_reaction": {
-        "portrait": "/assets/dufu/hero/portrait.png",
+        "portrait": "/assets/dufu/hero/portrait.webp",
         "text": "这一住，已是五年。"
       }
     }

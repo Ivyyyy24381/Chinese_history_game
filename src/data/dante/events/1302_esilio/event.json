@@ -7,7 +7,7 @@
     {
       "id": "papal_hall",
       "type": "explore",
-      "background": "/assets/dante/events/1302_esilio/backgrounds/papal_hall.png",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/papal_hall.webp",
       "title": "罗马 · 教皇接见厅 · 1301 秋",
       "narrative": "黑党要借法兰西王弟瓦卢瓦的查理「调停」佛罗伦萨。城里派出三名使节赴罗马向教皇陈情——但丁是其中之一。",
       "instruction": "在接见厅里听清楚：留下的是谁，放走的是谁。",
@@ -16,12 +16,12 @@
         {
           "id": "boniface",
           "name": "卜尼法斯八世",
-          "portrait": "/assets/dante/npcs/boniface.png",
+          "portrait": "/assets/dante/npcs/boniface.webp",
           "position": {
-            "x": 48,
-            "y": 60
+            "x": 51,
+            "y": 64
           },
-          "scale": 1.6,
+          "scale": 2.3,
           "isClue": true,
           "dialogues": [
             {
@@ -39,12 +39,12 @@
         {
           "id": "papal_attendant",
           "name": "侍从",
-          "portrait": "/assets/dante/events/1302_esilio/npcs/papal_attendant.png",
+          "portrait": "/assets/dante/events/1302_esilio/npcs/papal_attendant.webp",
           "position": {
-            "x": 74,
-            "y": 68
+            "x": 9,
+            "y": 72
           },
-          "scale": 1.2,
+          "scale": 2.3,
           "flip": true,
           "isClue": true,
           "dialogues": [
@@ -65,8 +65,8 @@
           "name": "但丁的心事",
           "portrait": "",
           "position": {
-            "x": 24,
-            "y": 52
+            "x": 79,
+            "y": 71
           },
           "isClue": true,
           "dialogues": [
@@ -89,7 +89,7 @@
     {
       "id": "ritorno",
       "type": "map_travel",
-      "background": "/assets/dante/maps/route_1302_ritorno.png",
+      "background": "/assets/dante/maps/route_1302_ritorno.webp",
       "title": "归途 · 一路坏消息",
       "travelNarrative": "教皇终于放行。归途上，消息一站比一站坏。",
       "instruction": "沿路点击每一站。",
@@ -146,7 +146,7 @@
     {
       "id": "inn_investigate",
       "type": "explore",
-      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.png",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.webp",
       "title": "城外驿站 · 雪夜查案",
       "narrative": "佛罗伦萨城外的驿站。雪夜。判决书的抄件在白党难民手里传阅。到底发生了什么——把线索拼起来。",
       "instruction": "收集全部 5 条线索，弄清这场审判的真相。",
@@ -155,10 +155,10 @@
         {
           "id": "sentenza_scroll",
           "name": "判决书抄件",
-          "portrait": "/assets/dante/props/sentenza_scroll.png",
+          "portrait": "/assets/dante/props/sentenza_scroll.webp",
           "position": {
-            "x": 38,
-            "y": 56
+            "x": 0,
+            "y": 54
           },
           "scale": 0.7,
           "isClue": true,
@@ -178,12 +178,12 @@
         {
           "id": "white_refugee",
           "name": "白党难民",
-          "portrait": "/assets/dante/events/1302_esilio/npcs/white_refugee.png",
+          "portrait": "/assets/dante/events/1302_esilio/npcs/white_refugee.webp",
           "position": {
-            "x": 18,
-            "y": 70
+            "x": 16,
+            "y": 77
           },
-          "scale": 1.25,
+          "scale": 1.7,
           "isClue": true,
           "dialogues": [
             {
@@ -203,8 +203,8 @@
           "name": "第二道判决",
           "portrait": "",
           "position": {
-            "x": 57,
-            "y": 44
+            "x": 9,
+            "y": 55
           },
           "isClue": true,
           "dialogues": [
@@ -223,12 +223,12 @@
         {
           "id": "courier",
           "name": "信使",
-          "portrait": "/assets/dante/npcs/friar_messenger.png",
+          "portrait": "/assets/dante/npcs/friar_messenger.webp",
           "position": {
-            "x": 80,
-            "y": 68
+            "x": 64,
+            "y": 78
           },
-          "scale": 1.25,
+          "scale": 2.3,
           "flip": true,
           "isClue": true,
           "dialogues": [
@@ -249,8 +249,8 @@
           "name": "同案名单",
           "portrait": "",
           "position": {
-            "x": 66,
-            "y": 74
+            "x": 58,
+            "y": 77
           },
           "isClue": true,
           "dialogues": [
@@ -262,13 +262,13 @@
           ]
         }
       ],
-      "requiredTalks": 5,
+      "requiredTalks": 3,
       "nextPhase": "conclusion_choice"
     },
     {
       "id": "conclusion_choice",
       "type": "forced_choice",
-      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.png",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.webp",
       "title": "得出结论",
       "narrative": "炉火将熄。把所有线索放在一起——这场审判的实质是什么？",
       "question": "这场审判的实质是什么？",
@@ -303,7 +303,7 @@
     {
       "id": "prophecy",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "卡恰圭达的预言",
       "transitionText": "讲坛上，薄伽丘翻到《天堂》第十七歌——写作时间的倒装：流亡多年的但丁，让 1300 年的先祖「预言」这一切。",
       "announcement": {
@@ -312,7 +312,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/exile/cloak.png",
+        "portrait": "/assets/dante/hero/exile/cloak.webp",
         "text": "别人的面包，有多咸。\n——我将用余生，亲口尝到。"
       },
       "narrative": ""

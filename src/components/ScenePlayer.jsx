@@ -8,17 +8,17 @@ import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
 
 // ---- Portrait resolution -----------------------------------------------------
-// Convention: shared NPC PNGs live at /assets/<line>/npcs/<speaker_id>.png.
+// Convention: shared NPC PNGs live at /assets/<line>/npcs/<speaker_id>.webp.
 // No hardcoded map needed — just derive the path from the speaker id.
 function npcPortraitPath(speakerId, eventId) {
   const line = parseInt(eventId, 10) < 1000 ? "dufu" : "dante";
-  return `/assets/${line}/npcs/${speakerId}.png`;
+  return `/assets/${line}/npcs/${speakerId}.webp`;
 }
 
 // Hero portrait resolution lives in src/data/<charId>Poses.js (shared with the
 // editor). Priority: line dufu_pose > phase dufu_pose > event dufu_pose >
 // stage default derived from the event year. (键名 dufu_pose/dufu_reaction 为
-// 引擎历史键名，各故事线沿用。) The legacy hero portrait.png is remapped to the
+// 引擎历史键名，各故事线沿用。) The legacy hero portrait.webp is remapped to the
 // stage default.
 const HERO_SPEAKERS = new Set(["dufu", "dante", "self"]);
 function heroPortraitPath(pose, year, eventId) {
@@ -280,7 +280,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           ) : !showConclusion && hasAnnouncement ? (
             <div style={styles.scrollContainer} onClick={() => hasReaction ? setShowConclusion(true) : goToNextPhase()}>
               {/* Self-contained parchment card \u2014 no image dependency (the old
-                  scroll.png path was a 404, which collapsed the layout). */}
+                  scroll.webp path was a 404, which collapsed the layout). */}
               <div
                 style={{
                   ...styles.scrollWrap,
@@ -1751,7 +1751,7 @@ const cpStyles = {
 // }
 function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) {
   const startRef = useRef(Date.now());
-  // The legacy hero portrait.png is remapped to the stage default.
+  // The legacy hero portrait.webp is remapped to the stage default.
   const playerPortrait =
     phase.playerPortrait && !isLegacyHeroPortrait(phase.playerPortrait)
       ? phase.playerPortrait

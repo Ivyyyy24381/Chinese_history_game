@@ -1,5 +1,5 @@
 // Du Fu portrait poses, organized by life stage.
-// Files live at /assets/characters/dufu/<stage>/<pose>.png
+// Files live at /assets/characters/dufu/<stage>/<pose>.webp
 // Resolution priority (in ScenePlayer):
 //   dialogue line dufu_pose > phase dufu_pose > event dufu_pose > stage default by event year
 
@@ -22,7 +22,7 @@ export const DUFU_POSES = [
 
 // The old all-purpose default. The file on disk is nearly blank, so the engine
 // treats any reference to it as "unset" and resolves a stage default instead.
-export const DUFU_LEGACY_PORTRAIT = "/assets/dufu/hero/portrait.png";
+export const DUFU_LEGACY_PORTRAIT = "/assets/dufu/hero/portrait.webp";
 
 const STAGE_DEFAULT_POSE = {
   youth: "youth/standing",
@@ -50,5 +50,5 @@ export function dufuPortraitPath(pose, year) {
     const stage = dufuStageForYear(year) || "scholar";
     pose = STAGE_DEFAULT_POSE[stage];
   }
-  return `/assets/dufu/hero/${pose}.png`;
+  return `/assets/dufu/hero/${pose}.webp`;
 }

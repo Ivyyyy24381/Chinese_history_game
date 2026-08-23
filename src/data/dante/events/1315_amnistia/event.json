@@ -7,7 +7,7 @@
     {
       "id": "morning",
       "type": "explore",
-      "background": "/assets/dante/events/1315_amnistia/backgrounds/lodging_courtyard.png",
+      "background": "/assets/dante/events/1315_amnistia/backgrounds/lodging_courtyard.webp",
       "title": "客居的清晨",
       "narrative": "流亡第十三年。佛罗伦萨颁布大赦令——一封信送到了客居的小院。快五十岁的但丁，想家想了十三年。",
       "instruction": "读完大赦令的条款，再听听身边人的话。",
@@ -16,7 +16,7 @@
         {
           "id": "friar_messenger",
           "name": "送信修士",
-          "portrait": "/assets/dante/npcs/friar_messenger.png",
+          "portrait": "/assets/dante/npcs/friar_messenger.webp",
           "position": {
             "x": 26,
             "y": 68
@@ -44,7 +44,7 @@
         {
           "id": "amnistia_scroll",
           "name": "大赦令",
-          "portrait": "/assets/dante/props/amnistia_scroll.png",
+          "portrait": "/assets/dante/props/amnistia_scroll.webp",
           "position": {
             "x": 50,
             "y": 56
@@ -67,7 +67,7 @@
         {
           "id": "landlady_girl",
           "name": "房东女儿",
-          "portrait": "/assets/dante/events/1315_amnistia/npcs/landlady_girl.png",
+          "portrait": "/assets/dante/events/1315_amnistia/npcs/landlady_girl.webp",
           "position": {
             "x": 70,
             "y": 70
@@ -89,7 +89,7 @@
         {
           "id": "pietro_adult",
           "name": "儿子彼得罗",
-          "portrait": "/assets/dante/npcs/pietro_adult.png",
+          "portrait": "/assets/dante/npcs/pietro_adult.webp",
           "position": {
             "x": 86,
             "y": 68
@@ -117,7 +117,7 @@
     {
       "id": "reply",
       "type": "forced_choice",
-      "background": "/assets/dante/events/1315_amnistia/backgrounds/lodging_courtyard.png",
+      "background": "/assets/dante/events/1315_amnistia/backgrounds/lodging_courtyard.webp",
       "title": "回信",
       "narrative": "笔和纸摆在院中的石桌上。修士在等，儿子也在等。",
       "question": "怎么回复佛罗伦萨？",
@@ -152,7 +152,7 @@
     {
       "id": "price",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "代价 · 后世回声",
       "transitionText": "数月后，佛罗伦萨改判：\n但丁及诸子，斩首。\n（此前为火刑。）",
       "announcement": {
@@ -161,7 +161,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/exile/refusing.png",
+        "portrait": "/assets/dante/hero/exile/refusing.webp",
         "text": "「若这圣诗能战胜将我拒于羊栏之外的残忍——\n我将以另一种嗓音、另一身羊毛归来，\n在我受洗的池边，接受桂冠。」（《天堂》XXV）"
       },
       "narrative": ""

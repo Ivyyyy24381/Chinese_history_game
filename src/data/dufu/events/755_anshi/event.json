@@ -7,7 +7,7 @@
     {
       "id": "ru_shi_home",
       "type": "explore",
-      "background": "/assets/dufu/events/751_lifu/backgrounds/dufu_home.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/dufu_home.webp",
       "title": "入仕 · 杜甫家中",
       "narrative": "天宝十四载（755）十月。长安。困守长安十年，杜甫终于等到了任命。",
       "instruction": "查看桌案上的委任状。",
@@ -45,7 +45,7 @@
         {
           "id": "kneeling",
           "name": "kneeling",
-          "portrait": "/assets/dufu/hero/official/kneeling.png",
+          "portrait": "/assets/dufu/hero/official/kneeling.webp",
           "position": {
             "x": 64,
             "y": 71
@@ -66,7 +66,7 @@
     {
       "id": "ru_shi_choice",
       "type": "forced_choice",
-      "background": "/assets/dufu/events/751_lifu/backgrounds/dufu_home.png",
+      "background": "/assets/dufu/events/751_lifu/backgrounds/dufu_home.webp",
       "title": "入仕 · 该如何回应",
       "narrative": "杜甫提笔欲奏。但该说什么呢？",
       "question": "杜甫该如何拒绝这份任命？",
@@ -109,7 +109,7 @@
     {
       "id": "ru_shi_court",
       "type": "transition",
-      "background": "/assets/dufu/events/747_exam/backgrounds/palace_outside.png",
+      "background": "/assets/dufu/events/747_exam/backgrounds/palace_outside.webp",
       "title": "入仕 · 朝堂",
       "transitionText": "数日后，尚书省。一封婉拒的奏疏摆在案头。",
       "announcement": {
@@ -118,7 +118,7 @@
         "title": "诏"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dufu/hero/scholar/standing.png",
+        "portrait": "/assets/dufu/hero/scholar/standing.webp",
         "text": "看管兵器……也好。总比河西尉强。"
       },
       "narrative": ""
@@ -126,7 +126,7 @@
     {
       "id": "fanyang_rumor",
       "type": "explore",
-      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_winter.png",
+      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_winter.webp",
       "title": "长安·烽烟传来",
       "narrative": "天宝十四载（755）十一月，长安。一封塘报从北方驿道飞驰而来。",
       "instruction": "点击周围的人物，听听他们怎么说『安禄山反了』。",
@@ -134,7 +134,7 @@
         {
           "id": "messenger",
           "name": "驿卒",
-          "portrait": "/assets/dufu/npcs/messenger.png",
+          "portrait": "/assets/dufu/npcs/messenger.webp",
           "position": {
             "x": 66,
             "y": 74
@@ -157,7 +157,7 @@
         {
           "id": "commoner_a",
           "name": "百姓甲",
-          "portrait": "/assets/dufu/npcs/merchant_a.png",
+          "portrait": "/assets/dufu/npcs/merchant_a.webp",
           "position": {
             "x": 22,
             "y": 80
@@ -179,7 +179,7 @@
         {
           "id": "commoner_b",
           "name": "百姓乙",
-          "portrait": "/assets/dufu/npcs/merchant_b.png",
+          "portrait": "/assets/dufu/npcs/merchant_b.webp",
           "position": {
             "x": 33,
             "y": 79
@@ -201,7 +201,7 @@
         {
           "id": "official",
           "name": "路过官员",
-          "portrait": "/assets/dufu/npcs/official.png",
+          "portrait": "/assets/dufu/npcs/official.webp",
           "position": {
             "x": 57,
             "y": 76
@@ -224,7 +224,7 @@
         {
           "id": "poster",
           "name": "街头告示",
-          "portrait": "/assets/shared/items/scroll_small.png",
+          "portrait": "/assets/shared/items/scroll_small.webp",
           "position": {
             "x": 79,
             "y": 63
@@ -253,7 +253,7 @@
     {
       "id": "changan_falls",
       "type": "transition",
-      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_burning.png",
+      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_burning.webp",
       "title": "长安陷落",
       "transitionText": "天宝十五载六月。\n潼关失守。\n玄宗连夜出奔蜀地。\n长安无主。",
       "announcement": {
@@ -262,7 +262,7 @@
         "title": "御诏"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dufu/hero/scholar/standing.png",
+        "portrait": "/assets/dufu/hero/scholar/standing.webp",
         "text": "我把家人安顿在鄜州，自己却走不出长安。"
       },
       "nextPhase": "besieged",
@@ -271,7 +271,7 @@
     {
       "id": "besieged",
       "type": "explore",
-      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_ruin.png",
+      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_ruin.webp",
       "title": "沦陷的长安",
       "narrative": "叛军入城。残垣，乱兵。城中再无禁卫。",
       "instruction": "在沦陷的长安城里走动，记住你看到的一切。",
@@ -279,7 +279,7 @@
         {
           "id": "refugee_woman",
           "name": "难民妇人",
-          "portrait": "/assets/dufu/npcs/refugee_woman.png",
+          "portrait": "/assets/dufu/npcs/refugee_woman.webp",
           "position": {
             "x": 33,
             "y": 67
@@ -302,7 +302,7 @@
         {
           "id": "refugee_old",
           "name": "难民老汉",
-          "portrait": "/assets/dufu/npcs/refugee_old.png",
+          "portrait": "/assets/dufu/npcs/refugee_old.webp",
           "position": {
             "x": 48,
             "y": 70
@@ -325,7 +325,7 @@
         {
           "id": "rebel_officer",
           "name": "叛军军官",
-          "portrait": "/assets/dufu/npcs/rebel_officer.png",
+          "portrait": "/assets/dufu/npcs/rebel_officer.webp",
           "position": {
             "x": 76,
             "y": 68
@@ -374,7 +374,7 @@
     {
       "id": "chunwang",
       "type": "click_points",
-      "background": "/assets/dufu/events/755_anshi/backgrounds/chunwang_scene.png",
+      "background": "/assets/dufu/events/755_anshi/backgrounds/chunwang_scene.webp",
       "title": "《春望》·画面独白",
       "narrative": "杜甫站在长安城头，远望残破宫城。",
       "instruction": "画面里藏着 7 个杜甫的心事——点击它们，听他写下心中的句子",
@@ -457,7 +457,7 @@
         "烽火连三月，家书抵万金。",
         "白头搔更短，浑欲不胜簪。"
       ],
-      "image": "/assets/dufu/events/755_anshi/backgrounds/chunwang_scene.png"
+      "image": "/assets/dufu/events/755_anshi/backgrounds/chunwang_scene.webp"
     },
     {
       "id": "escape",
@@ -477,8 +477,8 @@
       },
       "playerPortrait": "",
       "soldierPortraits": [
-        "/assets/dufu/npcs/rebel_officer.png",
-        "/assets/dufu/npcs/officer_night.png"
+        "/assets/dufu/npcs/rebel_officer.webp",
+        "/assets/dufu/npcs/officer_night.webp"
       ],
       "cells": [
         {
@@ -702,7 +702,7 @@
       ],
       "conclusion": "至德二载（757）四月，杜甫从长安城西金光门出，奔赴凤翔。",
       "chaseRadius": 2,
-      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_burning.png"
+      "background": "/assets/dufu/events/755_anshi/backgrounds/changan_burning.webp"
     }
   ]
 }

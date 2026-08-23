@@ -1,5 +1,5 @@
 // Dante portrait poses, organized by life stage.
-// Files live at /assets/dante/hero/<stage>/<pose>.png
+// Files live at /assets/dante/hero/<stage>/<pose>.webp
 // Resolution priority (in ScenePlayer):
 //   dialogue line dufu_pose > phase dufu_pose > event dufu_pose > stage default by event year
 // (键名沿用引擎现有的 dufu_pose / dufu_reaction，不改引擎。)
@@ -20,7 +20,7 @@ export const DANTE_POSES = [
 
 // The character-select portrait. Any event reference to it is treated as
 // "unset" and resolves to a stage default instead (same convention as dufu).
-export const DANTE_LEGACY_PORTRAIT = "/assets/dante/hero/portrait.png";
+export const DANTE_LEGACY_PORTRAIT = "/assets/dante/hero/portrait.webp";
 
 const STAGE_DEFAULT_POSE = {
   youth: "youth/standing",
@@ -46,5 +46,5 @@ export function dantePortraitPath(pose, year) {
     const stage = danteStageForYear(year) || "exile";
     pose = STAGE_DEFAULT_POSE[stage];
   }
-  return `/assets/dante/hero/${pose}.png`;
+  return `/assets/dante/hero/${pose}.webp`;
 }

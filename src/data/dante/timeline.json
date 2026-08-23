@@ -6,8 +6,8 @@
     "years": "1265—1321",
     "dynasty": "意大利·中世纪晚期",
     "description": "《神曲》作者，欧洲文艺复兴的先声，「意大利语之父」",
-    "portrait": "/assets/dante/hero/portrait.png",
-    "generalMap": "/assets/dante/maps/dante_general_map.png",
+    "portrait": "/assets/dante/hero/portrait.webp",
+    "generalMap": "/assets/dante/maps/dante_general_map.webp",
     "mapRatio": 1.7778
   },
   "stages": [

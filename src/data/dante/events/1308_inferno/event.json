@@ -7,13 +7,13 @@
     {
       "id": "lectern_intro",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "讲坛引子",
       "transitionText": "讲坛上，薄伽丘念《飨宴》里的一句自述。",
       "announcement": {
-        "title": "讲坛 · 《飨宴》",
         "text": "「我是一条无帆无舵的船，被干燥的贫穷之风，吹往各处的港口、河口与海岸。」——薄伽丘：「流亡第六年。接下来诸位要看的，是一个人沉到底，然后在底上动笔。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "讲坛 · 《飨宴》"
       },
       "narrative": "",
       "nextPhase": "scala_court"
@@ -21,7 +21,7 @@
     {
       "id": "scala_court",
       "type": "explore",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/verona_scala_court.png",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/verona_scala_court.webp",
       "title": "维罗纳 · 斯卡拉宫廊下",
       "narrative": "寄人篱下的日子。维罗纳，斯卡拉家的宫廷——恩主的面包，末席的座位。",
       "instruction": "在廊下走一走，看看寄食者的处境。",
@@ -30,12 +30,12 @@
         {
           "id": "steward_scala",
           "name": "管家",
-          "portrait": "/assets/dante/events/1308_inferno/npcs/steward_scala.png",
+          "portrait": "/assets/dante/events/1308_inferno/npcs/steward_scala.webp",
           "position": {
-            "x": 22,
-            "y": 68
+            "x": 24,
+            "y": 77
           },
-          "scale": 1.25,
+          "scale": 3,
           "dialogues": [
             {
               "speaker": "steward_scala",
@@ -52,12 +52,12 @@
         {
           "id": "jester_scala",
           "name": "弄臣",
-          "portrait": "/assets/dante/events/1308_inferno/npcs/jester_scala.png",
+          "portrait": "/assets/dante/events/1308_inferno/npcs/jester_scala.webp",
           "position": {
-            "x": 44,
-            "y": 72
+            "x": 47,
+            "y": 58
           },
-          "scale": 1.2,
+          "scale": 1.5,
           "isClue": true,
           "dialogues": [
             {
@@ -75,12 +75,12 @@
         {
           "id": "white_envoy",
           "name": "流亡白党使者",
-          "portrait": "/assets/dante/events/1308_inferno/npcs/white_envoy.png",
+          "portrait": "/assets/dante/events/1308_inferno/npcs/white_envoy.webp",
           "position": {
-            "x": 66,
-            "y": 70
+            "x": 74,
+            "y": 57
           },
-          "scale": 1.25,
+          "scale": 1.8,
           "flip": true,
           "isClue": true,
           "dialogues": [
@@ -99,12 +99,12 @@
         {
           "id": "cangrande_young",
           "name": "少年坎格兰德",
-          "portrait": "/assets/dante/npcs/cangrande_young.png",
+          "portrait": "/assets/dante/npcs/cangrande_young.webp",
           "position": {
-            "x": 84,
-            "y": 66
+            "x": 88,
+            "y": 68
           },
-          "scale": 1.2,
+          "scale": 3,
           "flip": true,
           "isClue": true,
           "dialogues": [
@@ -121,13 +121,13 @@
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "parte_choice"
     },
     {
       "id": "parte_choice",
       "type": "forced_choice",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/verona_scala_court.png",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/verona_scala_court.webp",
       "title": "随他们回去吗？",
       "narrative": "白党使者站在廊下等答复。武力还乡——回家的路，还是死路？",
       "question": "随流亡白党武力还乡吗？",
@@ -162,7 +162,7 @@
     {
       "id": "volgare",
       "type": "sliding_puzzle",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.webp",
       "title": "锻造俗语 · 数字华容道",
       "narrative": "烛下。要写一部大书了——用什么语言写？拉丁文是学者的体面，可他心里的句子是另一种。把它们拼出来。",
       "puzzles": [
@@ -182,8 +182,8 @@
     {
       "id": "gate",
       "type": "click_points",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.png",
-      "image": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.png",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.webp",
+      "image": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.webp",
       "title": "地狱之门",
       "narrative": "语言定了。第一卷《地狱》。他先刻下那扇门。",
       "instruction": "点亮门上的暗刻——铭文将逐行显现。",
@@ -262,7 +262,7 @@
     {
       "id": "henry_news",
       "type": "transition",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.png",
+      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.webp",
       "title": "一个消息",
       "transitionText": "《地狱》一歌一歌地写着，在各个宫廷之间传抄。\n1308 年深秋，一名信使闯进廊下——",
       "announcement": {
@@ -271,7 +271,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/exile/writing.png",
+        "portrait": "/assets/dante/hero/exile/writing.webp",
         "text": "（猛然抬头）\n……也许，还有希望。"
       },
       "narrative": ""

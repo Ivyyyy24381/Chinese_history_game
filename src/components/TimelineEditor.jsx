@@ -247,7 +247,7 @@ export default function TimelineEditor({ line = "dufu", onLineChange, onEditEven
             ref={mapRef}
             style={{
               ...styles.map,
-              backgroundImage: `url('${data.character?.generalMap || `/assets/${line}/maps/${line}_general_map.png`}')`,
+              backgroundImage: `url('${data.character?.generalMap || `/assets/${line}/maps/${line}_general_map.webp`}')`,
               cursor: dragging ? "grabbing" : "default",
             }}
           >

@@ -7,7 +7,7 @@
     {
       "id": "lectern_intro",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "最后一讲",
       "transitionText": "圣斯特凡诺教堂。烛火比往常多点了一倍。\n薄伽丘翻开讲义的最后一册。",
       "announcement": {
@@ -21,7 +21,7 @@
     {
       "id": "pineta",
       "type": "explore",
-      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_pineta.png",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_pineta.webp",
       "title": "拉文纳 · 海松林",
       "narrative": "1318 年前后，拉文纳领主圭多·诺韦洛·达·波伦塔遣使相邀。海松林沙沙作响，子女前来团聚——流亡的最后一站，竟像个家。",
       "instruction": "在松林与宫廷之间走走，见见这里的人。",
@@ -30,7 +30,7 @@
         {
           "id": "guido_novello",
           "name": "圭多·诺韦洛",
-          "portrait": "/assets/dante/npcs/guido_novello.png",
+          "portrait": "/assets/dante/npcs/guido_novello.webp",
           "position": {
             "x": 26,
             "y": 68
@@ -53,7 +53,7 @@
         {
           "id": "antonia_nun",
           "name": "女儿安东妮娅",
-          "portrait": "/assets/dante/npcs/antonia_nun.png",
+          "portrait": "/assets/dante/npcs/antonia_nun.webp",
           "position": {
             "x": 56,
             "y": 70
@@ -81,7 +81,7 @@
         {
           "id": "scribe",
           "name": "抄写员",
-          "portrait": "/assets/dante/npcs/scribe.png",
+          "portrait": "/assets/dante/npcs/scribe.webp",
           "position": {
             "x": 80,
             "y": 68
@@ -108,7 +108,7 @@
     {
       "id": "mosaic",
       "type": "explore",
-      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_mosaic.png",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_mosaic.webp",
       "title": "金色马赛克",
       "narrative": "圣阿波利纳雷教堂。六世纪的金色马赛克，已经燃烧了八百年。",
       "instruction": "点击教堂里打动他的东西。",
@@ -117,7 +117,7 @@
         {
           "id": "mosaic_fragment",
           "name": "金色穹顶",
-          "portrait": "/assets/dante/props/mosaic_fragment.png",
+          "portrait": "/assets/dante/props/mosaic_fragment.webp",
           "position": {
             "x": 42,
             "y": 40
@@ -176,12 +176,12 @@
     {
       "id": "paradiso_exam",
       "type": "exam",
-      "background": "/assets/dante/events/1321_ravenna/backgrounds/heaven_exam.png",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/heaven_exam.webp",
       "title": "三使徒之考",
       "narrative": "《天堂》第二十四至二十六歌：在群星之上，贝雅特丽切把但丁引到三位使徒面前——圣彼得考「信」，圣雅各考「望」，圣约翰考「爱」。那场制举人间作弊；这场考试，天堂公正。",
       "examiner": {
         "name": "贝雅特丽切",
-        "portrait": "/assets/dante/npcs/beatrice_paradiso.png"
+        "portrait": "/assets/dante/npcs/beatrice_paradiso.webp"
       },
       "questions": [
         {
@@ -261,7 +261,7 @@
     {
       "id": "venezia",
       "type": "transition",
-      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_pineta.png",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/ravenna_pineta.webp",
       "title": "威尼斯使命 · 病榻",
       "transitionText": "1321 年夏，拉文纳与威尼斯起了争端。\n但丁为圭多出使威尼斯斡旋，归途取道沼泽水路——\n蚊虫，热病。疟疾。",
       "announcement": {
@@ -270,7 +270,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/old/dying.png",
+        "portrait": "/assets/dante/hero/old/dying.webp",
         "text": "面包，哪里都不会缺……\n只是《天堂》……还差十三歌。"
       },
       "narrative": "",
@@ -279,8 +279,8 @@
     {
       "id": "tredici",
       "type": "comic_reveal",
-      "background": "/assets/dante/events/1321_ravenna/backgrounds/comic_tredici_canti.png",
-      "image": "/assets/dante/events/1321_ravenna/backgrounds/comic_tredici_canti.png",
+      "background": "/assets/dante/events/1321_ravenna/backgrounds/comic_tredici_canti.webp",
+      "image": "/assets/dante/events/1321_ravenna/backgrounds/comic_tredici_canti.webp",
       "title": "失落的十三歌",
       "narrative": "八个月后。一个流传至今的传说——",
       "autoAdvanceSec": 2.5,
@@ -361,7 +361,7 @@
     {
       "id": "finale",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "讲坛落幕",
       "transitionText": "薄伽丘合上讲义。教堂里很静。",
       "announcement": {
@@ -370,7 +370,7 @@
         "style": "imperial_decree"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/old/laurel.png",
+        "portrait": "/assets/dante/hero/old/laurel.webp",
         "text": "是爱，推动太阳与群星。"
       },
       "narrative": ""

@@ -30,7 +30,7 @@ const MIN_SCALE = 1;
 const MAX_SCALE = 4;
 const FOCUS_SCALE = 2.1; // 自动聚焦时的放大倍数
 // 兜底（人物 timeline 未提供 generalMap/mapRatio 时按杜甫地图处理）
-const DEFAULT_MAP = "/assets/dufu/maps/dufu_general_map.png";
+const DEFAULT_MAP = "/assets/dufu/maps/dufu_general_map.webp";
 const DEFAULT_RATIO = 1752 / 1245; // 地图原图宽高比
 
 // 视口任意比例下，底图以 cover 方式铺满（宽或高撑满，可平移看其余部分）

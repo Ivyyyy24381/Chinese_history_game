@@ -7,13 +7,13 @@
     {
       "id": "lectern_intro",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "讲坛引子",
       "transitionText": "讲坛上，薄伽丘翻开《新生》。",
       "announcement": {
-        "title": "讲坛",
         "text": "薄伽丘：「他一生只与她说过几次话。她嫁了银行家，他娶了政治联姻的妻子。可《神曲》里引他上天堂的不是妻子——是她。何以至此？」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "讲坛"
       },
       "narrative": "",
       "nextPhase": "ponte"
@@ -21,7 +21,7 @@
     {
       "id": "ponte",
       "type": "explore",
-      "background": "/assets/dante/events/1283_beatrice/backgrounds/ponte_arno.png",
+      "background": "/assets/dante/events/1283_beatrice/backgrounds/ponte_arno.webp",
       "title": "圣三一桥头 · 1283",
       "narrative": "十八岁。晨光里的阿诺河。一位白衣的女子与两名女伴从桥上走来。",
       "instruction": "点击桥头的人，把这一刻记下来。",
@@ -30,12 +30,12 @@
         {
           "id": "beatrice_young",
           "name": "贝雅特丽切",
-          "portrait": "/assets/dante/npcs/beatrice_young.png",
+          "portrait": "/assets/dante/npcs/beatrice_young.webp",
           "position": {
-            "x": 56,
-            "y": 66
+            "x": 57,
+            "y": 89
           },
-          "scale": 1.35,
+          "scale": 3,
           "isClue": true,
           "dialogues": [
             {
@@ -63,12 +63,12 @@
         {
           "id": "cavalcanti",
           "name": "圭多·卡瓦尔坎蒂",
-          "portrait": "/assets/dante/npcs/cavalcanti.png",
+          "portrait": "/assets/dante/npcs/cavalcanti.webp",
           "position": {
-            "x": 22,
-            "y": 70
+            "x": 24,
+            "y": 91
           },
-          "scale": 1.3,
+          "scale": 3,
           "isClue": true,
           "dialogues": [
             {
@@ -91,12 +91,12 @@
         {
           "id": "lady_companion",
           "name": "女伴",
-          "portrait": "/assets/dante/events/1283_beatrice/npcs/lady_companion.png",
+          "portrait": "/assets/dante/events/1283_beatrice/npcs/lady_companion.webp",
           "position": {
-            "x": 74,
-            "y": 70
+            "x": 85,
+            "y": 84
           },
-          "scale": 1.2,
+          "scale": 3,
           "flip": true,
           "dialogues": [
             {
@@ -118,7 +118,7 @@
     {
       "id": "compose",
       "type": "poem_compose",
-      "background": "/assets/dante/events/1283_beatrice/backgrounds/ponte_arno.png",
+      "background": "/assets/dante/events/1283_beatrice/backgrounds/ponte_arno.webp",
       "title": "《新生》·十四行",
       "poemContext": "回到房间，那首十四行诗呼之欲出——请把候选词放回正确的空格。",
       "puzzle": "我的女郎如此温柔，如此___，\n她向人致意的时候，\n所有的舌头都颤抖着变得___，\n所有的眼睛都不敢___。",
@@ -134,12 +134,14 @@
       ],
       "poemTitle": "《新生》第二十六章 · Tanto gentile",
       "narrative": "",
-      "nextPhase": "campaldino_intro"
+      "nextPhase": "campaldino_intro",
+      "poemAnswer": "",
+      "poemCandidates": []
     },
     {
       "id": "campaldino_intro",
       "type": "transition",
-      "background": "/assets/dante/events/1283_beatrice/backgrounds/campaldino_field.png",
+      "background": "/assets/dante/events/1283_beatrice/backgrounds/campaldino_field.webp",
       "title": "坎帕尔迪诺 · 1289",
       "transitionText": "六年后。佛罗伦萨与阿雷佐开战。\n二十四岁的但丁作为轻骑兵，站在坎帕尔迪诺平原的第一线。\n开战的第一冲，佛军前排被阿雷佐骑兵凿穿——",
       "narrative": "",
@@ -148,7 +150,7 @@
     {
       "id": "campaldino",
       "type": "escape_game",
-      "background": "/assets/dante/events/1283_beatrice/backgrounds/campaldino_field.png",
+      "background": "/assets/dante/events/1283_beatrice/backgrounds/campaldino_field.webp",
       "title": "坎帕尔迪诺战役 · 撤回本阵",
       "narrative": "前排溃退。避开追击的阿雷佐骑兵，从尘土与长矛之间撤回己方本阵。",
       "gridW": 14,
@@ -163,7 +165,7 @@
         "x": 0,
         "y": 6
       },
-      "playerPortrait": "/assets/dante/hero/youth/armored.png",
+      "playerPortrait": "/assets/dante/hero/youth/armored.webp",
       "soldierPortraits": [],
       "cells": [
         {
@@ -317,7 +319,7 @@
     {
       "id": "death_1290",
       "type": "transition",
-      "background": "/assets/dante/events/1283_beatrice/backgrounds/ponte_arno.png",
+      "background": "/assets/dante/events/1283_beatrice/backgrounds/ponte_arno.webp",
       "title": "1290 · 六月八日",
       "transitionText": "战争结束了。\n但第二年夏天，佛罗伦萨的丧钟，\n为一个二十四岁的女人而鸣。",
       "narrative": "",
@@ -326,8 +328,8 @@
     {
       "id": "comic_death",
       "type": "comic_reveal",
-      "background": "/assets/dante/events/1283_beatrice/backgrounds/comic_beatrice_death.png",
-      "image": "/assets/dante/events/1283_beatrice/backgrounds/comic_beatrice_death.png",
+      "background": "/assets/dante/events/1283_beatrice/backgrounds/comic_beatrice_death.webp",
+      "image": "/assets/dante/events/1283_beatrice/backgrounds/comic_beatrice_death.webp",
       "title": "这座城成了寡妇",
       "narrative": "",
       "autoAdvanceSec": 2.5,
@@ -336,7 +338,7 @@
           "id": "p1_bridge",
           "x": 0,
           "y": 0,
-          "w": 50,
+          "w": 31.9,
           "h": 52,
           "dialogues": [
             {
@@ -348,9 +350,9 @@
         },
         {
           "id": "p2_procession",
-          "x": 50,
+          "x": 31,
           "y": 0,
-          "w": 50,
+          "w": 69.2,
           "h": 52,
           "dialogues": [
             {
@@ -363,9 +365,9 @@
         {
           "id": "p3_desk",
           "x": 0,
-          "y": 52,
+          "y": 51,
           "w": 100,
-          "h": 48,
+          "h": 50.4,
           "dialogues": [
             {
               "speaker": "dante",
@@ -380,12 +382,13 @@
           ]
         }
       ],
-      "nextPhase": "vow"
+      "nextPhase": "vow",
+      "instruction": ""
     },
     {
       "id": "vow",
       "type": "forced_choice",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/casa_alighieri.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/casa_alighieri.webp",
       "title": "《新生》的结尾",
       "narrative": "悲痛之后，《新生》要有一个结尾。",
       "question": "悲痛之后，你要为她写什么？",
@@ -419,7 +422,7 @@
     {
       "id": "echo",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "后世回声",
       "transitionText": "讲坛上，薄伽丘把《新生》的终章与《炼狱》第三十歌并排摊开。",
       "announcement": {

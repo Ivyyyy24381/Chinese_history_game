@@ -11,9 +11,9 @@
       "title": "讲坛引子",
       "transitionText": "讲坛上，薄伽丘合上《新生》，换了一册城邦档案。",
       "announcement": {
-        "title": "讲坛",
         "text": "薄伽丘：「要害死一个诗人，先让他从政。1295 年，他去登记了行会——医生和药剂师的行会。别笑：书在当时，按药材归类。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "讲坛"
       },
       "narrative": "",
       "nextPhase": "guild_hall"
@@ -32,10 +32,10 @@
           "name": "行会书记",
           "portrait": "/assets/dante/events/1295_arte/npcs/guild_clerk.png",
           "position": {
-            "x": 30,
-            "y": 66
+            "x": 32,
+            "y": 74
           },
-          "scale": 1.3,
+          "scale": 2.1,
           "isClue": true,
           "dialogues": [
             {
@@ -60,10 +60,10 @@
           "name": "药剂师",
           "portrait": "/assets/dante/events/1295_arte/npcs/apothecary.png",
           "position": {
-            "x": 50,
-            "y": 70
+            "x": 48,
+            "y": 60
           },
-          "scale": 1.25,
+          "scale": 2.1,
           "dialogues": [
             {
               "speaker": "apothecary",
@@ -82,10 +82,10 @@
           "name": "书商",
           "portrait": "/assets/dante/events/1295_arte/npcs/bookseller.png",
           "position": {
-            "x": 70,
-            "y": 68
+            "x": 85,
+            "y": 70
           },
-          "scale": 1.25,
+          "scale": 2.4,
           "flip": true,
           "isClue": true,
           "dialogues": [
@@ -106,10 +106,10 @@
           "name": "市民",
           "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.png",
           "position": {
-            "x": 86,
-            "y": 72
+            "x": 11,
+            "y": 82
           },
-          "scale": 1.2,
+          "scale": 2.5,
           "isClue": true,
           "dialogues": [
             {
@@ -130,7 +130,7 @@
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "civic_exam"
     },
     {
@@ -140,8 +140,8 @@
       "title": "公民资格问答",
       "narrative": "行会书记敲了敲登记簿：「例行问答。答得上来，才算明白自己进的是什么局。」",
       "examiner": {
-        "name": "行会书记",
-        "portrait": "/assets/dante/events/1295_arte/npcs/guild_clerk.png"
+        "portrait": "/assets/dante/events/1295_arte/npcs/guild_clerk.png",
+        "name": "行会书记"
       },
       "questions": [
         {
@@ -221,10 +221,10 @@
           "name": "圭多·卡瓦尔坎蒂",
           "portrait": "/assets/dante/npcs/cavalcanti.png",
           "position": {
-            "x": 28,
-            "y": 68
+            "x": 22,
+            "y": 80
           },
-          "scale": 1.3,
+          "scale": 3,
           "isClue": true,
           "dialogues": [
             {
@@ -249,11 +249,10 @@
           "name": "福雷塞·多纳蒂",
           "portrait": "/assets/dante/npcs/forese.png",
           "position": {
-            "x": 72,
-            "y": 70
+            "x": 78,
+            "y": 82
           },
-          "scale": 1.3,
-          "flip": true,
+          "scale": 3,
           "dialogues": [
             {
               "speaker": "forese",

@@ -7,13 +7,13 @@
     {
       "id": "lectern_intro",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "讲坛引子",
       "transitionText": "讲坛上，薄伽丘写下一个年份：1300。",
       "announcement": {
-        "title": "讲坛",
         "text": "薄伽丘：「记住这一年。史实里，他在这一年当上执政官；而《神曲》的故事，也被他放在这一年——人生的中点。为什么？听完你们就懂了。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "讲坛"
       },
       "narrative": "",
       "nextPhase": "giubileo"
@@ -21,7 +21,7 @@
     {
       "id": "giubileo",
       "type": "map_travel",
-      "background": "/assets/dante/maps/route_1300_giubileo.png",
+      "background": "/assets/dante/maps/route_1300_giubileo.webp",
       "title": "禧年朝圣",
       "travelNarrative": "教皇卜尼法斯八世首创「禧年」：凡今年至罗马朝圣者，罪愆全赦。二十万人涌向罗马——但丁也在其中。",
       "instruction": "沿路线点击每一站。",
@@ -30,8 +30,8 @@
         {
           "id": "firenze_partenza",
           "name": "佛罗伦萨·出发",
-          "x": 23,
-          "y": 24,
+          "x": 22,
+          "y": 29,
           "dialogues": [
             {
               "speaker": "dante",
@@ -43,8 +43,8 @@
         {
           "id": "strada",
           "name": "法兰奇纳古道",
-          "x": 44,
-          "y": 45,
+          "x": 42,
+          "y": 51,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -57,7 +57,7 @@
           "id": "roma_porta",
           "name": "罗马城门",
           "x": 60,
-          "y": 62,
+          "y": 64,
           "isKey": true,
           "dialogues": [
             {
@@ -73,12 +73,13 @@
           ]
         }
       ],
-      "nextPhase": "porta"
+      "nextPhase": "porta",
+      "narrative": ""
     },
     {
       "id": "porta",
       "type": "explore",
-      "background": "/assets/dante/events/1300_priore/backgrounds/roma_porta_giubileo.png",
+      "background": "/assets/dante/events/1300_priore/backgrounds/roma_porta_giubileo.webp",
       "title": "禧年的罗马",
       "narrative": "罗马。二十万朝圣者把街道挤成河流。",
       "instruction": "点击画面中的人与景。",
@@ -89,8 +90,8 @@
           "name": "分成两列的人流",
           "portrait": "",
           "position": {
-            "x": 40,
-            "y": 60
+            "x": 24,
+            "y": 78
           },
           "isClue": true,
           "dialogues": [
@@ -111,8 +112,8 @@
           "name": "香客的歌声",
           "portrait": "",
           "position": {
-            "x": 68,
-            "y": 52
+            "x": 69,
+            "y": 67
           },
           "dialogues": [
             {
@@ -125,12 +126,12 @@
         {
           "id": "coin_chest",
           "name": "祭坛边的钱箱",
-          "portrait": "/assets/dante/props/florin_coin.png",
+          "portrait": "/assets/dante/props/florin_coin.webp",
           "position": {
-            "x": 84,
-            "y": 66
+            "x": 46,
+            "y": 36
           },
-          "scale": 0.55,
+          "scale": 0.4,
           "isClue": true,
           "dialogues": [
             {
@@ -152,16 +153,16 @@
     {
       "id": "san_pietro",
       "type": "transition",
-      "background": "/assets/dante/events/1300_priore/backgrounds/san_pietro_old.png",
+      "background": "/assets/dante/events/1300_priore/backgrounds/san_pietro_old.webp",
       "title": "圣彼得堂 · 教皇的影子",
       "transitionText": "圣彼得堂前。远处的高台上，一个金冠的身影接受着二十万人的欢呼。\n没有对话。只有威压。",
       "announcement": {
-        "title": "禧年诏书",
         "text": "卜尼法斯八世：「凡于此圣年虔诚朝觐使徒之墓者，罪愆全赦。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "禧年诏书"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/citizen/robe.png",
+        "portrait": "/assets/dante/hero/citizen/robe.webp",
         "text": "他把天堂的钥匙，铸成了人间的权杖。记住这个人——卜尼法斯。"
       },
       "narrative": "",
@@ -170,7 +171,7 @@
     {
       "id": "priori",
       "type": "explore",
-      "background": "/assets/dante/events/1300_priore/backgrounds/palazzo_priori.png",
+      "background": "/assets/dante/events/1300_priore/backgrounds/palazzo_priori.webp",
       "title": "执政官厅 · 六月",
       "narrative": "回城即上任。1300 年 6 月，但丁当选佛罗伦萨六执政官之一，任期两个月。上任第一件事，就是一场火并的善后。",
       "instruction": "听取同僚与书记的禀报。",
@@ -179,10 +180,10 @@
         {
           "id": "fellow_prior",
           "name": "同僚执政官",
-          "portrait": "/assets/dante/events/1300_priore/npcs/fellow_prior.png",
+          "portrait": "",
           "position": {
-            "x": 28,
-            "y": 66
+            "x": 34,
+            "y": 64
           },
           "scale": 1.3,
           "isClue": true,
@@ -202,10 +203,10 @@
         {
           "id": "scribe",
           "name": "书记官",
-          "portrait": "/assets/dante/npcs/scribe.png",
+          "portrait": "",
           "position": {
-            "x": 52,
-            "y": 70
+            "x": 64,
+            "y": 67
           },
           "scale": 1.25,
           "isClue": true,
@@ -225,10 +226,10 @@
         {
           "id": "corso_donati",
           "name": "科尔索·多纳蒂",
-          "portrait": "/assets/dante/npcs/corso_donati.png",
+          "portrait": "",
           "position": {
-            "x": 78,
-            "y": 68
+            "x": 91,
+            "y": 69
           },
           "scale": 1.35,
           "flip": true,
@@ -253,7 +254,7 @@
     {
       "id": "exile_choice",
       "type": "forced_choice",
-      "background": "/assets/dante/events/1300_priore/backgrounds/palazzo_priori.png",
+      "background": "/assets/dante/events/1300_priore/backgrounds/palazzo_priori.webp",
       "title": "放逐名单上有你的挚友",
       "narrative": "笔悬在名单上方。白党首恶一栏，写着圭多·卡瓦尔坎蒂——教你写诗的人，你的「第一好友」。",
       "question": "你签吗？",
@@ -288,18 +289,18 @@
     {
       "id": "selva",
       "type": "comic_reveal",
-      "background": "/assets/dante/events/1300_priore/backgrounds/comic_selva.png",
-      "image": "/assets/dante/events/1300_priore/backgrounds/comic_selva.png",
+      "background": "/assets/dante/events/1300_priore/backgrounds/comic_selva.webp",
+      "image": "/assets/dante/events/1300_priore/backgrounds/comic_selva.webp",
       "title": "幽暗森林",
       "narrative": "",
       "autoAdvanceSec": 2.5,
       "panels": [
         {
           "id": "p1_desk",
-          "x": 1.5,
-          "y": 2.5,
-          "w": 35,
-          "h": 46,
+          "x": 0,
+          "y": 0,
+          "w": 36.6,
+          "h": 50.7,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -310,10 +311,10 @@
         },
         {
           "id": "p2_dark",
-          "x": 1.5,
+          "x": 0,
           "y": 50,
-          "w": 35,
-          "h": 47,
+          "w": 36.6,
+          "h": 50.3,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -324,10 +325,10 @@
         },
         {
           "id": "p3_selva",
-          "x": 37,
-          "y": 2.5,
-          "w": 62,
-          "h": 95,
+          "x": 36,
+          "y": 0,
+          "w": 64.9,
+          "h": 100.7,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -342,18 +343,19 @@
           ]
         }
       ],
-      "nextPhase": "echo"
+      "nextPhase": "echo",
+      "instruction": ""
     },
     {
       "id": "echo",
       "type": "transition",
-      "background": "/assets/dante/events/1300_priore/backgrounds/dark_forest.png",
+      "background": "/assets/dante/events/1300_priore/backgrounds/dark_forest.webp",
       "title": "后世回声",
       "transitionText": "山顶有光。三头野兽挡在路上。\n这是《神曲》的第一页——写的正是 1300 年的他自己。",
       "announcement": {
-        "title": "后世回声",
         "text": "薄伽丘：「史实的 1300 年，他签下了放逐挚友的名字；虚构的 1300 年，他在幽暗森林里迷路。诸位——这两件事，是同一件事。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "后世回声"
       },
       "narrative": ""
     }
