@@ -18,10 +18,10 @@
           "name": "送信修士",
           "portrait": "/assets/dante/npcs/friar_messenger.webp",
           "position": {
-            "x": 26,
-            "y": 68
+            "x": 27,
+            "y": 76
           },
-          "scale": 1.25,
+          "scale": 3,
           "isClue": true,
           "dialogues": [
             {
@@ -44,10 +44,10 @@
         {
           "id": "amnistia_scroll",
           "name": "大赦令",
-          "portrait": "/assets/dante/props/amnistia_scroll.webp",
+          "portrait": "",
           "position": {
-            "x": 50,
-            "y": 56
+            "x": 28,
+            "y": 67
           },
           "scale": 0.7,
           "isClue": true,
@@ -69,10 +69,10 @@
           "name": "房东女儿",
           "portrait": "/assets/dante/events/1315_amnistia/npcs/landlady_girl.webp",
           "position": {
-            "x": 70,
-            "y": 70
+            "x": 49,
+            "y": 81
           },
-          "scale": 1.15,
+          "scale": 2.1,
           "dialogues": [
             {
               "speaker": "landlady_girl",
@@ -91,10 +91,10 @@
           "name": "儿子彼得罗",
           "portrait": "/assets/dante/npcs/pietro_adult.webp",
           "position": {
-            "x": 86,
-            "y": 68
+            "x": 82,
+            "y": 73
           },
-          "scale": 1.25,
+          "scale": 2.5,
           "flip": true,
           "isClue": true,
           "dialogues": [
@@ -111,7 +111,7 @@
           ]
         }
       ],
-      "requiredTalks": 4,
+      "requiredTalks": 3,
       "nextPhase": "reply"
     },
     {

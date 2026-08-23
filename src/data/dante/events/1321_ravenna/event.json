@@ -11,9 +11,9 @@
       "title": "最后一讲",
       "transitionText": "圣斯特凡诺教堂。烛火比往常多点了一倍。\n薄伽丘翻开讲义的最后一册。",
       "announcement": {
-        "title": "讲坛",
         "text": "薄伽丘：「故事讲到头了。一座海边的城收留了他——拉文纳。诸位会看到：一个失去一切的人，怎样把一切写完。」",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "讲坛"
       },
       "narrative": "",
       "nextPhase": "pineta"
@@ -32,8 +32,8 @@
           "name": "圭多·诺韦洛",
           "portrait": "/assets/dante/npcs/guido_novello.webp",
           "position": {
-            "x": 26,
-            "y": 68
+            "x": 22,
+            "y": 82
           },
           "scale": 1.3,
           "isClue": true,
@@ -55,10 +55,10 @@
           "name": "女儿安东妮娅",
           "portrait": "/assets/dante/npcs/antonia_nun.webp",
           "position": {
-            "x": 56,
-            "y": 70
+            "x": 62,
+            "y": 81
           },
-          "scale": 1.2,
+          "scale": 1.3,
           "isClue": true,
           "dialogues": [
             {
@@ -83,10 +83,10 @@
           "name": "抄写员",
           "portrait": "/assets/dante/npcs/scribe.webp",
           "position": {
-            "x": 80,
-            "y": 68
+            "x": 93,
+            "y": 81
           },
-          "scale": 1.25,
+          "scale": 1.4,
           "flip": true,
           "dialogues": [
             {
@@ -119,10 +119,10 @@
           "name": "金色穹顶",
           "portrait": "/assets/dante/props/mosaic_fragment.webp",
           "position": {
-            "x": 42,
-            "y": 40
+            "x": 51,
+            "y": 44
           },
-          "scale": 0.75,
+          "scale": 0.5,
           "isClue": true,
           "dialogues": [
             {
@@ -147,8 +147,8 @@
           "name": "德尔·维吉利奥的信",
           "portrait": "",
           "position": {
-            "x": 70,
-            "y": 62
+            "x": 67,
+            "y": 81
           },
           "isClue": true,
           "dialogues": [
@@ -180,8 +180,8 @@
       "title": "三使徒之考",
       "narrative": "《天堂》第二十四至二十六歌：在群星之上，贝雅特丽切把但丁引到三位使徒面前——圣彼得考「信」，圣雅各考「望」，圣约翰考「爱」。那场制举人间作弊；这场考试，天堂公正。",
       "examiner": {
-        "name": "贝雅特丽切",
-        "portrait": "/assets/dante/npcs/beatrice_paradiso.webp"
+        "portrait": "/assets/dante/npcs/beatrice_paradiso.webp",
+        "name": "贝雅特丽切"
       },
       "questions": [
         {
@@ -265,12 +265,12 @@
       "title": "威尼斯使命 · 病榻",
       "transitionText": "1321 年夏，拉文纳与威尼斯起了争端。\n但丁为圭多出使威尼斯斡旋，归途取道沼泽水路——\n蚊虫，热病。疟疾。",
       "announcement": {
-        "title": "1321 · 九月十三日夜",
         "text": "五十六岁的但丁·阿利吉耶里，在拉文纳去世。子女守在榻前。《天堂》的最后十三歌，遍寻书房——无人找到。",
-        "style": "imperial_decree"
+        "style": "imperial_decree",
+        "title": "1321 · 九月十三日夜"
       },
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/old/dying.webp",
+        "portrait": "/assets/dante/hero/old/laurel.webp",
         "text": "面包，哪里都不会缺……\n只是《天堂》……还差十三歌。"
       },
       "narrative": "",
@@ -287,10 +287,10 @@
       "panels": [
         {
           "id": "p1_dream",
-          "x": 1.5,
-          "y": 2,
-          "w": 30,
-          "h": 51,
+          "x": 0,
+          "y": 0,
+          "w": 32,
+          "h": 50.7,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -301,10 +301,10 @@
         },
         {
           "id": "p2_point",
-          "x": 66,
-          "y": 2,
-          "w": 33,
-          "h": 96,
+          "x": 65,
+          "y": 0,
+          "w": 35.1,
+          "h": 100.1,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -315,10 +315,10 @@
         },
         {
           "id": "p3_niche",
-          "x": 1.5,
-          "y": 55,
-          "w": 30,
-          "h": 43,
+          "x": 0,
+          "y": 50,
+          "w": 32.1,
+          "h": 50.3,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -329,10 +329,10 @@
         },
         {
           "id": "p4_lift",
-          "x": 32.5,
-          "y": 2,
-          "w": 32,
-          "h": 51,
+          "x": 32,
+          "y": 0,
+          "w": 33.2,
+          "h": 50.5,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -343,10 +343,10 @@
         },
         {
           "id": "p5_last_line",
-          "x": 32.5,
-          "y": 55,
-          "w": 32,
-          "h": 43,
+          "x": 32,
+          "y": 50,
+          "w": 33.2,
+          "h": 50.2,
           "dialogues": [
             {
               "speaker": "narrator",
@@ -356,7 +356,8 @@
           ]
         }
       ],
-      "nextPhase": "finale"
+      "nextPhase": "finale",
+      "instruction": ""
     },
     {
       "id": "finale",
