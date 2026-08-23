@@ -182,7 +182,7 @@ const styles = {
   panel: {
     position: "relative",
     backgroundColor: "#F5EFE3", borderRadius: 14,
-    padding: "32px 36px", width: 360,
+    padding: "32px 36px", width: "min(360px, calc(100vw - 24px))",
     border: "2px solid #C9A86A",
     boxShadow: "0 12px 48px rgba(0,0,0,0.5)",
     display: "flex", flexDirection: "column", gap: 12,
@@ -190,7 +190,7 @@ const styles = {
   title: { margin: 0, fontSize: "clamp(17.6px, 1.528vw, 25.3px)", color: "#3B2510", letterSpacing: 4, textAlign: "center" },
   localNote: { margin: 0, fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#8B7355", lineHeight: 1.6 },
   input: {
-    padding: "10px 12px", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit",
+    padding: "10px 12px", fontSize: "clamp(16px, 0.972vw, 16.1px)", fontFamily: "inherit",
     border: "1px solid #C9B08A", borderRadius: 8, backgroundColor: "#FFF",
   },
   error: { color: "#C0392B", fontSize: "clamp(10.4px, 0.903vw, 14.9px)" },

@@ -633,7 +633,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             {examinerPortrait ? (
               <img src={asset(examinerPortrait)} alt={currentPhase.examiner?.name || ""} style={styles.examPortraitImg} />
             ) : (
-              <div style={{ width: "100%", height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#888", fontSize: "clamp(11.2px, 0.972vw, 16.1px)" }}>
+              <div style={{ width: "100%", height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#888", fontSize: "clamp(12.5px, 0.972vw, 16.1px)" }}>
                 {"（无考官立绘）"}
               </div>
             )}
@@ -715,7 +715,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     </>
                   )}
                   {examShowResult && !isCorrect && (
-                    <div style={{ fontSize: "clamp(11.2px, 0.972vw, 16.1px)", color: "#28A745", marginTop: 8 }}>
+                    <div style={{ fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#28A745", marginTop: 8 }}>
                       {"\u6B63\u786E\u7B54\u6848: " + q.answer}
                     </div>
                   )}
@@ -930,7 +930,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 <div style={{ ...styles.explanationBox, backgroundColor: "#F0F8FF" }}>
                   {"\u7B54\u5BF9 "}<strong>{correctCount}</strong>{" / "}{blanks.length}{" \u9898"}
                   {blanks.map((ans, i) => composedBlanks[i] !== ans && (
-                    <div key={i} style={{ fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#28A745", marginTop: 4 }}>
+                    <div key={i} style={{ fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#28A745", marginTop: 4 }}>
                       {"\u7B2C " + (i + 1) + " \u7A7A\u6B63\u786E\u7B54\u6848\uFF1A" + ans}
                     </div>
                   ))}
@@ -1237,14 +1237,14 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F4AC} \u5BF9\u8BDD: " + (currentPhase.branchCharacter || "")}</h2>
             {currentPhase.narrative && <p style={styles.choiceNarrative}>{currentPhase.narrative}</p>}
-            <p style={{ color: "#999", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", marginBottom: 16 }}>{"\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09"}</p>
+            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{"\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09"}</p>
             {(currentPhase.dialogueTree || []).map((node, i) => (
               <div key={i} style={{ ...styles.explanationBox, marginBottom: 8 }}>
                 <strong>{node.speaker || "\u65C1\u767D"}: </strong>{node.text}
                 {node.choices && node.choices.length > 0 && (
                   <div style={{ marginTop: 4, paddingLeft: 12 }}>
                     {node.choices.map((c, ci) => (
-                      <div key={ci} style={{ color: "#2980B9", fontSize: "clamp(10.4px, 0.903vw, 14.9px)" }}>{"\u2192 " + c.text}</div>
+                      <div key={ci} style={{ color: "#2980B9", fontSize: "clamp(12px, 0.903vw, 14.9px)" }}>{"\u2192 " + c.text}</div>
                     ))}
                   </div>
                 )}
@@ -1263,7 +1263,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     return (
       <div style={bgStyle}>
         <div style={styles.transitionOverlay}>
-          <div style={{ maxWidth: 600, width: "90%", maxHeight: "85vh", overflowY: "auto" }}>
+          <div style={{ maxWidth: 600, width: "90%", maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto" }}>
             {slides.length === 0 ? (
               <p style={{ color: "#AAA", textAlign: "center" }}>{"\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09"}</p>
             ) : slides.map((slide, i) => (
@@ -1279,7 +1279,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 }}
               >
                 {slide.image && <img src={asset(slide.image)} alt="" style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }} />}
-                {slide.speaker && <div style={{ color: "#D4A574", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontWeight: "bold", marginBottom: 4 }}>{slide.speaker}</div>}
+                {slide.speaker && <div style={{ color: "#D4A574", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", fontWeight: "bold", marginBottom: 4 }}>{slide.speaker}</div>}
                 <p style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, margin: 0 }}>{nb(slide.text)}</p>
               </div>
             ))}
@@ -1334,13 +1334,13 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F3AE} " + (typeLabel[currentPhase.minigameType] || "\u5C0F\u6E38\u620F")}</h2>
             {currentPhase.minigameInstruction && <p style={styles.choiceNarrative}>{currentPhase.minigameInstruction}</p>}
-            <p style={{ color: "#999", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", marginBottom: 16 }}>{"\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09"}</p>
+            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{"\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09"}</p>
             {items.length > 0 && (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
                 {items.map((item, i) => (
                   <div key={i} style={{ ...styles.explanationBox, margin: 0, textAlign: "center" }}>
                     <div style={{ fontWeight: "bold" }}>{item.left}</div>
-                    <div style={{ color: "#888", fontSize: "clamp(9.6px, 0.833vw, 13.8px)" }}>{"\u2194 " + item.right}</div>
+                    <div style={{ color: "#888", fontSize: "clamp(11.5px, 0.833vw, 13.8px)" }}>{"\u2194 " + item.right}</div>
                   </div>
                 ))}
               </div>
@@ -1462,14 +1462,14 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
     <div style={styles.choiceOverlay}>
       <div style={{ ...styles.choicePanel, maxWidth: 560 }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>
-          {"\u{1F4DC} 数字华容道  "}<span style={{ color: "#888", fontSize: "clamp(11.2px, 0.972vw, 16.1px)" }}>{`(${pIdx + 1}/${puzzles.length})`}</span>
+          {"\u{1F4DC} 数字华容道  "}<span style={{ color: "#888", fontSize: "clamp(12.5px, 0.972vw, 16.1px)" }}>{`(${pIdx + 1}/${puzzles.length})`}</span>
         </h2>
-        {currentP.label && <p style={{ color: "#666", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", margin: "4px 0 12px" }}>{currentP.label}</p>}
+        {currentP.label && <p style={{ color: "#666", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", margin: "4px 0 12px" }}>{currentP.label}</p>}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <span style={{ fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: timeLeft <= 30 ? "#DC3545" : "#666" }}>
+          <span style={{ fontSize: "clamp(12px, 0.903vw, 14.9px)", color: timeLeft <= 30 ? "#DC3545" : "#666" }}>
             {"⏱ 剩余 "}{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
           </span>
-          <button style={{ ...styles.choiceBtn, fontSize: "clamp(9.6px, 0.833vw, 13.8px)", padding: "4px 12px", margin: 0, width: "auto" }} onClick={skipPuzzle}>
+          <button style={{ ...styles.choiceBtn, fontSize: "clamp(11.5px, 0.833vw, 13.8px)", padding: "4px 12px", margin: 0, width: "auto" }} onClick={skipPuzzle}>
             {"跳过"}
           </button>
         </div>
@@ -1503,7 +1503,7 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
         {timeLeft === 0 && !solved && (
           <div style={{ ...styles.explanationBox, backgroundColor: "#FFF3CD", textAlign: "center" }}>
             <strong>{"⏱ 时间到"}</strong>
-            <div style={{ marginTop: 6, fontSize: "clamp(11.2px, 0.972vw, 16.1px)", color: "#666" }}>{"原句：" + currentP.solution}</div>
+            <div style={{ marginTop: 6, fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#666" }}>{"原句：" + currentP.solution}</div>
           </div>
         )}
         {(solved || timeLeft === 0) && (
@@ -1734,7 +1734,7 @@ function ComicRevealPhase({ phase, onComplete }) {
         {/* Subtle progress in the corner */}
         <div style={{
           position: "absolute", top: 12, right: 16, zIndex: 30,
-          color: "rgba(245,230,211,0.75)", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", letterSpacing: 2,
+          color: "rgba(245,230,211,0.75)", fontSize: "clamp(12px, 0.903vw, 14.9px)", letterSpacing: 2,
           textShadow: "0 1px 4px #000",
         }}>
           {revealed}{" / "}{panels.length}
@@ -1750,14 +1750,14 @@ function ComicRevealPhase({ phase, onComplete }) {
             textAlign: "left",
           }}>
             {activeLine.speakerName && (
-              <div style={{ color: "#D4A574", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", fontWeight: "bold", letterSpacing: 2, marginBottom: 6 }}>
+              <div style={{ color: "#D4A574", fontSize: "clamp(12px, 0.903vw, 14.9px)", fontWeight: "bold", letterSpacing: 2, marginBottom: 6 }}>
                 {activeLine.speakerName}
               </div>
             )}
             <div style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif" }}>
               {nb(activeLine.text)}
             </div>
-            <div style={{ color: "#A89968", fontSize: "clamp(8.8px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{"▼ 点击继续"}</div>
+            <div style={{ color: "#A89968", fontSize: "clamp(11px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{"▼ 点击继续"}</div>
           </div>
         )}
 
@@ -1787,7 +1787,7 @@ const cpStyles = {
     borderRadius: 12,
     maxWidth: "min(900px, 95vw)",
     width: "100%",
-    height: "95vh",
+    height: "calc(var(--vh100) - 24px)",
     overflow: "hidden", // never scroll — the image scales down instead
     boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
     display: "flex", flexDirection: "column",
@@ -1802,11 +1802,11 @@ const cpStyles = {
     letterSpacing: 2,
   },
   narrative: {
-    margin: "0 0 8px", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#6B5340", lineHeight: 1.6,
+    margin: "0 0 8px", fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#6B5340", lineHeight: 1.6,
   },
   instructionRow: {
     display: "flex", justifyContent: "space-between", alignItems: "center",
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#8B7355",
+    fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#8B7355",
   },
   progress: { color: "#3E2723" },
   imageArea: {
@@ -1834,7 +1834,7 @@ const cpStyles = {
     flexShrink: 0,
   },
   poemTitle: {
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)", color: "#8B7355", marginBottom: 6, letterSpacing: 2,
+    fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#8B7355", marginBottom: 6, letterSpacing: 2,
   },
   poemLine: {
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)", color: "#3E2723", lineHeight: 1.8, letterSpacing: 2,
@@ -1848,7 +1848,7 @@ const cpStyles = {
   },
   hint: {
     margin: "8px 24px 20px",
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#8B7355", textAlign: "center", fontStyle: "italic",
+    fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#8B7355", textAlign: "center", fontStyle: "italic",
     flexShrink: 0,
   },
   bubbleOverlay: {
@@ -1864,13 +1864,13 @@ const cpStyles = {
     border: "2px solid #D4A574",
     cursor: "default",
   },
-  bubbleLabel: { fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#999", marginBottom: 8, letterSpacing: 1 },
+  bubbleLabel: { fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#999", marginBottom: 8, letterSpacing: 1 },
   bubbleText: {
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)", color: "#3E2723", lineHeight: 1.8, letterSpacing: 1,
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   bubbleClose: {
-    marginTop: 16, padding: "8px 24px", fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    marginTop: 16, padding: "11px 26px", minHeight: 42, fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
     backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 4,
     cursor: "pointer", float: "right", fontFamily: "inherit",
   },
@@ -2306,7 +2306,7 @@ const egStyles = {
     // Fixed height + flex column: the board area is measured and the cell
     // size derived from it, so the full maze (incl. exit) always fits —
     // no clipping at any window size / display scaling.
-    height: "94vh", overflow: "hidden",
+    height: "calc(var(--vh100) - 24px)", overflow: "hidden",
     display: "flex", flexDirection: "column",
     position: "relative", // 方向键锚点
   },
@@ -2336,14 +2336,14 @@ const egStyles = {
     WebkitUserSelect: "none",
   },
   title: { margin: "0 0 4px", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", color: "#3E2723", letterSpacing: 2 },
-  narrative: { margin: "0 0 8px", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#6B5340" },
+  narrative: { margin: "0 0 8px", fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#6B5340" },
   statusRow: {
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#666", marginBottom: 10,
+    fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#666", marginBottom: 10,
     display: "flex", gap: 16, justifyContent: "center", alignItems: "center",
     flexWrap: "wrap",
   },
   restartBtn: {
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)", padding: "4px 12px", border: "1px solid #999",
+    fontSize: "clamp(12px, 0.833vw, 13.8px)", padding: "9px 16px", border: "1px solid #999",
     borderRadius: 4, backgroundColor: "#FFF", cursor: "pointer",
     fontFamily: "inherit",
   },
@@ -2418,14 +2418,14 @@ const styles = {
     zIndex: 20,
   },
   phaseTitle: { margin: "0 0 4px", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 4 },
-  phaseNarrative: { margin: 0, fontSize: "clamp(10.4px, 0.903vw, 14.9px)", opacity: 0.85, lineHeight: 1.6 },
+  phaseNarrative: { margin: 0, fontSize: "clamp(12px, 0.903vw, 14.9px)", opacity: 0.85, lineHeight: 1.6 },
   // Instruction
   instructionBar: {
     // Top-right corner so it never overlaps character art in the scene.
     position: "absolute", top: 14, right: 14,
     maxWidth: "36%",
     backgroundColor: "rgba(0,0,0,0.8)", color: "#F5E6D3",
-    padding: "10px 16px", borderRadius: 8, fontSize: "clamp(10.4px, 0.903vw, 14.9px)", lineHeight: 1.5,
+    padding: "10px 16px", borderRadius: 8, fontSize: "clamp(12px, 0.903vw, 14.9px)", lineHeight: 1.5,
     display: "flex", alignItems: "center", gap: 8,
     zIndex: 25,
   },
@@ -2464,7 +2464,7 @@ const styles = {
     // Absolutely positioned so the hover tooltip doesn't shift the portrait.
     position: "absolute", top: "100%", left: "50%",
     transform: "translateX(-50%)", marginTop: 4,
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#FFF",
+    fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#FFF",
     backgroundColor: "rgba(0,0,0,0.6)", padding: "2px 8px",
     borderRadius: 4, whiteSpace: "nowrap", pointerEvents: "none",
   },
@@ -2480,14 +2480,14 @@ const styles = {
     width: 28, height: 28, borderRadius: "50%",
     backgroundColor: "rgba(231,76,60,0.85)", color: "#FFF",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontWeight: "bold",
+    fontSize: "clamp(12.5px, 0.972vw, 16.1px)", fontWeight: "bold",
     pointerEvents: "none",
     marginBottom: 4,
   },
   // Standalone ? marker for portrait-less items (props, paintings, scrolls).
   // No name label; the ? itself is the clickable element.
   npcQuestionMark: {
-    width: 36, height: 36, borderRadius: "50%",
+    width: 44, height: 44, borderRadius: "50%",
     color: "#FFF",
     display: "flex", alignItems: "center", justifyContent: "center",
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)", fontWeight: "bold",
@@ -2500,7 +2500,7 @@ const styles = {
     width: 28, height: 28, borderRadius: "50%",
     backgroundColor: "rgba(46,204,113,0.85)", color: "#FFF",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontWeight: "bold",
+    fontSize: "clamp(12.5px, 0.972vw, 16.1px)", fontWeight: "bold",
     pointerEvents: "none",
     marginBottom: 4,
   },
@@ -2517,7 +2517,7 @@ const styles = {
     animation: "pulse 1.5s ease-in-out infinite",
   },
   triggerLabel: {
-    marginTop: 6, fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#FFF", fontWeight: "bold",
+    marginTop: 6, fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#FFF", fontWeight: "bold",
     backgroundColor: "rgba(46,204,113,0.85)", padding: "4px 12px",
     borderRadius: 4, whiteSpace: "nowrap",
   },
@@ -2547,7 +2547,7 @@ const styles = {
     minHeight: 160,
   },
   dialoguePortraitArea: {
-    width: "25vw", minWidth: 180, maxWidth: 360,
+    width: "25vw", minWidth: "min(180px, 30vw)", maxWidth: 360,
     flexShrink: 0,
     display: "flex", alignItems: "flex-end", justifyContent: "center",
     marginTop: "-45vh",
@@ -2571,7 +2571,7 @@ const styles = {
     color: "#F5E6D3", fontSize: "clamp(13.6px, 1.181vw, 19.5px)", lineHeight: 2,
   },
   dialogueContinue: {
-    textAlign: "right", color: "#A89968", fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    textAlign: "right", color: "#A89968", fontSize: "clamp(12px, 0.903vw, 14.9px)",
     marginTop: 16, cursor: "pointer",
   },
   // Speech bubble (bubble mode — NPC drawn into background)
@@ -2594,7 +2594,7 @@ const styles = {
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
   bubbleSpeaker: {
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
+    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
     fontWeight: "bold",
     color: "#8B6914",
     letterSpacing: 2,
@@ -2608,7 +2608,7 @@ const styles = {
   },
   bubbleContinue: {
     textAlign: "right",
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
+    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
     color: "#A89968",
     marginTop: 6,
   },
@@ -2638,7 +2638,7 @@ const styles = {
     marginBottom: 16,
     textShadow: "0 1px 6px rgba(0,0,0,0.9)", // keep readable over the lighter mask
   },
-  clickHint: { color: "#AAA", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", marginTop: 12 },
+  clickHint: { color: "#AAA", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginTop: 12 },
   // Examiner intro
   examIntroCard: {
     display: "flex", flexDirection: "column", alignItems: "center",
@@ -2714,7 +2714,7 @@ const styles = {
     objectPosition: "center top", // full-body art: crop to the head, not the torso
     border: "2px solid #D4A574",
   },
-  reactionText: { color: "#F5E6D3", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.6, margin: 0, flex: 1 },
+  reactionText: { color: "#F5E6D3", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", lineHeight: 1.6, margin: 0, flex: 1 },
   // Exam
   examOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
@@ -2732,30 +2732,32 @@ const styles = {
     display: "flex", alignItems: "flex-end", justifyContent: "center",
     paddingLeft: 12,
     zIndex: 2,
+    // 纯装饰立绘，不挡答题面板的点击
+    pointerEvents: "none",
   },
   examPortraitImg: {
-    width: "100%", height: "auto", maxHeight: "80vh",
+    width: "100%", height: "auto", maxHeight: "min(80vh, calc(var(--vh100) - 120px))",
     objectFit: "contain",
     filter: "drop-shadow(4px 4px 16px rgba(0,0,0,0.7))",
   },
   examPanelRight: {
     backgroundColor: "rgba(255,255,255,0.95)", borderRadius: 12,
     padding: "clamp(12px, 2vh, 24px) clamp(14px, 2.2vw, 32px)",
-    maxHeight: "92vh", overflowY: "auto",
+    maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto",
     width: "55vw", maxWidth: 680, minWidth: "min(360px, 92vw)",
     boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
     zIndex: 1,
   },
   examPanel: {
     backgroundColor: "#FFF", borderRadius: 12, padding: 28,
-    maxWidth: 600, width: "90%", maxHeight: "85vh", overflowY: "auto",
+    maxWidth: 600, width: "90%", maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto",
   },
   examinerBar: {
     backgroundColor: "#8B7355", color: "#FFF", padding: "6px 16px",
-    borderRadius: 6, marginBottom: 16, display: "inline-block", fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    borderRadius: 6, marginBottom: 16, display: "inline-block", fontSize: "clamp(12px, 0.903vw, 14.9px)",
   },
   examinerName: { fontWeight: "bold" },
-  examProgress: { fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#999", marginBottom: 16 },
+  examProgress: { fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#999", marginBottom: 16 },
   examQuestion: { fontSize: "clamp(13.6px, 1.181vw, 19.5px)", lineHeight: 1.6, marginBottom: 20, whiteSpace: "pre-wrap" },
   examOptions: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 },
   examOption: {
@@ -2767,7 +2769,7 @@ const styles = {
   fillRow: { display: "flex", gap: 8, marginBottom: 20 },
   fillInput: {
     flex: 1, padding: "10px 14px", border: "2px solid", borderRadius: 6,
-    fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontFamily: "inherit", textAlign: "center",
+    fontSize: "clamp(16px, 1.111vw, 18.4px)", fontFamily: "inherit", textAlign: "center",
   },
   fillSubmit: {
     padding: "10px 18px", backgroundColor: "#8B7355", color: "#FFF",
@@ -2789,7 +2791,7 @@ const styles = {
     justifyContent: "center",
   },
   fillChip: {
-    padding: "8px 18px", backgroundColor: "#FDF8F0",
+    padding: "10px 20px", minHeight: 42, backgroundColor: "#FDF8F0",
     border: "2px solid #D4A574", borderRadius: 8,
     fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold", color: "#5D4E37",
     cursor: "grab", userSelect: "none",
@@ -2799,25 +2801,25 @@ const styles = {
   },
   explanationBox: {
     backgroundColor: "#F0F8FF", border: "1px solid #B0D4FF",
-    borderRadius: 6, padding: 12, marginBottom: 16, fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.6,
+    borderRadius: 6, padding: 12, marginBottom: 16, fontSize: "clamp(12.5px, 0.972vw, 16.1px)", lineHeight: 1.6,
   },
   examResultCard: {
     backgroundColor: "#FFF", borderRadius: 12, padding: "clamp(16px, 3vh, 32px)",
     maxWidth: 400, width: "90%", textAlign: "center",
-    maxHeight: "92vh", overflowY: "auto",
+    maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto",
   },
   examResultTitle: { marginBottom: 16 },
   examScoreDisplay: { marginBottom: 16 },
   examScoreBig: { fontSize: "clamp(38.4px, 3.333vw, 55.2px)", fontWeight: "bold", color: "#333" },
   examScoreTotal: { fontSize: "clamp(19.2px, 1.667vw, 27.6px)", color: "#999" },
-  examResultNote: { color: "#999", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", marginBottom: 20 },
+  examResultNote: { color: "#999", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginBottom: 20 },
   // Forced choice
   choiceOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.7)", padding: 20,
   },
   tapHint: {
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
+    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
     color: "#999",
     marginTop: 6,
     textAlign: "center",
@@ -2826,23 +2828,23 @@ const styles = {
     backgroundColor: "#FFF", borderRadius: 12,
     padding: "clamp(14px, 2vh, 28px) clamp(16px, 2vw, 28px)",
     maxWidth: 500, width: "90%",
-    maxHeight: "92vh", overflowY: "auto",
+    maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto",
   },
-  choiceNarrative: { fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.8, color: "#555", marginBottom: 16 },
+  choiceNarrative: { fontSize: "clamp(12.5px, 0.972vw, 16.1px)", lineHeight: 1.8, color: "#555", marginBottom: 16 },
   choiceQuestion: { fontSize: "clamp(14.4px, 1.25vw, 20.7px)", marginBottom: 20 },
   choiceOptions: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 },
   choiceBtn: {
     padding: "12px 16px", backgroundColor: "#F8F9FA",
     border: "2px solid #DEE2E6", borderRadius: 8,
-    cursor: "pointer", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", textAlign: "left",
-    transition: "all 0.2s", fontFamily: "inherit",
+    cursor: "pointer", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", textAlign: "left",
+    transition: "all 0.2s", fontFamily: "inherit", minHeight: 44, touchAction: "manipulation",
   },
   choiceResponseBox: {
     padding: 16, borderRadius: 8, border: "2px solid",
     marginBottom: 16,
   },
-  choiceResponseSpeaker: { fontWeight: "bold", marginBottom: 4, fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#555" },
-  choiceResponseText: { margin: 0, fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.6 },
+  choiceResponseSpeaker: { fontWeight: "bold", marginBottom: 4, fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#555" },
+  choiceResponseText: { margin: 0, fontSize: "clamp(12.5px, 0.972vw, 16.1px)", lineHeight: 1.6 },
   // Conclusion
   conclusionOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
@@ -2850,7 +2852,7 @@ const styles = {
   },
   conclusionPanel: {
     backgroundColor: "#FFF", borderRadius: 12, padding: "clamp(14px, 2vh, 28px)",
-    maxWidth: 560, width: "90%", maxHeight: "85vh", overflowY: "auto",
+    maxWidth: 560, width: "90%", maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto",
   },
   conclusionNarrative: { fontSize: "clamp(12.0px, 1.042vw, 17.2px)", lineHeight: 1.8, color: "#444", textIndent: "2em", marginBottom: 20 },
   conclusionPoem: {

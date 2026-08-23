@@ -226,7 +226,7 @@ const styles = {
     padding: 24,
     maxWidth: 600,
     width: "90%",
-    maxHeight: "80vh",
+    maxHeight: "min(80vh, calc(var(--vh100) - 24px))",
     overflowY: "auto",
     position: "relative",
     boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
@@ -235,8 +235,8 @@ const styles = {
     position: "absolute",
     top: 12,
     right: 12,
-    width: 32,
-    height: 32,
+    width: 40,
+    height: 40,
     backgroundColor: "#F0EBE0",
     border: "none",
     borderRadius: "50%",
@@ -257,7 +257,7 @@ const styles = {
     fontWeight: "bold",
   },
   quizProgress: {
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
     color: "#999",
   },
   quizQuestion: {
@@ -299,7 +299,8 @@ const styles = {
     padding: "10px 12px",
     border: "2px solid",
     borderRadius: 6,
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    // ≥16px：iOS 聚焦输入框不触发整页自动放大
+    fontSize: "clamp(16px, 0.972vw, 16.1px)",
     fontFamily: "inherit",
   },
   submitBtn: {
@@ -319,7 +320,7 @@ const styles = {
   },
   explanationText: {
     margin: 0,
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
     color: "#333",
     lineHeight: 1.6,
   },
@@ -331,7 +332,7 @@ const styles = {
     color: "white",
     fontWeight: "bold",
     cursor: "pointer",
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
   },
   quizResultPanel: {
     backgroundColor: "#FFF",

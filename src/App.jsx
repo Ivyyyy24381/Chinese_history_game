@@ -429,7 +429,7 @@ export default function App() {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "var(--vh100)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -581,7 +581,7 @@ export default function App() {
             </div>
             <p style={styles.congratsUnlock}>{"✨ 已解锁：人物回顾"}</p>
             <p style={styles.congratsNext}>{"下一位人物：李白（即将推出，敬请期待）"}</p>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20 }}>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20, flexWrap: "wrap" }}>
               <button
                 style={{ ...styles.congratsBtn, backgroundColor: "#B8860B", color: "#FFF" }}
                 onClick={() => { setBoardHighlight(runScoreRef.current); setShowBoard(true); }}>
@@ -679,7 +679,7 @@ if (typeof document !== "undefined" && !document.getElementById("rotate-hint-key
 
 const styles = {
   placeholderScreen: {
-    minHeight: "100vh",
+    minHeight: "var(--vh100)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -713,7 +713,7 @@ const styles = {
     letterSpacing: 2,
   },
   gameContainer: {
-    minHeight: "100vh",
+    minHeight: "var(--vh100)",
     backgroundColor: "#F5F0E8",
     fontFamily: FONT,
     display: "flex",
@@ -727,7 +727,8 @@ const styles = {
     alignItems: "stretch",
     justifyContent: "center",
     padding: 0,
-    minHeight: 400,
+    // 横屏手机可视高不足 400px 时跟随实际视口，避免把时间轴挤出屏外
+    minHeight: "min(400px, var(--vh100))",
   },
   // 顶带护人物信息条的纸色蒙版（底带极轻，为时间轴瘦身预留）
   mapScrim: {
@@ -743,8 +744,9 @@ const styles = {
   },
   charStrip: {
     position: "absolute",
-    top: 4,
-    left: 10,
+    // 刘海/状态栏安全区（viewport-fit=cover 后 env() 才有值，桌面为 0）
+    top: "calc(4px + env(safe-area-inset-top, 0px))",
+    left: "calc(10px + env(safe-area-inset-left, 0px))",
     zIndex: 30,
   },
   timelineDock: {
@@ -752,6 +754,7 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
+    paddingBottom: "env(safe-area-inset-bottom, 0px)",
     zIndex: 40,
   },
   floatingInfo: {
@@ -759,7 +762,8 @@ const styles = {
     bottom: 116,
     // 让开右下角的缩放钮列（36px 圆钮 + 边距）
     right: 78,
-    width: 300,
+    // 窄屏自动收窄（360px 手机上原 300px 面板会伸出左屏缘）
+    width: "min(300px, calc(100vw - 96px))",
     padding: "20px 26px 22px",
     textAlign: "center",
     zIndex: 25,
@@ -776,7 +780,7 @@ const styles = {
   },
   eventMeta: {
     marginTop: 4,
-    fontSize: "clamp(9.6px, 0.83vw, 13.2px)",
+    fontSize: "clamp(11.5px, 0.83vw, 13.2px)",
     color: COLOR.secondary,
     letterSpacing: TRACKING.normal,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
@@ -792,7 +796,7 @@ const styles = {
   },
   eventSummary: {
     margin: "8px 0 0",
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    fontSize: "clamp(12.5px, 0.903vw, 14.9px)",
     color: COLOR.body,
     lineHeight: 1.7,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
@@ -812,12 +816,12 @@ const styles = {
   },
   sceneExitBtn: {
     position: "fixed",
-    // 左下角，小圆钮不显眼
-    left: 14,
-    bottom: 14,
+    // 左下角，小圆钮不显眼；躲开刘海与 Home 条
+    left: "calc(14px + env(safe-area-inset-left, 0px))",
+    bottom: "calc(14px + env(safe-area-inset-bottom, 0px))",
     zIndex: 380,
-    width: 34,
-    height: 34,
+    width: 44,
+    height: 44,
     padding: 0,
     backgroundColor: "rgba(20,12,6,0.5)",
     color: "rgba(245,230,211,0.85)",
@@ -830,8 +834,8 @@ const styles = {
   },
   musicBtn: {
     position: "fixed",
-    bottom: 20,
-    right: 20,
+    bottom: "calc(20px + env(safe-area-inset-bottom, 0px))",
+    right: "calc(20px + env(safe-area-inset-right, 0px))",
     width: 44, height: 44,
     backgroundColor: paperBtn(0.92),
     border: `1px solid ${COLOR.goldLineSoft}`,
@@ -848,7 +852,11 @@ const styles = {
   },
   congratsCard: {
     backgroundColor: "#F5EFE3", borderRadius: 14,
-    padding: "36px 48px", maxWidth: 560, textAlign: "center",
+    padding: "clamp(20px, 4vh, 36px) clamp(16px, 5vw, 48px)",
+    maxWidth: "min(560px, calc(100vw - 24px))",
+    maxHeight: "calc(var(--vh100) - 24px)",
+    overflowY: "auto",
+    textAlign: "center",
     border: "2px solid #C9A86A",
     boxShadow: "0 12px 48px rgba(0,0,0,0.6)",
   },
@@ -859,7 +867,10 @@ const styles = {
     color: "#3B2510", fontSize: "clamp(12.0px, 1.042vw, 17.2px)",
   },
   userCorner: {
-    position: "fixed", top: 16, right: 20, zIndex: 90,
+    position: "fixed",
+    top: "calc(16px + env(safe-area-inset-top, 0px))",
+    right: "calc(20px + env(safe-area-inset-right, 0px))",
+    zIndex: 90,
     display: "flex", alignItems: "center", gap: 8,
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
   },
@@ -871,7 +882,8 @@ const styles = {
     boxShadow: "0 2px 6px rgba(90,70,40,0.12)",
   },
   cornerBtn: {
-    padding: "6px 16px", borderRadius: 18, fontSize: "clamp(10.4px, 0.903vw, 14.9px)", fontFamily: "inherit",
+    padding: "9px 18px", borderRadius: 18, fontSize: "clamp(12px, 0.903vw, 14.9px)", fontFamily: "inherit",
+    minHeight: 38, touchAction: "manipulation",
     backgroundColor: "rgba(252,248,238,0.9)", color: "#5A4A32",
     border: "1px solid #C9B08A", cursor: "pointer", letterSpacing: 1,
     boxShadow: "0 2px 6px rgba(90,70,40,0.12)",
@@ -881,18 +893,20 @@ const styles = {
     padding: "6px 22px", backgroundColor: "#3B2510", color: "#F4D03F",
     borderRadius: 20, fontSize: "clamp(12.8px, 1.111vw, 18.4px)", letterSpacing: 3,
   },
-  congratsText: { color: "#555", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", lineHeight: 1.8, margin: "8px 0" },
-  congratsUnlock: { color: "#1B5E20", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontWeight: "bold", margin: "10px 0 2px" },
-  congratsNext: { color: "#8B7355", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", margin: "4px 0 0" },
+  congratsText: { color: "#555", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", lineHeight: 1.8, margin: "8px 0" },
+  congratsUnlock: { color: "#1B5E20", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", fontWeight: "bold", margin: "10px 0 2px" },
+  congratsNext: { color: "#8B7355", fontSize: "clamp(12px, 0.903vw, 14.9px)", margin: "4px 0 0" },
   congratsBtn: {
     padding: "10px 18px", border: "1px solid #C9B08A", borderRadius: 8,
     backgroundColor: "#FFF", cursor: "pointer", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit",
   },
   backBtn: {
     position: "fixed",
-    bottom: 20,
-    left: 20,
+    bottom: "calc(20px + env(safe-area-inset-bottom, 0px))",
+    left: "calc(20px + env(safe-area-inset-left, 0px))",
     padding: "9px 18px",
+    minHeight: 42,
+    touchAction: "manipulation",
     backgroundColor: paperBtn(0.92),
     border: `1px solid ${COLOR.goldLineSoft}`,
     borderRadius: 20,

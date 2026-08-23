@@ -94,7 +94,7 @@ const styles = {
   panel: {
     position: "relative",
     backgroundColor: "#F5EFE3", borderRadius: 14,
-    padding: "30px 34px", width: 400, maxHeight: "80vh",
+    padding: "30px 34px", width: "min(400px, calc(100vw - 24px))", maxHeight: "min(80vh, calc(var(--vh100) - 24px))",
     border: "2px solid #C9A86A",
     boxShadow: "0 12px 48px rgba(0,0,0,0.5)",
     display: "flex", flexDirection: "column", gap: 10,

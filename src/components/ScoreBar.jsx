@@ -76,7 +76,7 @@ const styles = {
   },
   meta: {
     color: COLOR.secondary,
-    fontSize: "clamp(10px, 1.25vh, 13.5px)",
+    fontSize: "clamp(11.5px, 1.25vh, 13.5px)",
     letterSpacing: TRACKING.tight,
     margin: "3px 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",

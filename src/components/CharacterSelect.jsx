@@ -235,7 +235,7 @@ export default function CharacterSelect({
 const styles = {
   screen: {
     position: "relative",
-    minHeight: "100vh",
+    minHeight: "var(--vh100)",
     overflow: "hidden",
     fontFamily: FONT,
     backgroundColor: COLOR.paperSolid,
@@ -257,12 +257,12 @@ const styles = {
   },
   content: {
     position: "relative",
-    minHeight: "100vh",
+    minHeight: "var(--vh100)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    padding: "clamp(16px, 3vh, 36px) 24px",
+    padding: "clamp(16px, 3vh, 36px) max(24px, env(safe-area-inset-left, 0px)) clamp(16px, 3vh, 36px) max(24px, env(safe-area-inset-right, 0px))",
     gap: 0,
   },
   header: {
@@ -285,7 +285,8 @@ const styles = {
   row: {
     marginTop: "clamp(10px, 2vh, 26px)",
     display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    // 宽屏三列并排（1180 容器下恰好 3 列，与原布局一致）；手机竖屏自动落成单列上下滚动
+    gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))",
     alignItems: "end",
     gap: "clamp(8px, 2.4vw, 44px)",
     width: "100%",
@@ -359,7 +360,8 @@ const styles = {
     fontWeight: 600,
     margin: "8px 0 0",
     textShadow: SHADOW.text,
-    whiteSpace: "nowrap",
+    // 桌面单行放得下不会换；窄列允许换行且两行均衡，不再溢出名牌
+    textWrap: "balance",
   },
   readableTitle: {
     color: COLOR.secondary,
@@ -373,13 +375,13 @@ const styles = {
     letterSpacing: TRACKING.tight,
     margin: "3px 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
-    whiteSpace: "nowrap",
+    textWrap: "balance",
   },
   metaSep: { opacity: 0.45 },
   // 简介只在选中时展开，收起时高度为 0，三列不会因文字长短错位
   desc: {
     color: COLOR.body,
-    fontSize: "clamp(10.5px, 1.35vh, 14px)",
+    fontSize: "clamp(12.5px, 1.35vh, 14px)",
     lineHeight: 1.6,
     margin: 0,
     overflow: "hidden",
@@ -387,7 +389,7 @@ const styles = {
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
   },
   actionBar: {
-    height: "clamp(46px, 7vh, 62px)",
+    minHeight: "clamp(46px, 7vh, 62px)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -413,15 +415,15 @@ const styles = {
   },
   achievementHeading: {
     color: COLOR.goldBrown,
-    fontSize: "clamp(10.5px, 1.3vh, 14px)",
+    fontSize: "clamp(12px, 1.3vh, 14px)",
     letterSpacing: TRACKING.normal,
     fontWeight: 600,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
   },
   achievementChip: {
-    padding: "3px 12px",
+    padding: "4px 12px",
     borderRadius: 14,
-    fontSize: "clamp(9.5px, 1.15vh, 12.5px)",
+    fontSize: "clamp(11px, 1.15vh, 12.5px)",
     letterSpacing: TRACKING.tight,
     backgroundColor: gold(0.22),
     color: COLOR.goldBrown,

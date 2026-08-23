@@ -81,6 +81,12 @@ export const BUTTON = {
     fontFamily: "inherit",
     letterSpacing: TRACKING.loose,
     boxShadow: SHADOW.button,
+    // 触屏最小命中高度（桌面本就 ~42px，几乎无感）
+    minHeight: 44,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    touchAction: "manipulation",
   },
   // 次级 ghost
   ghost: {
@@ -92,6 +98,11 @@ export const BUTTON = {
     cursor: "pointer",
     fontFamily: "inherit",
     letterSpacing: TRACKING.tight,
+    minHeight: 42,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    touchAction: "manipulation",
   },
 };
 

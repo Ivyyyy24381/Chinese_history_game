@@ -356,38 +356,95 @@ export default function GameMap({
     return () => el.removeEventListener("wheel", onWheel);
   }, [clampView]);
 
-  // 拖拽平移（鼠标 + 触屏）
+  // 拖拽平移（鼠标 + 触屏）+ 双指捏合缩放
   const startDrag = (clientX, clientY) => {
     dragRef.current = { x: clientX, y: clientY, tx0: view.tx, ty0: view.ty, moved: false };
     setAnimated(false);
   };
+  const pinchRef = useRef(null);
+  const lastTapRef = useRef(0);
+  const viewLatestRef = useRef(view);
+  viewLatestRef.current = view;
+  const startPinch = (touches) => {
+    const [a, b] = touches;
+    pinchRef.current = {
+      dist: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY),
+      scale0: view.scale,
+      tx0: view.tx,
+      ty0: view.ty,
+      cx: (a.clientX + b.clientX) / 2,
+      cy: (a.clientY + b.clientY) / 2,
+    };
+    dragRef.current = null;
+    setAnimated(false);
+  };
   useEffect(() => {
     const onMove = (e) => {
+      if (e.touches && e.touches.length >= 2 && pinchRef.current) {
+        const p = pinchRef.current;
+        const el = viewportRef.current;
+        if (!el) return;
+        const [a, b] = e.touches;
+        const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        if (dist <= 0 || p.dist <= 0) return;
+        const rect = el.getBoundingClientRect();
+        const ns = Math.min(MAX_SCALE, Math.max(MIN_SCALE, p.scale0 * (dist / p.dist)));
+        const k = ns / p.scale0;
+        const mx = p.cx - rect.left;
+        const my = p.cy - rect.top;
+        justDraggedRef.current = true;
+        setView(() => clampView({ scale: ns, tx: mx - k * (mx - p.tx0), ty: my - k * (my - p.ty0) }));
+        return;
+      }
       const d = dragRef.current;
       if (!d) return;
       const cx = e.touches ? e.touches[0].clientX : e.clientX;
       const cy = e.touches ? e.touches[0].clientY : e.clientY;
-      if (Math.abs(cx - d.x) + Math.abs(cy - d.y) > 4) d.moved = true;
+      // 触屏手指天然抖动，判定拖拽的阈值放宽，避免点按被误判成拖地图
+      const slop = e.touches ? 9 : 4;
+      if (Math.abs(cx - d.x) + Math.abs(cy - d.y) > slop) d.moved = true;
       if (d.moved) {
         setView((v) => clampView({ scale: v.scale, tx: d.tx0 + (cx - d.x), ty: d.ty0 + (cy - d.y) }));
       }
     };
-    const onUp = () => {
-      if (dragRef.current?.moved) {
+    const onUp = (e) => {
+      // 捏合中抬起一根手指：剩下的那根无缝转为平移
+      if (e.touches && e.touches.length > 0) {
+        if (pinchRef.current && e.touches.length === 1) {
+          pinchRef.current = null;
+          const t = e.touches[0];
+          const v = viewLatestRef.current;
+          dragRef.current = { x: t.clientX, y: t.clientY, tx0: v.tx, ty0: v.ty, moved: true };
+          setTimeout(() => { justDraggedRef.current = false; }, 80);
+        }
+        return;
+      }
+      if (dragRef.current?.moved || pinchRef.current) {
         justDraggedRef.current = true;
         setTimeout(() => { justDraggedRef.current = false; }, 80);
+      } else if (e.changedTouches && dragRef.current) {
+        // 触屏双击复位（touchAction:none 下 dblclick 不可靠）
+        const now = Date.now();
+        if (now - lastTapRef.current < 320) {
+          setAnimated(true);
+          setView({ scale: 1, tx: 0, ty: 0 });
+        }
+        lastTapRef.current = now;
       }
+      pinchRef.current = null;
       dragRef.current = null;
     };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
     window.addEventListener("touchmove", onMove);
     window.addEventListener("touchend", onUp);
+    window.addEventListener("touchcancel", onUp);
     return () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend", onUp);
+      window.removeEventListener("touchcancel", onUp);
     };
   }, [clampView]);
 
@@ -411,9 +468,17 @@ export default function GameMap({
     <div style={styles.mapContainer}>
       <div
         ref={viewportRef}
-        style={{ ...styles.viewport, cursor: dragRef.current?.moved ? "grabbing" : "grab" }}
+        style={{
+          ...styles.viewport,
+          cursor: dragRef.current?.moved ? "grabbing" : "grab",
+          // 触屏手势全部交给地图（平移/捏合），不让浏览器拿去滚动/缩放页面
+          touchAction: "none",
+        }}
         onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
-        onTouchStart={(e) => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
+        onTouchStart={(e) => {
+          if (e.touches.length >= 2) startPinch(e.touches);
+          else startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }}
         onDoubleClick={resetView}
       >
         <div
@@ -579,6 +644,7 @@ export default function GameMap({
                   onEventClick(event);
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
                 title={`${event.year} 年 · ${event.name}`}
               >
                 {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示。
@@ -697,7 +763,7 @@ const styles = {
     alignItems: "stretch",
     justifyContent: "center",
     padding: 0,
-    minHeight: 400,
+    minHeight: "min(400px, var(--vh100))",
   },
   // 视口：全宽通栏，底图 cover 铺满，可平移缩放
   viewport: {
@@ -729,8 +795,11 @@ const styles = {
     position: "absolute",
     background: "none",
     border: "none",
-    padding: 0,
+    // 触控命中区外扩（视觉尺寸不变，符号周围 10px 也可点中）
+    padding: 10,
+    margin: -10,
     cursor: "pointer",
+    touchAction: "manipulation",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -771,12 +840,18 @@ const styles = {
     border: `1px solid ${COLOR.goldLineSoft}`,
     backgroundColor: paperBtn(0.92),
     color: COLOR.btnTextSub,
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    fontSize: "clamp(12px, 0.903vw, 14.9px)",
     fontFamily: FONT,
     boxShadow: SHADOW.chip,
     letterSpacing: TRACKING.tight,
     cursor: "pointer",
     whiteSpace: "nowrap",
+    // 窄屏两枚并排放不下完整「年份+事件名」时截断而不是溢出屏幕
+    maxWidth: "42vw",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    minHeight: 40,
+    touchAction: "manipulation",
   },
   zoomControls: {
     position: "absolute",
@@ -790,8 +865,9 @@ const styles = {
   },
   // 主页同款小胶囊：纸底 + 金线描边的圆钮
   zoomBtn: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
+    touchAction: "manipulation",
     borderRadius: "50%",
     border: `1px solid ${COLOR.goldLineSoft}`,
     backgroundColor: paperBtn(0.92),

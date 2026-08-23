@@ -2,12 +2,24 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- 加到主屏幕后全屏运行（iPhone Safari 没有 Fullscreen API，这是唯一的真全屏途径） -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#F5F0E8" />
     <title>历史长河 - 互动历史教育游戏</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif; }
-      #root { min-height: 100vh; }
+      /* 手机浏览器地址栏伸缩：dvh 跟随实际可视高度，旧浏览器退回 vh */
+      :root { --vh100: 100vh; }
+      @supports (height: 100dvh) { :root { --vh100: 100dvh; } }
+      html, body { overscroll-behavior: none; }
+      body {
+        font-family: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #root { min-height: 100vh; min-height: var(--vh100); }
     </style>
   </head>
   <body>

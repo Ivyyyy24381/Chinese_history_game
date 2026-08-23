@@ -125,14 +125,14 @@ const styles = {
     borderTop: "2px solid #8B7355",
   },
   portraitLeft: {
-    flex: "0 0 140px",
+    flex: "0 0 clamp(90px, 16vw, 140px)",
     height: 160,
     borderRadius: 8,
     overflow: "hidden",
     boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
   },
   portraitRight: {
-    flex: "0 0 140px",
+    flex: "0 0 clamp(90px, 16vw, 140px)",
     height: 160,
     borderRadius: 8,
     overflow: "hidden",
@@ -153,7 +153,7 @@ const styles = {
   },
   speakerName: {
     color: "#D4A574",
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
     fontWeight: "bold",
     letterSpacing: 2,
   },
@@ -171,7 +171,7 @@ const styles = {
   },
   clickPrompt: {
     color: "#A89968",
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
+    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
     animation: "pulse 1.5s ease-in-out infinite",
   },
   progressBar: {

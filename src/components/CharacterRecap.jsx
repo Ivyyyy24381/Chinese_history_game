@@ -76,8 +76,8 @@ const styles = {
   },
   closeBtn: {
     position: "absolute", top: 16, right: 16,
-    padding: "6px 14px", border: "1px solid #BBA", borderRadius: 6,
-    backgroundColor: "#FFF", cursor: "pointer", fontFamily: "inherit", fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    padding: "10px 18px", minHeight: 40, border: "1px solid #BBA", borderRadius: 6,
+    backgroundColor: "#FFF", cursor: "pointer", fontFamily: "inherit", fontSize: "clamp(12.5px, 0.903vw, 14.9px)",
   },
   header: {
     display: "flex", gap: 24, alignItems: "center", marginBottom: 12,
@@ -87,13 +87,13 @@ const styles = {
     borderRadius: 8, border: "2px solid #C9A86A", backgroundColor: "#FFF",
   },
   name: { margin: 0, fontSize: "clamp(20.8px, 1.806vw, 29.9px)", color: "#3B2510", letterSpacing: 2 },
-  meta: { color: "#8B7355", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", margin: "6px 0" },
-  desc: { color: "#555", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", margin: 0, lineHeight: 1.7 },
+  meta: { color: "#8B7355", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", margin: "6px 0" },
+  desc: { color: "#555", fontSize: "clamp(12.5px, 0.903vw, 14.9px)", margin: 0, lineHeight: 1.7 },
   badgeRow: { margin: "12px 0 24px" },
   badge: {
     display: "inline-block", padding: "6px 16px",
     backgroundColor: "#3B2510", color: "#F4D03F",
-    borderRadius: 20, fontSize: "clamp(10.4px, 0.903vw, 14.9px)", letterSpacing: 2,
+    borderRadius: 20, fontSize: "clamp(12.5px, 0.903vw, 14.9px)", letterSpacing: 2,
   },
   stageBlock: { marginBottom: 26 },
   stageHeader: {
@@ -101,12 +101,12 @@ const styles = {
     borderLeft: "5px solid", paddingLeft: 12, marginBottom: 6,
   },
   stagePeriod: { fontSize: "clamp(15.2px, 1.319vw, 21.8px)", fontWeight: "bold", letterSpacing: 2 },
-  stageYears: { fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#999" },
-  stageSummary: { color: "#6B5340", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", margin: "4px 0 12px 17px", lineHeight: 1.7 },
+  stageYears: { fontSize: "clamp(12.5px, 0.903vw, 14.9px)", color: "#999" },
+  stageSummary: { color: "#6B5340", fontSize: "clamp(12.5px, 0.903vw, 14.9px)", margin: "4px 0 12px 17px", lineHeight: 1.7 },
   eventRow: { display: "flex", gap: 14, marginBottom: 14, paddingLeft: 17 },
   eventYear: {
     flexShrink: 0, width: 52, height: 28, borderRadius: 6,
-    color: "#FFF", fontWeight: "bold", fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    color: "#FFF", fontWeight: "bold", fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
     display: "flex", alignItems: "center", justifyContent: "center",
   },
   eventBody: { flex: 1 },
@@ -116,7 +116,7 @@ const styles = {
     border: "1px solid #C9B08A", borderRadius: 4, padding: "1px 8px",
   },
   eventLoc: { fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#999", margin: "3px 0" },
-  eventSummary: { fontSize: "clamp(10.4px, 0.903vw, 14.9px)", color: "#555", margin: "4px 0 0", lineHeight: 1.7 },
+  eventSummary: { fontSize: "clamp(12.5px, 0.903vw, 14.9px)", color: "#555", margin: "4px 0 0", lineHeight: 1.7 },
   epilogue: {
     marginTop: 32, textAlign: "center",
     fontSize: "clamp(13.6px, 1.181vw, 19.5px)", color: "#3B2510", letterSpacing: 3,

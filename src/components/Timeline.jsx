@@ -31,6 +31,7 @@ export default function Timeline({
   const lifeStart = stages[0].yearStart; // 展示用的生年
 
   const trackRef = useRef(null);
+  const touchCollapseRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [hoverYear, setHoverYear] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -71,11 +72,13 @@ export default function Timeline({
     window.addEventListener("mouseup", onUp);
     window.addEventListener("touchmove", onMove);
     window.addEventListener("touchend", onUp);
+    window.addEventListener("touchcancel", onUp);
     return () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend", onUp);
+      window.removeEventListener("touchcancel", onUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dragging, currentYear]);
@@ -100,6 +103,12 @@ export default function Timeline({
       onMouseLeave={() => { if (!dragging) setExpanded(false); }}
       onFocus={() => setExpanded(true)}
       onBlur={() => setExpanded(false)}
+      // 触屏无 hover：碰一下即展开，5s 无操作自动收起
+      onTouchStart={() => {
+        setExpanded(true);
+        clearTimeout(touchCollapseRef.current);
+        touchCollapseRef.current = setTimeout(() => setExpanded(false), 5000);
+      }}
     >
       <div style={styles.headerRow}>
         <span style={styles.yearDisplay}>{`${currentYear} 年`}</span>
@@ -134,6 +143,8 @@ export default function Timeline({
           onMouseDown={onTrackDown}
           onTouchStart={onTrackDown}
         >
+          {/* 触控命中区：8px 滑轨手指点不中，上下各外扩 16px（事件冒泡到 track 的按下处理） */}
+          <div style={{ position: "absolute", left: 0, right: 0, top: -16, bottom: -16 }} />
           {/* 时期 = 极淡色带 */}
           {stages.map((stage) => {
             // 裁掉时间轴起点之前的部分（如 712–736 的空白期）
@@ -175,6 +186,8 @@ export default function Timeline({
                 }}
                 title={`${event.year} 年 · ${event.name}`}
               >
+                {/* 触控命中垫：10px 墨点手指点不中，外扩到 36px 圆域（点击冒泡到本容器） */}
+                <span style={{ position: "absolute", left: -18, top: -18, width: 36, height: 36, borderRadius: "50%" }} />
                 <div
                   style={{
                     ...styles.eventDot,
@@ -261,8 +274,9 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "baseline",
+    gap: 10,
     marginBottom: 2,
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
+    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
     color: COLOR.secondary,
   },
   yearDisplay: {
@@ -274,7 +288,7 @@ const styles = {
   },
   lifespan: {
     color: COLOR.faint,
-    fontSize: "clamp(8.8px, 0.764vw, 12.6px)",
+    fontSize: "clamp(10.5px, 0.764vw, 12.6px)",
     marginLeft: 6,
     fontWeight: "normal",
     letterSpacing: 0,
@@ -284,11 +298,14 @@ const styles = {
     alignItems: "center",
     gap: 6,
     color: COLOR.ink,
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    fontSize: "clamp(12px, 0.903vw, 14.9px)",
     fontWeight: 600,
     letterSpacing: TRACKING.tight,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
     whiteSpace: "nowrap",
+    // 窄屏放不下「事件名 · 时期（生卒）」全文时裁剪，不挤走左侧年份
+    minWidth: 0,
+    overflow: "hidden",
   },
   currentDot: {
     width: 8,
@@ -317,6 +334,8 @@ const styles = {
     position: "relative",
     height: 8,
     cursor: "pointer",
+    // 手指拖动时竖向分量不移交给页面滚动，拖不中断
+    touchAction: "none",
   },
   stageSegment: {
     position: "absolute",
@@ -358,7 +377,7 @@ const styles = {
     transform: "translateX(-50%)",
     textAlign: "center",
     whiteSpace: "nowrap",
-    fontSize: "clamp(8.8px, 0.764vw, 12.6px)",
+    fontSize: "clamp(10.5px, 0.764vw, 12.6px)",
     lineHeight: 1.3,
     letterSpacing: TRACKING.tight,
     textShadow: "0 1px 2px rgba(255,255,255,0.6)",
@@ -377,20 +396,21 @@ const styles = {
     backgroundColor: COLOR.faint,
   },
   eventYear: {
-    fontSize: "clamp(8.8px, 0.764vw, 12.6px)",
+    fontSize: "clamp(10.5px, 0.764vw, 12.6px)",
     color: "inherit",
     opacity: 0.7,
   },
   eventName: {
-    fontSize: "clamp(10.4px, 0.903vw, 14.9px)",
+    fontSize: "clamp(12px, 0.903vw, 14.9px)",
     color: "inherit",
     marginTop: 1,
   },
   thumb: {
     position: "absolute",
     top: "50%",
-    width: 17,
-    height: 17,
+    width: 20,
+    height: 20,
+    touchAction: "none",
     borderRadius: "50%",
     border: `1.5px solid ${COLOR.goldLine}`,
     backgroundColor: paperBtn(0.96),

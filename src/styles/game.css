@@ -16,6 +16,13 @@ body,
 #root {
   width: 100%;
   height: 100%;
+  /* 顶部下拉不触发浏览器「下拉刷新」/橡皮筋，避免打断游戏内拖拽 */
+  overscroll-behavior: none;
+}
+
+/* 快速连点（连续点「继续」很常见）不触发浏览器双击缩放 */
+button {
+  touch-action: manipulation;
 }
 
 #root {
