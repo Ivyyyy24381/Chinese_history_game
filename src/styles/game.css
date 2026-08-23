@@ -65,6 +65,17 @@ p {
   }
 }
 
+/* 行旅墨线随脚步画出（配合 pathLength=1 归一化） */
+@keyframes pathDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* 旅人赶路时的轻微起伏 */
+@keyframes travelBob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
+}
+
 /* 公告/诏书卡的入场：从纸里浮出来 */
 @keyframes announceIn {
   from {

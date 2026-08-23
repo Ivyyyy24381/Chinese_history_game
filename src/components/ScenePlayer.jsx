@@ -119,6 +119,10 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
   const [visitedWaypoints, setVisitedWaypoints] = useState(new Set());
   const [activeWaypoint, setActiveWaypoint] = useState(null);
   const [waypointDialogueIdx, setWaypointDialogueIdx] = useState(0);
+  // 行旅顺序推进：旅人当前所在站 index、正在走向的站 index（走路动画中）
+  const [reachedIdx, setReachedIdx] = useState(0);
+  const [walkingTo, setWalkingTo] = useState(null);
+  const walkTimerRef = useRef(null);
 
   const phases = sceneData.phases;
   const currentPhase = phases[phaseIndex];
@@ -152,6 +156,9 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
       setVisitedWaypoints(new Set());
       setActiveWaypoint(null);
       setWaypointDialogueIdx(0);
+      clearTimeout(walkTimerRef.current);
+      setReachedIdx(0);
+      setWalkingTo(null);
     } else {
       onComplete();
     }
@@ -949,17 +956,47 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
   if (currentPhase.type === "map_travel") {
     const waypoints = currentPhase.waypoints || currentPhase.destinations || [];
     const requireAll = currentPhase.requireAll !== false; // default true
-    const allVisited = waypoints.every((w) => visitedWaypoints.has(w.id || w.name));
-    const handleWaypointClick = (wp) => {
-      const wid = wp.id || wp.name;
+    const wpId = (w) => w.id || w.name;
+    // 顺序行旅：只有「下一站」可以互动，未至的站是淡铅笔稿
+    const currentTargetIdx = waypoints.findIndex((w) => !visitedWaypoints.has(wpId(w)));
+    const allVisited = currentTargetIdx === -1;
+    const WALK_MS = 1400;
+
+    // 到站（或减少动效时直接跳到站）后开对话；没有对话的站直接完成并继续走
+    const openWaypoint = (wp, idx) => {
       if (wp.dialogues && wp.dialogues.length > 0) {
         setActiveWaypoint(wp);
         setWaypointDialogueIdx(0);
       } else {
-        const next = new Set(visitedWaypoints);
-        next.add(wid);
-        setVisitedWaypoints(next);
+        completeWaypoint(wp, idx);
       }
+    };
+    const beginWalkTo = (idx) => {
+      if (prefersReducedMotion) {
+        setReachedIdx(idx);
+        openWaypoint(waypoints[idx], idx);
+        return;
+      }
+      setWalkingTo(idx);
+      walkTimerRef.current = setTimeout(() => {
+        setWalkingTo(null);
+        setReachedIdx(idx);
+        // 到站落定，停一拍再开口
+        walkTimerRef.current = setTimeout(() => openWaypoint(waypoints[idx], idx), 350);
+      }, WALK_MS);
+    };
+    const completeWaypoint = (wp, idx) => {
+      setVisitedWaypoints((prev) => {
+        const next = new Set(prev);
+        next.add(wpId(wp));
+        return next;
+      });
+      if (idx + 1 < waypoints.length) beginWalkTo(idx + 1);
+    };
+    const handleWaypointClick = (wp, idx) => {
+      // 只响应「旅人正站着的下一站」——出发第一站靠这一下点击启动整趟行程
+      if (idx !== currentTargetIdx || walkingTo !== null || reachedIdx !== idx || activeWaypoint) return;
+      openWaypoint(wp, idx);
     };
     const advanceWaypointDialogue = () => {
       if (!activeWaypoint) return;
@@ -967,14 +1004,29 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
       if (waypointDialogueIdx < dlgs.length - 1) {
         setWaypointDialogueIdx(waypointDialogueIdx + 1);
       } else {
-        const wid = activeWaypoint.id || activeWaypoint.name;
-        const next = new Set(visitedWaypoints);
-        next.add(wid);
-        setVisitedWaypoints(next);
+        const idx = waypoints.findIndex((w) => wpId(w) === wpId(activeWaypoint));
         setActiveWaypoint(null);
         setWaypointDialogueIdx(0);
+        completeWaypoint(activeWaypoint, idx);
       }
     };
+
+    // 站点坐标 → 16:9 画面坐标系（viewBox 160×90，和舞台等比，单位均匀）
+    const px = (w) => (w.x ?? 50) * 1.6;
+    const py = (w) => (w.y ?? 50) * 0.9;
+    // 相邻站之间的手绘感墨线：二次贝塞尔，垂线方向交替拱起
+    const segPath = (a, b, i) => {
+      const x1 = px(a), y1 = py(a), x2 = px(b), y2 = py(b);
+      const dx = x2 - x1, dy = y2 - y1;
+      const len = Math.hypot(dx, dy) || 1;
+      const bow = Math.min(6, len * 0.16) * (i % 2 === 0 ? 1 : -1);
+      const mx = (x1 + x2) / 2 - (dy / len) * bow;
+      const my = (y1 + y2) / 2 + (dx / len) * bow;
+      return `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`;
+    };
+    const INK = "#3A2E20";
+    const SEAL = "#A63A2B";
+    const PENCIL = "#8A7A62";
 
     return (
       <div style={styles.sceneOuter}>
@@ -991,16 +1043,70 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             {currentPhase.instruction && (
               <div style={styles.instructionBar}>
                 <span style={styles.instructionIcon}>{"\u{1F5FA}"}</span>
-                <span>{currentPhase.instruction}</span>
-                <span style={styles.talkCount}>{"\u5DF2\u5230\u8BBF: " + visitedWaypoints.size + "/" + waypoints.length}</span>
+                <span>
+                  {allVisited
+                    ? currentPhase.instruction
+                    : walkingTo !== null
+                      ? `\u8D76\u8DEF\u4E2D\u2026\u2026`
+                      : `\u4E0B\u4E00\u7AD9\uFF1A${waypoints[currentTargetIdx]?.name || ""}`}
+                </span>
+                <span style={styles.talkCount}>{"\u884C\u7A0B " + visitedWaypoints.size + "/" + waypoints.length}</span>
               </div>
             )}
 
-            {/* \u7AD9\u70B9\u7528\u4E3B\u9875\u5730\u56FE\u540C\u6B3E\u5C0F Pin\uFF08\u5E95\u56FE\u5DF2\u6709\u5730\u540D\uFF0C\u4E0D\u518D\u53E0\u6587\u5B57\uFF09\uFF1B\u60AC\u505C\u6709 title \u63D0\u793A */}
-            {waypoints.map((wp) => {
-              const wid = wp.id || wp.name;
+            {/* \u884C\u65C5\u58A8\u7EBF\uFF1A\u5DF2\u8D70\u8FC7\u7684\u5B9E\u58A8\u3001\u6B63\u5728\u8D70\u7684\u9010\u6BB5\u663E\u5F71\u3001\u672A\u81F3\u7684\u6DE1\u94C5\u7B14\u7A3F */}
+            <svg
+              viewBox="0 0 160 90"
+              preserveAspectRatio="none"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 10 }}
+            >
+              {waypoints.slice(0, -1).map((wp, i) => {
+                const d = segPath(wp, waypoints[i + 1], i);
+                if (i + 1 <= reachedIdx) {
+                  // \u5DF2\u8D70\u8FC7\uFF1A\u5B9E\u58A8\u7EBF
+                  return <path key={i} d={d} fill="none" stroke={INK} strokeWidth="0.7" strokeLinecap="round" opacity="0.55" />;
+                }
+                if (walkingTo === i + 1) {
+                  // \u6B63\u5728\u8D70\uFF1A\u58A8\u7EBF\u968F\u811A\u6B65\u753B\u51FA\u6765
+                  return (
+                    <path
+                      key={i} d={d} fill="none" stroke={INK} strokeWidth="0.7" strokeLinecap="round" opacity="0.6"
+                      pathLength="1" strokeDasharray="1" strokeDashoffset="1"
+                      style={{ animation: `pathDraw ${WALK_MS}ms linear forwards` }}
+                    />
+                  );
+                }
+                // \u672A\u81F3\uFF1A\u6781\u6DE1\u7684\u94C5\u7B14\u7A3F
+                return <path key={i} d={d} fill="none" stroke={PENCIL} strokeWidth="0.45" strokeLinecap="round" strokeDasharray="1.1 1.7" opacity="0.3" />;
+              })}
+            </svg>
+
+            {/* \u7AD9\u70B9\u4E09\u6001\uFF1A\u5DF2\u81F3=\u5B9E\u58A8+\u2713\uFF1B\u5F53\u524D=\u5370\u7AE0\u7EA2\u547C\u5438\uFF0C\u5E26\u540D\u724C\uFF1B\u672A\u81F3=\u533F\u540D\u94C5\u7B14\u5C0F\u70B9 */}
+            {waypoints.map((wp, idx) => {
+              const wid = wpId(wp);
               const visited = visitedWaypoints.has(wid);
-              const color = visited ? "#95A5A6" : (wp.isKey ? "#E74C3C" : "#2ECC71");
+              const isCurrent = idx === currentTargetIdx;
+              const awaitingTap = isCurrent && walkingTo === null && reachedIdx === idx && !activeWaypoint;
+              if (!visited && !isCurrent) {
+                // \u672A\u81F3\u4E4B\u7AD9\uFF1A\u53EA\u7ED9\u4E00\u4E2A\u6DE1\u94C5\u7B14\u5C0F\u5708\uFF0C\u540D\u5B57\u5148\u4E0D\u63ED\u6653
+                return (
+                  <div
+                    key={wid}
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute",
+                      left: (wp.x || 50) + "%",
+                      top: (wp.y || 50) + "%",
+                      transform: "translate(-50%, -50%)",
+                      width: 9, height: 9, borderRadius: "50%",
+                      border: `1.5px dashed ${PENCIL}`,
+                      opacity: 0.45,
+                      zIndex: 20,
+                      pointerEvents: "none",
+                    }}
+                  />
+                );
+              }
               return (
                 <div
                   key={wid}
@@ -1010,50 +1116,84 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     left: (wp.x || 50) + "%",
                     top: (wp.y || 50) + "%",
                     transform: "translate(-50%, -100%)",
-                    cursor: "pointer",
+                    cursor: awaitingTap ? "pointer" : "default",
                     zIndex: 30,
-                    opacity: visited ? 0.7 : 1,
+                    opacity: visited ? 0.85 : 1,
                   }}
-                  onClick={() => handleWaypointClick(wp)}
+                  onClick={() => handleWaypointClick(wp, idx)}
                 >
-                  {!visited && (
+                  {awaitingTap && (
                     <span style={{
                       position: "absolute", top: 0, left: "50%",
-                      width: 18, height: 18, borderRadius: "50%",
-                      backgroundColor: color, opacity: 0.35,
+                      width: 20, height: 20, borderRadius: "50%",
+                      backgroundColor: SEAL, opacity: 0.35,
                       transform: "translate(-50%, 0)",
                       animation: "mapPinPulse 1.6s ease-out infinite",
                       pointerEvents: "none",
                     }} />
                   )}
-                  <Pin color={color} size={22} glow={!visited} badge={visited ? "\u2713" : null} />
+                  <Pin
+                    color={visited ? INK : SEAL}
+                    size={wp.isKey ? 25 : 22}
+                    glow={awaitingTap}
+                    badge={visited ? "\u2713" : null}
+                  />
+                  {/* \u5F53\u524D\u7AD9\u540D\u724C\uFF1A\u7EB8\u5E95\u5C0F\u80F6\u56CA\uFF0C\u7B2C\u4E00\u7AD9\u63D0\u793A\u51FA\u53D1 */}
+                  {awaitingTap && (
+                    <div style={{
+                      position: "absolute",
+                      top: "100%", left: "50%",
+                      transform: "translateX(-50%)",
+                      marginTop: 4,
+                      padding: "3px 10px",
+                      borderRadius: 12,
+                      backgroundColor: "rgba(250,246,238,0.88)",
+                      border: "1px solid #C9B08A",
+                      color: INK,
+                      fontSize: "clamp(11px, 0.9vw, 14px)",
+                      letterSpacing: 1,
+                      whiteSpace: "nowrap",
+                      boxShadow: "0 2px 8px rgba(70,55,35,0.25)",
+                      pointerEvents: "none",
+                    }}>
+                      {(wp.name || "") + (visitedWaypoints.size === 0 && idx === 0 ? " \u00B7 \u70B9\u51FB\u51FA\u53D1" : "")}
+                    </div>
+                  )}
                 </div>
               );
             })}
 
-            {/* \u5C0F\u675C\u752B\uFF1A\u7AD9\u5728\u5F53\u524D/\u6700\u8FD1\u5230\u8BBF\u7684\u7AD9\u70B9\uFF0C\u70B9\u4E0B\u4E00\u7AD9\u4F1A\u8D70\u8FC7\u53BB */}
+            {/* \u65C5\u4EBA\uFF1A\u6CBF\u58A8\u7EBF\u8D70\u5411\u4E0B\u4E00\u7AD9\uFF0C\u8D70\u8DEF\u65F6\u8F7B\u5FAE\u8D77\u4F0F */}
             {(() => {
-              const lastId = [...visitedWaypoints].pop();
-              const at = activeWaypoint
-                || waypoints.find((w) => (w.id || w.name) === lastId)
-                || waypoints[0];
+              const at = waypoints[walkingTo ?? Math.min(reachedIdx, waypoints.length - 1)];
               if (!at) return null;
               return (
-                <img
-                  src={asset(heroPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year, eventId))}
-                  alt=""
+                <div
                   style={{
                     position: "absolute",
                     left: (at.x || 50) + "%",
                     top: (at.y || 50) + "%",
-                    height: "min(7vw, 12vh)",
                     transform: "translate(-50%, -96%)",
-                    transition: "left 0.9s ease-in-out, top 0.9s ease-in-out",
+                    transition: prefersReducedMotion
+                      ? "none"
+                      : `left ${WALK_MS}ms cubic-bezier(0.45, 0.1, 0.45, 0.9), top ${WALK_MS}ms cubic-bezier(0.45, 0.1, 0.45, 0.9)`,
                     pointerEvents: "none",
-                    zIndex: 12,
-                    filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.4))",
+                    zIndex: 25,
                   }}
-                />
+                >
+                  <img
+                    src={asset(heroPortraitPath(currentPhase.dufu_pose || sceneData.dufu_pose, sceneData.year, eventId))}
+                    alt=""
+                    style={{
+                      display: "block",
+                      height: "min(9vw, 15vh)",
+                      filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.4))",
+                      animation: walkingTo !== null && !prefersReducedMotion
+                        ? "travelBob 380ms ease-in-out infinite alternate"
+                        : "none",
+                    }}
+                  />
+                </div>
               );
             })()}
 
@@ -2261,8 +2401,8 @@ const styles = {
   },
   sceneStageInner: {
     position: "relative",
-    width: "min(100vw, calc(100vh * 16 / 9))",
-    height: "min(100vh, calc(100vw * 9 / 16))",
+    width: "min(100vw, calc(var(--vh100) * 16 / 9))",
+    height: "min(var(--vh100), calc(100vw * 9 / 16))",
     aspectRatio: "16 / 9",
     backgroundSize: "cover", backgroundPosition: "center",
     backgroundColor: "#2C3E50",
@@ -2382,11 +2522,14 @@ const styles = {
     borderRadius: 4, whiteSpace: "nowrap",
   },
   floatingProceed: {
+    // 主页同款纸底金线胶囊（视觉基准：CharacterSelect 的开始按钮）
     position: "absolute", bottom: 20, right: 20,
-    padding: "12px 24px", backgroundColor: "#2ECC71",
-    color: "#FFF", border: "none", borderRadius: 8,
+    padding: "12px 26px", backgroundColor: "rgba(252,248,238,0.92)",
+    color: "#3A2E20", border: "1px solid #C9A86A", borderRadius: 24,
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    letterSpacing: 2,
     fontSize: "clamp(12.0px, 1.042vw, 17.2px)", fontWeight: "bold", cursor: "pointer",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+    boxShadow: "0 6px 16px rgba(70,55,35,0.28)",
     zIndex: 30, // always above character art (npcMarker z=10)
   },
   // Dialogue overlay
