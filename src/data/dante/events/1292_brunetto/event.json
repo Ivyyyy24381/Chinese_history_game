@@ -1,0 +1,237 @@
+{
+  "id": "1292_brunetto",
+  "title": "老师布鲁内托",
+  "year": "1292",
+  "type": "interactive",
+  "phases": [
+    {
+      "id": "lectern_intro",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
+      "title": "1373 · 后世讲坛",
+      "transitionText": "薄伽丘翻过一页，停住了。",
+      "announcement": {
+        "title": "先说一句实话",
+        "text": "我们其实不知道但丁是怎么认识布鲁内托·拉蒂尼的。没有学籍，没有契约，没有一封信。\n我们知道有这么一位老师，只有一个原因——但丁在《地狱》里写了他。\n记住这件事：现实这一半的证据，来自文学那一半。",
+        "style": "imperial_decree"
+      },
+      "dufu_reaction": {
+        "portrait": "/assets/dante/npcs/boccaccio.webp",
+        "text": "所以今天这一课，要倒着上。\n先看他们在人世间怎么相处——再看学生把老师写去了哪里。"
+      },
+      "narrative": ""
+    },
+    {
+      "id": "study",
+      "type": "explore",
+      "background": "/assets/dante/events/1292_brunetto/backgrounds/brunetto_study.webp",
+      "title": "佛罗伦萨 · 老师的书房 · 1292",
+      "narrative": "贝雅特丽切死后两年。二十七岁的但丁把自己埋进书里。城里最有学问的老人是布鲁内托·拉蒂尼——公证人、前公社书记长、教这座城怎么说话、怎么议政的人。",
+      "instruction": "跟老师聊聊。留意他桌上那两本书。",
+      "dufu_pose": "youth/standing",
+      "npcs": [
+        {
+          "id": "brunetto",
+          "name": "布鲁内托·拉蒂尼",
+          "portrait": "/assets/dante/npcs/brunetto.webp",
+          "position": { "x": 63, "y": 66 },
+          "scale": 2.1,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "brunetto",
+              "speakerName": "布鲁内托",
+              "text": "会写诗不算本事，孩子。这城里会写诗的人，比会读的还多。"
+            },
+            {
+              "speaker": "brunetto",
+              "speakerName": "布鲁内托",
+              "text": "本事是：让一座城听懂你。修辞学不是装饰，是政治。你要从政，先学会怎么把话说进别人心里。"
+            },
+            {
+              "speaker": "brunetto",
+              "speakerName": "布鲁内托",
+              "text": "人这一辈子很短。但人能让自己不朽——靠留下一样比自己活得久的东西。\n你现在还不懂我在说什么。以后会懂。"
+            }
+          ]
+        },
+        {
+          "id": "tesoro_codex",
+          "name": "《宝库》",
+          "portrait": "/assets/dante/props/lectern_codex.webp",
+          "position": { "x": 40, "y": 62 },
+          "scale": 0.85,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "《宝库》· Li Livres dou Trésor",
+              "text": "老师毕生的大书：一部把全世界的学问收进来的百科。天文、历史、伦理、修辞、如何治理一座城——什么都有。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "……老师，这是法文写的。"
+            },
+            {
+              "speaker": "brunetto",
+              "speakerName": "布鲁内托",
+              "text": "蒙塔佩尔蒂之后我流亡法国，那六年写的。法语通行得远，读的人多。学问要传得出去才叫学问。"
+            }
+          ]
+        },
+        {
+          "id": "tesoretto",
+          "name": "《小宝库》",
+          "portrait": "",
+          "position": { "x": 27, "y": 71 },
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "narrator",
+              "speakerName": "《小宝库》· Il Tesoretto",
+              "text": "旁边一本薄的，意大利俗语写的韵文。诗里，作者在一座树林中迷了路，遇见一位女神，被带着游历万物之理。"
+            },
+            {
+              "speaker": "dante",
+              "speakerName": "但丁",
+              "text": "……在树林里迷路。被一个人领着走。"
+            }
+          ]
+        },
+        {
+          "id": "apprentice_scribe",
+          "name": "抄书学徒",
+          "portrait": "/assets/dante/npcs/scribe.webp",
+          "position": { "x": 84, "y": 74 },
+          "scale": 1.9,
+          "flip": true,
+          "isClue": true,
+          "dialogues": [
+            {
+              "speaker": "apprentice_scribe",
+              "speakerName": "抄书学徒",
+              "text": "先生年纪大了。你来得算晚的——他从法国回来快三十年了。"
+            },
+            {
+              "speaker": "apprentice_scribe",
+              "speakerName": "抄书学徒",
+              "text": "全城的人都受过他的教。人家说，是他把佛罗伦萨人「教粗为细」的。"
+            }
+          ]
+        }
+      ],
+      "requiredTalks": 3,
+      "nextPhase": "language_choice"
+    },
+    {
+      "id": "language_choice",
+      "type": "forced_choice",
+      "background": "/assets/dante/events/1292_brunetto/backgrounds/brunetto_study.webp",
+      "title": "一个还没到期的问题",
+      "narrative": "老师的大书用法文写，小书用俗语写。有一天但丁也要选。",
+      "question": "如果要写一本能活得比自己久的书，该用哪种语言？",
+      "dufu_pose": "youth/gazing",
+      "options": [
+        {
+          "id": "latin",
+          "text": "拉丁文——学者的语言，最体面",
+          "correct": false,
+          "response": {
+            "speaker": "brunetto",
+            "speakerName": "布鲁内托",
+            "text": "体面。可你母亲读不了，你邻居读不了。你要写给谁看？"
+          }
+        },
+        {
+          "id": "french",
+          "text": "法文——像老师那样，传得远",
+          "correct": false,
+          "response": {
+            "speaker": "brunetto",
+            "speakerName": "布鲁内托",
+            "text": "我就是这么选的。读的人确实多。\n……只是，那不是我出生时说的话。"
+          }
+        },
+        {
+          "id": "volgare",
+          "text": "俗语——我在佛罗伦萨街上学会的那种话",
+          "correct": true,
+          "response": {
+            "speaker": "dante",
+            "speakerName": "但丁",
+            "text": "如果一样东西要活得比我久，它得用活着的语言写。\n拉丁文是死的，法文不是我的。\n我要用我母亲教我的那种话，写一本谁都能读的书。"
+          }
+        }
+      ],
+      "conclusion": {
+        "narrative": "这个选择在 1292 年还只是一句空话。十几年后，一个流亡在外、身无分文的人，会用它写出一部三行连锁韵的长诗——用「俗语」，而不是任何一种体面的语言。那部诗后来把这种「俗语」变成了意大利语。\n而他的老师，选了另一条路。"
+      },
+      "nextPhase": "portal_maestro"
+    },
+    {
+      "id": "portal_maestro",
+      "type": "echo_portal",
+      "background": "/assets/dante/events/1292_brunetto/backgrounds/brunetto_study.webp",
+      "comedyBackground": "/assets/dante/comedy/backgrounds/inferno_xv_sand.webp",
+      "manuscript": "/assets/dante/comedy/manuscript.webp",
+      "token": {
+        "id": "maestro",
+        "kind": "person",
+        "name": "老师",
+        "detail": "1292 · 布鲁内托·拉蒂尼，教他修辞、政治，与「如何使人不朽」"
+      },
+      "prompt": "把「老师」放进但丁的手稿",
+      "afterTitle": "三十年后 · 地狱 第十五歌",
+      "afterText": "第七圈，第三环。\n火雨落在沙上，一落就是永远。\n一群亡魂沿着堤岸走过来，眯着眼打量他。\n其中一个，忽然抓住了他的衣角。",
+      "nextPhase": "meet_brunetto"
+    },
+    {
+      "id": "meet_brunetto",
+      "type": "comedy_encounter",
+      "background": "/assets/dante/comedy/backgrounds/inferno_xv_sand.webp",
+      "soul": {
+        "id": "brunetto",
+        "name": "布鲁内托·拉蒂尼",
+        "realityPortrait": "/assets/dante/npcs/brunetto.webp",
+        "comedyPortrait": "/assets/dante/comedy/souls/brunetto_shade.webp",
+        "metIn": "1292_brunetto",
+        "metLabel": "1292 佛罗伦萨 · 老师的书房"
+      },
+      "recognition": "那张脸被火燎得看不清了。\n但丁俯下身，盯了很久，才认出来——\n\n「您在这儿吗，布鲁内托先生？」",
+      "asks": [
+        {
+          "q": "你敬重他。他为什么在这里？",
+          "a": "因为敬重不替他免罪。\n我把他判进「违逆自然」这一环。这是全书最难写的一段。\n如果我因为爱一个人，就把他挪到他不该在的地方——\n那这整座地狱，一文不值。"
+        },
+        {
+          "q": "那你为什么还用敬称叫他「您」？",
+          "a": "整本书里我用「您」的人，五个都不到。\n判他的是我，敬他的也是我。这两件事我不打算调和。\n你刚才听见那句「您教我如何使人不朽」——\n那不是客套。那是我欠他的。"
+        },
+        {
+          "q": "他自己怎么说？",
+          "a": "他没有替自己辩解一个字。\n他只托付了一样东西：他的《宝库》。\n「让我的《宝库》托付给你——我在那本书里还活着。」\n然后他就跑开了。像维罗纳赛跑抢那块绿布的人——\n看上去还是赢的那一个，不是输的那一个。"
+        },
+        {
+          "q": "把他写进这里，是惩罚他，还是救他？",
+          "a": "你自己想。\n七百年过去了。人们记得布鲁内托·拉蒂尼，\n不是因为那部法文的《宝库》——\n是因为我把他放在了火雨底下。\n他要的那个「不朽」，我给他了。用的是这个方式。"
+        }
+      ],
+      "requiredAsks": 2,
+      "closing": "他教但丁：人如何让自己不朽。\n但丁做到了——然后把老师一起带了进去。\n\n现实里的一位老师，成了《地狱》第十五歌里的一个亡魂。\n《神曲》就是这么盖起来的：他把自己认识的人，一个一个放了进去。",
+      "nextPhase": "echo"
+    },
+    {
+      "id": "echo",
+      "type": "transition",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
+      "title": "后世回声",
+      "transitionText": "讲坛上，薄伽丘合上第十五歌。",
+      "dufu_reaction": {
+        "portrait": "/assets/dante/npcs/boccaccio.webp",
+        "text": "六百年来，学者们为一件事吵个不停：\n布鲁内托到底犯了什么「违逆自然」的罪？\n有人说是肉身的罪。也有人说——\n他背弃了自己的母语，用法文写了毕生的大书。\n\n哪一种说法对，我们不知道。\n但你注意到没有：判他的那个人，正是那个决定用母语写作的人。"
+      },
+      "narrative": ""
+    }
+  ]
+}

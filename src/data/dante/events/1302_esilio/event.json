@@ -298,22 +298,103 @@
       "conclusion": {
         "narrative": "1302 年 1 月 27 日罚金流放，3 月 10 日加判火刑。罪名「贪污」从未有过任何证据。这是一场以法律为武器的政治清洗——教皇借瓦卢瓦的查理之刀，把白党连根拔出佛罗伦萨。但丁此生，再没有踏进佛罗伦萨一步。"
       },
-      "nextPhase": "prophecy"
+      "nextPhase": "portal_esilio"
     },
     {
-      "id": "prophecy",
+      "id": "portal_esilio",
+      "type": "echo_portal",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.webp",
+      "comedyBackground": "/assets/dante/comedy/backgrounds/moral_geography.webp",
+      "manuscript": "/assets/dante/comedy/manuscript.webp",
+      "token": {
+        "id": "esilio",
+        "kind": "conflict",
+        "name": "流亡",
+        "detail": "1302 · 缺席审判，终身放逐，拒不到庭者火焚之"
+      },
+      "prompt": "把「流亡」放进但丁的手稿",
+      "afterTitle": "十四年后 · 天堂 第十七歌",
+      "afterText": "他让 1300 年的先祖，「预言」1302 年已经发生的事：\n\n「你将抛下一切最心爱之物——这是流亡之弓射出的第一支箭。\n你将尝到别人的面包多么咸，走别人的楼梯多么陡。」\n\n他还在那本书里，重新安排了所有人的位置。",
+      "nextPhase": "place_the_living"
+    },
+    {
+      "id": "place_the_living",
+      "type": "inferno_placement",
+      "background": "/assets/dante/comedy/backgrounds/moral_geography.webp",
+      "question": "这些人，但丁把他们放进了哪一界？",
+      "circles": [
+        {
+          "id": "paradiso",
+          "name": "天堂",
+          "label": "光里",
+          "y": 14
+        },
+        {
+          "id": "purgatorio",
+          "name": "炼狱",
+          "label": "还洗得干净的罪",
+          "y": 48
+        },
+        {
+          "id": "inferno",
+          "name": "地狱",
+          "label": "永远洗不干净的罪",
+          "y": 82
+        }
+      ],
+      "souls": [
+        {
+          "id": "boniface",
+          "name": "卜尼法斯八世",
+          "portrait": "/assets/dante/npcs/boniface.webp",
+          "metIn": "1302_esilio",
+          "metLabel": "1301 罗马 · 教皇接见厅",
+          "answer": "inferno",
+          "verdict": "《地狱》第十九歌：第八圈第三沟，买卖圣职的人头下脚上倒插在石缝里，只有脚底露在外面挨火烧。但丁走到坑边，坑里的尼古拉三世认错了人，「预言」下一个来填这个坑的会是卜尼法斯。——写这一段的时候，卜尼法斯还活着。但丁把一个活人写进了地狱，还提前给他留好了位置。",
+          "hint": "他的罪，和「钱」与「圣职」有关。"
+        },
+        {
+          "id": "corso_donati",
+          "name": "科尔索·多纳蒂",
+          "portrait": "/assets/dante/npcs/corso_donati.webp",
+          "metIn": "1300_priore",
+          "metLabel": "1300 佛罗伦萨 · 执政团",
+          "answer": "inferno",
+          "verdict": "黑党的头目，把但丁赶出城的那个人。但丁没有亲手判他——他让科尔索自己的亲弟弟福雷塞，在炼狱里说出来：「那个罪魁，会被一头野兽拖着走，越拖越快，一直拖到那个罪永远洗不干净的谷底。」（《炼狱》第二十四歌）兄弟两个，一个在炼狱，一个在下面。",
+          "hint": "问问他弟弟。"
+        },
+        {
+          "id": "forese",
+          "name": "福雷塞·多纳蒂",
+          "portrait": "/assets/dante/npcs/forese.webp",
+          "metIn": "1295_arte",
+          "metLabel": "1295 佛罗伦萨 · 老桥",
+          "answer": "purgatorio",
+          "verdict": "《炼狱》第二十三歌：贪食者饿得瘦脱了形，但丁差一点没认出这个老朋友。他们年轻时互相写诗对骂过，很难听的那种。可在炼狱重逢，两个人像什么都没发生过一样聊起天来。——不是他爱过的人都在天上，也不是犯过错的人都在下面。",
+          "hint": "他是科尔索的弟弟，但不是科尔索。"
+        },
+        {
+          "id": "beatrice_young",
+          "name": "贝雅特丽切",
+          "portrait": "/assets/dante/npcs/beatrice_young.webp",
+          "metIn": "1283_beatrice",
+          "metLabel": "1283 佛罗伦萨 · 圣三一桥头",
+          "answer": "paradiso",
+          "verdict": "《炼狱》第三十歌她登场，从维吉尔手里接过但丁，一路带到《天堂》第三十三歌的终极之光。九岁那年宴会上那个穿绯红衣裙的女孩，最后成了整部诗的向导。",
+          "hint": "她是那个引路的人。"
+        }
+      ],
+      "nextPhase": "thesis"
+    },
+    {
+      "id": "thesis",
       "type": "transition",
       "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
-      "title": "卡恰圭达的预言",
-      "transitionText": "讲坛上，薄伽丘翻到《天堂》第十七歌——写作时间的倒装：流亡多年的但丁，让 1300 年的先祖「预言」这一切。",
-      "announcement": {
-        "title": "天堂 · 第十七歌",
-        "text": "卡恰圭达：「你将抛下一切最心爱之物——这是流亡之弓射出的第一支箭。你将尝到别人的面包多么咸，走别人的楼梯多么陡。」",
-        "style": "imperial_decree"
-      },
+      "title": "后世回声",
+      "transitionText": "薄伽丘放下讲义。",
       "dufu_reaction": {
-        "portrait": "/assets/dante/hero/exile/cloak.webp",
-        "text": "别人的面包，有多咸。\n——我将用余生，亲口尝到。"
+        "portrait": "/assets/dante/npcs/boccaccio.webp",
+        "text": "你刚才放进地狱的那个人，一刻钟前还在罗马跟你说话。\n\n这就是这本书的造法。他没有编出一个地狱——\n他是把佛罗伦萨、把罗马、把他这一生认识的人，\n一层一层，重新排了一遍座位。"
       },
       "narrative": ""
     }
