@@ -224,11 +224,25 @@ UI 会显示 `metLabel`（「你在 1301 罗马见过他」）——「等等，
 ## 八、实施顺序
 
 1. ✅ 本文档
-2. 引擎：3 个 phase 类型 + 占位素材（先跑通渲染）
-3. 新增 1292 布鲁内托事件（现实半场）
-4. 1302 放逐令接上第 5 层：`echo_portal` → `inferno_placement` → `comedy_encounter`(布鲁内托)
-5. `npm run build` + 浏览器实跑验证
-6. —— 竖切跑通后 —— 双时间轴 UI、其余 7 个事件的第 5 层、token 回收结算页
+2. ✅ 引擎：3 个 phase 类型（ScenePlayer）+ 编辑器模板（SceneEditor）+ 占位素材
+3. ✅ 新增 1292 布鲁内托事件（现实半场 → portal → 地狱 XV 重遇）
+4. ✅ 1302 放逐令接上第 5 层：`echo_portal` → `inferno_placement`（删掉旧的 prophecy transition）
+5. ✅ `vite build` 通过；浏览器 1280×720 逐 phase 实跑截图，修掉 3 个 bug；
+   全局 10 事件时间轴无横向溢出、无 JS 报错
+6. ⬜ —— 竖切已跑通，以下是下一轮 ——
+   - 双时间轴 UI（`Timeline.jsx` 第二条《神曲》淡轨，数据已就位：每个事件的 `comedyAnchor`）
+   - 其余 7 个事件的第 5 层（映射表见 §四；1308「异乡的面包」优先——它是要被溶解的那个「独立神曲章节」）
+   - token 回收：`localStorage` 持久化 + `CharacterRecap` 手稿页
+   - `src/data/dante/comedy/cast.json` 注册表（防止现实半场与《神曲》半场写岔）
+   - 正式美术替换占位图（同名覆盖即可，prompt 见 `ASSET_PROMPTS_DANTE.md`）
+
+## 十、本轮实跑发现的坑（给下一轮留个记录）
+
+- `active === 0` 是 falsy。`!active` 判空会让「点第一个选项」失效——凡是用 index 当状态的都要写 `=== null`。
+- 转场类 phase 的暗层要分「过场中」和「已落地」两档，否则新场景的底图永远被压在 70% 黑底下面。
+- 「你见过**他**」这种人称，一遇到女性人物就错。UI 文案里不要带人称。
+- `device_bash` 那台 Linux VM 跑不了 macOS 装的 node_modules（rollup/esbuild 是 darwin 二进制）。
+  验证要么在 Mac 上跑，要么把 src 拷到别处重装依赖。
 
 ---
 
