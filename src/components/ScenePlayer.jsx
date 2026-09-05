@@ -2448,7 +2448,8 @@ function EchoPortalPhase({ phase, onComplete }) {
         <div style={{
           position: "absolute", inset: 0,
           backgroundColor: "#0B0805",
-          opacity: crossing ? 0.72 : 0,
+          // 过场时压到最暗，抵达后回到 0.34——既压得住文字，又让底图透出来
+          opacity: stage === "crossing" ? 0.72 : (inComedy ? 0.34 : 0),
           transition: reduced ? "none" : "opacity 1.6s ease",
           pointerEvents: "none",
         }} />
@@ -2641,7 +2642,7 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
   return (
     <div style={styles.sceneOuter}>
       <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
-        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.62)" }} />
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.45)" }} />
 
         <div style={ipStyles.question}>{nb(phase.question || "他们被放在了哪一层？")}</div>
 
@@ -2662,7 +2663,7 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
               {s.portrait && <div style={{ ...ipStyles.soulFace, backgroundImage: `url(${asset(s.portrait)})` }} />}
               <div style={{ minWidth: 0 }}>
                 <div style={ipStyles.soulName}>{nb(s.name)}</div>
-                {s.metLabel && <div style={ipStyles.soulMet}>{"你见过他 · " + s.metLabel}</div>}
+                {s.metLabel && <div style={ipStyles.soulMet}>{"见过 · " + s.metLabel}</div>}
               </div>
             </div>
           ))}
@@ -2684,8 +2685,9 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
                 style={{
                   ...ipStyles.band,
                   width: w + "%",
-                  backgroundColor: overCircle === c.id || (picked && !submitted)
-                    ? "rgba(201,168,106,0.16)" : "rgba(20,12,6,0.55)",
+                  backgroundColor: overCircle === c.id
+                    ? "rgba(201,168,106,0.22)"
+                    : (picked && !submitted ? "rgba(201,168,106,0.10)" : "rgba(20,12,6,0.34)"),
                   borderColor: overCircle === c.id ? "#C9A86A" : "rgba(201,168,106,0.28)",
                   cursor: picked && !submitted ? "pointer" : "default",
                 }}
@@ -2876,18 +2878,18 @@ function ComedyEncounterPhase({ phase, onComplete }) {
           <div style={ceStyles.name}>{nb(soul.name || "")}</div>
           {soul.metLabel && (
             <div style={{ ...ceStyles.met, opacity: revealed ? 1 : 0, transition: "opacity 900ms ease 600ms" }}>
-              {"你见过他 · " + soul.metLabel}
+              {"你在这里见过 · " + soul.metLabel}
             </div>
           )}
         </div>
 
         {/* 认出他的那一句 */}
-        {revealed && !closing && phase.recognition && asked.length === 0 && !active && (
+        {revealed && !closing && phase.recognition && asked.length === 0 && active === null && (
           <div style={ceStyles.recognition}>{nb(phase.recognition)}</div>
         )}
 
         {/* 追问 */}
-        {revealed && !closing && !active && (
+        {revealed && !closing && active === null && (
           <div style={ceStyles.askList}>
             {asks.map((a, i) => (
               <button

@@ -1068,6 +1068,9 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
             <option value="escape_game">{"\u{1F6AA} 出城 (escape_game)"}</option>
                 <option value="click_points">{"\u{1F441} 找茬 (click_points)"}</option>
                 <option value="comic_reveal">{"\uD83D\uDCD6 \u8FDE\u73AF\u753B (comic_reveal)"}</option>
+                <option value="echo_portal">{"\u{1F4DC} \u8F6C\u573A\u00B7\u795E\u66F2 (echo_portal)"}</option>
+                <option value="inferno_placement">{"\u{1F5FA} \u5B89\u653E\u4E09\u754C (inferno_placement)"}</option>
+                <option value="comedy_encounter">{"\u{1F464} \u91CD\u9022 (comedy_encounter)"}</option>
                 <option value="minigame">minigame (\u5C0F\u6E38\u620F)</option>
           </select>
         </div>

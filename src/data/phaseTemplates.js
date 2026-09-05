@@ -1,7 +1,7 @@
 // 交互模板库 —— 场景编辑器「插入交互模板」面板的数据源。
 //
 // 每个模板：
-//   type    phase 类型（与 ScenePlayer 支持的 13 种一一对应）
+//   type    phase 类型（与 ScenePlayer 支持的 16 种一一对应）
 //   name    卡片标题
 //   desc    一句话说明（玩家看到什么、要做什么）
 //   ref     取材的现有事件（该用法已在游戏里跑通）
@@ -388,6 +388,88 @@ export const PHASE_TEMPLATES = [
         { left: "（左项一）", right: "（右项一）" },
         { left: "（左项二）", right: "（右项二）" },
       ],
+    }),
+  },
+  // ── 第 5 层：Reality → Divine Comedy（见 docs/DESIGN_DANTE_V2.md）──
+  {
+    type: "echo_portal",
+    name: "转场 · 现实 → 《神曲》",
+    desc: "玩家把一枚 token（人物/记忆/思想/矛盾）拖进但丁的手稿，现实去色淡出、墨迹晕开，《神曲》场景淡入。",
+    ref: "dante · 1302_esilio「把「流亡」放进手稿」",
+    sketch: "pairs",
+    make: () => ({
+      id: "portal_" + uid(),
+      type: "echo_portal",
+      background: "",
+      comedyBackground: "/assets/dante/comedy/backgrounds/inferno_gate.webp",
+      manuscript: "/assets/dante/comedy/manuscript.webp",
+      token: {
+        id: "token_" + uid(),
+        kind: "conflict",
+        name: "（这一关掉落的东西）",
+        detail: "（年份 · 一句话说明它是什么）",
+      },
+      prompt: "把「（token 名）」放进但丁的手稿",
+      afterTitle: "（多少年后 · 哪一部 第几歌）",
+      afterText: "（这段经历在《神曲》里变成了什么。两三句，逐句显影。）",
+    }),
+  },
+  {
+    type: "inferno_placement",
+    name: "他们被放在哪一界",
+    desc: "把玩家在现实场景里真的见过的人，拖进天堂／炼狱／地狱。souls 必须只用已出场人物，卡片会显示「见过 · 某年某地」。",
+    ref: "dante · 1302_esilio「这些人，但丁把他们放进了哪一界？」",
+    sketch: "pairs",
+    make: () => ({
+      id: "place_" + uid(),
+      type: "inferno_placement",
+      background: "/assets/dante/comedy/backgrounds/moral_geography.webp",
+      question: "这些人，但丁把他们放进了哪一界？",
+      circles: [
+        { id: "paradiso", name: "天堂", label: "光里", y: 14 },
+        { id: "purgatorio", name: "炼狱", label: "还洗得干净的罪", y: 48 },
+        { id: "inferno", name: "地狱", label: "永远洗不干净的罪", y: 82 },
+      ],
+      souls: [
+        {
+          id: "soul_a",
+          name: "（人物名 · 必须是前面出场过的）",
+          portrait: "",
+          metIn: "（那个事件的 id）",
+          metLabel: "（年份 · 地点 · 场景）",
+          answer: "inferno",
+          verdict: "（但丁把他写在哪一歌、什么样子、为什么。这段是这一关真正的内容。）",
+          hint: "（答错时的提示，一句。）",
+        },
+      ],
+    }),
+  },
+  {
+    type: "comedy_encounter",
+    name: "重遇 · 同一个人",
+    desc: "现实里见过的人在《神曲》里重新出现：立绘交叉淡化成亡魂，玩家追问但丁「他为什么在这里」。不计分——这一层考理解。",
+    ref: "dante · 1292_brunetto「您在这儿吗，布鲁内托先生？」",
+    sketch: "npcs",
+    make: () => ({
+      id: "meet_" + uid(),
+      type: "comedy_encounter",
+      background: "",
+      soul: {
+        id: "soul_" + uid(),
+        name: "（人物名）",
+        realityPortrait: "",
+        comedyPortrait: "",
+        metIn: "（那个事件的 id）",
+        metLabel: "（年份 · 地点 · 场景）",
+      },
+      recognition: "（认出他的那一句。玩家应该先愣一下，再想起来。）",
+      asks: [
+        { q: "（追问一：最直接的那个问题）", a: "（但丁的回答。他不辩解，他解释自己的判断。）" },
+        { q: "（追问二：从判断问到态度）", a: "（但丁的回答。）" },
+        { q: "（追问三：问到这本书本身）", a: "（但丁的回答。）" },
+      ],
+      requiredAsks: 2,
+      closing: "（收束：这个人从现实走进文学，中间发生了什么。）",
     }),
   },
 ];
