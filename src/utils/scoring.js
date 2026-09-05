@@ -4,6 +4,7 @@
 // - 数字华容道：满分 100，每过 1 秒扣 1 分
 // - 出逃：满分 50，每过 1 秒扣 1 分，被抓一次额外扣 10 分
 // - 图片找点：满分 50，每过 1 秒扣 1 分
+// - 地狱安放：每放对一个人 +20（comedy_encounter 不计分，那一层考的是理解）
 // 单次游玩每一关只计一次分（用 key 去重），结束后结算总分进排行榜。
 
 export const POINTS = {
@@ -13,6 +14,7 @@ export const POINTS = {
   escapeMax: 50,
   escapeCaughtPenalty: 10,
   clickPointsMax: 50,
+  infernoPlace: 20,   // 「但丁把他们放在哪儿了」每放对一个
 };
 
 /** 限时类得分：满分 - 用时秒数 - 额外罚分，最低 0 分 */

@@ -85,7 +85,10 @@ function RevealLines({ text, style, skip = false, unitDelay = 620, duration = 90
 
 /**
  * ScenePlayer - Interactive scene engine
- * Supports phase types: explore, exam, transition, forced_choice
+ * Supports phase types: explore, exam, transition, forced_choice, poem_compose,
+ * map_travel, dialogue_branch, narration, sliding_puzzle, click_points,
+ * comic_reveal, escape_game, minigame, 以及第 5 层的 echo_portal /
+ * inferno_placement / comedy_encounter（见 docs/DESIGN_DANTE_V2.md）
  */
 export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete }) {
   const [phaseIndex, setPhaseIndex] = useState(0);
@@ -1311,6 +1314,21 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
+  // --- ECHO PORTAL (第 5 层：把 token 拖进手稿，现实 → 《神曲》) ---
+  if (currentPhase.type === "echo_portal") {
+    return <EchoPortalPhase phase={currentPhase} onComplete={goToNextPhase} />;
+  }
+
+  // --- INFERNO PLACEMENT (刚见过的人，但丁把他们放进了地狱哪一层) ---
+  if (currentPhase.type === "inferno_placement") {
+    return <InfernoPlacementPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
+  // --- COMEDY ENCOUNTER (同一个人，在《神曲》里重新遇见) ---
+  if (currentPhase.type === "comedy_encounter") {
+    return <ComedyEncounterPhase phase={currentPhase} onComplete={goToNextPhase} />;
+  }
+
   // --- ESCAPE GAME PHASE (红蓝点逃离) ---
   if (currentPhase.type === "escape_game") {
     return (
@@ -2376,6 +2394,607 @@ if (typeof document !== "undefined" && !document.getElementById("click-point-key
   `;
   document.head.appendChild(style);
 }
+
+// ============================================================
+// 第 5 层 · REALITY → DIVINE COMEDY
+// ============================================================
+// 三个 phase 类型合力回答同一个问题：「这段经历后来去了哪？」
+//   echo_portal        —— 把 token 拖进手稿，现实淡出、《神曲》淡入
+//   inferno_placement  —— 刚才见过的人，但丁把他们放进了地狱哪一层
+//   comedy_encounter   —— 同一个人重新遇见，玩家追问但丁「他为什么在这里」
+// 设计文档：docs/DESIGN_DANTE_V2.md
+
+// token 的四种类型：印章字 + 色。不用 emoji，跟全站楷体纸面风格一致。
+const TOKEN_KIND = {
+  person:   { seal: "人", color: "#8A6D3B", label: "人物" },
+  memory:   { seal: "忆", color: "#6B7A8F", label: "记忆" },
+  idea:     { seal: "念", color: "#6E7F55", label: "思想" },
+  conflict: { seal: "结", color: "#A34A38", label: "矛盾" },
+};
+
+// ============================================================
+// ECHO PORTAL — 现实 → 《神曲》的转场仪式
+// ============================================================
+// phase.token       { id, kind, name, detail }
+// phase.background  现实底图（淡出）
+// phase.comedyBackground 《神曲》底图（淡入）
+// phase.manuscript  手稿图（可缺，缺则退化为 CSS 羊皮纸方块）
+// phase.prompt / afterTitle / afterText
+function EchoPortalPhase({ phase, onComplete }) {
+  const token = phase.token || {};
+  const kind = TOKEN_KIND[token.kind] || TOKEN_KIND.idea;
+  const reduced = usePrefersReducedMotion();
+  const [stage, setStage] = useState("reality"); // reality → crossing → comedy
+  const [armed, setArmed] = useState(false);     // 触屏：token 已「拿起」
+  const [over, setOver] = useState(false);
+
+  const drop = useCallback(() => {
+    setStage((s) => (s === "reality" ? "crossing" : s));
+  }, []);
+
+  useEffect(() => {
+    if (stage !== "crossing") return;
+    const t = setTimeout(() => setStage("comedy"), reduced ? 150 : 2100);
+    return () => clearTimeout(t);
+  }, [stage, reduced]);
+
+  const inComedy = stage === "comedy";
+  const crossing = stage !== "reality";
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        {/* 现实层：去色 + 淡出 */}
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundColor: "#0B0805",
+          opacity: crossing ? 0.72 : 0,
+          transition: reduced ? "none" : "opacity 1.6s ease",
+          pointerEvents: "none",
+        }} />
+        {/* 《神曲》层：淡入 */}
+        {phase.comedyBackground && (
+          <div style={{
+            position: "absolute", inset: 0,
+            backgroundImage: `url(${asset(phase.comedyBackground)})`,
+            backgroundSize: "cover", backgroundPosition: "center",
+            opacity: inComedy ? 1 : 0,
+            transition: reduced ? "none" : "opacity 1.4s ease",
+          }} />
+        )}
+        {/* 墨迹晕开：从手稿位置放射 */}
+        <div style={{
+          position: "absolute", left: "50%", top: "52%",
+          width: 40, height: 40, marginLeft: -20, marginTop: -20,
+          borderRadius: "50%", backgroundColor: "rgba(20,12,6,0.9)",
+          transform: crossing ? "scale(60)" : "scale(0)",
+          opacity: inComedy ? 0 : 1,
+          transition: reduced ? "none" : "transform 1.5s cubic-bezier(.5,0,.4,1), opacity 1.1s ease 1.3s",
+          pointerEvents: "none",
+        }} />
+
+        {/* —— 现实：拖 token 进手稿 —— */}
+        {stage === "reality" && (
+          <>
+            <div style={epStyles.prompt}>{nb(phase.prompt || "把它放进但丁的手稿")}</div>
+
+            {/* 手稿 = 投放区 */}
+            <div
+              onDragOver={(e) => { e.preventDefault(); setOver(true); }}
+              onDragLeave={() => setOver(false)}
+              onDrop={(e) => { e.preventDefault(); setOver(false); drop(); }}
+              onClick={() => armed && drop()}
+              style={{
+                ...epStyles.manuscript,
+                backgroundImage: phase.manuscript ? `url(${asset(phase.manuscript)})` : undefined,
+                borderColor: over || armed ? "#C9A86A" : "rgba(201,168,106,0.35)",
+                boxShadow: over || armed
+                  ? "0 0 0 6px rgba(201,168,106,0.22), 0 14px 30px rgba(0,0,0,0.45)"
+                  : "0 10px 24px rgba(0,0,0,0.4)",
+                cursor: armed ? "pointer" : "default",
+              }}
+            >
+              {!phase.manuscript && <div style={epStyles.manuscriptRules} />}
+              <div style={epStyles.manuscriptHint}>
+                {armed ? "点这里放下" : "手稿"}
+              </div>
+            </div>
+
+            {/* token 印章 */}
+            <div
+              draggable
+              onDragStart={(e) => { e.dataTransfer.setData("text/plain", token.id || "token"); setArmed(true); }}
+              onClick={() => setArmed((a) => !a)}
+              style={{
+                ...epStyles.token,
+                borderColor: kind.color,
+                transform: armed ? "translateY(-6px) scale(1.04)" : "none",
+                boxShadow: armed
+                  ? `0 0 0 5px ${kind.color}33, 0 12px 26px rgba(0,0,0,0.4)`
+                  : "0 6px 18px rgba(0,0,0,0.35)",
+              }}
+            >
+              <div style={{ ...epStyles.tokenSeal, backgroundColor: kind.color }}>{kind.seal}</div>
+              <div style={epStyles.tokenBody}>
+                <div style={epStyles.tokenKind}>{kind.label}</div>
+                <div style={epStyles.tokenName}>{nb(token.name || "")}</div>
+                {token.detail && <div style={epStyles.tokenDetail}>{nb(token.detail)}</div>}
+              </div>
+            </div>
+
+            <div style={epStyles.tapHint}>
+              {"拖到手稿上，或先点印章再点手稿"}
+            </div>
+          </>
+        )}
+
+        {/* —— 抵达《神曲》 —— */}
+        {inComedy && (
+          <div style={epStyles.afterWrap}>
+            {phase.afterTitle && <div style={epStyles.afterTitle}>{nb(phase.afterTitle)}</div>}
+            {phase.afterText && (
+              <RevealLines text={phase.afterText} style={epStyles.afterText} unitDelay={700} />
+            )}
+            <button style={{ ...styles.floatingProceed, position: "static", marginTop: 26 }} onClick={onComplete}>
+              {"继续 →"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const epStyles = {
+  prompt: {
+    position: "absolute", top: "9%", left: 0, right: 0, textAlign: "center",
+    color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 3,
+    textShadow: "0 2px 10px rgba(0,0,0,0.85)", zIndex: 20,
+  },
+  manuscript: {
+    position: "absolute", left: "50%", top: "52%", transform: "translate(-50%, -50%)",
+    width: "34%", aspectRatio: "4 / 3",
+    backgroundSize: "cover", backgroundPosition: "center",
+    backgroundColor: "#E8DCC0",
+    border: "2px dashed", borderRadius: 6,
+    transition: "box-shadow 260ms ease, border-color 260ms ease",
+    zIndex: 15,
+  },
+  manuscriptRules: {
+    position: "absolute", inset: "14% 12%",
+    background: "repeating-linear-gradient(180deg, rgba(90,70,45,0.22) 0 1px, transparent 1px 13px)",
+  },
+  manuscriptHint: {
+    position: "absolute", left: 0, right: 0, bottom: 8, textAlign: "center",
+    color: "#6B5340", fontSize: "clamp(11px, 0.833vw, 13.8px)", letterSpacing: 4,
+  },
+  token: {
+    position: "absolute", left: "6%", bottom: "12%",
+    display: "flex", alignItems: "center", gap: 12,
+    padding: "12px 18px 12px 12px",
+    backgroundColor: "rgba(252,248,238,0.96)",
+    border: "2px solid", borderRadius: 10,
+    cursor: "grab", zIndex: 20, maxWidth: "34%",
+    transition: "transform 220ms cubic-bezier(.2,.7,.3,1), box-shadow 220ms ease",
+    userSelect: "none", WebkitUserSelect: "none",
+  },
+  tokenSeal: {
+    width: 44, height: 44, flexShrink: 0, borderRadius: 4,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "#FCF8EE", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 0,
+  },
+  tokenBody: { minWidth: 0 },
+  tokenKind: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#9A8B72", letterSpacing: 3 },
+  tokenName: { fontSize: "clamp(15px, 1.32vw, 22px)", color: "#2B2118", letterSpacing: 2 },
+  tokenDetail: { fontSize: "clamp(11px, 0.833vw, 13.8px)", color: "#7A6A50", marginTop: 3, lineHeight: 1.5 },
+  tapHint: {
+    position: "absolute", left: 0, right: 0, bottom: "4%", textAlign: "center",
+    color: "rgba(245,230,211,0.72)", fontSize: "clamp(11px, 0.764vw, 12.6px)", letterSpacing: 2,
+    textShadow: "0 1px 4px #000", zIndex: 20,
+  },
+  afterWrap: {
+    position: "absolute", inset: 0, zIndex: 25,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "0 8%", textAlign: "center",
+  },
+  afterTitle: {
+    color: "#C9A86A", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", letterSpacing: 6, marginBottom: 18,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  afterText: {
+    color: "#F5E6D3", fontSize: "clamp(15px, 1.39vw, 23px)", lineHeight: 2.0, letterSpacing: 2,
+    textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+  },
+};
+
+// ============================================================
+// INFERNO PLACEMENT — 「但丁把他们放在哪儿了？」
+// ============================================================
+// phase.circles [{ id, name, label, y? }]  由浅到深
+// phase.souls   [{ id, name, portrait, metIn, metLabel, answer, verdict, hint }]
+// 关键约束：souls 必须是玩家在前面现实场景里真的对过话的人（metLabel 会显示出来）。
+function InfernoPlacementPhase({ phase, onScore, onComplete }) {
+  const circles = phase.circles || [];
+  const souls = phase.souls || [];
+  const [placed, setPlaced] = useState({});     // soulId → circleId
+  const [picked, setPicked] = useState(null);   // 触屏：拿起的 soul
+  const [overCircle, setOverCircle] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const place = useCallback((soulId, circleId) => {
+    if (submitted || !soulId) return;
+    setPlaced((p) => ({ ...p, [soulId]: circleId }));
+    setPicked(null);
+  }, [submitted]);
+
+  const allPlaced = souls.length > 0 && souls.every((s) => placed[s.id]);
+  const correctCount = souls.reduce((n, s) => n + (placed[s.id] === s.answer ? 1 : 0), 0);
+
+  const submit = () => {
+    setSubmitted(true);
+    if (onScore) onScore("inferno_place", correctCount * POINTS.infernoPlace);
+  };
+
+  const soulsIn = (cid) => souls.filter((s) => placed[s.id] === cid);
+  const tray = souls.filter((s) => !placed[s.id]);
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.62)" }} />
+
+        <div style={ipStyles.question}>{nb(phase.question || "他们被放在了哪一层？")}</div>
+
+        {/* 左：待安放的亡魂（都是刚刚见过的人） */}
+        <div style={ipStyles.tray}>
+          {tray.map((s) => (
+            <div
+              key={s.id}
+              draggable={!submitted}
+              onDragStart={(e) => { e.dataTransfer.setData("text/plain", s.id); setPicked(s.id); }}
+              onClick={() => setPicked((p) => (p === s.id ? null : s.id))}
+              style={{
+                ...ipStyles.soulCard,
+                borderColor: picked === s.id ? "#C9A86A" : "rgba(201,168,106,0.3)",
+                boxShadow: picked === s.id ? "0 0 0 4px rgba(201,168,106,0.25)" : "none",
+              }}
+            >
+              {s.portrait && <div style={{ ...ipStyles.soulFace, backgroundImage: `url(${asset(s.portrait)})` }} />}
+              <div style={{ minWidth: 0 }}>
+                <div style={ipStyles.soulName}>{nb(s.name)}</div>
+                {s.metLabel && <div style={ipStyles.soulMet}>{"你见过他 · " + s.metLabel}</div>}
+              </div>
+            </div>
+          ))}
+          {tray.length === 0 && <div style={ipStyles.trayEmpty}>{"都安排完了。"}</div>}
+        </div>
+
+        {/* 右：地狱漏斗 */}
+        <div style={ipStyles.funnel}>
+          {circles.map((c, i) => {
+            const w = 96 - (circles.length > 1 ? (i * 46) / (circles.length - 1) : 0);
+            const here = soulsIn(c.id);
+            return (
+              <div
+                key={c.id}
+                onDragOver={(e) => { e.preventDefault(); setOverCircle(c.id); }}
+                onDragLeave={() => setOverCircle(null)}
+                onDrop={(e) => { e.preventDefault(); setOverCircle(null); place(e.dataTransfer.getData("text/plain"), c.id); }}
+                onClick={() => picked && place(picked, c.id)}
+                style={{
+                  ...ipStyles.band,
+                  width: w + "%",
+                  backgroundColor: overCircle === c.id || (picked && !submitted)
+                    ? "rgba(201,168,106,0.16)" : "rgba(20,12,6,0.55)",
+                  borderColor: overCircle === c.id ? "#C9A86A" : "rgba(201,168,106,0.28)",
+                  cursor: picked && !submitted ? "pointer" : "default",
+                }}
+              >
+                <div style={ipStyles.bandLabel}>
+                  <span style={ipStyles.bandName}>{nb(c.name)}</span>
+                  {c.label && <span style={ipStyles.bandSin}>{nb(c.label)}</span>}
+                </div>
+                <div style={ipStyles.bandSouls}>
+                  {here.map((s) => {
+                    const ok = s.answer === c.id;
+                    return (
+                      <span
+                        key={s.id}
+                        onClick={(e) => { e.stopPropagation(); if (!submitted) setPlaced((p) => { const n = { ...p }; delete n[s.id]; return n; }); }}
+                        style={{
+                          ...ipStyles.chip,
+                          backgroundColor: submitted ? (ok ? "rgba(72,120,70,0.9)" : "rgba(150,60,50,0.9)") : "rgba(252,248,238,0.92)",
+                          color: submitted ? "#F5E6D3" : "#2B2118",
+                          cursor: submitted ? "default" : "pointer",
+                        }}
+                      >
+                        {nb(s.name)}{submitted && (ok ? " ✓" : " ✗")}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 提交 / 判词 */}
+        {!submitted && (
+          <button
+            style={{ ...styles.floatingProceed, opacity: allPlaced ? 1 : 0.45, cursor: allPlaced ? "pointer" : "not-allowed" }}
+            disabled={!allPlaced}
+            onClick={submit}
+          >
+            {"看看但丁怎么写的 →"}
+          </button>
+        )}
+
+        {submitted && (
+          <div style={ipStyles.verdictOverlay}>
+            <div style={ipStyles.verdictPanel}>
+              <div style={ipStyles.verdictScore}>
+                {"放对 "}<strong>{correctCount}</strong>{" / " + souls.length}
+              </div>
+              {souls.map((s) => (
+                <div key={s.id} style={ipStyles.verdictRow}>
+                  <div style={ipStyles.verdictName}>
+                    {nb(s.name)}
+                    <span style={ipStyles.verdictWhere}>
+                      {" → " + (circles.find((c) => c.id === s.answer)?.name || "")}
+                    </span>
+                  </div>
+                  <div style={ipStyles.verdictText}>{nb(s.verdict || "")}</div>
+                </div>
+              ))}
+              <button style={styles.proceedBtn} onClick={onComplete}>{"继续 →"}</button>
+            </div>
+          </div>
+        )}
+
+        {!submitted && (
+          <div style={epStyles.tapHint}>
+            {"拖到对应的一层，或先点人再点层（点已放的名字可取回）"}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const ipStyles = {
+  question: {
+    position: "absolute", top: "5%", left: 0, right: 0, textAlign: "center",
+    color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 3,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)", zIndex: 20,
+  },
+  tray: {
+    position: "absolute", left: "3%", top: "16%", width: "27%", maxHeight: "74%",
+    overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, zIndex: 20,
+  },
+  soulCard: {
+    display: "flex", alignItems: "center", gap: 10, padding: 8,
+    backgroundColor: "rgba(252,248,238,0.94)", border: "2px solid", borderRadius: 8,
+    cursor: "grab", userSelect: "none", WebkitUserSelect: "none",
+    transition: "box-shadow 200ms ease, border-color 200ms ease",
+  },
+  soulFace: {
+    width: 40, height: 40, flexShrink: 0, borderRadius: 4,
+    backgroundSize: "cover", backgroundPosition: "top center", backgroundColor: "#D8CDB8",
+  },
+  soulName: { fontSize: "clamp(12.5px, 1.042vw, 17.2px)", color: "#2B2118", letterSpacing: 1 },
+  soulMet: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#8A7A5E", marginTop: 2, lineHeight: 1.4 },
+  trayEmpty: { color: "rgba(245,230,211,0.6)", fontSize: "clamp(11.5px, 0.833vw, 13.8px)", letterSpacing: 2 },
+  funnel: {
+    position: "absolute", right: "3%", top: "15%", width: "62%", height: "72%",
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between",
+    zIndex: 20,
+  },
+  band: {
+    minHeight: 0, flex: 1, margin: "3px 0",
+    border: "1px solid", borderRadius: 4,
+    display: "flex", alignItems: "center", gap: 10, padding: "4px 12px",
+    transition: "background-color 200ms ease, border-color 200ms ease",
+  },
+  bandLabel: { flexShrink: 0, display: "flex", flexDirection: "column", minWidth: "30%" },
+  bandName: { color: "#E8D9BE", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 2 },
+  bandSin: { color: "#A89968", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 1 },
+  bandSouls: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1 },
+  chip: {
+    padding: "3px 10px", borderRadius: 12,
+    fontSize: "clamp(11px, 0.833vw, 13.8px)", letterSpacing: 1,
+  },
+  verdictOverlay: {
+    position: "absolute", inset: 0, zIndex: 40,
+    backgroundColor: "rgba(10,7,4,0.82)",
+    display: "flex", alignItems: "center", justifyContent: "center", padding: "3% 6%",
+  },
+  verdictPanel: {
+    backgroundColor: "#FAF6EE", borderRadius: 10, padding: "20px 24px",
+    maxWidth: 720, width: "100%", maxHeight: "94%", overflowY: "auto",
+    boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
+  },
+  verdictScore: {
+    fontSize: "clamp(14px, 1.25vw, 20.7px)", color: "#3A2E20", letterSpacing: 2,
+    borderBottom: "1px solid #D8CDB8", paddingBottom: 10, marginBottom: 12,
+  },
+  verdictRow: { marginBottom: 14 },
+  verdictName: { fontSize: "clamp(12.8px, 1.042vw, 17.2px)", color: "#2B2118", letterSpacing: 1 },
+  verdictWhere: { color: "#8A6D3B", fontSize: "clamp(11.5px, 0.833vw, 13.8px)" },
+  verdictText: { fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#5A4A38", lineHeight: 1.85, marginTop: 4 },
+};
+
+// ============================================================
+// COMEDY ENCOUNTER — 同一个人，重新遇见
+// ============================================================
+// phase.soul { id, name, realityPortrait, comedyPortrait, metIn, metLabel }
+// phase.recognition  认出他的那一句
+// phase.asks [{ q, a }]  —— 问的对象是但丁，不是玩家。没有对错。
+// phase.requiredAsks / phase.closing
+function ComedyEncounterPhase({ phase, onComplete }) {
+  const soul = phase.soul || {};
+  const asks = phase.asks || [];
+  const reduced = usePrefersReducedMotion();
+  const [revealed, setRevealed] = useState(false);   // 现实立绘 → 地狱立绘
+  const [asked, setAsked] = useState([]);            // 已问过的 index
+  const [active, setActive] = useState(null);        // 正在看的回答
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setRevealed(true), reduced ? 100 : 1400);
+    return () => clearTimeout(t);
+  }, [reduced]);
+
+  const need = phase.requiredAsks == null ? Math.min(2, asks.length) : phase.requiredAsks;
+  const canClose = asked.length >= need;
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(14,9,5,0.5)" }} />
+
+        {/* 同一张脸，两个世界 —— 交叉淡化 */}
+        <div style={ceStyles.figure}>
+          {soul.realityPortrait && (
+            <img src={asset(soul.realityPortrait)} alt="" style={{
+              ...ceStyles.portrait,
+              opacity: revealed ? 0 : 1,
+              filter: revealed ? "saturate(0.2)" : "none",
+              transition: reduced ? "none" : "opacity 1.5s ease, filter 1.5s ease",
+            }} />
+          )}
+          {soul.comedyPortrait && (
+            <img src={asset(soul.comedyPortrait)} alt="" style={{
+              ...ceStyles.portrait,
+              opacity: revealed ? 1 : 0,
+              transition: reduced ? "none" : "opacity 1.5s ease",
+            }} />
+          )}
+        </div>
+
+        {/* 他是谁 · 你在哪见过他 */}
+        <div style={ceStyles.nameplate}>
+          <div style={ceStyles.name}>{nb(soul.name || "")}</div>
+          {soul.metLabel && (
+            <div style={{ ...ceStyles.met, opacity: revealed ? 1 : 0, transition: "opacity 900ms ease 600ms" }}>
+              {"你见过他 · " + soul.metLabel}
+            </div>
+          )}
+        </div>
+
+        {/* 认出他的那一句 */}
+        {revealed && !closing && phase.recognition && asked.length === 0 && !active && (
+          <div style={ceStyles.recognition}>{nb(phase.recognition)}</div>
+        )}
+
+        {/* 追问 */}
+        {revealed && !closing && !active && (
+          <div style={ceStyles.askList}>
+            {asks.map((a, i) => (
+              <button
+                key={i}
+                onClick={() => { setActive(i); setAsked((s) => (s.includes(i) ? s : [...s, i])); }}
+                style={{
+                  ...ceStyles.askBtn,
+                  opacity: asked.includes(i) ? 0.5 : 1,
+                }}
+              >
+                {nb(a.q)}
+              </button>
+            ))}
+            {canClose && (
+              <button style={{ ...ceStyles.askBtn, ...ceStyles.closeBtn }} onClick={() => setClosing(true)}>
+                {"—— 走开 →"}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* 但丁的回答 */}
+        {active != null && (
+          <div style={ceStyles.answerBar} onClick={() => setActive(null)}>
+            <div style={ceStyles.answerWho}>{"但丁"}</div>
+            <div style={ceStyles.answerText}>{nb(asks[active].a)}</div>
+            <div style={ceStyles.answerHint}>
+              {canClose ? "▼ 点击返回" : "▼ 点击返回（至少再问 " + (need - asked.length) + " 个）"}
+            </div>
+          </div>
+        )}
+
+        {/* 收束 */}
+        {closing && (
+          <div style={ceStyles.closingWrap}>
+            <RevealLines text={phase.closing || ""} style={ceStyles.closingText} unitDelay={760} />
+            <button style={{ ...styles.floatingProceed, position: "static", marginTop: 24 }} onClick={onComplete}>
+              {"继续 →"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const ceStyles = {
+  figure: {
+    position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
+    width: "34%", height: "78%", zIndex: 10,
+  },
+  portrait: {
+    position: "absolute", inset: 0, width: "100%", height: "100%",
+    objectFit: "contain", objectPosition: "center bottom",
+    filter: "drop-shadow(0 10px 22px rgba(0,0,0,0.5))",
+  },
+  nameplate: {
+    position: "absolute", top: "7%", left: 0, right: 0, textAlign: "center", zIndex: 20,
+  },
+  name: {
+    color: "#F5E6D3", fontSize: "clamp(15px, 1.39vw, 23px)", letterSpacing: 5,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  met: {
+    color: "#C9A86A", fontSize: "clamp(11px, 0.833vw, 13.8px)", letterSpacing: 2, marginTop: 6,
+    textShadow: "0 1px 6px rgba(0,0,0,0.9)",
+  },
+  recognition: {
+    position: "absolute", left: "6%", top: "24%", maxWidth: "26%", zIndex: 20,
+    color: "#F5E6D3", fontSize: "clamp(13px, 1.15vw, 19px)", lineHeight: 1.9, letterSpacing: 2,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  askList: {
+    position: "absolute", right: "4%", bottom: "8%", width: "34%", zIndex: 25,
+    display: "flex", flexDirection: "column", gap: 8,
+  },
+  askBtn: {
+    textAlign: "left", padding: "10px 14px",
+    backgroundColor: "rgba(252,248,238,0.93)", color: "#3A2E20",
+    border: "1px solid #C9A86A", borderRadius: 8, cursor: "pointer",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontSize: "clamp(12px, 0.97vw, 16px)", lineHeight: 1.6, letterSpacing: 1,
+    transition: "opacity 200ms ease",
+  },
+  closeBtn: { backgroundColor: "rgba(30,20,12,0.85)", color: "#E8D9BE", borderColor: "rgba(201,168,106,0.5)" },
+  answerBar: {
+    position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30,
+    backgroundColor: "rgba(20,12,6,0.9)", borderTop: "1px solid rgba(201,168,106,0.45)",
+    padding: "16px 32px 14px", cursor: "pointer",
+  },
+  answerWho: { color: "#C9A86A", fontSize: "clamp(12px, 0.903vw, 14.9px)", letterSpacing: 3, marginBottom: 6 },
+  answerText: {
+    color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.95, letterSpacing: 1,
+    whiteSpace: "pre-wrap",
+  },
+  answerHint: { color: "#A89968", fontSize: "clamp(11px, 0.764vw, 12.6px)", marginTop: 8, textAlign: "right" },
+  closingWrap: {
+    position: "absolute", inset: 0, zIndex: 40,
+    backgroundColor: "rgba(10,7,4,0.8)",
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "0 10%", textAlign: "center",
+  },
+  closingText: {
+    color: "#F5E6D3", fontSize: "clamp(14px, 1.32vw, 22px)", lineHeight: 2.05, letterSpacing: 2,
+    textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+  },
+};
 
 // ============================================================
 // STYLES
