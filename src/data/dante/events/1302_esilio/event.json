@@ -84,6 +84,34 @@
         }
       ],
       "requiredTalks": 3,
+      "nextPhase": "predict_city"
+    },
+    {
+      "id": "predict_city",
+      "type": "predict_reveal",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/papal_hall.webp",
+      "situation": "教皇把另外两名使节打发回佛罗伦萨，单把你留下。\n同一时间，法兰西王弟瓦卢瓦的查理正带兵北上——名义上，是去「调停」。",
+      "question": "佛罗伦萨会怎么样？",
+      "himLabel": "实际",
+      "options": [
+        {
+          "id": "mediate",
+          "text": "查理真的调停成功，两党各让一步"
+        },
+        {
+          "id": "coup",
+          "text": "黑党开城迎他，白党被清算"
+        },
+        {
+          "id": "hold",
+          "text": "白党守住城，查理无功而返"
+        }
+      ],
+      "actual": "coup",
+      "sameNote": "你猜对了。那你已经知道这场「调停」是什么了——接下来看它怎么落到你自己头上。",
+      "diffNote": "实际走的是另一条。往下看它是怎么发生的——",
+      "reveal": "「城门是自己开的。」",
+      "consequence": "黑党开门迎了查理。科尔索·多纳蒂回城。烧白党的房子，抢白党的铺子，烧抢了六天。\n然后才轮到审判。",
       "nextPhase": "ritorno"
     },
     {
@@ -296,8 +324,50 @@
         }
       ],
       "conclusion": {
-        "narrative": "1302 年 1 月 27 日罚金流放，3 月 10 日加判火刑。罪名「贪污」从未有过任何证据。这是一场以法律为武器的政治清洗——教皇借瓦卢瓦的查理之刀，把白党连根拔出佛罗伦萨。但丁此生，再没有踏进佛罗伦萨一步。"
+        "narrative": "罪名、时机、名单——先把结论定下来。下一步：证明它。"
       },
+      "nextPhase": "evidence_purge"
+    },
+    {
+      "id": "evidence_purge",
+      "type": "evidence_select",
+      "background": "/assets/dante/events/1302_esilio/backgrounds/inn_snow_night.webp",
+      "claim": "这场审判不是司法，是一场以法律为武器的政治清洗。",
+      "instruction": "你刚才在驿站看到的东西里，挑出 2 条真能支持这个判断的。",
+      "pick": 2,
+      "items": [
+        {
+          "id": "charge",
+          "text": "判决书列的罪名是「贪污受贿、勒索不义之财」——可但丁在执政团总共只干了两个月。",
+          "supports": true,
+          "why": "罪名和事实对不上，而且从头到尾没有拿出过一份账目。罪名是套上去的——说明目的本来就不在定罪。"
+        },
+        {
+          "id": "namelist",
+          "text": "3 月 10 日与他同判火刑的十五人，全是白党骨干，无一例外。",
+          "supports": true,
+          "why": "如果真在查贪污，被告名单不会正好和一个党派完全重合。名单整齐，说明筛人的标准是党派，不是罪行。"
+        },
+        {
+          "id": "fire",
+          "text": "第二道判决把刑罚从罚金流放加到了火刑。",
+          "supports": false,
+          "why": "严厉不等于有政治动机。一个真的贪污犯拒不到庭，也可能被加刑。这条说明他们急，但单靠它推不出「清洗」。"
+        },
+        {
+          "id": "snow",
+          "text": "宣判那几天，佛罗伦萨下着雪。",
+          "supports": false,
+          "why": "这是真的，但和判断无关。证据要能支撑结论，不是只要它是真的。"
+        },
+        {
+          "id": "gemma",
+          "text": "杰玛带着孩子留在城内没有受牵连——她是多纳蒂家的女儿。",
+          "supports": false,
+          "why": "这条反而有点往回拉：黑党讲家族情面，不是见白党就杀。真实、重要，但它不支持「审判是武器」——好的推理要认得出哪些事实对自己不利。"
+        }
+      ],
+      "closing": "两条就够了：罪名，和名单。\n罪名对不上，名单却整整齐齐盖住一个党派——那它办的就不是案子。",
       "nextPhase": "portal_esilio"
     },
     {

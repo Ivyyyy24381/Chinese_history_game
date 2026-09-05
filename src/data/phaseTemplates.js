@@ -1,7 +1,7 @@
 // 交互模板库 —— 场景编辑器「插入交互模板」面板的数据源。
 //
 // 每个模板：
-//   type    phase 类型（与 ScenePlayer 支持的 16 种一一对应）
+//   type    phase 类型（与 ScenePlayer 支持的 18 种一一对应）
 //   name    卡片标题
 //   desc    一句话说明（玩家看到什么、要做什么）
 //   ref     取材的现有事件（该用法已在游戏里跑通）
@@ -470,6 +470,60 @@ export const PHASE_TEMPLATES = [
       ],
       requiredAsks: 2,
       closing: "（收束：这个人从现实走进文学，中间发生了什么。）",
+    }),
+  },
+  // ── 认知动词（见 docs/DESIGN_VERBS.md）──
+  {
+    type: "predict_reveal",
+    name: "先猜 · 再对照",
+    desc: "事情发生前先让玩家预测。提交后并列「你猜／实际」，不打对错，再演出后果。分数奖励「敢下判断」本身。",
+    ref: "dante · 1302_esilio「佛罗伦萨会怎么样？」",
+    sketch: "pairs",
+    make: () => ({
+      id: "predict_" + uid(),
+      type: "predict_reveal",
+      background: "",
+      situation: "（把玩家放到当事人的信息状态里：他此刻知道什么、不知道什么。）",
+      question: "（他会怎么做？／接下来会发生什么？）",
+      himLabel: "实际",
+      options: [
+        { id: "opt_a", text: "（一个看起来很合理的猜测）" },
+        { id: "opt_b", text: "（真正发生的那个）" },
+        { id: "opt_c", text: "（另一个合理的猜测）" },
+      ],
+      actual: "opt_b",
+      sameNote: "你猜对了。那要紧的就不是猜对——是他为什么这么选。",
+      diffNote: "实际走的是另一条。往下看它是怎么发生的——",
+      reveal: "（他的原话，或那一刻最锋利的一句。）",
+      consequence: "（后来怎么样了。这里才给史实细节。）",
+    }),
+  },
+  {
+    type: "evidence_select",
+    name: "挑证据",
+    desc: "给一个判断，让玩家从刚才见过的材料里挑出真正支持它的几条。干扰项要放「真的但不相干」，练的是真实≠支持结论。",
+    ref: "dante · 1302_esilio「这场审判不是司法」",
+    sketch: "pairs",
+    make: () => ({
+      id: "evidence_" + uid(),
+      type: "evidence_select",
+      background: "",
+      claim: "（一个判断句。玩家刚才应该已经有能力同意它。）",
+      instruction: "挑出 2 条真能支持这个判断的。",
+      pick: 2,
+      items: [
+        { id: "ev_a", text: "（支持项一：直接指向判断的核心）", supports: true,
+          why: "（为什么这条管用。）" },
+        { id: "ev_b", text: "（支持项二：从另一个角度指向同一处）", supports: true,
+          why: "（为什么这条管用。）" },
+        { id: "ev_c", text: "（干扰项：真实、相关，但推不出这个结论）", supports: false,
+          why: "（说清它差在哪一步。）" },
+        { id: "ev_d", text: "（干扰项：真实，但完全不相干）", supports: false,
+          why: "这是真的，但和判断无关。证据要能支撑结论，不是只要它是真的。" },
+        { id: "ev_e", text: "（最好的干扰项：真实、重要，但对这个判断反而不利）", supports: false,
+          why: "（承认它的分量，再说清它为什么不支持——好的推理要认得出哪些事实对自己不利。）" },
+      ],
+      closing: "（把挑对的两条串成一句话，点破这个判断是怎么立住的。）",
     }),
   },
 ];

@@ -14,6 +14,8 @@ export const POINTS = {
   escapeMax: 50,
   escapeCaughtPenalty: 10,
   clickPointsMax: 50,
+  predict: 15,        // 「敢下判断」本身给分——猜对猜错一样多，否则玩家会退回揣摩标准答案
+  evidence: 20,       // 挑对一条支持性证据
   infernoPlace: 20,   // 「但丁把他们放在哪儿了」每放对一个
 };
 

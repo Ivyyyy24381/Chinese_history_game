@@ -1314,6 +1314,16 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
+  // --- PREDICT REVEAL (先猜，再对照。没有对错) ---
+  if (currentPhase.type === "predict_reveal") {
+    return <PredictRevealPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
+  // --- EVIDENCE SELECT (给一个判断，挑出支持它的材料) ---
+  if (currentPhase.type === "evidence_select") {
+    return <EvidenceSelectPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
   // --- ECHO PORTAL (第 5 层：把 token 拖进手稿，现实 → 《神曲》) ---
   if (currentPhase.type === "echo_portal") {
     return <EchoPortalPhase phase={currentPhase} onComplete={goToNextPhase} />;
@@ -2396,6 +2406,293 @@ if (typeof document !== "undefined" && !document.getElementById("click-point-key
 }
 
 // ============================================================
+// 认知动词 · COGNITIVE VERBS
+// ============================================================
+// 原则：每一个 interaction 都把一个认知动作外化——
+// 预测 / 观察 / 归类 / 连接 / 解释 / 修正 / 重建。
+// 不是「点一下、读一段」，而是「先做出一个判断，再拿它去撞史实」。
+// 见 docs/DESIGN_VERBS.md；编排由 scripts/lint_phases.mjs 把关。
+
+// ============================================================
+// PREDICT REVEAL — 先猜，再对照。没有对错。
+// ============================================================
+// phase.situation / question / options[{id,text}] / actual(optionId)
+//       reveal(他的原话) / consequence(后来怎样) / sameNote / diffNote
+// 关键：玩家的预测不是答题，是给后面的解释造一个锚点。
+// 所以界面上没有 ✓ ✗，只有「你猜」和「他做的」并排放着。
+function PredictRevealPhase({ phase, onScore, onComplete }) {
+  const options = phase.options || [];
+  const [mine, setMine] = useState(null);
+  const [step, setStep] = useState(0); // 0 选 · 1 并列 · 2 后果
+  const reduced = usePrefersReducedMotion();
+
+  const actual = options.find((o) => o.id === phase.actual) || options[0];
+  const chosen = options.find((o) => o.id === mine);
+  const same = mine && mine === phase.actual;
+
+  const commit = (id) => {
+    setMine(id);
+    setStep(1);
+    // 分数奖励「敢下判断」这个动作本身，猜对猜错一样多——
+    // 一旦按对错给分，玩家就会退回到揣摩标准答案。
+    if (onScore) onScore("predict", POINTS.predict);
+  };
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.58)" }} />
+
+        <div style={prStyles.wrap}>
+          {phase.situation && <div style={prStyles.situation}>{nb(phase.situation)}</div>}
+          <div style={prStyles.question}>{nb(phase.question || "他会怎么做？")}</div>
+
+          {step === 0 && (
+            <>
+              <div style={prStyles.opts}>
+                {options.map((o) => (
+                  <button key={o.id} style={prStyles.opt} onClick={() => commit(o.id)}>
+                    {nb(o.text)}
+                  </button>
+                ))}
+              </div>
+              <div style={prStyles.hint}>{"先猜一个。猜错没有惩罚——猜过之后再看，才记得住。"}</div>
+            </>
+          )}
+
+          {step >= 1 && (
+            <>
+              <div style={prStyles.duo}>
+                <div style={{ ...prStyles.card, borderColor: "rgba(201,168,106,0.4)" }}>
+                  <div style={prStyles.cardLabel}>{"你猜"}</div>
+                  <div style={prStyles.cardText}>{nb(chosen ? chosen.text : "")}</div>
+                </div>
+                <div style={{ ...prStyles.card, borderColor: "#C9A86A", backgroundColor: "rgba(246,236,214,0.96)" }}>
+                  <div style={{ ...prStyles.cardLabel, color: "#C9A86A" }}>{phase.himLabel || "他做的"}</div>
+                  <div style={prStyles.cardText}>{nb(actual.text)}</div>
+                </div>
+              </div>
+
+              <div style={prStyles.note}>
+                {nb(same
+                  ? (phase.sameNote || "你猜对了。但要紧的不是猜对——是他为什么这么选。")
+                  : (phase.diffNote || "你和他选了不一样的。看看他的理由——"))}
+              </div>
+
+              {step === 1 && (
+                <>
+                  {phase.reveal && (
+                    <RevealLines text={phase.reveal} style={prStyles.reveal} unitDelay={700}
+                      skip={reduced} onDone={() => {}} />
+                  )}
+                  <button style={prStyles.go} onClick={() => setStep(2)}>{"后来呢 →"}</button>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  {phase.reveal && <div style={prStyles.reveal}>{nb(phase.reveal)}</div>}
+                  {phase.consequence && (
+                    <div style={prStyles.consequence}>{nb(phase.consequence)}</div>
+                  )}
+                  <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const prStyles = {
+  wrap: {
+    position: "absolute", inset: 0, zIndex: 20,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "4% 9%", textAlign: "center", gap: 14, overflowY: "auto",
+    // 内容不直接浮在底图上：一层从中心向外收干净的纸色暗底，托住文字又看不出方块
+    background: "radial-gradient(ellipse 70% 78% at 50% 50%, rgba(10,7,4,0.82) 0%, rgba(10,7,4,0.62) 55%, rgba(10,7,4,0) 100%)",
+  },
+  situation: {
+    color: "#E2D3B4", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.9, letterSpacing: 1,
+    maxWidth: 760, textShadow: "0 2px 10px rgba(0,0,0,0.95)",
+  },
+  question: {
+    color: "#F5E6D3", fontSize: "clamp(16px, 1.46vw, 24px)", letterSpacing: 4,
+    textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+  },
+  opts: { display: "flex", flexDirection: "column", gap: 10, width: "100%", maxWidth: 560 },
+  opt: {
+    padding: "13px 20px", borderRadius: 10,
+    backgroundColor: "rgba(252,248,238,0.94)", color: "#3A2E20",
+    border: "1px solid #C9A86A", cursor: "pointer",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.7, letterSpacing: 1,
+  },
+  hint: { color: "rgba(245,230,211,0.62)", fontSize: "clamp(11px, 0.79vw, 13px)", letterSpacing: 2 },
+  duo: { display: "flex", gap: 14, width: "100%", maxWidth: 720, justifyContent: "center", flexWrap: "wrap" },
+  card: {
+    flex: "1 1 260px", minWidth: 220, padding: "12px 16px",
+    backgroundColor: "rgba(252,248,238,0.9)", border: "2px solid", borderRadius: 10, textAlign: "left",
+  },
+  cardLabel: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#8A7A5E", letterSpacing: 4, marginBottom: 5 },
+  cardText: { fontSize: "clamp(12.5px, 1.04vw, 17.2px)", color: "#2B2118", lineHeight: 1.7 },
+  note: { color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2, textShadow: "0 1px 8px rgba(0,0,0,0.9)" },
+  reveal: {
+    color: "#F5E6D3", fontSize: "clamp(13.5px, 1.25vw, 20.7px)", lineHeight: 2.0, letterSpacing: 2,
+    maxWidth: 700, textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+  },
+  consequence: {
+    color: "#D8C8A8", fontSize: "clamp(12px, 0.97vw, 16px)", lineHeight: 1.9, maxWidth: 700,
+    borderTop: "1px solid rgba(201,168,106,0.3)", paddingTop: 12,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  go: { ...{}, padding: "10px 26px", borderRadius: 22, border: "1px solid #C9A86A",
+    backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontSize: "clamp(12px, 1.04vw, 17.2px)", letterSpacing: 2, marginTop: 4 },
+};
+
+// ============================================================
+// EVIDENCE SELECT — 给一个判断，挑出支持它的材料
+// ============================================================
+// phase.claim / instruction / pick(要选几条) / items[{id,text,supports,why}]
+// 干扰项的设计要点：不要放「假的」，要放「真的但不相干」——
+// 要练的是「真实 ≠ 支持结论」这个区分，不是辨真假。
+function EvidenceSelectPhase({ phase, onScore, onComplete }) {
+  const items = phase.items || [];
+  const need = phase.pick || items.filter((i) => i.supports).length || 2;
+  const [picked, setPicked] = useState([]);
+  const [done, setDone] = useState(false);
+
+  const toggle = (id) => {
+    if (done) return;
+    setPicked((p) => p.includes(id) ? p.filter((x) => x !== id)
+      : (p.length >= need ? p : [...p, id]));
+  };
+  const right = picked.filter((id) => items.find((i) => i.id === id)?.supports).length;
+
+  const submit = () => {
+    setDone(true);
+    if (onScore) onScore("evidence", right * POINTS.evidence);
+  };
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.66)" }} />
+
+        <div style={esStyles.wrap}>
+          <div style={esStyles.claimBox}>
+            <div style={esStyles.claimLabel}>{"这个判断"}</div>
+            <div style={esStyles.claim}>{nb(phase.claim || "")}</div>
+          </div>
+
+          <div style={esStyles.instruction}>
+            {nb(phase.instruction || `挑出 ${need} 条能支持它的材料。`)}
+            {!done && <span style={esStyles.counter}>{` ${picked.length} / ${need}`}</span>}
+          </div>
+
+          <div style={esStyles.list}>
+            {items.map((it) => {
+              const on = picked.includes(it.id);
+              return (
+                <div
+                  key={it.id}
+                  onClick={() => toggle(it.id)}
+                  style={{
+                    ...esStyles.item,
+                    cursor: done ? "default" : "pointer",
+                    borderColor: done
+                      ? (it.supports ? "#C9A86A" : "rgba(255,255,255,0.14)")
+                      : (on ? "#C9A86A" : "rgba(201,168,106,0.3)"),
+                    backgroundColor: on ? "rgba(201,168,106,0.18)" : "rgba(28,20,13,0.55)",
+                    opacity: done && !it.supports && !on ? 0.7 : 1,
+                  }}
+                >
+                  <div style={esStyles.itemHead}>
+                    <span style={{
+                      ...esStyles.tick,
+                      borderColor: on ? "#C9A86A" : "rgba(201,168,106,0.4)",
+                      backgroundColor: on ? "#C9A86A" : "transparent",
+                    }} />
+                    <span style={esStyles.itemText}>{nb(it.text)}</span>
+                    {done && (
+                      <span style={{ ...esStyles.verdictTag, color: it.supports ? "#C9A86A" : "#8A7A5E" }}>
+                        {it.supports ? "支持" : "不支持"}
+                      </span>
+                    )}
+                  </div>
+                  {done && it.why && <div style={esStyles.why}>{nb(it.why)}</div>}
+                </div>
+              );
+            })}
+          </div>
+
+          {!done ? (
+            <button
+              style={{ ...prStyles.go, opacity: picked.length === need ? 1 : 0.45,
+                       cursor: picked.length === need ? "pointer" : "not-allowed" }}
+              disabled={picked.length !== need}
+              onClick={submit}
+            >
+              {"就这些 →"}
+            </button>
+          ) : (
+            <>
+              {phase.closing && <div style={esStyles.closing}>{nb(phase.closing)}</div>}
+              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const esStyles = {
+  wrap: {
+    position: "absolute", inset: 0, zIndex: 20, overflowY: "auto",
+    display: "flex", flexDirection: "column", alignItems: "center",
+    padding: "3% 8% 4%", gap: 12,
+    background: "linear-gradient(180deg, rgba(10,7,4,0.86) 0%, rgba(10,7,4,0.78) 70%, rgba(10,7,4,0.86) 100%)",
+  },
+  claimBox: {
+    borderLeft: "3px solid #C9A86A", paddingLeft: 14, maxWidth: 760, width: "100%",
+  },
+  claimLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 4 },
+  claim: {
+    color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", lineHeight: 1.75, letterSpacing: 2,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  instruction: {
+    color: "#D8C8A8", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", letterSpacing: 1, maxWidth: 760, width: "100%",
+  },
+  counter: { color: "#C9A86A", marginLeft: 8 },
+  list: { display: "flex", flexDirection: "column", gap: 8, maxWidth: 760, width: "100%" },
+  item: {
+    border: "1px solid", borderRadius: 8, padding: "11px 14px",
+    transition: "border-color 180ms ease, background-color 180ms ease, opacity 180ms ease",
+  },
+  itemHead: { display: "flex", alignItems: "flex-start", gap: 10 },
+  tick: {
+    width: 15, height: 15, borderRadius: 3, border: "1.5px solid", flexShrink: 0, marginTop: 3,
+    transition: "background-color 180ms ease",
+  },
+  itemText: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.7, flex: 1 },
+  verdictTag: { fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 2, flexShrink: 0, marginTop: 3 },
+  why: {
+    color: "#CBBC9E", fontSize: "clamp(11.5px, 0.87vw, 14.4px)", lineHeight: 1.85,
+    marginTop: 8, paddingLeft: 25, borderTop: "1px dashed rgba(201,168,106,0.22)", paddingTop: 8,
+  },
+  closing: {
+    color: "#C9A86A", fontSize: "clamp(12px, 0.97vw, 16px)", lineHeight: 1.9, letterSpacing: 1,
+    maxWidth: 760, textAlign: "center", textShadow: "0 1px 8px rgba(0,0,0,0.9)",
+  },
+};
+
+// ============================================================
 // 第 5 层 · REALITY → DIVINE COMEDY
 // ============================================================
 // 三个 phase 类型合力回答同一个问题：「这段经历后来去了哪？」
@@ -2614,6 +2911,10 @@ const epStyles = {
 // phase.circles [{ id, name, label, y? }]  由浅到深
 // phase.souls   [{ id, name, portrait, metIn, metLabel, answer, verdict, hint }]
 // 关键约束：souls 必须是玩家在前面现实场景里真的对过话的人（metLabel 会显示出来）。
+//
+// commit → contrast：提交之后不打 ✓✗。玩家自己的答案留在原地变成 ghost，
+// 但丁的答案在旁边亮起来；两个不一样的时候，那个差额本身就是这一关的教材——
+// 问的不是「你错了」，是「但丁为什么放这儿」。
 function InfernoPlacementPhase({ phase, onScore, onComplete }) {
   const circles = phase.circles || [];
   const souls = phase.souls || [];
@@ -2697,23 +2998,28 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
                   {c.label && <span style={ipStyles.bandSin}>{nb(c.label)}</span>}
                 </div>
                 <div style={ipStyles.bandSouls}>
-                  {here.map((s) => {
-                    const ok = s.answer === c.id;
-                    return (
-                      <span
-                        key={s.id}
-                        onClick={(e) => { e.stopPropagation(); if (!submitted) setPlaced((p) => { const n = { ...p }; delete n[s.id]; return n; }); }}
-                        style={{
-                          ...ipStyles.chip,
-                          backgroundColor: submitted ? (ok ? "rgba(72,120,70,0.9)" : "rgba(150,60,50,0.9)") : "rgba(252,248,238,0.92)",
-                          color: submitted ? "#F5E6D3" : "#2B2118",
-                          cursor: submitted ? "default" : "pointer",
-                        }}
-                      >
-                        {nb(s.name)}{submitted && (ok ? " ✓" : " ✗")}
-                      </span>
-                    );
-                  })}
+                  {/* 未提交：玩家放的人。已提交：玩家放的留成 ghost（虚线），
+                      但丁放的另起一枚金色实心——两枚并存才看得见差在哪。 */}
+                  {here.map((s) => (
+                    <span
+                      key={"mine-" + s.id}
+                      onClick={(e) => { e.stopPropagation(); if (!submitted) setPlaced((p) => { const n = { ...p }; delete n[s.id]; return n; }); }}
+                      style={{
+                        ...ipStyles.chip,
+                        ...(submitted ? ipStyles.chipGhost : null),
+                        cursor: submitted ? "default" : "pointer",
+                      }}
+                    >
+                      {submitted && <span style={ipStyles.chipWho}>{"你"}</span>}
+                      {nb(s.name)}
+                    </span>
+                  ))}
+                  {submitted && souls.filter((s) => s.answer === c.id).map((s) => (
+                    <span key={"dante-" + s.id} style={{ ...ipStyles.chip, ...ipStyles.chipDante }}>
+                      <span style={{ ...ipStyles.chipWho, color: "#3A2E20", opacity: 0.65 }}>{"但丁"}</span>
+                      {nb(s.name)}
+                    </span>
+                  ))}
                 </div>
               </div>
             );
@@ -2727,7 +3033,7 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
             disabled={!allPlaced}
             onClick={submit}
           >
-            {"看看但丁怎么写的 →"}
+            {"定了，看但丁怎么排的 →"}
           </button>
         )}
 
@@ -2735,15 +3041,29 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
           <div style={ipStyles.verdictOverlay}>
             <div style={ipStyles.verdictPanel}>
               <div style={ipStyles.verdictScore}>
-                {"放对 "}<strong>{correctCount}</strong>{" / " + souls.length}
+                {"你和但丁，"}<strong>{correctCount}</strong>{" / " + souls.length + " 处放到了一起"}
+                <div style={ipStyles.verdictSub}>
+                  {correctCount === souls.length
+                    ? "全都一样。那就往下问一句：他凭什么这么排？"
+                    : "不一样的那几个，才是这一关真正要读的地方。"}
+                </div>
               </div>
               {souls.map((s) => (
                 <div key={s.id} style={ipStyles.verdictRow}>
                   <div style={ipStyles.verdictName}>
                     {nb(s.name)}
-                    <span style={ipStyles.verdictWhere}>
-                      {" → " + (circles.find((c) => c.id === s.answer)?.name || "")}
-                    </span>
+                    {(() => {
+                      const mineC = circles.find((c) => c.id === placed[s.id]);
+                      const hisC = circles.find((c) => c.id === s.answer);
+                      const agree = placed[s.id] === s.answer;
+                      return (
+                        <span style={ipStyles.verdictWhere}>
+                          {agree
+                            ? "　你和但丁都放在「" + (hisC?.name || "") + "」"
+                            : "　你放「" + (mineC?.name || "—") + "」　但丁放「" + (hisC?.name || "") + "」"}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <div style={ipStyles.verdictText}>{nb(s.verdict || "")}</div>
                 </div>
@@ -2804,7 +3124,15 @@ const ipStyles = {
   chip: {
     padding: "3px 10px", borderRadius: 12,
     fontSize: "clamp(11px, 0.833vw, 13.8px)", letterSpacing: 1,
+    backgroundColor: "rgba(252,248,238,0.92)", color: "#2B2118",
+    display: "inline-flex", alignItems: "baseline", gap: 5,
   },
+  chipGhost: {
+    backgroundColor: "transparent", color: "rgba(232,217,190,0.7)",
+    border: "1px dashed rgba(232,217,190,0.45)",
+  },
+  chipDante: { backgroundColor: "#C9A86A", color: "#241A10" },
+  chipWho: { fontSize: "clamp(9px, 0.62vw, 10.5px)", letterSpacing: 2, opacity: 0.7 },
   verdictOverlay: {
     position: "absolute", inset: 0, zIndex: 40,
     backgroundColor: "rgba(10,7,4,0.82)",
@@ -2819,6 +3147,7 @@ const ipStyles = {
     fontSize: "clamp(14px, 1.25vw, 20.7px)", color: "#3A2E20", letterSpacing: 2,
     borderBottom: "1px solid #D8CDB8", paddingBottom: 10, marginBottom: 12,
   },
+  verdictSub: { fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#7A6A50", marginTop: 5, letterSpacing: 1 },
   verdictRow: { marginBottom: 14 },
   verdictName: { fontSize: "clamp(12.8px, 1.042vw, 17.2px)", color: "#2B2118", letterSpacing: 1 },
   verdictWhere: { color: "#8A6D3B", fontSize: "clamp(11.5px, 0.833vw, 13.8px)" },
