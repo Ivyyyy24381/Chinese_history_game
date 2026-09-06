@@ -3,6 +3,9 @@ import { dufuPortraitPath, DUFU_LEGACY_PORTRAIT } from "../data/dufuPoses";
 import { dantePortraitPath, DANTE_LEGACY_PORTRAIT } from "../data/dantePoses";
 import { Pin } from "./GameMap";
 import { nb } from "../utils/cjkText";
+import { localize, lineOf } from "../i18n/localize";
+import { t } from "../i18n/ui";
+import { useLang } from "../i18n/lang";
 import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
 import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
@@ -102,8 +105,12 @@ function RevealLines({ text, style, skip = false, unitDelay = 620, duration = 90
  * comic_reveal, escape_game, minigame, 以及第 5 层的 echo_portal /
  * inferno_placement / comedy_encounter（见 docs/DESIGN_DANTE_V2.md）
  */
-export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete }) {
-  const [phaseIndex, setPhaseIndex] = useState(0);
+export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete, startPhase = 0 }) {
+  // 订阅语言：这一层重渲染，底下所有用 t() 的子组件跟着换语言。
+  // （t() 是模块级函数，不是 hook，所以要在这里把订阅点上。）
+  useLang();
+  // startPhase 只有截图/自查用（?shot=… ，见 App.jsx）。正常游玩永远从 0 开始。
+  const [phaseIndex, setPhaseIndex] = useState(startPhase);
   const [talkedNpcs, setTalkedNpcs] = useState(new Set());
   const [activeNpc, setActiveNpc] = useState(null);
   const [hoveredNpc, setHoveredNpc] = useState(null);
@@ -1556,7 +1563,7 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
               style={{
                 aspectRatio: "1",
                 fontSize: "clamp(19.2px, 1.667vw, 27.6px)",
-                fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+                fontFamily: "var(--font-body)",
                 fontWeight: "bold",
                 backgroundColor: ch === null ? "transparent" : (solved ? "#D4EDDA" : "#F5E6D3"),
                 border: ch === null ? "2px dashed #CCC" : "2px solid #8B7355",
@@ -1829,7 +1836,7 @@ function ComicRevealPhase({ phase, onComplete }) {
                 {activeLine.speakerName}
               </div>
             )}
-            <div style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif" }}>
+            <div style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, fontFamily: "var(--font-body)" }}>
               {nb(activeLine.text)}
             </div>
             <div style={{ color: "#A89968", fontSize: "clamp(11px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{"▼ 点击继续"}</div>
@@ -1854,7 +1861,7 @@ const cpStyles = {
     position: "fixed", inset: 0, zIndex: 250,
     backgroundColor: "rgba(0,0,0,0.75)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     padding: 20,
   },
   popup: {
@@ -1942,7 +1949,7 @@ const cpStyles = {
   bubbleLabel: { fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#999", marginBottom: 8, letterSpacing: 1 },
   bubbleText: {
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)", color: "#3E2723", lineHeight: 1.8, letterSpacing: 1,
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   bubbleClose: {
     marginTop: 16, padding: "11px 26px", minHeight: 42, fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
@@ -2247,7 +2254,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
                   borderRadius: 2,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   textAlign: "center",
-                  fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+                  fontFamily: "var(--font-body)",
                   color: "#3E2723",
                   fontSize: "min(1.2vw, 14px)", fontWeight: "bold",
                   letterSpacing: 1, lineHeight: 1.2,
@@ -2371,7 +2378,7 @@ const egStyles = {
     position: "fixed", inset: 0, zIndex: 240,
     backgroundColor: "rgba(0,0,0,0.78)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     padding: 16, overflow: "auto",
   },
   popup: {
@@ -2470,9 +2477,12 @@ if (typeof document !== "undefined" && !document.getElementById("click-point-key
 // 不许出现在生平里。玩家要靠推理，不是靠读到答案。
 const CAST_MODULES = import.meta.glob("../data/*/cast.json", { eager: true });
 function castFor(eventId) {
-  const line = parseInt(eventId, 10) < 1000 ? "dufu" : "dante";
+  const line = lineOf(eventId);
   const mod = CAST_MODULES[`../data/${line}/cast.json`];
-  return (mod && (mod.default || mod).people) || {};
+  if (!mod) return {};
+  // 生平弹层的文字也要跟着语言走。localize 是纯函数，每次返回新对象；
+  // 这一层调用频率很低（只在打开弹层/渲染卡片时），不做缓存也够快。
+  return localize((mod.default || mod), line, "cast").people || {};
 }
 
 /**
@@ -2584,7 +2594,7 @@ const bioStyles = {
   actionBtn: {
     flex: "1 1 auto", padding: "9px 16px", borderRadius: 8,
     border: "1px solid #C9A86A", backgroundColor: "rgba(201,168,106,0.14)", color: "#3A2E20",
-    cursor: "pointer", fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    cursor: "pointer", fontFamily: "var(--font-body)",
     fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2,
   },
 };
@@ -3357,7 +3367,7 @@ const tgStyles = {
   move: {
     flex: "1 1 0", padding: "11px 14px", borderRadius: 9, border: "1.5px solid",
     backgroundColor: "rgba(252,248,238,0.93)", color: "#2B2118", cursor: "pointer",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3,
     display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
   },
@@ -3814,7 +3824,7 @@ const ptStyles = {
   btn: {
     padding: "13px 34px", borderRadius: 10, border: "2px solid",
     backgroundColor: "rgba(252,248,238,0.94)", color: "#2B2118", cursor: "pointer",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 4,
   },
   reaction: { position: "absolute", left: "38%", top: "56%", maxWidth: "48%", zIndex: 25 },
@@ -3999,7 +4009,7 @@ const prStyles = {
     padding: "13px 20px", borderRadius: 10,
     backgroundColor: "rgba(252,248,238,0.94)", color: "#3A2E20",
     border: "1px solid #C9A86A", cursor: "pointer",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.7, letterSpacing: 1,
   },
   gateRow: { position: "relative", display: "flex", gap: 26, justifyContent: "center", width: "100%", maxWidth: 820 },
@@ -4052,7 +4062,7 @@ const prStyles = {
   },
   go: { alignSelf: "center", padding: "10px 26px", borderRadius: 22, border: "1px solid #C9A86A",
     backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     fontSize: "clamp(12px, 1.04vw, 17.2px)", letterSpacing: 2, marginTop: 4 },
 };
 
@@ -4530,7 +4540,7 @@ const cbStyles = {
   opt: {
     padding: "12px 18px", borderRadius: 9, border: "1.5px solid",
     backgroundColor: "rgba(252,248,238,0.93)", color: "#2B2118", cursor: "pointer",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     fontSize: "clamp(12.5px, 1.04vw, 17.2px)", lineHeight: 1.7, letterSpacing: 1,
   },
   row: { display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", justifyContent: "center", maxWidth: 900, width: "100%" },
@@ -5372,7 +5382,7 @@ const ceStyles = {
     textAlign: "left", padding: "10px 14px",
     backgroundColor: "rgba(252,248,238,0.93)", color: "#3A2E20",
     border: "1px solid #C9A86A", borderRadius: 8, cursor: "pointer",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     fontSize: "clamp(12px, 0.97vw, 16px)", lineHeight: 1.6, letterSpacing: 1,
     transition: "opacity 200ms ease",
   },
@@ -5414,7 +5424,7 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 200,
     backgroundSize: "cover", backgroundPosition: "center",
     backgroundColor: "#2C3E50",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     display: "flex", flexDirection: "column",
   },
   // Locked aspect-ratio wrapper for explore phase
@@ -5422,7 +5432,7 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 200,
     backgroundColor: "#000",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   sceneStage: {
     width: "100%", height: "100%",
@@ -5555,7 +5565,7 @@ const styles = {
     position: "absolute", bottom: 20, right: 20,
     padding: "12px 26px", backgroundColor: "rgba(252,248,238,0.92)",
     color: "#3A2E20", border: "1px solid #C9A86A", borderRadius: 24,
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     letterSpacing: 2,
     fontSize: "clamp(12.0px, 1.042vw, 17.2px)", fontWeight: "bold", cursor: "pointer",
     boxShadow: "0 6px 16px rgba(70,55,35,0.28)",
@@ -5620,7 +5630,7 @@ const styles = {
     minWidth: 180,
     maxWidth: 320,
     boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   bubbleSpeaker: {
     fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
@@ -5707,12 +5717,12 @@ const styles = {
   scrollTitle: {
     fontSize: "clamp(16.0px, 1.389vw, 23.0px)", color: "#3B2510", letterSpacing: 6,
     fontWeight: "bold", margin: "0 0 16px",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   scrollResult: {
     fontSize: "clamp(16.8px, 1.458vw, 24.1px)", color: "#8B0000", fontWeight: "bold",
     letterSpacing: 2, lineHeight: 2.1, margin: 0,
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     whiteSpace: "pre-wrap",
   },
   // Announcement
@@ -5807,7 +5817,7 @@ const styles = {
   fillPassage: {
     fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 2.2, color: "#333",
     marginBottom: 16, whiteSpace: "pre-wrap",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   fillDropZone: {
     display: "inline-block", minWidth: 60, padding: "4px 12px",
@@ -5824,7 +5834,7 @@ const styles = {
     border: "2px solid #D4A574", borderRadius: 8,
     fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold", color: "#5D4E37",
     cursor: "grab", userSelect: "none",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     transition: "all 0.2s",
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   },
@@ -5891,7 +5901,7 @@ const styles = {
   poemTitle: { margin: "0 0 12px", color: "#8B6914", fontSize: "clamp(12.0px, 1.042vw, 17.2px)" },
   poemContent: {
     margin: 0, fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 2, color: "#5D4E37",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     whiteSpace: "pre-wrap", textAlign: "center",
   },
   // Shared

@@ -15,8 +15,20 @@
       :root { --vh100: 100vh; }
       @supports (height: 100dvh) { :root { --vh100: 100dvh; } }
       html, body { overscroll-behavior: none; }
+
+      /* 字体栈是全站唯一的一处 —— JS 里一律写 var(--font-body)（见 src/styles/theme.js）。
+         楷体没有拉丁字形，英文交给它会退化成系统默认字重、字距全乱；
+         所以 <html lang> 切到 en 时整栈换成衬线栈，末尾仍留楷体，
+         好让「没译到、回落成中文」的那几句照旧是楷体。 */
+      :root {
+        --font-body: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif;
+      }
+      html[lang^="en"] {
+        --font-body: 'Iowan Old Style', Palatino, 'Palatino Linotype', 'Book Antiqua',
+          Georgia, 'Times New Roman', 'LXGW WenKai', 'Kaiti SC', serif;
+      }
       body {
-        font-family: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif;
+        font-family: var(--font-body);
         -webkit-tap-highlight-color: transparent;
       }
       #root { min-height: 100vh; min-height: var(--vh100); }

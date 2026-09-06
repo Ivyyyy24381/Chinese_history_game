@@ -1,8 +1,11 @@
 import { useState } from "react";
 import DialogueBox from "./DialogueBox";
 import { nb } from "../utils/cjkText";
+import { localize, lineOf } from "../i18n/localize";
+import { useT } from "../i18n/ui";
 
 export default function EventPanel({ stage, onStartQuiz, onClose }) {
+  const t = useT();
   const [sceneData, setSceneData] = useState(null);
   const [showDialogue, setShowDialogue] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -10,10 +13,10 @@ export default function EventPanel({ stage, onStartQuiz, onClose }) {
   // Load scene data when stage changes (event-based path; 事件 id 年份 <1000 → dufu，否则 → dante)
   if (!sceneData && loading) {
     setLoading(false);
-    const line = parseInt(stage.id, 10) < 1000 ? "dufu" : "dante";
+    const line = lineOf(stage.id);
     import(`../data/${line}/events/${stage.id}/event.json`)
       .then((module) => {
-        setSceneData(module.default);
+        setSceneData(localize(module.default, line, `events/${stage.id}`));
         setShowDialogue(true);
       })
       .catch(() => {
@@ -66,14 +69,14 @@ export default function EventPanel({ stage, onStartQuiz, onClose }) {
                   onClose();
                 }}
               >
-                {"🗣 查看对话"}
+                {t("event.viewDialogue")}
               </button>
             )}
             <button
               style={{ ...styles.actionBtn, backgroundColor: stage.color }}
               onClick={onStartQuiz}
             >
-              {"🎉 开始答题"}
+              {t("event.startQuiz")}
             </button>
           </div>
         </div>
@@ -141,7 +144,7 @@ const styles = {
     fontWeight: "bold",
   },
   poemContent: {
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
     lineHeight: 2,
     color: "#333",

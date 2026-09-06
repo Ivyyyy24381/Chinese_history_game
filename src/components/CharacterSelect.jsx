@@ -1,3 +1,5 @@
+import LangSwitch from "../i18n/LangSwitch";
+import { useT } from "../i18n/ui";
 import { useState } from "react";
 import { asset } from "../utils/asset";
 import { TITLE_IMG } from "../data/characters";
@@ -25,6 +27,7 @@ export default function CharacterSelect({
   achievementTitles = {},
   onRecap,
 }) {
+  const t = useT();
   const [selectedId, setSelectedId] = useState(null);
   const [hoverId, setHoverId] = useState(null);
   // 名字书法图缺失时退回文字渲染
@@ -72,7 +75,8 @@ export default function CharacterSelect({
           <h1 style={styles.titleWrap}>
             <img src={asset(TITLE_IMG)} alt="历史长河" style={styles.titleImg} />
           </h1>
-          <p style={styles.subtitle}>{"选择你的主人公"}</p>
+          <p style={styles.subtitle}>{t("select.subtitle")}</p>
+          <LangSwitch style={{ marginTop: 10 }} />
         </div>
 
         {/* ── 立绘排 ── */}
@@ -123,7 +127,7 @@ export default function CharacterSelect({
                   {achievements[char.id] && (
                     <span
                       style={styles.achBadge}
-                      title={"历史成就 · " + (achievementTitles[char.id] || char.name)}
+                      title={t("select.achievements") + (achievementTitles[char.id] || char.name)}
                     >
                       {"🏆"}
                     </span>
@@ -175,7 +179,7 @@ export default function CharacterSelect({
         <div style={styles.actionBar}>
           {selected && selected.locked && (
             <span style={styles.comingSoon}>
-              {`🔒 ${selected.name}的旅程即将开放`}
+              {`\u{1F512} ${selected.name}${t("select.locked")}`}
             </span>
           )}
           {selected && !selected.locked && (
@@ -185,16 +189,16 @@ export default function CharacterSelect({
                 onClick={() => onSelect(selected)}
               >
                 {resumeForSelected
-                  ? `▶ 继续上局 · ${resumeForSelected.runScore || 0} 分`
-                  : `开始 · 走进${selected.name}的一生`}
+                  ? `${t("select.resume")}${resumeForSelected.runScore || 0}${t("select.resumePoints")}`
+                  : `${t("select.start")}${selected.name}${t("select.startSuffix")}`}
               </button>
               {resumeForSelected && (
                 <button
                   style={styles.ghostBtn}
-                  title="清除上局进度，从头开始"
+                  title={t("select.clearRunTitle")}
                   onClick={() => onRestart && onRestart(selected)}
                 >
-                  {"重新开始"}
+                  {t("select.restart")}
                 </button>
               )}
               {achievements[selected.id] && (
@@ -202,7 +206,7 @@ export default function CharacterSelect({
                   style={styles.ghostBtn}
                   onClick={() => onRecap && onRecap(selected.id)}
                 >
-                  {"📜 人物回顾"}
+                  {t("select.recap")}
                 </button>
               )}
             </>
@@ -212,7 +216,7 @@ export default function CharacterSelect({
         {/* ── 成就栏 ── */}
         <div style={styles.achievementBar}>
           <span style={styles.achievementHeading}>
-            {`🏆 历史成就 ${earnedCount} / ${characters.length}`}
+            {`${t("select.achievementCount")}${earnedCount} / ${characters.length}`}
           </span>
           {characters.map((c) => (
             <span

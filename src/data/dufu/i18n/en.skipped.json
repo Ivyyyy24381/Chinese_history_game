@@ -1,0 +1,265 @@
+{
+  "_why": "这些键有意不抽——值同时充当身份，译了会把游戏玩坏",
+  "items": [
+    {
+      "key": "events/736_qizhao/phases/3/blanks/0",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "齐鲁"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/blanks/1",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "钟"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/blanks/2",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "阴阳"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/blanks/3",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "生"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/blanks/4",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "凌绝顶"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/blanks/5",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "众山小"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/distractors/0",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "江汉"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/distractors/1",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "见"
+    },
+    {
+      "key": "events/736_qizhao/phases/3/distractors/2",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "雷电"
+    },
+    {
+      "key": "quiz/736_qizhao/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "阴阳"
+    },
+    {
+      "key": "quiz/744_libai/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "飘然"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/5/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "铜"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/5/distractors/0",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "金"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/5/distractors/1",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "铁"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/5/distractors/2",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "玉"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/6/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "显称"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/6/distractors/0",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "比肩"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/6/distractors/1",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "称道"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/6/distractors/2",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "言表"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/7/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "黄旗紫气"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/7/distractors/0",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "龙光瑞彩"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/7/distractors/1",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "紫电青霜"
+    },
+    {
+      "key": "events/747_exam/phases/2/questions/7/distractors/2",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "祥云瑞霭"
+    },
+    {
+      "key": "quiz/747_exam/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "下笔"
+    },
+    {
+      "key": "events/751_lifu/phases/2/puzzles/0/solution",
+      "reason": "对句题的标准答案，要和玩家拼出的字串逐字相等",
+      "value": "祝融掷火以焚香，溪女捧盘而盥漱"
+    },
+    {
+      "key": "events/751_lifu/phases/2/puzzles/1/solution",
+      "reason": "对句题的标准答案，要和玩家拼出的字串逐字相等",
+      "value": "鞉鼓埙篪为之主，钟磬竽瑟以之和"
+    },
+    {
+      "key": "events/751_lifu/phases/2/puzzles/2/solution",
+      "reason": "对句题的标准答案，要和玩家拼出的字串逐字相等",
+      "value": "群望之遍祭在斯，示有以明其翼戴"
+    },
+    {
+      "key": "quiz/751_lifu/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "肥马"
+    },
+    {
+      "key": "quiz/755_anshi/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "鸟惊心"
+    },
+    {
+      "key": "quiz/757_zuoshiyi/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "家书"
+    },
+    {
+      "key": "quiz/759_qinzhou/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "捉人"
+    },
+    {
+      "key": "events/760_caotang/phases/4/blanks/0",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "广厦千万间"
+    },
+    {
+      "key": "events/760_caotang/phases/4/blanks/1",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "寒士俱欢颜"
+    },
+    {
+      "key": "events/760_caotang/phases/4/blanks/2",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "不动安如山"
+    },
+    {
+      "key": "events/760_caotang/phases/4/blanks/3",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "独破受冻死亦足"
+    },
+    {
+      "key": "events/760_caotang/phases/4/distractors/0",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "金堂玉马间"
+    },
+    {
+      "key": "events/760_caotang/phases/4/distractors/1",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "故人尽白头"
+    },
+    {
+      "key": "events/760_caotang/phases/4/distractors/2",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "稳渡江湖船"
+    },
+    {
+      "key": "quiz/760_caotang/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "欢颜"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/0",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "天高猿啸哀"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/1",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "沙白鸟飞回"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/2",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "萧萧下"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/3",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "滚滚来"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/4",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "悲秋常作客"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/5",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "多病独登台"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/6",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "繁霜鬓"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/blanks/7",
+      "reason": "诗句填空的正确词，同时是拖动块的身份",
+      "value": "浊酒杯"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/distractors/0",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "月明星稀低"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/distractors/1",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "草绿故人来"
+    },
+    {
+      "key": "events/765_kuizhou/phases/2/distractors/2",
+      "reason": "诗句填空的干扰词，同时是拖动块的身份",
+      "value": "重重叠"
+    },
+    {
+      "key": "quiz/765_kuizhou/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "滚滚"
+    },
+    {
+      "key": "quiz/770_xiangjiang/quizzes/2/answer",
+      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
+      "value": "乾坤"
+    }
+  ]
+}

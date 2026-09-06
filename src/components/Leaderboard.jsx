@@ -89,7 +89,7 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 400,
     backgroundColor: "rgba(12,10,8,0.7)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   panel: {
     position: "relative",

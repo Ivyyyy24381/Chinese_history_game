@@ -14,6 +14,9 @@ import { asset } from "./utils/asset";
 import { CHARACTERS, ACHIEVEMENT_TITLES, COMPLETION_LINES } from "./data/characters";
 import { FONT, COLOR, TRACKING, SHADOW, BUTTON, paperBtn, halo, scrim } from "./styles/theme";
 import { nb } from "./utils/cjkText";
+import { localize } from "./i18n/localize";
+import { useLang } from "./i18n/lang";
+import { useT } from "./i18n/ui";
 
 // 编辑器只在本地 dev 存在（保存走 vite 中间件）。生产构建里彻底排除：
 // SceneEditor 的素材自动发现 glob 会把 /public/assets 的全部图片重复打包进 dist。
@@ -45,7 +48,41 @@ const timelineLoader = (dir) => TIMELINE_MODULES[`./data/${dir}/timeline.json`] 
 const eventLoader = (dir, eventId) =>
   EVENT_MODULES[`./data/${dir}/events/${eventId}/event.json`] || null;
 
+/**
+ * 截图自查用的直达入口（仅 DEV）。?shot=dante/1302_esilio/8 → 直接渲染那一幕。
+ * 不改任何游戏逻辑：它只是把 event.json 读出来交给 ScenePlayer，并指定起始幕。
+ */
+function ShotHarness({ spec }) {
+  const [line, eventId, idx] = String(spec).split("/");
+  const [data, setData] = useState(null);
+  const [err, setErr] = useState(null);
+  useEffect(() => {
+    const load = eventLoader(line, eventId);
+    if (!load) { setErr(`no such event: ${line}/${eventId}`); return; }
+    load().then((m) => setData(localize(m.default, line, `events/${eventId}`)))
+          .catch((e) => setErr(String(e)));
+  }, [line, eventId]);
+  if (err) return <div style={{ padding: 20, color: "#900" }} data-shot-error="1">{err}</div>;
+  if (!data) return null;
+  return (
+    <div data-shot-ready="1" style={{ width: "100%", height: "100%" }}>
+      <ScenePlayer
+        sceneData={data}
+        eventId={eventId}
+        startPhase={Math.max(0, parseInt(idx, 10) || 0)}
+        awardScore={() => {}}
+        onComplete={() => {}}
+      />
+    </div>
+  );
+}
+
+const mod0 = (m) => m.default;
+
 export default function App() {
+  // 语言一变，整棵树重渲染：数据是在这一层 localize 的，重跑一次就换语言了
+  const lang = useLang();
+  const t = useT();
   const [screen, setScreen] = useState("select");
   const [character, setCharacter] = useState(null);
   const [timelineData, setTimelineData] = useState(null);
@@ -104,6 +141,15 @@ export default function App() {
   });
   const audioRef = useRef(null);
 
+  // 换语言：数据是加载时 localize 的，所以已经缓存的那份要丢掉重来。
+  // 不动 currentYear / progressYear，玩家停在哪一年就还在哪一年。
+  const firstLangRef = useRef(true);
+  useEffect(() => {
+    if (firstLangRef.current) { firstLangRef.current = false; return; }
+    setTimelineData(null);
+    setSceneData(null);
+  }, [lang]);
+
   // Load timeline data when character is selected
   useEffect(() => {
     if (!character || timelineData) return;
@@ -116,7 +162,7 @@ export default function App() {
     setDataMissing(false);
     load()
       .then((module) => {
-        const data = module.default;
+        const data = localize(module.default, dataDirOf(character), "timeline");
         setTimelineData(data);
         const resume = pendingResumeRef.current;
         pendingResumeRef.current = null;
@@ -270,7 +316,7 @@ export default function App() {
       } catch {
         sceneModule = await load(); // 弱网自动重试一次
       }
-      const data = sceneModule.default;
+      const data = localize(sceneModule.default, dataDirOf(character), `events/${currentEvent.id}`);
       if (data.type === "interactive" && data.phases) {
         setSceneData(data);
         setShowScene(true);
@@ -332,10 +378,18 @@ export default function App() {
     try {
       const load = timelineLoader(dataDirOf(target));
       if (!load) return;
-      const mod = await load();
-      setRecapData({ character: mod.default.character, stages: mod.default.stages });
+      const data = localize(mod0(await load()), dataDirOf(target), "timeline");
+      setRecapData({ character: data.character, stages: data.stages });
     } catch { /* ignore */ }
   };
+
+  // 截图自查：?shot=<line>/<eventId>/<phaseIndex>（只在 npm run dev 下开）。
+  // 视觉打磨要一幕一幕看，正常玩法要点几十下才走到第 8 幕；
+  // 这个入口让 scripts/shots.mjs 直接把每一幕拍下来。不进生产构建。
+  if (import.meta.env.DEV && typeof window !== "undefined") {
+    const shot = new URLSearchParams(window.location.search).get("shot");
+    if (shot) return <ShotHarness spec={shot} />;
+  }
 
   // Editor mode via ?editor=true (entry: timeline editor; drill into scene editor per event)
   if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("editor") === "true") {
@@ -433,7 +487,7 @@ export default function App() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+          fontFamily: "var(--font-body)",
           fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
         }}
       >
@@ -654,7 +708,7 @@ const orientStyles = {
     backgroundColor: "rgba(20,14,8,0.92)",
     display: "flex", flexDirection: "column",
     alignItems: "center", justifyContent: "center", gap: 14,
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   text: { color: "#F5E6D3", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 4 },
   sub: { color: "#B8A88C", fontSize: "clamp(11.2px, 0.972vw, 16.1px)" },
@@ -686,7 +740,7 @@ const styles = {
     justifyContent: "center",
     gap: 14,
     backgroundColor: "#F5F0E8",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   placeholderTitle: {
     color: "#5A4A38",
@@ -830,7 +884,7 @@ const styles = {
     cursor: "pointer",
     fontSize: "clamp(12.0px, 1.042vw, 17.2px)",
     lineHeight: 1,
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   musicBtn: {
     position: "fixed",
@@ -872,7 +926,7 @@ const styles = {
     right: "calc(20px + env(safe-area-inset-right, 0px))",
     zIndex: 90,
     display: "flex", alignItems: "center", gap: 8,
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
   userChip: {
     color: "#8A6D3B", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", letterSpacing: 1,

@@ -161,7 +161,7 @@ const styles = {
     color: "#F5E6D3",
     fontSize: "clamp(12.0px, 1.042vw, 17.2px)",
     lineHeight: 1.8,
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     minHeight: 60,
   },
   continueIndicator: {

@@ -560,7 +560,7 @@ const styles = {
     minHeight: "100vh",
     backgroundColor: "#1a1a2e",
     color: "#FFF",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     display: "flex",
     flexDirection: "column",
   },
@@ -781,6 +781,6 @@ const styles = {
     color: "#FFF",
     fontSize: 18,
     backgroundColor: "#1a1a2e",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
   },
 };

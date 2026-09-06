@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { nb } from "../utils/cjkText";
 import { POINTS } from "../utils/scoring";
+import { localize, lineOf } from "../i18n/localize";
 
 export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
   const [quizData, setQuizData] = useState(null);
@@ -15,10 +16,10 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
   // Load quiz data (event-based path; 事件 id 年份 <1000 → dufu，否则 → dante)
   useEffect(() => {
     if (loading) {
-      const line = parseInt(stage.id, 10) < 1000 ? "dufu" : "dante";
+      const line = lineOf(stage.id);
       import(`../data/${line}/events/${stage.id}/quiz.json`)
         .then((module) => {
-          setQuizData(module.default);
+          setQuizData(localize(module.default, line, `quiz/${stage.id}`));
           setLoading(false);
         })
         .catch(() => {

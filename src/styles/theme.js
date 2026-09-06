@@ -12,7 +12,7 @@
 //      scrimBoost），用 paper(alpha) 叠一层，跟底图一起淡入淡出。
 
 // ── 字体 ──
-export const FONT = "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif";
+export const FONT = "var(--font-body)";
 
 // ── 纸色：全站唯一的「白」。蒙版、暖光、雾、按钮底都用它，只改 alpha ──
 export const paper = (a) => `rgba(250,246,238,${a})`;

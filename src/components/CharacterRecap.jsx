@@ -64,7 +64,7 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 400,
     backgroundColor: "rgba(12,10,8,0.92)",
     overflowY: "auto",
-    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontFamily: "var(--font-body)",
     padding: "32px 16px",
   },
   page: {
