@@ -5,8 +5,11 @@
 import { asset } from "../utils/asset";
 import { nb } from "../utils/cjkText";
 import { t } from "../i18n/ui";
+import { useLang } from "../i18n/lang";
+import { RECAP_EPIGRAPHS } from "../data/characters";
 
 export default function CharacterRecap({ character, stages, onClose }) {
+  useLang();
   return (
     <div style={styles.overlay}>
       <div style={styles.page}>
@@ -17,44 +20,46 @@ export default function CharacterRecap({ character, stages, onClose }) {
             <img src={asset(character.portrait)} alt={character.name} style={styles.portrait} />
           )}
           <div>
-            <h1 style={styles.name}>{character.name}{t("·一生回顾")}</h1>
+            <h1 style={styles.name}>{t(character.name)}{t("·一生回顾")}</h1>
             <div style={styles.meta}>
-              {character.title}{" · "}{character.dynasty}{" · "}{character.years}
+              {t(character.title)}{" · "}{t(character.dynasty)}{" · "}{character.years}
             </div>
-            <p style={styles.desc}>{nb(character.description)}</p>
+            <p style={styles.desc}>{nb(t(character.description))}</p>
           </div>
         </div>
 
         <div style={styles.badgeRow}>
-          <span style={styles.badge}>{t("🏆 历史成就 · 诗圣之路")}</span>
+          <span style={styles.badge}>{t("select.achievements2") + t(character.achievementTitle || "")}</span>
         </div>
 
         {stages.map((stage) => (
           <div key={stage.id} style={styles.stageBlock}>
             <div style={{ ...styles.stageHeader, borderLeftColor: stage.color }}>
-              <span style={{ ...styles.stagePeriod, color: stage.color }}>{stage.period}</span>
+              <span style={{ ...styles.stagePeriod, color: stage.color }}>{t(stage.period)}</span>
               <span style={styles.stageYears}>{stage.yearStart}{"—"}{stage.yearEnd}</span>
             </div>
-            {stage.summary && <p style={styles.stageSummary}>{nb(stage.summary)}</p>}
+            {stage.summary && <p style={styles.stageSummary}>{nb(t(stage.summary))}</p>}
             {(stage.events || []).map((ev) => (
               <div key={ev.id} style={styles.eventRow}>
                 <div style={{ ...styles.eventYear, backgroundColor: stage.color }}>{ev.year}</div>
                 <div style={styles.eventBody}>
                   <div style={styles.eventName}>
-                    {ev.name}
-                    {ev.state && <span style={styles.eventState}>{ev.state}</span>}
+                    {t(ev.name)}
+                    {ev.state && <span style={styles.eventState}>{t(ev.state)}</span>}
                   </div>
-                  {ev.location?.name && <div style={styles.eventLoc}>{"📍 " + ev.location.name}</div>}
-                  {ev.summary && <p style={styles.eventSummary}>{nb(ev.summary)}</p>}
+                  {ev.location?.name && <div style={styles.eventLoc}>{"📍 " + t(ev.location.name)}</div>}
+                  {ev.summary && <p style={styles.eventSummary}>{nb(t(ev.summary))}</p>}
                 </div>
               </div>
             ))}
           </div>
         ))}
 
-        <div style={styles.epilogue}>
-          {t("「李杜文章在，光焰万丈长。」——韩愈")}
-        </div>
+        {/* 收尾题辞按人物取。原来写死的是韩愈评李杜——杜甫专用，
+            但丁的回顾页上出现它是错的。没写题辞的人物就不显示这一块。 */}
+        {RECAP_EPIGRAPHS[character.id] && (
+          <div style={styles.epilogue}>{nb(t(RECAP_EPIGRAPHS[character.id]))}</div>
+        )}
       </div>
     </div>
   );

@@ -299,7 +299,7 @@
   "comicsort.tileLabel": "一格连环画",
   "art.aria": "这张画是谁画的",
   "about.title": "关于 · 致谢",
-  "about.open": "关于 / 致谢",
+  "about.open": "画作库",
   "about.close": "关闭",
   "about.artworks": "公版画作",
   "about.artworksSource": "图片来源：Wikimedia Commons。这些画的作者去世已逾百年，作品进入公有领域。",
@@ -371,5 +371,11 @@
   "clicks.morePrefix": "再点 ",
   "clicks.moreMid": " 处，",
   "clicks.moreTail": "将缓缓浮现…",
-  "escape.title": "🚪 出城：避开守卫"
+  "escape.title": "🚪 出城：避开守卫",
+  "select.achievements2": "🏆 历史成就 · ",
+  "char.dufu.epigraph": "「李杜文章在，光焰万丈长。」——韩愈",
+  "char.dante.epigraph": "「是爱，在推动太阳和其他的星辰。」——《神曲·天堂》最后一行",
+  "char.dante.path": "Divina Commedia",
+  "art.libTitle": "画作库",
+  "art.libLede": "游戏里这几幅画，都不是我们画的——是六百多年里，一代代人为这首诗画的。点开看大图。"
 }

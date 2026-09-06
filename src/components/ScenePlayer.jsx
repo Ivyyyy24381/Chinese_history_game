@@ -2739,6 +2739,14 @@ const disabledBtn = (ok) => (ok ? null : {
   cursor: "not-allowed",
 });
 
+// —— z 轴分层（改之前先看这里）——
+//   10 + position.y   立绘 NPC。加 y 是为了让画面下方（更近）的人盖住上方的人，
+//                     所以一个站在 y=90 的角色实际是 z=100。
+//   20–60             场景内的题面、托盘、投放区、判词面板
+//   150  Z_PROCEED    「继续 / 提交」这一族按钮 —— 必须高过任何立绘
+//   200–300           生平弹层、对话浮层、排行榜这类整屏弹层
+const Z_PROCEED = 150;
+
 // 键盘可达。全站的按钮几乎都是自绘的 <div onClick>，不补 role/tabIndex 的话
 // Tab 根本走不到，屏幕阅读器也读不出「这是个可以按的东西」。
 // 用法：<div {...pressable(() => doThing(), { pressed: on })} style={...}>
@@ -2825,7 +2833,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
   }, [flash]);
 
   // 几何：由内向外九个同心环，投放口沿环错开角度排布
-  const R0 = 46, STEP = 27;
+  const R0 = 50, STEP = 30;
   const radius = (i) => R0 + i * STEP;
   const angle = (i) => -104 + i * 27;                    // deg
   const period = (i) => (reduced ? 0 : 34 - i * 2.6);    // 越往外转得越快
@@ -2861,7 +2869,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
         <div style={{
           ...csStyles.orrery,
           transform: `translate(-50%,-50%) scale(${zoom ? (reduced ? 1 : 0.62) : 1})`,
-          left: zoom ? "50%" : "36%",
+          left: zoom ? "50%" : "29%",
           opacity: zoom ? 0.7 : 1,
           transition: reduced ? "none" : "transform 2.4s cubic-bezier(.4,0,.2,1), left 2.4s cubic-bezier(.4,0,.2,1), opacity 2.4s ease",
         }}>
@@ -2870,7 +2878,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
             <circle cx="0" cy="0" r="13" fill="#C9A86A" opacity={0.85} />
             <polyline
               points={spheres.map((_, i) => (isLit(i) ? `${pos(i).x},${pos(i).y}` : null)).filter(Boolean).join(" ")}
-              fill="none" stroke="#C9A86A" strokeWidth="1.2" opacity="0.5" strokeLinecap="round"
+              fill="none" stroke="#C9A86A" strokeWidth="1.6" opacity="0.62" strokeLinecap="round"
             />
           </svg>
 
@@ -2883,7 +2891,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
                 <div style={{
                   ...csStyles.ring,
                   width: radius(i) * 2, height: radius(i) * 2,
-                  borderColor: lit ? `rgba(201,168,106,${0.28 + 0.42 * (i / n)})` : "rgba(201,168,106,0.10)",
+                  borderColor: lit ? `rgba(201,168,106,${0.34 + 0.46 * (i / n)})` : "rgba(201,168,106,0.20)",
                   boxShadow: lit ? `0 0 ${14 + i * 3}px rgba(201,168,106,0.16)` : "none",
                 }} />
                 <div
@@ -2894,8 +2902,11 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
                   style={{
                     ...csStyles.socket,
                     left: `calc(50% + ${p.x}px)`, top: `calc(50% + ${p.y}px)`,
-                    borderColor: over === i ? "#F0DCA8" : lit ? "rgba(201,168,106,0.85)" : (picked ? "rgba(201,168,106,0.5)" : "rgba(201,168,106,0.22)"),
-                    backgroundColor: lit ? "rgba(201,168,106,0.22)" : (here ? "rgba(120,110,95,0.2)" : "rgba(8,10,18,0.7)"),
+                    borderColor: over === i ? "#F0DCA8" : lit ? "rgba(201,168,106,0.9)" : (picked ? "rgba(201,168,106,0.72)" : "rgba(201,168,106,0.42)"),
+                    borderStyle: lit || here ? "solid" : "dashed",
+                    backgroundColor: lit
+                      ? "rgba(201,168,106,0.26)"
+                      : (here ? "rgba(120,110,95,0.22)" : "rgba(8,10,18,0.78)"),
                     boxShadow: lit ? "0 0 18px rgba(230,200,140,0.55)" : "none",
                     animation: lit && !reduced ? `sphereSpin ${period(i)}s linear infinite` : "none",
                     cursor: zoom ? "default" : "pointer",
@@ -2928,6 +2939,10 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
                   ...csStyles.chip,
                   borderColor: picked === s.id ? "#C9A86A" : "rgba(201,168,106,0.24)",
                   backgroundColor: picked === s.id ? "rgba(201,168,106,0.16)" : "rgba(14,16,26,0.72)",
+                  transform: picked === s.id && !reduced ? "translateY(-3px)" : "none",
+                  boxShadow: picked === s.id
+                    ? "0 0 0 3px rgba(201,168,106,0.22), 0 8px 20px rgba(0,0,0,0.5)"
+                    : "0 2px 8px rgba(0,0,0,0.35)",
                 }}
               >
                 <span style={csStyles.chipGlyph}>{s.glyph}</span>
@@ -3010,7 +3025,7 @@ const csStyles = {
     position: "absolute", top: "5.5%", right: "4%", zIndex: 20,
     color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 3,
   },
-  orrery: { position: "absolute", top: "52%", width: 0, height: 0, zIndex: 15 },
+  orrery: { position: "absolute", top: "50%", width: 0, height: 0, zIndex: 15 },
   svg: { position: "absolute", left: -340, top: -340, width: 680, height: 680, overflow: "visible", pointerEvents: "none" },
   ring: {
     position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)",
@@ -3026,19 +3041,31 @@ const csStyles = {
     transition: "border-color 220ms ease, background-color 600ms ease, box-shadow 900ms ease",
     zIndex: 16,
   },
-  glyph: { fontSize: 16, lineHeight: 1, transition: "color 700ms ease", userSelect: "none" },
+  glyph: { fontSize: 18, lineHeight: 1, transition: "color 700ms ease", userSelect: "none" },
+  // 两列。十一张牌单列排下来要滚动，而且一行一句读起来像清单不像天体。
   tray: {
-    position: "absolute", right: "3%", top: "17%", width: "31%", maxHeight: "76%",
-    overflowY: "auto", display: "flex", flexDirection: "column", gap: 6, zIndex: 20,
+    position: "absolute", right: "3%", top: "16%", width: "42%", maxHeight: "78%",
+    overflowY: "auto", display: "grid", gridTemplateColumns: "1fr 1fr",
+    gap: 8, alignContent: "start", zIndex: 20,
   },
   chip: {
     minHeight: 44,
-    display: "flex", alignItems: "center", gap: 9, padding: "7px 10px",
-    border: "1px solid", borderRadius: 8, cursor: "grab",
+    display: "flex", alignItems: "center", gap: 10, padding: "8px 10px",
+    border: "1px solid", borderRadius: 10, cursor: "grab",
     userSelect: "none", WebkitUserSelect: "none",
-    transition: "border-color 200ms ease, background-color 200ms ease",
+    transition: "border-color 200ms ease, background-color 200ms ease, transform 200ms cubic-bezier(.2,.7,.3,1), box-shadow 200ms ease",
   },
-  chipGlyph: { fontSize: 17, color: "#F5EEDF", width: 20, textAlign: "center", flexShrink: 0 },
+  // 星象符号做成一枚小星盘：暗底 + 金圈 + 金字。
+  // **十一枚长得一模一样**（干扰项也一样）—— 只要按顺序给它们上色差，
+  // 就等于把答案画在牌面上了。
+  chipGlyph: {
+    width: 34, height: 34, flexShrink: 0, borderRadius: "50%",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 19, color: "#F0DCA8", lineHeight: 1,
+    background: "radial-gradient(circle at 34% 30%, rgba(201,168,106,0.32), rgba(8,10,18,0.9) 72%)",
+    border: "1px solid rgba(201,168,106,0.5)",
+    boxShadow: "inset 0 0 8px rgba(201,168,106,0.18)",
+  },
   chipName: { display: "block", color: "#EFE3CC", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 1 },
   chipHolds: { display: "block", color: "#CFC6B4", fontSize: "clamp(12px, 0.76vw, 12.6px)", marginTop: 2, lineHeight: 1.4 },
   chipBio: {
@@ -5999,7 +6026,8 @@ const styles = {
     background: "linear-gradient(180deg, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.62) 72%, transparent 100%)",
     color: "#FFF",
     position: "relative",
-    zIndex: 20,
+    // 同样要压过立绘：站在 y=10 以下的角色 z 就 >20 了
+    zIndex: Z_PROCEED,
   },
   phaseTitle: {
     margin: "0 0 4px", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 4,
@@ -6014,7 +6042,7 @@ const styles = {
   // Instruction
   instructionBar: {
     // Top-right corner so it never overlaps character art in the scene.
-    position: "absolute", top: 14, right: 14,
+    position: "absolute", top: 14, right: 14, zIndex: Z_PROCEED,
     maxWidth: "36%",
     backgroundColor: "rgba(0,0,0,0.8)", color: "#F5E6D3",
     padding: "10px 16px", borderRadius: 8, fontSize: "clamp(12px, 0.903vw, 14.9px)", lineHeight: 1.5,
@@ -6122,7 +6150,11 @@ const styles = {
     letterSpacing: 2,
     fontSize: "clamp(12.0px, 1.042vw, 17.2px)", fontWeight: "bold", cursor: "pointer",
     boxShadow: "0 6px 16px rgba(70,55,35,0.28)",
-    zIndex: 30, // always above character art (npcMarker z=10)
+    // 「继续」必须压在所有立绘上面。原来写的是 30，注释还写着「npcMarker z=10」——
+    // 但 npcMarker 实际是 `10 + position.y`（下方的人盖住上方的人，这是对的），
+    // 所以画面下半部分的任何一个 NPC 都是 z=60~110，把这颗按钮埋在底下。
+    // Z_PROCEED 定在 150：高过任何立绘（最高 110），低过弹层（≥200）。
+    zIndex: Z_PROCEED
   },
   // Dialogue overlay
   dialogueOverlay: {

@@ -11,7 +11,8 @@
     "i18n:extract": "node scripts/i18n_extract.mjs",
     "shots": "node scripts/shots.mjs",
     "i18n:ui": "node scripts/i18n_ui_check.mjs",
-    "contrast": "node scripts/contrast.mjs"
+    "contrast": "node scripts/contrast.mjs",
+    "check:overlap": "node scripts/check_overlap.mjs"
   },
   "dependencies": {
     "@cloudbase/js-sdk": "^3.6.2",

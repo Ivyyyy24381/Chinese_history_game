@@ -299,7 +299,7 @@
   "comicsort.tileLabel": "A comic panel",
   "art.aria": "About this artwork",
   "about.title": "About · Credits",
-  "about.open": "About / Credits",
+  "about.open": "Art Library",
   "about.close": "Close",
   "about.artworks": "Public-domain artworks",
   "about.artworksSource": "Images from Wikimedia Commons. Their painters died over a century ago, so the works are in the public domain.",
@@ -371,5 +371,11 @@
   "clicks.morePrefix": "Find ",
   "clicks.moreMid": " more, and ",
   "clicks.moreTail": " will slowly appear…",
-  "escape.title": "🚪 Out of the city: dodge the guards"
+  "escape.title": "🚪 Out of the city: dodge the guards",
+  "select.achievements2": "🏆 Achievement · ",
+  "char.dufu.epigraph": "“The writing of Li Bai and Du Fu still stands, and its light shines ten thousand feet.” — Han Yu",
+  "char.dante.epigraph": "“It is love that moves the sun and the other stars.” — the last line of the Divine Comedy",
+  "char.dante.path": "Divina Commedia",
+  "art.libTitle": "Art Library",
+  "art.libLede": "None of these were made for this game. People have been painting this poem for six hundred years. Tap one to see it large."
 }

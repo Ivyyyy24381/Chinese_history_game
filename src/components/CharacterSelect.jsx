@@ -1,6 +1,6 @@
 import { useState as useStateAbout } from "react";
 import LangSwitch from "../i18n/LangSwitch";
-import AboutPanel from "./AboutPanel";
+import ArtLibrary from "./ArtLibrary";
 import { useT } from "../i18n/ui";
 import { useState } from "react";
 import { asset } from "../utils/asset";
@@ -153,7 +153,7 @@ export default function CharacterSelect({
                   )}
                   {/* 书法图/花体字未必读得出来，中文名单独写一行 */}
                   <p style={styles.readableName}>
-                    {char.name}
+                    {t(char.name)}
                     <span style={styles.metaSep}>{" · "}</span>
                     <span style={styles.readableTitle}>{t(char.title)}</span>
                   </p>
@@ -221,7 +221,7 @@ export default function CharacterSelect({
         <button style={styles.aboutLink} onClick={() => setShowAbout(true)}>
           {t("about.open")}
         </button>
-        {showAbout && <AboutPanel onClose={() => setShowAbout(false)} />}
+        {showAbout && <ArtLibrary onClose={() => setShowAbout(false)} />}
 
         {/* ── 成就栏 ── */}
         <div style={styles.achievementBar}>

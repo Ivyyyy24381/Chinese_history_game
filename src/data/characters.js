@@ -35,6 +35,7 @@ export const CHARACTERS = [
     description: "以诗为史，走过盛唐的绚烂与崩塌",
     achievementTitle: "诗圣之路",
     completionLine: "从裘马轻狂的少年，到湘江舟中的诗圣。",
+    recapEpigraph: "「李杜文章在，光焰万丈长。」——韩愈",
     heroPortrait: "/assets/dufu/hero/portrait.webp",
     avatar: "🖊",
     color: "#4A90A4",
@@ -64,6 +65,7 @@ export const CHARACTERS = [
     description: "《神曲》作者，欧洲文艺复兴的先声，「意大利语之父」",
     achievementTitle: "Divina Commedia",
     completionLine: "从佛罗伦萨的婴儿，到拉文纳的桂冠诗人——是爱，推动太阳与群星。",
+    recapEpigraph: "「是爱，在推动太阳和其他的星辰。」——《神曲·天堂》最后一行",
     heroPortrait: "/assets/dante/hero/portrait.webp",
     avatar: "📕",
     color: "#A63A2E",
@@ -93,6 +95,7 @@ export const CHARACTERS = [
     description: "在旋舞与诗行之间追寻神圣之爱",
     achievementTitle: "旋舞之路",
     completionLine: "",
+    recapEpigraph: "",
     heroPortrait: null,
     avatar: "🌀",
     color: "#2F6F6B",
@@ -121,6 +124,10 @@ export const ACHIEVEMENT_TITLES = Object.fromEntries(
 );
 
 // 走完一生后的结语；没写的人物由 App 兜底成通用句
+export const RECAP_EPIGRAPHS = Object.fromEntries(
+  CHARACTERS.map((c) => [c.id, c.recapEpigraph || ""])
+);
+
 export const COMPLETION_LINES = Object.fromEntries(
   CHARACTERS.filter((c) => c.completionLine).map((c) => [c.id, c.completionLine])
 );
