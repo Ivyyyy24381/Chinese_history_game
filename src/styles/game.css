@@ -138,3 +138,20 @@ p {
 .scene-stage :where(button, [role="button"], [tabindex]):focus-visible {
   box-shadow: 0 0 0 6px rgba(10, 7, 4, 0.55);
 }
+
+/* ── 减少动态效果 ──
+   9 个 phase 组件有动效但没读 usePrefersReducedMotion（九重天的自转、
+   连环画的揭开、逃脱关的移动…）。逐个补太容易漏，而且以后新写的还会漏。
+   这一条兜底：!important 连内联 style 里的 animation/transition 一起压掉。
+   注意是压到 0.01ms 而不是 none —— 有些逻辑挂在 animationend/transitionend 上，
+   设成 none 事件就不触发了，界面会卡住。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
