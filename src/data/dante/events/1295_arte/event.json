@@ -7,7 +7,7 @@
     {
       "id": "lectern_intro",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "讲坛引子",
       "transitionText": "讲坛上，薄伽丘合上《新生》，换了一册城邦档案。",
       "announcement": {
@@ -21,7 +21,7 @@
     {
       "id": "guild_hall",
       "type": "explore",
-      "background": "/assets/dante/events/1295_arte/backgrounds/arte_medici.png",
+      "background": "/assets/dante/events/1295_arte/backgrounds/arte_medici.webp",
       "title": "医药行会大厅",
       "narrative": "《正义法规》颁布：豪族不得任公职，参政须注册行会。三十岁的但丁走进药柜与天平之间，来办一件改变命运的手续。",
       "instruction": "在行会大厅里办登记，顺便听听佛罗伦萨的新党争。",
@@ -30,7 +30,7 @@
         {
           "id": "guild_clerk",
           "name": "行会书记",
-          "portrait": "/assets/dante/events/1295_arte/npcs/guild_clerk.png",
+          "portrait": "/assets/dante/events/1295_arte/npcs/guild_clerk.webp",
           "position": {
             "x": 32,
             "y": 74
@@ -58,7 +58,7 @@
         {
           "id": "apothecary",
           "name": "药剂师",
-          "portrait": "/assets/dante/events/1295_arte/npcs/apothecary.png",
+          "portrait": "/assets/dante/events/1295_arte/npcs/apothecary.webp",
           "position": {
             "x": 48,
             "y": 60
@@ -80,7 +80,7 @@
         {
           "id": "bookseller",
           "name": "书商",
-          "portrait": "/assets/dante/events/1295_arte/npcs/bookseller.png",
+          "portrait": "/assets/dante/events/1295_arte/npcs/bookseller.webp",
           "position": {
             "x": 85,
             "y": 70
@@ -104,7 +104,7 @@
         {
           "id": "vendor_florence",
           "name": "市民",
-          "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.png",
+          "portrait": "/assets/dante/events/1265_firenze/npcs/vendor_florence.webp",
           "position": {
             "x": 11,
             "y": 82
@@ -136,7 +136,7 @@
     {
       "id": "ponte_vecchio",
       "type": "explore",
-      "background": "/assets/dante/events/1295_arte/backgrounds/ponte_vecchio_dusk.png",
+      "background": "/assets/dante/events/1295_arte/backgrounds/ponte_vecchio_dusk.webp",
       "title": "老桥暮色",
       "narrative": "手续办完。暮色里的老桥上，同侪们等着他。",
       "instruction": "和桥上的朋友说说话，再听听自己的心。",
@@ -145,7 +145,7 @@
         {
           "id": "cavalcanti",
           "name": "圭多·卡瓦尔坎蒂",
-          "portrait": "/assets/dante/npcs/cavalcanti.png",
+          "portrait": "/assets/dante/npcs/cavalcanti.webp",
           "position": {
             "x": 22,
             "y": 80
@@ -173,7 +173,7 @@
         {
           "id": "forese",
           "name": "福雷塞·多纳蒂",
-          "portrait": "/assets/dante/npcs/forese.png",
+          "portrait": "/assets/dante/npcs/forese.webp",
           "position": {
             "x": 78,
             "y": 82
@@ -247,7 +247,7 @@
     {
       "id": "echo",
       "type": "transition",
-      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.png",
+      "background": "/assets/dante/events/1265_firenze/backgrounds/lectern_1373.webp",
       "title": "后世回声",
       "transitionText": "讲坛上换了一个声音——彼得罗·阿利吉耶里，但丁之子，《神曲》最早的注疏人之一。",
       "announcement": {
