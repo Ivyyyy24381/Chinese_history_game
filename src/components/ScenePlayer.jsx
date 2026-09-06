@@ -1314,6 +1314,11 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
+  // --- TRUST GAME (放逐循环：迭代囚徒困境，收在「地狱是只有一轮的世界」) ---
+  if (currentPhase.type === "trust_game") {
+    return <TrustGamePhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
   // --- CELESTIAL SPHERES (九重天：连接而非归类；无对错，只有亮不亮) ---
   if (currentPhase.type === "celestial_spheres") {
     return <CelestialSpheresPhase phase={currentPhase} eventId={eventId} onScore={award} onComplete={goToNextPhase} />;
@@ -2902,6 +2907,486 @@ const csStyles = {
   coda: {
     color: "#E4CF9E", fontSize: "clamp(13px, 1.18vw, 19.5px)", lineHeight: 2.0, letterSpacing: 4,
     marginTop: 26, paddingTop: 18, borderTop: "1px solid rgba(201,168,106,0.3)", maxWidth: 660,
+    whiteSpace: "pre-line",
+  },
+};
+
+// ============================================================
+// TRUST GAME — 佛罗伦萨的放逐循环
+// ============================================================
+// 结构借自 Nicky Case《The Evolution of Trust》（迭代囚徒困境的可玩讲解），
+// 换成佛罗伦萨真实的那台机器：两党轮流上台，上台就放逐对方，
+// 被放逐的带着外援回来，再放逐回去。反复五十年。
+//
+// 收益沿用原作那组（调得很好）：
+//   都宽赦 +2/+2 · 一方放逐 +3/−1 · 都放逐 0/0
+// 另加一条「城」的血条：都宽赦城 +1，都放逐城 −1。两家都在得分而城在流血，
+// 这才是这段历史的形状。
+//
+// 四幕：交手 → 猜他的规矩 → 让满城跑一遍（两个滑块）→ 但丁的转折
+// 落点在最后一幕：《地狱》是一个只有一轮的世界。
+
+const SPARE = "spare", EXILE = "exile";
+
+// 六种人。规矩逐条对应原作的 Copycat / Always Cheat / Always Cooperate /
+// Grudger / Detective / Copykitten。
+const TRUST_STRATS = [
+  { id: "copycat",  name: "以牙还牙", rule: "先宽赦。之后你上一轮怎么待他，他就怎么待你。" },
+  { id: "allexile", name: "赶尽杀绝", rule: "永远放逐。不留后手。" },
+  { id: "allspare", name: "一味宽赦", rule: "永远宽赦。无论你做过什么。" },
+  { id: "grudger",  name: "记　仇",   rule: "先宽赦。你放逐他一次，他从此再也不宽赦你。" },
+  { id: "detective",name: "试　探",   rule: "先来「宽赦、放逐、宽赦、宽赦」四手试你。你敢还手，他就转成以牙还牙；你不还手，他就转成赶尽杀绝。" },
+  { id: "kitten",   name: "给两次机会", rule: "先宽赦。只有你连着放逐他两轮，他才还手。" },
+];
+// 配色：dataviz 参考暗色分类盘，按原序取前六（顺序不能动——
+// 相邻对的色觉分辨度是按这个顺序验过的）。
+const TRUST_COLORS = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300"];
+const colorOf = (sid) => TRUST_COLORS[TRUST_STRATS.findIndex((s) => s.id === sid)] || "#888";
+const stratName = (sid) => TRUST_STRATS.find((s) => s.id === sid)?.name || sid;
+
+// 一步棋。mine / theirs 是到目前为止双方「实际打出」的手（含误传后的结果）。
+function trustMove(sid, mine, theirs) {
+  const n = theirs.length;
+  switch (sid) {
+    case "allexile": return EXILE;
+    case "allspare": return SPARE;
+    case "copycat":  return n === 0 ? SPARE : theirs[n - 1];
+    case "grudger":  return theirs.includes(EXILE) ? EXILE : SPARE;
+    case "kitten":
+      return n >= 2 && theirs[n - 1] === EXILE && theirs[n - 2] === EXILE ? EXILE : SPARE;
+    case "detective": {
+      const opening = [SPARE, EXILE, SPARE, SPARE];
+      if (n < 4) return opening[n];
+      // 前四手里对方还过手 → 转以牙还牙；没还手 → 吃定他
+      return theirs.slice(0, 4).includes(EXILE) ? theirs[n - 1] : EXILE;
+    }
+    default: return SPARE;
+  }
+}
+const PAY = { // [我的得分, 对方得分]
+  spare_spare: [2, 2], spare_exile: [-1, 3], exile_spare: [3, -1], exile_exile: [0, 0],
+};
+const payoff = (a, b) => PAY[`${a}_${b}`];
+
+/** 两个策略打 rounds 轮，noise 是「命令被误传」的概率。返回双方总分。 */
+function playMatch(sidA, sidB, rounds, noise) {
+  const A = [], B = [];
+  let sa = 0, sb = 0;
+  for (let i = 0; i < rounds; i++) {
+    let a = trustMove(sidA, A, B);
+    let b = trustMove(sidB, B, A);
+    if (noise > 0) {
+      if (Math.random() < noise) a = a === SPARE ? EXILE : SPARE;
+      if (Math.random() < noise) b = b === SPARE ? EXILE : SPARE;
+    }
+    const [pa, pb] = payoff(a, b);
+    sa += pa; sb += pb;
+    A.push(a); B.push(b);
+  }
+  return [sa, sb];
+}
+
+/** 满城演化：每代所有人两两交手，末五名换成头五名的做法。 */
+function runCity({ perStrat = 5, generations = 20, rounds = 10, noise = 0 } = {}) {
+  let pop = [];
+  TRUST_STRATS.forEach((s) => { for (let i = 0; i < perStrat; i++) pop.push(s.id); });
+  const history = [];
+  const snapshot = () => {
+    const c = {}; TRUST_STRATS.forEach((s) => (c[s.id] = 0));
+    pop.forEach((p) => c[p]++);
+    return c;
+  };
+  history.push(snapshot());
+  for (let g = 0; g < generations; g++) {
+    const score = pop.map(() => 0);
+    for (let i = 0; i < pop.length; i++) {
+      for (let j = i + 1; j < pop.length; j++) {
+        const [a, b] = playMatch(pop[i], pop[j], rounds, noise);
+        score[i] += a; score[j] += b;
+      }
+    }
+    const rank = pop.map((_, i) => i).sort((x, y) => score[y] - score[x]);
+    const k = 5;
+    const next = [...pop];
+    for (let i = 0; i < k; i++) next[rank[pop.length - 1 - i]] = pop[rank[i]];
+    pop = next;
+    history.push(snapshot());
+  }
+  return history;
+}
+
+function TrustGamePhase({ phase, onScore, onComplete }) {
+  const reduced = usePrefersReducedMotion();
+  const oppId = phase.opponent || "copycat";
+  const totalRounds = phase.rounds || 8;
+
+  const [stage, setStage] = useState("play");     // play → guess → types → city → coda
+  const [mine, setMine] = useState([]);
+  const [theirs, setTheirs] = useState([]);
+  const [me, setMe] = useState(0);
+  const [them, setThem] = useState(0);
+  const [city, setCity] = useState(0);
+  const [guess, setGuess] = useState(null);
+
+  // 满城
+  const [rounds, setRounds] = useState(10);
+  const [noise, setNoise] = useState(0);
+  const [hist, setHist] = useState(null);
+  const [gen, setGen] = useState(0);
+  const [hover, setHover] = useState(null);
+
+  const play = (my) => {
+    if (mine.length >= totalRounds) return;
+    const their = trustMove(oppId, theirs, mine);
+    const [pa, pb] = payoff(my, their);
+    setMe((v) => v + pa); setThem((v) => v + pb);
+    setCity((v) => v + (my === SPARE && their === SPARE ? 1 : my === EXILE && their === EXILE ? -1 : 0));
+    const nm = [...mine, my], nt = [...theirs, their];
+    setMine(nm); setTheirs(nt);
+    if (nm.length >= totalRounds) setTimeout(() => setStage("guess"), 700);
+  };
+
+  const runSim = useCallback(() => {
+    const h = runCity({ rounds, noise: noise / 100 });
+    setHist(h); setGen(0);
+  }, [rounds, noise]);
+
+  // 逐代播放
+  useEffect(() => {
+    if (!hist || gen >= hist.length - 1) return;
+    const t = setTimeout(() => setGen((g) => g + 1), reduced ? 10 : 130);
+    return () => clearTimeout(t);
+  }, [hist, gen, reduced]);
+
+  const finalMix = hist ? hist[Math.min(gen, hist.length - 1)] : null;
+  const winner = finalMix
+    ? TRUST_STRATS.map((s) => [s.id, finalMix[s.id]]).sort((a, b) => b[1] - a[1])[0]
+    : null;
+
+  const Matrix = () => (
+    <table style={tgStyles.matrix}>
+      <tbody>
+        <tr><td style={tgStyles.mCorner} /><th style={tgStyles.mHead}>{"对面宽赦"}</th><th style={tgStyles.mHead}>{"对面放逐"}</th></tr>
+        <tr><th style={tgStyles.mHead}>{"你宽赦"}</th>
+          <td style={tgStyles.mCell}><b style={{ color: "#8FD0A8" }}>{"+2"}</b>{" / +2"}</td>
+          <td style={tgStyles.mCell}><b style={{ color: "#E08A7A" }}>{"−1"}</b>{" / +3"}</td></tr>
+        <tr><th style={tgStyles.mHead}>{"你放逐"}</th>
+          <td style={tgStyles.mCell}><b style={{ color: "#E8D9BE" }}>{"+3"}</b>{" / −1"}</td>
+          <td style={tgStyles.mCell}><b>{"0"}</b>{" / 0"}</td></tr>
+      </tbody>
+    </table>
+  );
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(10,7,4,0.80)" }} />
+
+        {/* ── 交手 ── */}
+        {stage === "play" && (
+          <div style={tgStyles.wrap}>
+            <div style={tgStyles.title}>{nb(phase.title || "放逐，还是宽赦")}</div>
+            <div style={tgStyles.lede}>{nb(phase.lede || "")}</div>
+
+            <div style={tgStyles.playRow}>
+              <div style={tgStyles.side}>
+                <Matrix />
+                <div style={tgStyles.scores}>
+                  <span>{"你 "}<b style={tgStyles.num}>{me}</b></span>
+                  <span>{"对面 "}<b style={tgStyles.num}>{them}</b></span>
+                </div>
+                <div style={tgStyles.cityBar}>
+                  <div style={tgStyles.cityLabel}>{"城的元气"}</div>
+                  <div style={tgStyles.cityTrack}>
+                    <div style={{
+                      ...tgStyles.cityFill,
+                      width: Math.max(2, Math.min(100, 50 + city * 6)) + "%",
+                      backgroundColor: city < 0 ? "#d95926" : "#199e70",
+                    }} />
+                  </div>
+                </div>
+              </div>
+
+              <div style={tgStyles.board}>
+                <div style={tgStyles.histRow}>
+                  <span style={tgStyles.histWho}>{"你"}</span>
+                  {Array.from({ length: totalRounds }).map((_, i) => (
+                    <span key={i} style={{ ...tgStyles.dot, ...(mine[i] ? (mine[i] === SPARE ? tgStyles.dotSpare : tgStyles.dotExile) : tgStyles.dotEmpty) }}>
+                      {mine[i] ? (mine[i] === SPARE ? "赦" : "逐") : ""}
+                    </span>
+                  ))}
+                </div>
+                <div style={tgStyles.histRow}>
+                  <span style={tgStyles.histWho}>{"对面"}</span>
+                  {Array.from({ length: totalRounds }).map((_, i) => (
+                    <span key={i} style={{ ...tgStyles.dot, ...(theirs[i] ? (theirs[i] === SPARE ? tgStyles.dotSpare : tgStyles.dotExile) : tgStyles.dotEmpty) }}>
+                      {theirs[i] ? (theirs[i] === SPARE ? "赦" : "逐") : ""}
+                    </span>
+                  ))}
+                </div>
+                <div style={tgStyles.roundNo}>{`第 ${Math.min(mine.length + 1, totalRounds)} 轮 / 共 ${totalRounds} 轮`}</div>
+                <div style={tgStyles.moves}>
+                  <button style={{ ...tgStyles.move, borderColor: "#199e70" }} onClick={() => play(SPARE)}>
+                    {"宽　赦"}<span style={tgStyles.moveSub}>{"让他们留在城里"}</span>
+                  </button>
+                  <button style={{ ...tgStyles.move, borderColor: "#d95926" }} onClick={() => play(EXILE)}>
+                    {"放　逐"}<span style={tgStyles.moveSub}>{"把他们赶出佛罗伦萨"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── 猜他的规矩 ── */}
+        {stage === "guess" && (
+          <div style={tgStyles.wrap}>
+            <div style={tgStyles.title}>{"对面那一家，是按什么规矩出手的？"}</div>
+            <div style={tgStyles.lede}>{"先猜。猜完才告诉你。"}</div>
+            <div style={tgStyles.guessList}>
+              {TRUST_STRATS.map((s) => (
+                <button key={s.id}
+                  onClick={() => { setGuess(s.id); setTimeout(() => setStage("types"), 500); if (onScore) onScore("trust_guess", POINTS.predict); }}
+                  style={{ ...tgStyles.guessBtn, borderColor: guess === s.id ? "#C9A86A" : "rgba(201,168,106,0.3)" }}>
+                  <b style={tgStyles.guessName}>{s.name}</b>
+                  <span style={tgStyles.guessRule}>{nb(s.rule)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── 六种人 ── */}
+        {stage === "types" && (
+          <div style={tgStyles.wrap}>
+            <div style={tgStyles.title}>
+              {"对面用的是「" + stratName(oppId) + "」"}
+              <span style={tgStyles.guessMark}>{guess === oppId ? "　你猜对了" : "　你猜的是「" + stratName(guess) + "」"}</span>
+            </div>
+            <div style={tgStyles.lede}>{"城里不止这一家。这六种人，佛罗伦萨都有。"}</div>
+            <div style={tgStyles.typeGrid}>
+              {TRUST_STRATS.map((s) => (
+                <div key={s.id} style={{ ...tgStyles.typeCard, borderLeftColor: colorOf(s.id) }}>
+                  <b style={tgStyles.typeName}>{s.name}</b>
+                  <span style={tgStyles.typeRule}>{nb(s.rule)}</span>
+                </div>
+              ))}
+            </div>
+            <button style={prStyles.go} onClick={() => setStage("city")}>{"让满城的人一起打 →"}</button>
+          </div>
+        )}
+
+        {/* ── 满城 ── */}
+        {stage === "city" && (
+          <div style={tgStyles.wrap}>
+            <div style={tgStyles.title}>{"让满城的人一起打"}</div>
+            <div style={tgStyles.lede}>
+              {"六种人各五家。所有人两两交手，每一代过后，垫底的五家改学头五家的做法。"}
+            </div>
+
+            <div style={tgStyles.controls}>
+              <label style={tgStyles.ctrl}>
+                <span style={tgStyles.ctrlLabel}>{"能不能回来"}</span>
+                <input type="range" min="1" max="10" value={rounds} style={tgStyles.range}
+                  onChange={(e) => { setRounds(+e.target.value); setHist(null); }} />
+                <span style={tgStyles.ctrlVal}>{rounds === 1 ? "一次定生死" : `还要再打 ${rounds} 回`}</span>
+              </label>
+              <label style={tgStyles.ctrl}>
+                <span style={tgStyles.ctrlLabel}>{"猜疑（命令被误传）"}</span>
+                <input type="range" min="0" max="50" step="5" value={noise} style={tgStyles.range}
+                  onChange={(e) => { setNoise(+e.target.value); setHist(null); }} />
+                <span style={tgStyles.ctrlVal}>{noise + "%"}</span>
+              </label>
+              <button style={{ ...prStyles.go, marginTop: 0 }} onClick={runSim}>
+                {hist ? "再跑一遍" : "跑起来"}
+              </button>
+            </div>
+
+            {/* 堆叠柱：每一代一列，六种人各一段 */}
+            <div style={tgStyles.chartBox}
+              onMouseLeave={() => setHover(null)}>
+              {!hist && <div style={tgStyles.chartHint}>{"拉一下两个滑块，再按「跑起来」。"}</div>}
+              {hist && (() => {
+                const G = hist.length, W = 640, H = 190, PADL = 30, PADB = 20;
+                const cw = (W - PADL) / G;
+                const shown = Math.min(gen, G - 1);
+                return (
+                  <svg viewBox={`0 0 ${W} ${H + PADB}`} style={tgStyles.svg}
+                    onMouseMove={(e) => {
+                      const r = e.currentTarget.getBoundingClientRect();
+                      const gx = Math.floor((((e.clientX - r.left) / r.width) * W - PADL) / cw);
+                      setHover(gx >= 0 && gx <= shown ? gx : null);
+                    }}>
+                    <line x1={PADL} y1={H} x2={W} y2={H} stroke="rgba(232,217,190,0.22)" strokeWidth="1" />
+                    <text x={PADL - 6} y={12} fill="#8A8068" fontSize="9" textAnchor="end">{"30"}</text>
+                    <text x={PADL - 6} y={H} fill="#8A8068" fontSize="9" textAnchor="end">{"0"}</text>
+                    <text x={PADL} y={H + 14} fill="#8A8068" fontSize="9">{"第 1 代"}</text>
+                    <text x={W} y={H + 14} fill="#8A8068" fontSize="9" textAnchor="end">{"第 " + G + " 代"}</text>
+                    {hist.slice(0, shown + 1).map((mix, gi) => {
+                      let acc = 0;
+                      return (
+                        <g key={gi} opacity={hover == null || hover === gi ? 1 : 0.55}>
+                          {TRUST_STRATS.map((s) => {
+                            const v = mix[s.id];
+                            if (!v) return null;
+                            const h = (v / 30) * H;
+                            const y = H - acc - h;
+                            acc += h;
+                            return (
+                              <rect key={s.id} x={PADL + gi * cw + 0.6} y={y + 1}
+                                width={Math.max(1.4, cw - 2)} height={Math.max(0.5, h - 2)}
+                                fill={colorOf(s.id)} rx="1" />
+                            );
+                          })}
+                        </g>
+                      );
+                    })}
+                  </svg>
+                );
+              })()}
+            </div>
+
+            {/* 图例 —— 六条，颜色不单独承担身份，名字始终在 */}
+            <div style={tgStyles.legend}>
+              {TRUST_STRATS.map((s) => {
+                const v = hover != null && hist ? hist[hover][s.id] : finalMix ? finalMix[s.id] : null;
+                return (
+                  <span key={s.id} style={tgStyles.legendItem}>
+                    <i style={{ ...tgStyles.swatch, backgroundColor: colorOf(s.id) }} />
+                    {s.name}
+                    {v != null && <b style={tgStyles.legendVal}>{v}</b>}
+                  </span>
+                );
+              })}
+            </div>
+
+            {hist && gen >= hist.length - 1 && winner && (
+              <div style={tgStyles.verdict}>
+                {rounds === 1
+                  ? "只打一轮、赢了就没有下次——「赶尽杀绝」吃掉整座城。谁都没有手软的理由。"
+                  : noise >= 25
+                    ? "猜疑太重，谁也分不清对方是存心还是传错话。善意撑不住，「赶尽杀绝」重新占上风。"
+                    : noise >= 20
+                      ? "到这个份上，城里乱成一团：肯宽赦的和记仇的谁也吃不掉谁。这是最难受的区间。"
+                      : noise > 0
+                        ? "有一点误会的时候，肯给两次机会的人反而活得最好——一次传错话，不至于毁掉一切。"
+                        : "只要还要再见面，「以牙还牙」就压得住「赶尽杀绝」：先善意，被咬了才咬回去。"}
+                <div style={tgStyles.verdictWho}>
+                  {"这一代最多的是：" }<b style={{ color: colorOf(winner[0]) }}>{stratName(winner[0])}</b>
+                </div>
+              </div>
+            )}
+
+            {hist && gen >= hist.length - 1 && (
+              <button style={prStyles.go} onClick={() => { setStage("coda"); if (onScore) onScore("trust", POINTS.trust); }}>
+                {"那但丁呢 →"}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* ── 但丁的转折 ── */}
+        {stage === "coda" && (
+          <div style={tgStyles.codaWrap}>
+            <RevealLines text={(phase.coda?.lines || []).join("\n")} style={tgStyles.codaText} unitDelay={900} duration={1100} />
+            {phase.coda?.turn && <div style={tgStyles.codaTurn}>{nb(phase.coda.turn)}</div>}
+            <button style={{ ...prStyles.go, marginTop: 22 }} onClick={onComplete}>{"继续 →"}</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const tgStyles = {
+  wrap: {
+    position: "absolute", inset: 0, zIndex: 20, overflowY: "auto",
+    display: "flex", flexDirection: "column", alignItems: "center",
+    justifyContent: "safe center",
+    padding: "3.5% 6% 4%", gap: 11, textAlign: "center",
+  },
+  title: { color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 3 },
+  guessMark: { color: "#C9A86A", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 1 },
+  lede: { color: "#B5A98C", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", lineHeight: 1.8, maxWidth: 660 },
+  playRow: { display: "flex", gap: 22, alignItems: "flex-start", width: "100%", maxWidth: 840, justifyContent: "center", flexWrap: "wrap" },
+  side: { flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 10, minWidth: 210 },
+  matrix: { borderCollapse: "collapse", fontSize: "clamp(10px, 0.79vw, 13px)", color: "#D8C8A8" },
+  mCorner: { border: "none" },
+  mHead: { padding: "4px 8px", color: "#8A8068", fontWeight: "normal", letterSpacing: 1, whiteSpace: "nowrap" },
+  mCell: { padding: "5px 10px", border: "1px solid rgba(201,168,106,0.2)", textAlign: "center", whiteSpace: "nowrap" },
+  scores: { display: "flex", gap: 18, justifyContent: "center", color: "#B5A98C", fontSize: "clamp(11px, 0.87vw, 14.4px)" },
+  num: { color: "#F5E6D3", fontSize: "clamp(14px, 1.11vw, 18.4px)", fontVariantNumeric: "tabular-nums" },
+  cityBar: { textAlign: "left" },
+  cityLabel: { color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2, marginBottom: 4 },
+  cityTrack: { height: 7, borderRadius: 4, backgroundColor: "rgba(232,217,190,0.14)", overflow: "hidden" },
+  cityFill: { height: "100%", transition: "width 400ms ease, background-color 400ms ease" },
+  board: { flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", gap: 8 },
+  histRow: { display: "flex", alignItems: "center", gap: 4, justifyContent: "center" },
+  histWho: { width: 32, textAlign: "right", color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", marginRight: 4 },
+  dot: {
+    width: 26, height: 26, borderRadius: 5, display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: "clamp(10.5px, 0.83vw, 13.8px)", transition: "all 260ms ease",
+  },
+  dotEmpty: { border: "1px dashed rgba(201,168,106,0.22)", color: "transparent" },
+  dotSpare: { backgroundColor: "rgba(25,158,112,0.85)", color: "#F2FBF6" },
+  dotExile: { backgroundColor: "rgba(217,89,38,0.85)", color: "#FFF3EC" },
+  roundNo: { color: "#8A8068", fontSize: "clamp(10.5px, 0.79vw, 13px)", letterSpacing: 2, marginTop: 2 },
+  moves: { display: "flex", gap: 10, justifyContent: "center", marginTop: 4 },
+  move: {
+    flex: "1 1 0", padding: "11px 14px", borderRadius: 9, border: "1.5px solid",
+    backgroundColor: "rgba(252,248,238,0.93)", color: "#2B2118", cursor: "pointer",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3,
+    display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+  },
+  moveSub: { fontSize: "clamp(10px, 0.76vw, 12.6px)", color: "#7A6A50", letterSpacing: 0 },
+  guessList: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxWidth: 760, width: "100%" },
+  guessBtn: {
+    textAlign: "left", padding: "9px 13px", borderRadius: 8, border: "1.5px solid",
+    backgroundColor: "rgba(20,16,12,0.72)", cursor: "pointer", fontFamily: "inherit",
+  },
+  guessName: { display: "block", color: "#EFE3CC", fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2 },
+  guessRule: { display: "block", color: "#8A8068", fontSize: "clamp(10px, 0.79vw, 13px)", lineHeight: 1.6, marginTop: 3 },
+  typeGrid: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, maxWidth: 860, width: "100%" },
+  typeCard: {
+    textAlign: "left", padding: "8px 11px", borderLeft: "3px solid",
+    backgroundColor: "rgba(20,16,12,0.6)", borderRadius: "0 6px 6px 0",
+  },
+  typeName: { display: "block", color: "#EFE3CC", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 2 },
+  typeRule: { display: "block", color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", lineHeight: 1.65, marginTop: 3 },
+  controls: { display: "flex", gap: 20, alignItems: "flex-end", flexWrap: "wrap", justifyContent: "center" },
+  ctrl: { display: "flex", flexDirection: "column", gap: 4, minWidth: 190 },
+  ctrlLabel: { color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2 },
+  range: { accentColor: "#C9A86A", width: "100%" },
+  ctrlVal: { color: "#D8C8A8", fontSize: "clamp(10.5px, 0.79vw, 13px)" },
+  chartBox: {
+    width: "100%", maxWidth: 700, backgroundColor: "#171310", borderRadius: 8,
+    padding: "10px 12px 6px", border: "1px solid rgba(201,168,106,0.16)",
+  },
+  chartHint: { color: "#8A8068", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", padding: "58px 0", letterSpacing: 1 },
+  svg: { width: "100%", height: "auto", display: "block" },
+  legend: { display: "flex", flexWrap: "wrap", gap: "5px 14px", justifyContent: "center", maxWidth: 700 },
+  legendItem: { display: "inline-flex", alignItems: "center", gap: 5, color: "#B5A98C", fontSize: "clamp(10px, 0.79vw, 13px)" },
+  swatch: { width: 9, height: 9, borderRadius: 2, display: "inline-block" },
+  legendVal: { color: "#EFE3CC", fontVariantNumeric: "tabular-nums", marginLeft: 2 },
+  verdict: {
+    maxWidth: 660, color: "#E4CF9E", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", lineHeight: 1.9,
+    borderTop: "1px solid rgba(201,168,106,0.25)", paddingTop: 10,
+  },
+  verdictWho: { color: "#8A8068", fontSize: "clamp(10.5px, 0.79vw, 13px)", marginTop: 5 },
+  codaWrap: {
+    position: "absolute", inset: 0, zIndex: 25,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "0 9%", textAlign: "center",
+    background: "radial-gradient(ellipse 66% 62% at 50% 50%, rgba(8,6,4,0.92) 0%, rgba(8,6,4,0.75) 58%, rgba(8,6,4,0) 100%)",
+  },
+  codaText: {
+    color: "#F5E6D3", fontSize: "clamp(13px, 1.25vw, 20.7px)", lineHeight: 2.1, letterSpacing: 2,
+    maxWidth: 780, textShadow: "0 2px 14px rgba(0,0,0,0.95)",
+  },
+  codaTurn: {
+    color: "#E4CF9E", fontSize: "clamp(13.5px, 1.32vw, 22px)", lineHeight: 2.05, letterSpacing: 3,
+    marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(201,168,106,0.3)", maxWidth: 700,
     whiteSpace: "pre-line",
   },
 };

@@ -1068,6 +1068,7 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
             <option value="escape_game">{"\u{1F6AA} 出城 (escape_game)"}</option>
                 <option value="click_points">{"\u{1F441} 找茬 (click_points)"}</option>
                 <option value="comic_reveal">{"\uD83D\uDCD6 \u8FDE\u73AF\u753B (comic_reveal)"}</option>
+                <option value="trust_game">{"\u2696 \u653E\u9010\u5FAA\u73AF (trust_game)"}</option>
                 <option value="celestial_spheres">{"\u2726 \u4E5D\u91CD\u5929 (celestial_spheres)"}</option>
                 <option value="explain_by_building">{"\u2699 \u642D\u89E3\u91CA (explain_by_building)"}</option>
                 <option value="contrapasso">{"\u2696 \u5B9A\u7F5A (contrapasso)"}</option>

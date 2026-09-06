@@ -1,7 +1,7 @@
 // 交互模板库 —— 场景编辑器「插入交互模板」面板的数据源。
 //
 // 每个模板：
-//   type    phase 类型（与 ScenePlayer 支持的 22 种一一对应）
+//   type    phase 类型（与 ScenePlayer 支持的 23 种一一对应）
 //   name    卡片标题
 //   desc    一句话说明（玩家看到什么、要做什么）
 //   ref     取材的现有事件（该用法已在游戏里跑通）
@@ -633,6 +633,29 @@ export const PHASE_TEMPLATES = [
         title: "（最外面那一重的名字）",
         lines: ["（拉远之后的收尾，一行一句。）", "（最后一句要把整条线兜起来。）"],
         coda: "（可选：一句压轴。用 \\n 换行。）",
+      },
+    }),
+  },
+  {
+    type: "trust_game",
+    name: "放逐循环（迭代博弈）",
+    desc: "仿《The Evolution of Trust》的迭代囚徒困境。四幕：交手 → 猜对方的规矩 → 让满城跑一遍（两个滑块：能不能回来 / 猜疑）→ 收尾。策略与模拟写死在引擎里，这里只配文案与对手。",
+    ref: "dante · 1295_arte「放逐，还是宽赦」",
+    sketch: "pairs",
+    make: () => ({
+      id: "trust_" + uid(),
+      type: "trust_game",
+      background: "",
+      title: "（这一局叫什么）",
+      lede: "（把玩家放进当事人的位置：他手上有什么牌，输了会怎样，为什么还会有下一轮。）",
+      opponent: "copycat",   // copycat | allexile | allspare | grudger | detective | kitten
+      rounds: 8,
+      coda: {
+        lines: [
+          "（史实：这台机器怎么碾到主人公自己身上。一行一句。）",
+          "（点出问题不在谁坏，在这台机器本身。）",
+        ],
+        turn: "（转折：他后来写的那本书，和这台机器是什么关系。用 \\n 换行。）",
       },
     }),
   },

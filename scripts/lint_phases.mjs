@@ -39,7 +39,7 @@ const DEXTERITY = new Set(["sliding_puzzle", "escape_game", "minigame", "dialogu
 const BRIDGE = new Set(["echo_portal"]);
 // 连接/综合：把散落的东西装成一个系统。天堂那一关的语法——
 // 地狱是归类（你是什么），炼狱是变化（你能怎么改），天堂是连接（万物怎么接起来）。
-const SYNTH = new Set(["celestial_spheres"]);
+const SYNTH = new Set(["celestial_spheres", "trust_game"]);
 
 const CAT = (t) =>
   PASSIVE.has(t) ? "passive" : BROWSE.has(t) ? "browse" : GENERATE.has(t) ? "generate"
