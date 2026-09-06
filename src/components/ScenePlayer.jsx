@@ -1346,12 +1346,12 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
 
   // --- INFERNO PLACEMENT (刚见过的人，但丁把他们放进了地狱哪一层) ---
   if (currentPhase.type === "inferno_placement") {
-    return <InfernoPlacementPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+    return <InfernoPlacementPhase phase={currentPhase} eventId={eventId} onScore={award} onComplete={goToNextPhase} />;
   }
 
   // --- COMEDY ENCOUNTER (同一个人，在《神曲》里重新遇见) ---
   if (currentPhase.type === "comedy_encounter") {
-    return <ComedyEncounterPhase phase={currentPhase} onComplete={goToNextPhase} />;
+    return <ComedyEncounterPhase phase={currentPhase} eventId={eventId} onComplete={goToNextPhase} />;
   }
 
   // --- ESCAPE GAME PHASE (红蓝点逃离) ---
@@ -2421,6 +2421,135 @@ if (typeof document !== "undefined" && !document.getElementById("click-point-key
 }
 
 // ============================================================
+// BIO PANEL — 「这人是谁？」
+// ============================================================
+// 拖之前先能查生平。资料来自 src/data/<line>/cast.json，一个人只写一次，
+// 现实场景和《神曲》场景共用一份，防止两边写岔。
+//
+// 规则：cast.json 里只写「活着的时候」——他后来被但丁放进哪一界属于答案，
+// 不许出现在生平里。玩家要靠推理，不是靠读到答案。
+const CAST_MODULES = import.meta.glob("../data/*/cast.json", { eager: true });
+function castFor(eventId) {
+  const line = parseInt(eventId, 10) < 1000 ? "dufu" : "dante";
+  const mod = CAST_MODULES[`../data/${line}/cast.json`];
+  return (mod && (mod.default || mod).people) || {};
+}
+
+/**
+ * BioPanel — 人物生平弹层。
+ * actions 传进来时，底部出现「读完了，放进：…」——读和决定连在一起，
+ * 不用关掉弹层再回去找卡片。
+ */
+function BioPanel({ person, metLabel, onClose, actions }) {
+  if (!person) return null;
+  return (
+    <div style={bioStyles.overlay} onClick={onClose}>
+      <div style={bioStyles.panel} onClick={(e) => e.stopPropagation()}>
+        <button style={bioStyles.close} onClick={onClose} aria-label="关闭">{"×"}</button>
+
+        <div style={bioStyles.head}>
+          {person.portrait && (
+            <div style={{ ...bioStyles.face, backgroundImage: `url(${asset(person.portrait)})` }} />
+          )}
+          <div style={{ minWidth: 0 }}>
+            <div style={bioStyles.name}>{nb(person.name)}</div>
+            {person.latin && <div style={bioStyles.latin}>{person.latin}</div>}
+            <div style={bioStyles.meta}>
+              {[person.years, person.role].filter(Boolean).join("　·　")}
+            </div>
+            {metLabel && <div style={bioStyles.met}>{"你见过他 · " + metLabel}</div>}
+          </div>
+        </div>
+
+        <div style={bioStyles.body}>
+          {person.life?.length > 0 && (
+            <section>
+              <div style={bioStyles.sectionLabel}>{"生平"}</div>
+              {person.life.map((t, i) => (
+                <p key={i} style={bioStyles.para}>{nb(t)}</p>
+              ))}
+            </section>
+          )}
+          {person.withDante?.length > 0 && (
+            <section style={{ marginTop: 14 }}>
+              <div style={{ ...bioStyles.sectionLabel, color: "#8A6D3B" }}>{"和但丁的交集"}</div>
+              {person.withDante.map((t, i) => (
+                <p key={i} style={{ ...bioStyles.para, color: "#4A3C2A" }}>{nb(t)}</p>
+              ))}
+            </section>
+          )}
+        </div>
+
+        {actions?.length > 0 && (
+          <div style={bioStyles.actions}>
+            <div style={bioStyles.actionsLabel}>{"读完了。你把他放进——"}</div>
+            <div style={bioStyles.actionsRow}>
+              {actions.map((a) => (
+                <button key={a.id} style={bioStyles.actionBtn} onClick={() => a.onPick(a.id)}>
+                  {nb(a.label)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const bioStyles = {
+  overlay: {
+    position: "absolute", inset: 0, zIndex: 60,
+    backgroundColor: "rgba(10,7,4,0.78)",
+    display: "flex", alignItems: "center", justifyContent: "center", padding: "3% 5%",
+  },
+  panel: {
+    position: "relative",
+    backgroundColor: "#FAF6EE", borderRadius: 10,
+    width: "100%", maxWidth: 620, maxHeight: "94%",
+    display: "flex", flexDirection: "column",
+    boxShadow: "0 18px 46px rgba(0,0,0,0.55)",
+    border: "1px solid #C9A86A",
+  },
+  close: {
+    position: "absolute", top: 8, right: 10, zIndex: 2,
+    width: 28, height: 28, borderRadius: "50%", border: "none",
+    background: "transparent", color: "#8A7A5E", cursor: "pointer",
+    fontSize: 22, lineHeight: 1, fontFamily: "inherit",
+  },
+  head: {
+    display: "flex", gap: 14, alignItems: "center",
+    padding: "16px 20px 14px", borderBottom: "1px solid #E2D8C2", flexShrink: 0,
+  },
+  face: {
+    width: 62, height: 62, flexShrink: 0, borderRadius: 6,
+    backgroundSize: "cover", backgroundPosition: "top center", backgroundColor: "#E2D8C2",
+  },
+  name: { fontSize: "clamp(16px, 1.39vw, 23px)", color: "#2B2118", letterSpacing: 2 },
+  latin: { fontSize: "clamp(10.5px, 0.79vw, 13px)", color: "#9A8B72", letterSpacing: 0.5, marginTop: 2 },
+  meta: { fontSize: "clamp(11.5px, 0.87vw, 14.4px)", color: "#7A6A50", marginTop: 4 },
+  met: { fontSize: "clamp(11px, 0.83vw, 13.8px)", color: "#8A6D3B", marginTop: 5 },
+  body: { padding: "14px 20px 16px", overflowY: "auto", flex: 1 },
+  sectionLabel: {
+    fontSize: "clamp(10px, 0.72vw, 12px)", color: "#9A8B72", letterSpacing: 5, marginBottom: 7,
+  },
+  para: {
+    margin: "0 0 8px", fontSize: "clamp(12px, 0.94vw, 15.5px)", lineHeight: 1.95, color: "#5A4A38",
+  },
+  actions: {
+    padding: "12px 20px 16px", borderTop: "1px solid #E2D8C2", flexShrink: 0,
+  },
+  actionsLabel: { fontSize: "clamp(11px, 0.83vw, 13.8px)", color: "#7A6A50", marginBottom: 8, letterSpacing: 1 },
+  actionsRow: { display: "flex", gap: 8, flexWrap: "wrap" },
+  actionBtn: {
+    flex: "1 1 auto", padding: "9px 16px", borderRadius: 8,
+    border: "1px solid #C9A86A", backgroundColor: "rgba(201,168,106,0.14)", color: "#3A2E20",
+    cursor: "pointer", fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2,
+  },
+};
+
+// ============================================================
 // 认知动词 · COGNITIVE VERBS
 // ============================================================
 // 原则：每一个 interaction 都把一个认知动作外化——
@@ -3452,7 +3581,9 @@ const epStyles = {
 // commit → contrast：提交之后不打 ✓✗。玩家自己的答案留在原地变成 ghost，
 // 但丁的答案在旁边亮起来；两个不一样的时候，那个差额本身就是这一关的教材——
 // 问的不是「你错了」，是「但丁为什么放这儿」。
-function InfernoPlacementPhase({ phase, onScore, onComplete }) {
+function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
+  const cast = castFor(eventId);
+  const [bioOf, setBioOf] = useState(null); // 正在看生平的 soul id
   const circles = phase.circles || [];
   const souls = phase.souls || [];
   const [placed, setPlaced] = useState({});     // soulId → circleId
@@ -3499,10 +3630,20 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
               }}
             >
               {s.portrait && <div style={{ ...ipStyles.soulFace, backgroundImage: `url(${asset(s.portrait)})` }} />}
-              <div style={{ minWidth: 0 }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={ipStyles.soulName}>{nb(s.name)}</div>
                 {s.metLabel && <div style={ipStyles.soulMet}>{"见过 · " + s.metLabel}</div>}
               </div>
+              {/* 拖之前先查生平。放在卡片右侧，不抢「点一下=拿起」这个手势 */}
+              {(cast[s.id] || s.bio) && (
+                <button
+                  style={ipStyles.bioBtn}
+                  onClick={(e) => { e.stopPropagation(); setBioOf(s.id); }}
+                  title="看他的生平"
+                >
+                  {"生平"}
+                </button>
+              )}
             </div>
           ))}
           {tray.length === 0 && <div style={ipStyles.trayEmpty}>{"都安排完了。"}</div>}
@@ -3612,9 +3753,27 @@ function InfernoPlacementPhase({ phase, onScore, onComplete }) {
 
         {!submitted && (
           <div style={epStyles.tapHint}>
-            {"拖到对应的一层，或先点人再点层（点已放的名字可取回）"}
+            {"点「生平」先了解这个人；拖到对应的一层，或先点人再点层（点已放的名字可取回）"}
           </div>
         )}
+
+        {/* 生平弹层：读完当场就能放，不用关掉再回去找卡片 */}
+        {bioOf && (() => {
+          const s = souls.find((x) => x.id === bioOf);
+          if (!s) return null;
+          return (
+            <BioPanel
+              person={cast[s.id] || s.bio || { name: s.name, portrait: s.portrait }}
+              metLabel={s.metLabel}
+              onClose={() => setBioOf(null)}
+              actions={submitted ? null : circles.map((c) => ({
+                id: c.id,
+                label: c.name,
+                onPick: (cid) => { place(s.id, cid); setBioOf(null); },
+              }))}
+            />
+          );
+        })()}
       </div>
     </div>
   );
@@ -3641,6 +3800,12 @@ const ipStyles = {
     backgroundSize: "cover", backgroundPosition: "top center", backgroundColor: "#D8CDB8",
   },
   soulName: { fontSize: "clamp(12.5px, 1.042vw, 17.2px)", color: "#2B2118", letterSpacing: 1 },
+  bioBtn: {
+    flexShrink: 0, alignSelf: "center", padding: "4px 9px", borderRadius: 12,
+    border: "1px solid rgba(138,109,59,0.45)", backgroundColor: "rgba(201,168,106,0.16)",
+    color: "#6B5340", cursor: "pointer", fontFamily: "inherit",
+    fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 1, lineHeight: 1.4,
+  },
   soulMet: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#8A7A5E", marginTop: 2, lineHeight: 1.4 },
   trayEmpty: { color: "rgba(245,230,211,0.6)", fontSize: "clamp(11.5px, 0.833vw, 13.8px)", letterSpacing: 2 },
   funnel: {
@@ -3698,7 +3863,9 @@ const ipStyles = {
 // phase.recognition  认出他的那一句
 // phase.asks [{ q, a }]  —— 问的对象是但丁，不是玩家。没有对错。
 // phase.requiredAsks / phase.closing
-function ComedyEncounterPhase({ phase, onComplete }) {
+function ComedyEncounterPhase({ phase, eventId, onComplete }) {
+  const cast = castFor(eventId);
+  const [showBio, setShowBio] = useState(false);
   const soul = phase.soul || {};
   const asks = phase.asks || [];
   const reduced = usePrefersReducedMotion();
@@ -3745,6 +3912,9 @@ function ComedyEncounterPhase({ phase, onComplete }) {
           {soul.metLabel && (
             <div style={{ ...ceStyles.met, opacity: revealed ? 1 : 0, transition: "opacity 900ms ease 600ms" }}>
               {"你在这里见过 · " + soul.metLabel}
+              {cast[soul.id] && (
+                <button style={ceStyles.bioBtn} onClick={() => setShowBio(true)}>{"他是谁"}</button>
+              )}
             </div>
           )}
         </div>
@@ -3786,6 +3956,14 @@ function ComedyEncounterPhase({ phase, onComplete }) {
               {canClose ? "▼ 点击返回" : "▼ 点击返回（至少再问 " + (need - asked.length) + " 个）"}
             </div>
           </div>
+        )}
+
+        {showBio && (
+          <BioPanel
+            person={cast[soul.id]}
+            metLabel={soul.metLabel}
+            onClose={() => setShowBio(false)}
+          />
         )}
 
         {/* 收束 */}
@@ -3841,6 +4019,12 @@ const ceStyles = {
     transition: "opacity 200ms ease",
   },
   closeBtn: { backgroundColor: "rgba(30,20,12,0.85)", color: "#E8D9BE", borderColor: "rgba(201,168,106,0.5)" },
+  bioBtn: {
+    marginLeft: 10, padding: "2px 9px", borderRadius: 11,
+    border: "1px solid rgba(201,168,106,0.55)", backgroundColor: "rgba(201,168,106,0.14)",
+    color: "#E8D9BE", cursor: "pointer", fontFamily: "inherit",
+    fontSize: "clamp(9.5px, 0.72vw, 12px)", letterSpacing: 1,
+  },
   answerBar: {
     position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30,
     backgroundColor: "rgba(20,12,6,0.9)", borderTop: "1px solid rgba(201,168,106,0.45)",
