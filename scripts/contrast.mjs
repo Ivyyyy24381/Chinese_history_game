@@ -31,6 +31,7 @@ const parseColor = (c) => {
 const metrics = JSON.parse(readFileSync(`${OUT}/metrics.json`, "utf8"));
 const rows = [];
 let scanned = 0;
+const skipped = { emoji: 0, tiny: 0, noBg: 0 };
 
 for (const phase of metrics) {
   if (!existsSync(phase.file)) continue;
@@ -41,19 +42,33 @@ for (const phase of metrics) {
     const col = parseColor(t.color);
     if (!col || col.a < 0.5) continue;
     let [x, y, w, h] = t.box;
+    // 量不准的三类，直接跳过并单独报数：
+    //   · emoji —— 它自带颜色，CSS 的 color 根本不生效，拿来算对比度没有意义
+    //   · 单字标签 —— 外框太小，背景像素不够，估不出背景
+    //   · 极小的框 —— 同上
+    if (/\p{Extended_Pictographic}/u.test(t.text)) { skipped.emoji++; continue; }
+    if (t.text.trim().length <= 1) { skipped.tiny++; continue; }
+    if (w * h < 400) { skipped.tiny++; continue; }
     if (w < 4 || h < 4) continue;
     const X = Math.max(0, Math.round(x * scale)), Y = Math.max(0, Math.round(y * scale));
     const W = Math.min(png.width - X, Math.round(w * scale)), H = Math.min(png.height - Y, Math.round(h * scale));
     if (W < 4 || H < 4) continue;
+    // 只取「不是字」的像素当背景。
+    // 行内 span 的外框基本被字填满，把字自己算进背景，量出来永远是 1:1。
+    // 判据：和文字颜色的 RGB 距离 > 40 才算背景像素。
+    const fg = lum(col.r, col.g, col.b);
     const ls = [];
-    for (let j = 0; j < H; j += 2) for (let i = 0; i < W; i += 2) {
+    for (let j = 0; j < H; j += 1) for (let i = 0; i < W; i += 1) {
       const o = ((Y + j) * png.width + (X + i)) << 2;
-      ls.push(lum(png.data[o], png.data[o + 1], png.data[o + 2]));
+      const r = png.data[o], g = png.data[o + 1], b = png.data[o + 2];
+      const d = Math.abs(r - col.r) + Math.abs(g - col.g) + Math.abs(b - col.b);
+      if (d <= 40) continue;                      // 这一点是字，不是背景
+      ls.push(lum(r, g, b));
     }
-    if (ls.length < 8) continue;
+    // 背景像素太少 = 这个框几乎全是字（图标、单字标签），量不出背景，跳过
+    if (ls.length < Math.max(12, W * H * 0.15)) { skipped.noBg++; continue; }
     ls.sort((a, b) => a - b);
     const lo = ls[Math.floor(ls.length * 0.10)], hi = ls[Math.floor(ls.length * 0.90)];
-    const fg = lum(col.r, col.g, col.b);
     const worst = Math.min(ratio(fg, lo), ratio(fg, hi));
     const need = t.fontSize >= 24 ? MIN_LARGE : MIN;
     scanned++;
@@ -67,6 +82,7 @@ for (const phase of metrics) {
 rows.sort((a, b) => a.ratio - b.ratio);
 writeFileSync(`${OUT}/contrast.json`, JSON.stringify(rows, null, 1));
 console.log(`量了 ${scanned} 段文字，不达标 ${rows.length} 段（正文 ≥${MIN}:1，大字 ≥${MIN_LARGE}:1）`);
+console.log(`跳过：emoji ${skipped.emoji} · 单字/小框 ${skipped.tiny} · 背景像素不够 ${skipped.noBg}（这三类量不准，要肉眼看）`);
 const byType = {};
 for (const r of rows) byType[r.type] = (byType[r.type] || 0) + 1;
 console.log("按 phase 类型：", Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(" · "));

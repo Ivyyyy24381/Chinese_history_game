@@ -2665,6 +2665,19 @@ function shuffleStable(items) {
     .map(({ it }) => it);
 }
 
+// 「还不能按」的按钮长什么样。
+// 原来一律 opacity:0.45——压在深色场景上时底色透过来，字和底几乎同色，
+// 实测对比度 1.56:1（正文要求 4.5:1），等于看不见。
+// 改成不动整体透明度，只把底色压灰、字色调暗一档，仍然读得出来。
+const disabledBtn = (ok) => (ok ? null : {
+  opacity: 0.9,
+  backgroundColor: "rgba(232,224,208,0.86)",
+  color: "#6B5A44",
+  borderColor: "rgba(201,168,106,0.45)",
+  boxShadow: "none",
+  cursor: "not-allowed",
+});
+
 // 键盘可达。全站的按钮几乎都是自绘的 <div onClick>，不补 role/tabIndex 的话
 // Tab 根本走不到，屏幕阅读器也读不出「这是个可以按的东西」。
 // 用法：<div {...pressable(() => doThing(), { pressed: on })} style={...}>
@@ -3594,7 +3607,7 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
                 );
               })}
               <button
-                style={{ ...ffStyles.goBtn, opacity: bag.length === LIMIT ? 1 : 0.4,
+                style={{ ...ffStyles.goBtn, ...disabledBtn(bag.length === LIMIT),
                          cursor: bag.length === LIMIT ? "pointer" : "not-allowed" }}
                 disabled={bag.length !== LIMIT}
                 onClick={() => setStage("walk")}>
@@ -4203,7 +4216,7 @@ function EvidenceSelectPhase({ phase, onScore, onComplete }) {
 
           {!done ? (
             <button
-              style={{ ...prStyles.go, opacity: picked.length === need ? 1 : 0.45,
+              style={{ ...prStyles.go, ...disabledBtn(picked.length === need),
                        cursor: picked.length === need ? "pointer" : "not-allowed" }}
               disabled={picked.length !== need}
               onClick={submit}
@@ -4362,7 +4375,7 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
               </div>
               <div style={ebStyles.hint}>{t("拖进空格，或先点零件再点空格（点已填的可取回）。有几块是用不上的。")}</div>
               <button
-                style={{ ...prStyles.go, opacity: allFilled ? 1 : 0.45, cursor: allFilled ? "pointer" : "not-allowed" }}
+                style={{ ...prStyles.go, ...disabledBtn(allFilled) }}
                 disabled={!allFilled}
                 onClick={submit}
               >
@@ -4538,7 +4551,7 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
           {!done && (
             <button
               style={{ ...prStyles.go,
-                opacity: (mode === "reverse" ? guess : allFilled) ? 1 : 0.45,
+                ...disabledBtn(mode === "reverse" ? !!guess : allFilled),
                 cursor: (mode === "reverse" ? guess : allFilled) ? "pointer" : "not-allowed" }}
               disabled={!(mode === "reverse" ? guess : allFilled)}
               onClick={submit}
@@ -4726,7 +4739,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
                 ))}
               </div>
               <button
-                style={{ ...prStyles.go, opacity: allFilled ? 1 : 0.45, cursor: allFilled ? "pointer" : "not-allowed" }}
+                style={{ ...prStyles.go, ...disabledBtn(allFilled) }}
                 disabled={!allFilled}
                 onClick={() => { setDone(true); if (onScore) onScore("prophecy", right * POINTS.prophecy); }}
               >
@@ -4986,7 +4999,7 @@ function ComicSortPhase({ phase, onScore, onComplete }) {
           <>
             <div style={csoStyles.hint}>{t("comicsort.hint")}</div>
             <button
-              style={{ ...styles.floatingProceed, opacity: full ? 1 : 0.45, cursor: full ? "pointer" : "not-allowed" }}
+              style={{ ...styles.floatingProceed, ...disabledBtn(full) }}
               disabled={!full}
               onClick={submit}
             >
@@ -5507,7 +5520,7 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
         {/* 提交 / 判词 */}
         {!submitted && (
           <button
-            style={{ ...styles.floatingProceed, opacity: allPlaced ? 1 : 0.45, cursor: allPlaced ? "pointer" : "not-allowed" }}
+            style={{ ...styles.floatingProceed, ...disabledBtn(allPlaced) }}
             disabled={!allPlaced}
             onClick={submit}
           >
@@ -5901,15 +5914,26 @@ const styles = {
   },
   // Phase header
   phaseHeader: {
-    padding: "16px 24px",
+    // 顶带蒙版。原来是 0.7 → transparent 一路到底，等标题下面那行叙述出现时
+    // 蒙版已经淡光了，白字直接压在底图上——1295 那关的彩窗后面实测 1.7:1。
+    // 现在把 0.62 一档撑到 72%，让整块文字都待在蒙版里，再往下才淡尽。
+    padding: "16px 24px 26px",
     paddingRight: "38%", // keep title/narrative clear of the top-right instruction box
-    background: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)",
+    background: "linear-gradient(180deg, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.62) 72%, transparent 100%)",
     color: "#FFF",
     position: "relative",
     zIndex: 20,
   },
-  phaseTitle: { margin: "0 0 4px", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 4 },
-  phaseNarrative: { margin: 0, fontSize: "clamp(12px, 0.903vw, 14.9px)", opacity: 0.85, lineHeight: 1.6 },
+  phaseTitle: {
+    margin: "0 0 4px", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 4,
+    textShadow: "0 2px 10px rgba(0,0,0,0.85)",
+  },
+  phaseNarrative: {
+    // 原来 opacity:0.85 —— 白字再打八五折，压在亮底图上就更读不出来了。
+    // 改成实打实的浅米色 + 阴影，亮度降一点但对比度反而上去。
+    margin: 0, fontSize: "clamp(12px, 0.903vw, 14.9px)", lineHeight: 1.6,
+    color: "#EFE6D6", textShadow: "0 1px 6px rgba(0,0,0,0.9)",
+  },
   // Instruction
   instructionBar: {
     // Top-right corner so it never overlaps character art in the scene.
