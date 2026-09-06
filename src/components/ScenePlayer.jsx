@@ -385,7 +385,9 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 <span style={styles.instructionIcon}>{"\u{1F4AC}"}</span>
                 <span>{nb(currentPhase.instruction)}</span>
                 <span style={styles.talkCount}>
-                  {t("\u5DF2\u4EA4\u8C08: ")}{talkedNpcs.size}/{currentPhase.npcs.length}
+                  {t("\u5DF2\u4EA4\u8C08: ")}
+                  {Math.min(talkedNpcs.size, currentPhase.requiredTalks || currentPhase.npcs.length)}
+                  {"/"}{currentPhase.requiredTalks || currentPhase.npcs.length}
                 </span>
               </div>
             )}
@@ -438,8 +440,21 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     )
                   ) : (
                     <>
-                      {showHint && !talked && <div style={styles.npcBubble}>{"?"}</div>}
-                      {clickable && talked && <div style={styles.npcCheckMark}>{"\u2713"}</div>}
+                      {/* 气泡和角标本来是 pointerEvents:none 的纯装饰，
+                          可它们画在真正点击区（立绘身体）上方 60–130px 处——
+                          屏幕上最像按钮的东西点了没反应。让它们也能点。 */}
+                      {showHint && !talked && (
+                        <div
+                          style={{ ...styles.npcBubble, pointerEvents: "auto", cursor: "pointer" }}
+                          onClick={() => handleNpcClick(npc)}
+                        >{"?"}</div>
+                      )}
+                      {clickable && talked && (
+                        <div
+                          style={{ ...styles.npcCheckMark, pointerEvents: "auto", cursor: "pointer" }}
+                          onClick={() => handleNpcClick(npc)}
+                        >{"\u2713"}</div>
+                      )}
                       <div style={{
                         ...styles.npcPortraitWrap,
                         width: npcSize,
@@ -1835,6 +1850,17 @@ function ComicRevealPhase({ phase, onComplete }) {
           }} />
         ))}
 
+        {/* 题头。原来 event.json 里写好的 title / narrative / instruction
+            被组件静默丢弃，而五个 cover 正好铺满整图——进场就是一块纯黑板，
+            屏幕上只剩右上角一个「0 / 5」，第一眼像图没加载出来。 */}
+        {(phase.title || phase.narrative || phase.instruction) && revealed === 0 && (
+          <div style={crStyles.intro}>
+            {phase.title && <div style={crStyles.introTitle}>{nb(phase.title)}</div>}
+            {phase.narrative && <div style={crStyles.introText}>{nb(phase.narrative)}</div>}
+            {phase.instruction && <div style={crStyles.introHint}>{nb(phase.instruction)}</div>}
+          </div>
+        )}
+
         {/* Subtle progress in the corner */}
         <div style={{
           position: "absolute", top: 12, right: 16, zIndex: 30,
@@ -1877,6 +1903,26 @@ function ComicRevealPhase({ phase, onComplete }) {
     </div>
   );
 }
+
+const crStyles = {
+  intro: {
+    position: "absolute", inset: 0, zIndex: 25,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    gap: 12, padding: "0 10%", textAlign: "center", pointerEvents: "none",
+  },
+  introTitle: {
+    color: "#F5E6D3", fontSize: "clamp(17.6px, 1.53vw, 25.3px)", letterSpacing: 5,
+    textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+  },
+  introText: {
+    color: "#E8D9BE", fontSize: "clamp(13px, 1.04vw, 17.2px)", lineHeight: 1.9, maxWidth: 720,
+    textShadow: "0 1px 8px rgba(0,0,0,0.9)",
+  },
+  introHint: {
+    color: "#C9A86A", fontSize: "clamp(12.5px, 0.9vw, 14.9px)", letterSpacing: 2, marginTop: 6,
+    textShadow: "0 1px 6px rgba(0,0,0,0.9)",
+  },
+};
 
 const cpStyles = {
   overlay: {
@@ -4312,7 +4358,10 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
 
   const tokById = (id) => tokens.find((t) => t.id === id);
   const usedIds = new Set(Object.values(fill).filter(Boolean));
-  const tray = tokens.filter((t) => !usedIds.has(t.id));
+  // 打乱。原来照 phase.tokens 的顺序排，而前四块正好就是 s1→s2→s3→s4，
+  // 从左到右挨个拖就全对。确定性洗牌，刷新不变。
+  const shuffledTokens = useMemo(() => shuffleStable(tokens), [phase]);
+  const tray = shuffledTokens.filter((t) => !usedIds.has(t.id));
   const allFilled = slots.length > 0 && slots.every((s) => fill[s.id]);
 
   const put = (slotId, tokenId) => {
@@ -4685,7 +4734,9 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
 
   const byId = (id) => blocks.find((b) => b.id === id);
   const used = new Set(Object.values(fill).filter(Boolean));
-  const tray = blocks.filter((b) => !used.has(b.id));
+  // 同上：blocks 的顺序就是轴上三个槽的顺序，顺着往右拖就三个全对。
+  const shuffledBlocks = useMemo(() => shuffleStable(blocks), [phase]);
+  const tray = shuffledBlocks.filter((b) => !used.has(b.id));
   const allFilled = axis.length > 0 && axis.every((a) => fill[a.id]);
   const right = axis.reduce((n, a) => n + (byId(fill[a.id])?.slot === a.id ? 1 : 0), 0);
 
@@ -5385,7 +5436,9 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
   };
 
   const soulsIn = (cid) => souls.filter((s) => placed[s.id] === cid);
-  const tray = souls.filter((s) => !placed[s.id]);
+  // 亡魂卡同样要打乱：souls 的顺序就是答案的分组顺序。
+  const shuffledSouls = useMemo(() => shuffleStable(souls), [phase]);
+  const tray = shuffledSouls.filter((s) => !placed[s.id]);
 
   return (
     <div style={styles.sceneOuter}>
