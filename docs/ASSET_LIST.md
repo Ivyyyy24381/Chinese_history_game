@@ -42,6 +42,26 @@
 
 ---
 
+## 待办：把 png 移出 public/（打包体积从 ~256MB 降到 ~35MB）
+
+全线数据已改成 0 处 `.png` 引用（webp 234 个 / 34.6MB）。
+但 `public/assets` 里还躺着 **229 个 png / 223.6 MB**，vite 会把整个 `public/` 拷进 dist。
+这些 png 是转 webp 之前的母版，留着有用，但不该在 `public/` 里。
+
+本机跑（云端那边跨挂载移 220MB 会超时）：
+
+```bash
+mkdir -p assets_src/png_masters
+cd public/assets && find . -name "*.png" -exec sh -c '
+  mkdir -p "../../assets_src/png_masters/$(dirname "$1")"
+  mv "$1" "../../assets_src/png_masters/$1"' _ {} \;
+cd ../.. && echo "assets_src/png_masters/" >> .gitignore   # 母版不必进版本库
+npm run build && du -sh dist
+```
+
+做完后 `npm run lint:phases` 和一次全线试玩确认没有断链。
+中国大陆部署这一项比什么优化都实在。
+
 ## 顺带：图标不用生成
 
 `src/data/icons.js` 收的是 game-icons.net 的 SVG path（CC BY 3.0，署名见 `CREDITS.md`）。
