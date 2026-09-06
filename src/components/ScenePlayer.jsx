@@ -6,6 +6,18 @@ import { nb } from "../utils/cjkText";
 import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
 import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
+import { GAME_ICONS } from "../data/icons";
+
+/** 图标：只吃 path，颜色大小随调。来源 game-icons.net（CC BY 3.0，见 CREDITS.md）。 */
+function Icon({ name, size = 40, color = "#E8D9BE" }) {
+  const d = GAME_ICONS[name];
+  if (!d) return null;
+  return (
+    <svg viewBox="0 0 512 512" width={size} height={size} aria-hidden="true" style={{ display: "block" }}>
+      <path d={d} fill={color} />
+    </svg>
+  );
+}
 
 // ---- Portrait resolution -----------------------------------------------------
 // Convention: shared NPC PNGs live at /assets/<line>/npcs/<speaker_id>.webp.
@@ -1312,6 +1324,11 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
   // --- COMIC REVEAL PHASE (连环画：遮盖分格，点击按顺序揭开) ---
   if (currentPhase.type === "comic_reveal") {
     return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
+  }
+
+  // --- FLEE FLORENCE (只能带三样东西；全线字最少的一关) ---
+  if (currentPhase.type === "flee_florence") {
+    return <FleeFlorencePhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
   }
 
   // --- TRUST GAME (放逐循环：迭代囚徒困境，收在「地狱是只有一轮的世界」) ---
@@ -3392,6 +3409,283 @@ const tgStyles = {
 };
 
 // ============================================================
+// FLEE FLORENCE — 只能带三样东西
+// ============================================================
+// 全线字最少的一关，故意的。文字总量 < 120 字，重量全在画面和那一句上。
+//
+// 史实上的关键：判决下来时但丁人在罗马，他根本没经历过「收拾东西逃出城」。
+// 但他确实有过那个早上——1301 年秋，他作为使节出发去罗马，以为几个星期就回来。
+// 所以这一关不是逃亡，是一次平常的出门。恐怖是回头才生出来的。
+//
+// 五拍：收拾 → 走到城门 → 门关上 → 判决砸下来 → 一句话
+function FleeFlorencePhase({ phase, onScore, onComplete }) {
+  const reduced = usePrefersReducedMotion();
+  const items = phase.items || [];
+  const LIMIT = phase.limit || 3;
+  const SECONDS = phase.seconds || 30;
+  const STEPS = 12;
+
+  const [stage, setStage] = useState("room");   // room → walk → gate → verdict → line
+  const [bag, setBag] = useState([]);
+  const [left, setLeft] = useState(SECONDS);
+  const [step, setStep] = useState(0);
+  const [dropped, setDropped] = useState(null); // 超时掉的那一件
+
+  // 倒计时只在收拾和赶路时走
+  useEffect(() => {
+    if (stage !== "room" && stage !== "walk") return;
+    if (left <= 0) return;
+    const t = setTimeout(() => setLeft((v) => v - 1), 1000);
+    return () => clearTimeout(t);
+  }, [left, stage]);
+
+  const toggle = (id) => {
+    if (stage !== "room") return;
+    setBag((b) => b.includes(id) ? b.filter((x) => x !== id)
+      : (b.length >= LIMIT ? b : [...b, id]));
+    playTone(392, { dur: 0.5, gain: 0.08 });
+  };
+
+  const stride = () => {
+    if (stage !== "walk") return;
+    const n = step + 1;
+    setStep(n);
+    playTone(196 + n * 8, { dur: 0.35, gain: 0.05 });
+    if (n >= STEPS) {
+      // 时间用光才到城门：路上丢了一件
+      if (left <= 0 && bag.length > 0) setDropped(bag[bag.length - 1]);
+      setStage("gate");
+      setTimeout(() => setStage("verdict"), reduced ? 400 : 2400);
+      setTimeout(() => {
+        setStage("line");
+        if (onScore) onScore("flee", POINTS.flee);
+        [261.63, 196, 130.81].forEach((f, i) =>
+          setTimeout(() => playTone(f, { dur: 5, gain: 0.09 }), i * 420));
+      }, reduced ? 900 : 6200);
+    }
+  };
+
+  const kept = bag.filter((id) => id !== dropped);
+  const item = (id) => items.find((i) => i.id === id);
+  const urgent = left <= 8;
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{
+        ...styles.sceneStageInner,
+        backgroundImage: `url(${asset(stage === "room" ? phase.room : phase.gate)})`,
+      }}>
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundColor: stage === "verdict" || stage === "line" ? "rgba(4,3,2,0.96)"
+            : stage === "gate" ? "rgba(4,3,2,0.55)" : "rgba(10,7,4,0.5)",
+          transition: reduced ? "none" : "background-color 1.6s ease",
+        }} />
+
+        {/* ── 收拾 ── */}
+        {stage === "room" && (
+          <>
+            <div style={ffStyles.top}>
+              <div style={ffStyles.head}>{nb(phase.prompt || "")}</div>
+              <div style={{ ...ffStyles.clock, color: urgent ? "#E07A5A" : "#C9A86A" }}>
+                {left > 0 ? left + "″" : "他们等不下去了"}
+              </div>
+            </div>
+
+            {items.map((it) => {
+              const on = bag.includes(it.id);
+              return (
+                <button key={it.id} onClick={() => toggle(it.id)}
+                  style={{
+                    ...ffStyles.item,
+                    left: it.x + "%", top: it.y + "%",
+                    borderColor: on ? "#C9A86A" : "rgba(201,168,106,0.25)",
+                    backgroundColor: on ? "rgba(201,168,106,0.2)" : "rgba(12,9,6,0.6)",
+                    opacity: !on && bag.length >= LIMIT ? 0.4 : 1,
+                  }}>
+                  <Icon name={it.icon} size={40} color={on ? "#F6E7C4" : "#B5A98C"} />
+                  <span style={ffStyles.itemName}>{it.name}</span>
+                </button>
+              );
+            })}
+
+            <div style={ffStyles.bagRow}>
+              {Array.from({ length: LIMIT }).map((_, i) => {
+                const it = item(bag[i]);
+                return (
+                  <div key={i} style={{ ...ffStyles.slot, borderStyle: it ? "solid" : "dashed" }}>
+                    {it ? <Icon name={it.icon} size={30} color="#F6E7C4" /> : null}
+                  </div>
+                );
+              })}
+              <button
+                style={{ ...ffStyles.goBtn, opacity: bag.length === LIMIT ? 1 : 0.4,
+                         cursor: bag.length === LIMIT ? "pointer" : "not-allowed" }}
+                disabled={bag.length !== LIMIT}
+                onClick={() => setStage("walk")}>
+                {"走 →"}
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* ── 走到城门 ── */}
+        {stage === "walk" && (
+          <>
+            <div style={ffStyles.top}>
+              <div style={ffStyles.head}>{nb(phase.walkPrompt || "去城门。")}</div>
+              <div style={{ ...ffStyles.clock, color: urgent ? "#E07A5A" : "#C9A86A" }}>
+                {left > 0 ? left + "″" : "迟了"}
+              </div>
+            </div>
+            <img src={asset(phase.hero)} alt="" style={{
+              ...ffStyles.hero,
+              left: `${8 + (step / STEPS) * 40}%`,
+              transform: `translateX(-50%) scale(${1 - (step / STEPS) * 0.42})`,
+              bottom: `${6 + (step / STEPS) * 20}%`,
+              transition: reduced ? "none" : "all 420ms cubic-bezier(.3,.7,.4,1)",
+            }} />
+            <div style={ffStyles.strideWrap}>
+              <div style={ffStyles.track}>
+                <div style={{ ...ffStyles.trackFill, width: (step / STEPS) * 100 + "%" }} />
+              </div>
+              <button style={ffStyles.stride} onClick={stride}>{"快　走"}</button>
+            </div>
+          </>
+        )}
+
+        {/* ── 门关上 ── */}
+        {(stage === "gate" || stage === "verdict" || stage === "line") && (
+          <>
+            <div style={{ ...ffStyles.door, left: 0,
+              transform: `translateX(${stage === "gate" || stage === "verdict" || stage === "line" ? "0%" : "-100%"})` }} />
+            <div style={{ ...ffStyles.door, right: 0,
+              transform: `translateX(${stage === "gate" || stage === "verdict" || stage === "line" ? "0%" : "100%"})` }} />
+          </>
+        )}
+
+        {/* ── 判决砸下来 ── */}
+        {stage === "verdict" && (
+          <div style={ffStyles.verdict}>
+            <div style={ffStyles.vDate}>{nb(phase.verdictDate || "")}</div>
+            <div style={ffStyles.vText}>{nb(phase.verdict || "")}</div>
+          </div>
+        )}
+
+        {/* ── 一句话 ── */}
+        {stage === "line" && (
+          <div style={ffStyles.lineWrap}>
+            <div style={ffStyles.oneLine}>{nb(phase.line || "")}</div>
+            <div style={ffStyles.keptRow}>
+              {kept.map((id) => {
+                const it = item(id);
+                return it ? (
+                  <span key={id} style={ffStyles.keptItem}>
+                    <Icon name={it.icon} size={26} color="#8A7A5E" />
+                    <span style={ffStyles.keptName}>{it.name}</span>
+                  </span>
+                ) : null;
+              })}
+              {dropped && (
+                <span style={{ ...ffStyles.keptItem, opacity: 0.42 }}>
+                  <Icon name={item(dropped)?.icon} size={26} color="#6B5340" />
+                  <span style={{ ...ffStyles.keptName, textDecoration: "line-through" }}>
+                    {item(dropped)?.name}
+                  </span>
+                </span>
+              )}
+            </div>
+            <div style={ffStyles.keptCaption}>
+              {dropped ? "路上丢了一件。剩下的，是他从佛罗伦萨带走的全部。"
+                       : "这是他从佛罗伦萨带走的全部。"}
+            </div>
+            <button style={{ ...prStyles.go, marginTop: 26 }} onClick={onComplete}>{"继续 →"}</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const ffStyles = {
+  top: {
+    position: "absolute", top: "4%", left: 0, right: 0, zIndex: 25,
+    display: "flex", alignItems: "baseline", justifyContent: "center", gap: 26, padding: "0 5%",
+  },
+  head: { color: "#F5E6D3", fontSize: "clamp(13px, 1.18vw, 19.5px)", letterSpacing: 3, textShadow: "0 2px 12px rgba(0,0,0,0.95)" },
+  clock: {
+    position: "absolute", right: "5%", top: 0,
+    fontSize: "clamp(20px, 2.1vw, 36px)", letterSpacing: 2,
+    fontVariantNumeric: "tabular-nums", textShadow: "0 2px 14px rgba(0,0,0,0.95)",
+  },
+  item: {
+    position: "absolute", transform: "translate(-50%,-50%)", zIndex: 20,
+    width: 92, padding: "10px 6px 8px", borderRadius: 10, border: "1.5px solid",
+    display: "flex", flexDirection: "column", alignItems: "center", gap: 5,
+    cursor: "pointer", fontFamily: "inherit",
+    transition: "border-color 200ms ease, background-color 200ms ease, opacity 200ms ease",
+  },
+  itemName: { color: "#E8D9BE", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", letterSpacing: 1 },
+  bagRow: {
+    position: "absolute", left: 0, right: 0, bottom: "6%", zIndex: 25,
+    display: "flex", gap: 10, alignItems: "center", justifyContent: "center",
+  },
+  slot: {
+    width: 54, height: 54, borderRadius: 9, border: "1.5px dashed rgba(201,168,106,0.4)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    backgroundColor: "rgba(12,9,6,0.55)",
+  },
+  goBtn: {
+    marginLeft: 12, padding: "12px 26px", borderRadius: 22, border: "1px solid #C9A86A",
+    backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
+    fontFamily: "inherit", fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3,
+  },
+  hero: { position: "absolute", height: "46%", objectFit: "contain", zIndex: 18, filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.6))" },
+  strideWrap: {
+    position: "absolute", left: 0, right: 0, bottom: "6%", zIndex: 25,
+    display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
+  },
+  track: { width: "44%", height: 4, borderRadius: 3, backgroundColor: "rgba(232,217,190,0.16)", overflow: "hidden" },
+  trackFill: { height: "100%", backgroundColor: "#C9A86A", transition: "width 380ms ease" },
+  stride: {
+    padding: "13px 40px", borderRadius: 26, border: "1px solid #C9A86A",
+    backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
+    fontFamily: "inherit", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 5,
+  },
+  door: {
+    position: "absolute", top: 0, bottom: 0, width: "50.5%", zIndex: 22,
+    backgroundColor: "#120D09",
+    borderLeft: "3px solid #2B2118", borderRight: "3px solid #2B2118",
+    backgroundImage: "repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 26px)",
+    transition: "transform 1.8s cubic-bezier(.7,0,.3,1)",
+  },
+  verdict: {
+    position: "absolute", inset: 0, zIndex: 30,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14,
+    animation: "flashIn 600ms ease both",
+  },
+  vDate: { color: "#8A7A5E", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 6 },
+  vText: {
+    color: "#E07A5A", fontSize: "clamp(16px, 1.6vw, 27px)", letterSpacing: 4, lineHeight: 2,
+    textAlign: "center", whiteSpace: "pre-line",
+  },
+  lineWrap: {
+    position: "absolute", inset: 0, zIndex: 30,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "0 8%", textAlign: "center",
+  },
+  oneLine: {
+    color: "#F6E7C4", fontSize: "clamp(17px, 1.75vw, 30px)", letterSpacing: 5, lineHeight: 1.9,
+    textShadow: "0 2px 20px rgba(0,0,0,0.95)",
+    animation: "flashIn 1400ms cubic-bezier(.2,.7,.3,1) both",
+  },
+  keptRow: { display: "flex", gap: 22, marginTop: 34, flexWrap: "wrap", justifyContent: "center" },
+  keptItem: { display: "flex", flexDirection: "column", alignItems: "center", gap: 5 },
+  keptName: { color: "#8A7A5E", fontSize: "clamp(10px, 0.79vw, 13px)", letterSpacing: 1 },
+  keptCaption: { color: "#6B5340", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", letterSpacing: 2, marginTop: 14 },
+};
+
+// ============================================================
 // 认知动词 · COGNITIVE VERBS
 // ============================================================
 // 原则：每一个 interaction 都把一个认知动作外化——
@@ -3435,13 +3729,25 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
 
           {step === 0 && (
             <>
-              <div style={prStyles.opts}>
-                {options.map((o) => (
-                  <button key={o.id} style={prStyles.opt} onClick={() => commit(o.id)}>
-                    {nb(o.text)}
-                  </button>
-                ))}
-              </div>
+              {/* 有配图就摆成三张画面：让玩家看图选，不是读三行字选 */}
+              {options.some((o) => o.image) ? (
+                <div style={prStyles.picRow}>
+                  {options.map((o) => (
+                    <button key={o.id} style={prStyles.picOpt} onClick={() => commit(o.id)}>
+                      <div style={{ ...prStyles.pic, backgroundImage: `url(${asset(o.image)})` }} />
+                      <span style={prStyles.picCap}>{nb(o.caption || o.text)}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div style={prStyles.opts}>
+                  {options.map((o) => (
+                    <button key={o.id} style={prStyles.opt} onClick={() => commit(o.id)}>
+                      {nb(o.text)}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div style={prStyles.hint}>{"先猜一个。猜错没有惩罚——猜过之后再看，才记得住。"}</div>
             </>
           )}
@@ -3517,6 +3823,16 @@ const prStyles = {
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.7, letterSpacing: 1,
   },
+  picRow: { display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", width: "100%", maxWidth: 860 },
+  picOpt: {
+    flex: "1 1 240px", maxWidth: 280, padding: 6, borderRadius: 10,
+    border: "1.5px solid rgba(201,168,106,0.35)", backgroundColor: "rgba(14,11,8,0.7)",
+    cursor: "pointer", fontFamily: "inherit",
+    display: "flex", flexDirection: "column", gap: 7,
+    transition: "border-color 200ms ease, transform 200ms ease",
+  },
+  pic: { width: "100%", aspectRatio: "8 / 5", borderRadius: 6, backgroundSize: "cover", backgroundPosition: "center" },
+  picCap: { color: "#E8D9BE", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 2, paddingBottom: 3 },
   hint: { color: "rgba(245,230,211,0.62)", fontSize: "clamp(11px, 0.79vw, 13px)", letterSpacing: 2 },
   duo: { display: "flex", gap: 14, width: "100%", maxWidth: 720, justifyContent: "center", flexWrap: "wrap" },
   card: {

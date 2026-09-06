@@ -227,86 +227,6 @@
         "punishment": "死后：永远只看得见后面"
       },
       "rule": "罪的形状，翻过来，就是罚的形状。\n但丁给这个规矩起了名字：contrapasso。\n\n看懂这条规矩，你就能自己推剩下的八圈了——这也正是接下来要做的事。",
-      "nextPhase": "gate"
-    },
-    {
-      "id": "gate",
-      "type": "click_points",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.webp",
-      "image": "/assets/dante/events/1308_inferno/backgrounds/gate_of_hell.webp",
-      "title": "地狱之门",
-      "narrative": "语言定了。第一卷《地狱》。他先刻下那扇门。",
-      "instruction": "点亮门上的暗刻——铭文将逐行显现。",
-      "unlockThreshold": 3,
-      "poemTitle": "地狱之门铭文",
-      "points": [
-        {
-          "id": "stella",
-          "label": "门楣上的星",
-          "position": {
-            "x": 50,
-            "y": 4
-          },
-          "size": 50,
-          "text": "一颗金星悬在门楣之上。他还不知道，三部曲的最后一个词，都会是「群星」。"
-        },
-        {
-          "id": "archivolto",
-          "label": "环拱铭文",
-          "position": {
-            "x": 50,
-            "y": 28
-          },
-          "size": 150,
-          "text": "拱环上刻满小字：「正义推动了至高的造我者；神圣的权能、至高的智慧与本初的爱，造了我。」"
-        },
-        {
-          "id": "pilastro",
-          "label": "左门柱刻字",
-          "position": {
-            "x": 34,
-            "y": 60
-          },
-          "size": 130,
-          "text": "「在我之前，无造物，除了永恒之物；而我永世长存。」"
-        },
-        {
-          "id": "oro",
-          "label": "金色铭版",
-          "position": {
-            "x": 66,
-            "y": 27
-          },
-          "size": 120,
-          "text": "金底上的黑字，像审判书的落款。他想起 1302 年那道以火为印的判决。"
-        },
-        {
-          "id": "rosso",
-          "label": "门内的红光",
-          "position": {
-            "x": 49,
-            "y": 62
-          },
-          "size": 130,
-          "text": "门后深处透出炉膛般的红光。叹息、哭喊与咒骂的声音，隐隐从里面传来。"
-        },
-        {
-          "id": "poeta",
-          "label": "门前执笔的人",
-          "position": {
-            "x": 72,
-            "y": 72
-          },
-          "size": 150,
-          "text": "他把自己的绝望刻在了门上。然后——他推门进去了。"
-        }
-      ],
-      "progressivePoem": [
-        "由我进入愁苦之城，",
-        "由我进入永劫之痛，",
-        "由我进入万劫不复的人群。",
-        "入此门者，当舍弃一切希望。"
-      ],
       "nextPhase": "henry_news"
     },
     {
@@ -316,8 +236,8 @@
       "title": "一个消息",
       "transitionText": "《地狱》一歌一歌地写着，在各个宫廷之间传抄。\n1308 年深秋，一名信使闯进廊下——",
       "announcement": {
-        "title": "阿尔卑斯山北的消息",
-        "text": "「卢森堡的亨利伯爵，当选罗马人的国王！他说要南下意大利，接受加冕，做真正的皇帝——做万民的和平！」",
+        "title": "地狱之门",
+        "text": "「由我进入愁苦之城，\n由我进入永劫之苦，\n由我进入沉沦之民中间。\n\n进来的人，把一切希望留在门外。」",
         "style": "imperial_decree"
       },
       "dufu_reaction": {

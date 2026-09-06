@@ -227,107 +227,15 @@
           ]
         }
       ],
-      "nextPhase": "dream_end",
+      "nextPhase": "echo",
       "narrative": ""
-    },
-    {
-      "id": "dream_end",
-      "type": "transition",
-      "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.webp",
-      "title": "梦碎",
-      "transitionText": "灵帐前，鹰旗倒卷。\n亨利死后，但丁再未对现世政治抱任何希望。\n他把皇帝写进了《天堂》。",
-      "announcement": {
-        "text": "「在至高玫瑰的座席之中，有一把空椅，上面放着一顶王冠——等着高贵的亨利，他来匡正意大利，可惜意大利尚未准备好。」",
-        "style": "imperial_decree",
-        "title": "天堂 · 第三十歌"
-      },
-      "dufu_reaction": {
-        "portrait": "/assets/dante/hero/exile/cloak.webp",
-        "text": "人间容不下的，天堂给他留了座。"
-      },
-      "narrative": "",
-      "nextPhase": "monarchia_exam"
-    },
-    {
-      "id": "monarchia_exam",
-      "type": "exam",
-      "background": "/assets/dante/events/1313_impero/backgrounds/milano_incoronazione.webp",
-      "title": "《帝制论》问答",
-      "narrative": "数年后，一位博洛尼亚学者慕名来访，就先生的《帝制论》与那场南征逐条求教。",
-      "examiner": {
-        "name": "博洛尼亚学者",
-        "portrait": "/assets/dante/events/1313_impero/npcs/bologna_scholar.webp"
-      },
-      "questions": [
-        {
-          "type": "choice",
-          "question": "1311 年，亨利七世在米兰加冕时戴上的是什么王冠？",
-          "options": [
-            "金玫瑰冠",
-            "伦巴第铁王冠",
-            "月桂冠",
-            "三重冕"
-          ],
-          "answer": 1,
-          "explanation": "米兰圣安布罗焦教堂的加冕用的是伦巴第诸王的铁王冠——相传冠内的铁环由基督受难的圣钉打成。观礼的但丁俯身吻了皇帝的脚。"
-        },
-        {
-          "type": "choice",
-          "question": "1312 年亨利在罗马的皇帝加冕，为何改在拉特兰教堂举行？",
-          "options": [
-            "拉特兰是历代惯例",
-            "圣彼得堂正在修缮",
-            "圣彼得堂被敌军占据",
-            "教皇指定拉特兰"
-          ],
-          "answer": 2,
-          "explanation": "罗马巷战中，圣彼得堂一带被那不勒斯与贵尔夫联军占据，加冕只能退而在拉特兰教堂举行——一场残缺的加冕，凶兆已现。"
-        },
-        {
-          "type": "choice",
-          "question": "《帝制论》中，但丁主张政权与教权的关系是？",
-          "options": [
-            "皇帝受教皇册封，如月亮借太阳之光",
-            "教会应服从帝国",
-            "帝国与教会如两个太阳，各自直接受命于神",
-            "政教应合为一体"
-          ],
-          "answer": 2,
-          "explanation": "但丁反对「日月说」（皇权如月亮借教皇的光），主张「两个太阳」：帝国掌尘世幸福，教会掌永恒救赎，各自直接受命于神，互不隶属。"
-        },
-        {
-          "type": "choice",
-          "question": "《帝制论》后来的命运是？",
-          "options": [
-            "被教会列为禁书，公开焚毁",
-            "成为帝国官学教材",
-            "散佚失传",
-            "被译成拉丁文百年后才刊行"
-          ],
-          "answer": 0,
-          "explanation": "但丁死后，《帝制论》因否定教皇的世俗权威被教会谴责焚毁，16 世纪被列入《禁书目录》。骨灰未冷，书先上了火堆。"
-        },
-        {
-          "type": "choice",
-          "question": "亨利七世的南征，最终结束于何事？",
-          "options": [
-            "兵败佛罗伦萨城下",
-            "1313 年在布翁孔文托染疟疾暴病而亡",
-            "与教皇和解后北返",
-            "被那不勒斯军俘虏"
-          ],
-          "answer": 1,
-          "explanation": "1313 年 8 月 24 日，大军南指之际，亨利七世在锡耶纳附近的布翁孔文托死于疟疾。帝国梦碎——但丁自此再未对现世政治抱任何希望。"
-        }
-      ],
-      "nextPhase": "echo"
     },
     {
       "id": "echo",
       "type": "transition",
       "background": "/assets/dante/events/1313_impero/backgrounds/buonconvento_camp.webp",
       "title": "后世回声",
-      "transitionText": "讲坛上，薄伽丘停了很久。",
+      "transitionText": "灵帐前，鹰旗倒卷。\n亨利死后，但丁再未对现世政治抱任何希望。\n他把皇帝写进了《天堂》。\n\n讲坛上，薄伽丘停了很久。",
       "announcement": {
         "title": "后世回声",
         "text": "薄伽丘：「他赌输了。可诸位——正因为人间的宝座空了，他才把整座天堂修成了法庭。《神曲》的裁决，比任何皇帝的都长久。」",

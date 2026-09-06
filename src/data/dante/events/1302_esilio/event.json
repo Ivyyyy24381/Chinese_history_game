@@ -5,6 +5,65 @@
   "type": "interactive",
   "phases": [
     {
+      "id": "leaving",
+      "type": "flee_florence",
+      "room": "/assets/dante/events/1265_firenze/backgrounds/casa_alighieri.webp",
+      "gate": "/assets/dante/events/1302_esilio/backgrounds/porta_san_piero.webp",
+      "hero": "/assets/dante/hero/citizen/robe.webp",
+      "prompt": "1301 年秋 · 出使罗马。使团在圣彼得门等你。只能带三样。",
+      "walkPrompt": "去城门。",
+      "seconds": 30,
+      "limit": 3,
+      "items": [
+        {
+          "id": "codex",
+          "icon": "codex",
+          "name": "维吉尔抄本",
+          "x": 15,
+          "y": 34
+        },
+        {
+          "id": "manuscript",
+          "icon": "manuscript",
+          "name": "《新生》手稿",
+          "x": 31,
+          "y": 20
+        },
+        {
+          "id": "florin",
+          "icon": "florin",
+          "name": "弗罗林金币",
+          "x": 48,
+          "y": 15
+        },
+        {
+          "id": "letters",
+          "icon": "letters",
+          "name": "家中书信",
+          "x": 63,
+          "y": 15
+        },
+        {
+          "id": "cloak",
+          "icon": "cloak",
+          "name": "冬衣",
+          "x": 15,
+          "y": 60
+        },
+        {
+          "id": "spindle",
+          "icon": "spindle",
+          "name": "亡母的纺锤",
+          "x": 26,
+          "y": 80
+        }
+      ],
+      "verdictDate": "1302 年 1 月 27 日",
+      "verdict": "缺席审判\n终身放逐\n拒不到庭者，火焚之",
+      "line": "但丁再也没有见过佛罗伦萨。",
+      "nextPhase": "papal_hall"
+    },
+    {
       "id": "papal_hall",
       "type": "explore",
       "background": "/assets/dante/events/1302_esilio/backgrounds/papal_hall.webp",
@@ -96,15 +155,21 @@
       "options": [
         {
           "id": "mediate",
-          "text": "查理真的调停成功，两党各让一步"
+          "text": "查理真的调停成功，两党各让一步",
+          "image": "/assets/dante/events/1302_esilio/choices/mediate.webp",
+          "caption": "两党各让一步"
         },
         {
           "id": "coup",
-          "text": "黑党开城迎他，白党被清算"
+          "text": "黑党开城迎他，白党被清算",
+          "image": "/assets/dante/events/1302_esilio/choices/coup.webp",
+          "caption": "城门大开，火光"
         },
         {
           "id": "hold",
-          "text": "白党守住城，查理无功而返"
+          "text": "白党守住城，查理无功而返",
+          "image": "/assets/dante/events/1302_esilio/choices/hold.webp",
+          "caption": "守住，查理无功而返"
         }
       ],
       "actual": "coup",
