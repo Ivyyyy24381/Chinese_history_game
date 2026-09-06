@@ -22,23 +22,47 @@ for (const line of readdirSync(DATA).filter((d) => existsSync(join(DATA, d, "eve
       await p.waitForTimeout(1500);
       const r = await p.evaluate((reSrc) => {
         const re = new RegExp(reSrc, "i");
-        return [...document.querySelectorAll("button")].filter((x) => re.test(x.textContent.trim()))
-          .map((x) => {
-            const q = x.getBoundingClientRect();
-            if (!q.width || !q.height) return null;
-            const top = document.elementFromPoint(q.x + q.width / 2, q.y + q.height / 2);
-            const ok = top === x || x.contains(top);
-            return { label: x.textContent.trim().slice(0, 18), ok,
-              coveredBy: ok ? null : `${top?.tagName}.${top?.className || ""} z=${top ? getComputedStyle(top).zIndex : "?"}`.slice(0, 64) };
-          }).filter(Boolean);
+        const out = [];
+
+        // (1) 此刻真的在屏幕上的推进按钮
+        for (const x of document.querySelectorAll("button")) {
+          if (!re.test(x.textContent.trim())) continue;
+          const q = x.getBoundingClientRect();
+          if (!q.width || !q.height) continue;
+          const top = document.elementFromPoint(q.x + q.width / 2, q.y + q.height / 2);
+          const ok = top === x || x.contains(top);
+          out.push({ kind: "real", label: x.textContent.trim().slice(0, 18), ok,
+            coveredBy: ok ? null : `${top?.tagName}.${top?.className || ""} z=${top ? getComputedStyle(top).zIndex : "?"}`.slice(0, 64) });
+        }
+
+        // (2) 大多数幕的「继续」要先完成交互才出现（explore 得先跟够人数说话），
+        //     光落地截一张图是测不到的 —— 而 Ivy 撞到的正是那些。
+        //     所以往按钮**将会出现的位置**塞一个同样样式的探针，直接问层级。
+        const stage = document.querySelector("[data-shot-ready] div div") || document.body;
+        const probe = document.createElement("button");
+        probe.textContent = "PROBE";
+        Object.assign(probe.style, {
+          position: "absolute", bottom: "20px", right: "20px",
+          padding: "12px 26px", borderRadius: "24px", zIndex: "150",
+        });
+        stage.appendChild(probe);
+        const q = probe.getBoundingClientRect();
+        if (q.width && q.height) {
+          const top = document.elementFromPoint(q.x + q.width / 2, q.y + q.height / 2);
+          const ok = top === probe || probe.contains(top);
+          out.push({ kind: "probe", label: "（按钮位）", ok,
+            coveredBy: ok ? null : `${top?.tagName}.${top?.className || ""} z=${top ? getComputedStyle(top).zIndex : "?"}`.slice(0, 64) });
+        }
+        probe.remove();
+        return out;
       }, RE.source);
       for (const x of r) {
         checked++;
-        if (!x.ok) { blocked++; console.log(`  x ${line}/${id} p${i} "${x.label}" covered by ${x.coveredBy}`); }
+        if (!x.ok) { blocked++; console.log(`  x ${line}/${id} p${i} [${x.kind}] "${x.label}" covered by ${x.coveredBy}`); }
       }
     }
   }
 }
-console.log(`\n查了 ${checked} 个推进按钮，被盖住 ${blocked} 个`);
+console.log(`\n查了 ${checked} 处（真按钮 + 按钮位探针），被盖住 ${blocked} 处`);
 await b.close();
 process.exit(blocked ? 1 : 0);
