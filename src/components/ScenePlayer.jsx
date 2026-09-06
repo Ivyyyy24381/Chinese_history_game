@@ -3503,6 +3503,7 @@ const prStyles = {
   situation: {
     color: "#E2D3B4", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.9, letterSpacing: 1,
     maxWidth: 760, textShadow: "0 2px 10px rgba(0,0,0,0.95)",
+    whiteSpace: "pre-line",
   },
   question: {
     color: "#F5E6D3", fontSize: "clamp(16px, 1.46vw, 24px)", letterSpacing: 4,
@@ -3528,11 +3529,13 @@ const prStyles = {
   reveal: {
     color: "#F5E6D3", fontSize: "clamp(13.5px, 1.25vw, 20.7px)", lineHeight: 2.0, letterSpacing: 2,
     maxWidth: 700, textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+    whiteSpace: "pre-line",
   },
   consequence: {
     color: "#D8C8A8", fontSize: "clamp(12px, 0.97vw, 16px)", lineHeight: 1.9, maxWidth: 700,
     borderTop: "1px solid rgba(201,168,106,0.3)", paddingTop: 12,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+    whiteSpace: "pre-line",
   },
   go: { alignSelf: "center", padding: "10px 26px", borderRadius: 22, border: "1px solid #C9A86A",
     backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
