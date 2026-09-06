@@ -10,6 +10,7 @@ import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
 import { asset } from "../utils/asset";
 import { POINTS, timedScore } from "../utils/scoring";
 import { GAME_ICONS } from "../data/icons";
+import ArtworkLabel from "./ArtworkLabel";
 
 /** 图标：只吃 path，颜色大小随调。来源 game-icons.net（CC BY 3.0，见 CREDITS.md）。 */
 function Icon({ name, size = 40, color = "#E8D9BE" }) {
@@ -243,6 +244,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
   // Fill drag-and-drop handler
   const handleFillDrop = (word, answer) => {
     if (examShowResult) return;
+    playDrop();
     setFillDropped(word);
     setExamFillInput(word);
     setExamShowResult(true);
@@ -303,7 +305,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                   transition: "opacity 500ms ease",
                 }}
               >
-                {"\u70B9\u51FB\u7EE7\u7EED"}
+                {t("\u70B9\u51FB\u7EE7\u7EED")}
               </p>
             </div>
           ) : !showConclusion && hasAnnouncement ? (
@@ -323,7 +325,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 )}
                 <p style={styles.scrollResult}>{nb(currentPhase.announcement.text)}</p>
               </div>
-              <p style={styles.clickHint}>{"\u70B9\u51FB\u7EE7\u7EED"}</p>
+              <p style={styles.clickHint}>{t("\u70B9\u51FB\u7EE7\u7EED")}</p>
             </div>
           ) : hasReaction ? (
             <div style={styles.announcementPanel}>
@@ -345,7 +347,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 <p style={styles.reactionText}>{nb(currentPhase.dufu_reaction.text)}</p>
               </div>
               <button style={styles.proceedBtn} onClick={goToNextPhase}>
-                {"\u7EE7\u7EED \u2192"}
+                {t("\u7EE7\u7EED \u2192")}
               </button>
             </div>
           ) : null}
@@ -383,7 +385,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 <span style={styles.instructionIcon}>{"\u{1F4AC}"}</span>
                 <span>{nb(currentPhase.instruction)}</span>
                 <span style={styles.talkCount}>
-                  {"\u5DF2\u4EA4\u8C08: "}{talkedNpcs.size}/{currentPhase.npcs.length}
+                  {t("\u5DF2\u4EA4\u8C08: ")}{talkedNpcs.size}/{currentPhase.npcs.length}
                 </span>
               </div>
             )}
@@ -500,7 +502,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             {/* If no trigger, show button when enough talks done */}
             {canProceedExplore && !currentPhase.nextTrigger && (
               <button style={styles.floatingProceed} onClick={goToNextPhase}>
-                {"\u7EE7\u7EED \u2192"}
+                {t("\u7EE7\u7EED \u2192")}
               </button>
             )}
 
@@ -607,7 +609,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                         {nb(line.text)}
                       </div>
                       <div style={styles.dialogueContinue}>
-                        {isLast ? "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED" : "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED"}
+                        {isLast ? t("\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED") : t("\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED")}
                       </div>
                     </div>
                   </div>
@@ -629,16 +631,16 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
         <div style={bgStyle}>
           <div style={styles.examOverlay}>
             <div style={styles.examResultCard}>
-              <h2 style={styles.examResultTitle}>{"\u8003\u8BD5\u7ED3\u675F"}</h2>
+              <h2 style={styles.examResultTitle}>{t("\u8003\u8BD5\u7ED3\u675F")}</h2>
               <div style={styles.examScoreDisplay}>
                 <span style={styles.examScoreBig}>{examScore}</span>
                 <span style={styles.examScoreTotal}>/ {currentPhase.questions.length}</span>
               </div>
               <p style={styles.examResultNote}>
-                {"\u65E0\u8BBA\u5F97\u5206\u591A\u5C11\uff0c\u7ED3\u679C\u90FD\u5DF2\u6CE8\u5B9A\u2026\u2026"}
+                {t("\u65E0\u8BBA\u5F97\u5206\u591A\u5C11\uff0c\u7ED3\u679C\u90FD\u5DF2\u6CE8\u5B9A\u2026\u2026")}
               </p>
               <button style={styles.proceedBtn} onClick={goToNextPhase}>
-                {"\u67E5\u770B\u7ED3\u679C \u2192"}
+                {t("\u67E5\u770B\u7ED3\u679C \u2192")}
               </button>
             </div>
           </div>
@@ -663,7 +665,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           {/* Exam panel on the right */}
           <div style={styles.examPanelRight}>
             <div style={styles.examProgress}>
-              {"\u7B2C "}{examIndex + 1}{" \u9898 / \u5171 "}{currentPhase.questions.length}{" \u9898"}
+              {t("\u7B2C ")}{examIndex + 1}{t(" \u9898 / \u5171 ")}{currentPhase.questions.length}{t(" \u9898")}
             </div>
 
             <h3 style={styles.examQuestion}>{q.question}</h3>
@@ -738,7 +740,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                   )}
                   {examShowResult && !isCorrect && (
                     <div style={{ fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#28A745", marginTop: 8 }}>
-                      {"\u6B63\u786E\u7B54\u6848: " + q.answer}
+                      {t("\u6B63\u786E\u7B54\u6848: ") + q.answer}
                     </div>
                   )}
                 </div>
@@ -753,7 +755,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
 
             {examShowResult && (
               <button style={styles.proceedBtn} onClick={handleExamNext}>
-                {examIndex + 1 >= currentPhase.questions.length ? "\u67E5\u770B\u6210\u7EE9 \u2192" : "\u4E0B\u4E00\u9898 \u2192"}
+                {examIndex + 1 >= currentPhase.questions.length ? t("\u67E5\u770B\u6210\u7EE9 \u2192") : t("\u4E0B\u4E00\u9898 \u2192")}
               </button>
             )}
           </div>
@@ -778,7 +780,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 </div>
               )}
               <button style={styles.proceedBtn} onClick={goToNextPhase}>
-                {isLastPhase ? "\u5B8C\u6210\u672C\u573A\u666F \u2192" : "\u7EE7\u7EED \u2192"}
+                {isLastPhase ? t("\u5B8C\u6210\u672C\u573A\u666F \u2192") : t("\u7EE7\u7EED \u2192")}
               </button>
             </div>
           </div>
@@ -824,7 +826,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
 
             {choiceCorrect && (
               <button style={styles.proceedBtn} onClick={() => setShowConclusion(true)}>
-                {"\u7EE7\u7EED \u2192"}
+                {t("\u7EE7\u7EED \u2192")}
               </button>
             )}
           </div>
@@ -856,6 +858,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
       for (let i = 0; i < next.length; i++) if (next[i] === word) next[i] = null;
       next[idx] = word;
       setComposedBlanks(next);
+      playDrop();
     };
     const clearBlank = (idx) => {
       if (composedSubmitted) return;
@@ -873,7 +876,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
       <div style={bgStyle}>
         <div style={styles.choiceOverlay}>
           <div style={{ ...styles.choicePanel, maxWidth: 700 }}>
-            <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F4DC} " + (currentPhase.title || "\u8BD7\u6B4C\u521B\u4F5C")}</h2>
+            <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F4DC} " + (currentPhase.title || t("\u8BD7\u6B4C\u521B\u4F5C"))}</h2>
             {currentPhase.poemContext && <p style={styles.choiceNarrative}>{currentPhase.poemContext}</p>}
 
             <div style={styles.fillPassage}>
@@ -942,7 +945,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     award("compose", correctCount * POINTS.poemFill);
                   }}
                 >
-                  {"\u63D0\u4EA4 \u2192"}
+                  {t("\u63D0\u4EA4 \u2192")}
                 </button>
               </>
             )}
@@ -950,10 +953,10 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             {composedSubmitted && (
               <>
                 <div style={{ ...styles.explanationBox, backgroundColor: "#F0F8FF" }}>
-                  {"\u7B54\u5BF9 "}<strong>{correctCount}</strong>{" / "}{blanks.length}{" \u9898"}
+                  {t("\u7B54\u5BF9 ")}<strong>{correctCount}</strong>{" / "}{blanks.length}{t(" \u9898")}
                   {blanks.map((ans, i) => composedBlanks[i] !== ans && (
                     <div key={i} style={{ fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#28A745", marginTop: 4 }}>
-                      {"\u7B2C " + (i + 1) + " \u7A7A\u6B63\u786E\u7B54\u6848\uFF1A" + ans}
+                      {t("\u7B2C ") + (i + 1) + t(" \u7A7A\u6B63\u786E\u7B54\u6848\uFF1A") + ans}
                     </div>
                   ))}
                 </div>
@@ -965,7 +968,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     }</pre>
                   </div>
                 )}
-                <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+                <button style={styles.proceedBtn} onClick={goToNextPhase}>{t("\u7EE7\u7EED \u2192")}</button>
               </>
             )}
           </div>
@@ -1058,7 +1061,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             backgroundImage: currentPhase.background ? `url(${asset(currentPhase.background)})` : "none",
           }}>
             <div style={styles.phaseHeader}>
-              <h2 style={styles.phaseTitle}>{currentPhase.title || "\u5730\u56FE\u884C\u65C5"}</h2>
+              <h2 style={styles.phaseTitle}>{currentPhase.title || t("\u5730\u56FE\u884C\u65C5")}</h2>
               {currentPhase.travelNarrative && <p style={styles.phaseNarrative}>{nb(currentPhase.travelNarrative)}</p>}
             </div>
 
@@ -1072,7 +1075,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                       ? `\u8D76\u8DEF\u4E2D\u2026\u2026`
                       : `\u4E0B\u4E00\u7AD9\uFF1A${waypoints[currentTargetIdx]?.name || ""}`}
                 </span>
-                <span style={styles.talkCount}>{"\u884C\u7A0B " + visitedWaypoints.size + "/" + waypoints.length}</span>
+                <span style={styles.talkCount}>{t("\u884C\u7A0B ") + visitedWaypoints.size + "/" + waypoints.length}</span>
               </div>
             )}
 
@@ -1132,7 +1135,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               return (
                 <div
                   key={wid}
-                  title={(visited ? "\u2713 " : "") + (wp.name || "\u76EE\u7684\u5730")}
+                  title={(visited ? "\u2713 " : "") + (wp.name || t("\u76EE\u7684\u5730"))}
                   style={{
                     position: "absolute",
                     left: (wp.x || 50) + "%",
@@ -1178,7 +1181,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                       boxShadow: "0 2px 8px rgba(70,55,35,0.25)",
                       pointerEvents: "none",
                     }}>
-                      {(wp.name || "") + (visitedWaypoints.size === 0 && idx === 0 ? " \u00B7 \u70B9\u51FB\u51FA\u53D1" : "")}
+                      {(wp.name || "") + (visitedWaypoints.size === 0 && idx === 0 ? t(" \u00B7 \u70B9\u51FB\u51FA\u53D1") : "")}
                     </div>
                   )}
                 </div>
@@ -1221,7 +1224,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
 
             {(!requireAll || allVisited) && (
               <button style={styles.floatingProceed} onClick={goToNextPhase}>
-                {"\u7EE7\u7EED \u2192"}
+                {t("\u7EE7\u7EED \u2192")}
               </button>
             )}
           </div>
@@ -1240,7 +1243,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                   </div>
                   <div style={styles.dialogueText}>{line.text}</div>
                   <div style={styles.dialogueContinue}>
-                    {isLast ? "\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED" : "\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED"}
+                    {isLast ? t("\u2713 \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5173\u95ED") : t("\u25BC \u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u7EE7\u7EED")}
                   </div>
                 </div>
               </div>
@@ -1259,10 +1262,10 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F4AC} \u5BF9\u8BDD: " + (currentPhase.branchCharacter || "")}</h2>
             {currentPhase.narrative && <p style={styles.choiceNarrative}>{currentPhase.narrative}</p>}
-            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{"\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09"}</p>
+            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09")}</p>
             {(currentPhase.dialogueTree || []).map((node, i) => (
               <div key={i} style={{ ...styles.explanationBox, marginBottom: 8 }}>
-                <strong>{node.speaker || "\u65C1\u767D"}: </strong>{node.text}
+                <strong>{node.speaker || t("\u65C1\u767D")}: </strong>{node.text}
                 {node.choices && node.choices.length > 0 && (
                   <div style={{ marginTop: 4, paddingLeft: 12 }}>
                     {node.choices.map((c, ci) => (
@@ -1272,7 +1275,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 )}
               </div>
             ))}
-            <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+            <button style={styles.proceedBtn} onClick={goToNextPhase}>{t("\u7EE7\u7EED \u2192")}</button>
           </div>
         </div>
       </div>
@@ -1287,7 +1290,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
         <div style={styles.transitionOverlay}>
           <div style={{ maxWidth: 600, width: "90%", maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto" }}>
             {slides.length === 0 ? (
-              <p style={{ color: "#AAA", textAlign: "center" }}>{"\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09"}</p>
+              <p style={{ color: "#AAA", textAlign: "center" }}>{t("\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09")}</p>
             ) : slides.map((slide, i) => (
               <div
                 key={i}
@@ -1305,7 +1308,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 <p style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, margin: 0 }}>{nb(slide.text)}</p>
               </div>
             ))}
-            <button style={{ ...styles.proceedBtn, marginTop: 20 }} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+            <button style={{ ...styles.proceedBtn, marginTop: 20 }} onClick={goToNextPhase}>{t("\u7EE7\u7EED \u2192")}</button>
           </div>
         </div>
       </div>
@@ -1413,14 +1416,14 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
   // --- MINIGAME PHASE ---
   if (currentPhase.type === "minigame") {
     const items = currentPhase.minigameItems || [];
-    const typeLabel = { memory: "\u8BB0\u5FC6\u7FFB\u724C", matching: "\u8FDE\u7EBF\u9898", sorting: "\u6392\u5E8F", puzzle: "\u62FC\u56FE" };
+    const typeLabel = { memory: t("\u8BB0\u5FC6\u7FFB\u724C"), matching: t("\u8FDE\u7EBF\u9898"), sorting: t("\u6392\u5E8F"), puzzle: t("\u62FC\u56FE") };
     return (
       <div style={bgStyle}>
         <div style={styles.choiceOverlay}>
           <div style={styles.choicePanel}>
-            <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F3AE} " + (typeLabel[currentPhase.minigameType] || "\u5C0F\u6E38\u620F")}</h2>
+            <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F3AE} " + (typeLabel[currentPhase.minigameType] || t("\u5C0F\u6E38\u620F"))}</h2>
             {currentPhase.minigameInstruction && <p style={styles.choiceNarrative}>{currentPhase.minigameInstruction}</p>}
-            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{"\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09"}</p>
+            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09")}</p>
             {items.length > 0 && (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
                 {items.map((item, i) => (
@@ -1431,7 +1434,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 ))}
               </div>
             )}
-            <button style={styles.proceedBtn} onClick={goToNextPhase}>{"\u7EE7\u7EED \u2192"}</button>
+            <button style={styles.proceedBtn} onClick={goToNextPhase}>{t("\u7EE7\u7EED \u2192")}</button>
           </div>
         </div>
       </div>
@@ -1664,12 +1667,12 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
       <div style={cpStyles.popup}>
         {/* Header: title + instruction */}
         <div style={cpStyles.header}>
-          <h2 style={cpStyles.title}>{phase.title || "\u8BE5\u6BB5\u8BD7\u753B"}</h2>
+          <h2 style={cpStyles.title}>{phase.title || t("\u8BE5\u6BB5\u8BD7\u753B")}</h2>
           {phase.narrative && <p style={cpStyles.narrative}>{phase.narrative}</p>}
           <div style={cpStyles.instructionRow}>
-            <span>{"\u{1F441} " + (phase.instruction || "\u70B9\u51FB\u753B\u4E2D\u4E0D\u540C\u4F4D\u7F6E\uFF0C\u542C\u7956\u7236\u5199\u4E0B\u5FC3\u4E2D\u53E5\u5B50")}</span>
+            <span>{"\u{1F441} " + (phase.instruction || t("\u70B9\u51FB\u753B\u4E2D\u4E0D\u540C\u4F4D\u7F6E\uFF0C\u542C\u7956\u7236\u5199\u4E0B\u5FC3\u4E2D\u53E5\u5B50"))}</span>
             <span style={cpStyles.progress}>
-              {"\u5DF2\u53D1\u73B0 "}<strong>{clicked.size}</strong>{" / "}{points.length}
+              {t("\u5DF2\u53D1\u73B0 ")}<strong>{clicked.size}</strong>{" / "}{points.length}
             </span>
           </div>
         </div>
@@ -1718,7 +1721,7 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
         {/* Progressive 春望 reveal */}
         {visibleLines > 0 && (
           <div style={cpStyles.poemBox}>
-            <div style={cpStyles.poemTitle}>{phase.poemTitle || "\u300A\u6625\u671B\u300B"}</div>
+            <div style={cpStyles.poemTitle}>{phase.poemTitle || t("\u300A\u6625\u671B\u300B")}</div>
             {poemLines.slice(0, visibleLines).map((ln, i) => (
               <div key={i} style={cpStyles.poemLine}>{ln}</div>
             ))}
@@ -1735,13 +1738,13 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
               onComplete();
             }}
             style={cpStyles.continueBtn}>
-            {"\u7EE7\u7EED \u2192"}
+            {t("\u7EE7\u7EED \u2192")}
           </button>
         ) : (
           <div style={cpStyles.hint}>
             {clicked.size < threshold
-              ? `\u518D\u70B9 ${threshold - clicked.size} \u5904\uFF0C${phase.poemTitle || "\u300A\u6625\u671B\u300B"}\u5C06\u7F13\u7F13\u6D6E\u73B0\u2026`
-              : "\u7EE7\u7EED\u70B9\u51FB\u672A\u53D1\u73B0\u7684\u4F4D\u7F6E\u2026"}
+              ? `\u518D\u70B9 ${threshold - clicked.size} \u5904\uFF0C${phase.poemTitle || t("\u300A\u6625\u671B\u300B")}\u5C06\u7F13\u7F13\u6D6E\u73B0\u2026`
+              : t("\u7EE7\u7EED\u70B9\u51FB\u672A\u53D1\u73B0\u7684\u4F4D\u7F6E\u2026")}
           </div>
         )}
       </div>
@@ -1755,7 +1758,7 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
           <div style={cpStyles.bubble} onClick={(e) => e.stopPropagation()}>
             {activePoint.label && <div style={cpStyles.bubbleLabel}>{activePoint.label}</div>}
             <div style={cpStyles.bubbleText}>{nb(activePoint.text)}</div>
-            <button onClick={() => setActivePoint(null)} style={cpStyles.bubbleClose}>{"\u77E5\u9053\u4E86"}</button>
+            <button onClick={() => setActivePoint(null)} style={cpStyles.bubbleClose}>{t("\u77E5\u9053\u4E86")}</button>
           </div>
         </div>
       )}
@@ -2191,9 +2194,9 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
         <h2 style={egStyles.title}>{"\u{1F6AA} \u51FA\u57CE\uFF1A\u907F\u5F00\u5B88\u536B"}</h2>
         {phase.narrative && <p style={egStyles.narrative}>{phase.narrative}</p>}
         <div style={egStyles.statusRow}>
-          <span>{"\u65B9\u5411\u952E / WASD / \u5C4F\u5E55\u6309\u952E / \u6ED1\u52A8\u68CB\u76D8 \u79FB\u52A8 \u00B7 \u6D45\u8272\uFF1D\u8857\u9053\u53EF\u8D70 \u00B7 \u6DF1\u8272\uFF1D\u574A\u5899\u4E0D\u53EF\u8D70 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u91D1\u5149\u95E8\u80DC\u5229"}</span>
-          <span style={{ color: "#DC3545" }}>{"\u88AB\u6293\uFF1A" + deaths}</span>
-          <button onClick={resetGame} style={egStyles.restartBtn}>{"\u91CD\u65B0\u5F00\u59CB"}</button>
+          <span>{t("\u65B9\u5411\u952E / WASD / \u5C4F\u5E55\u6309\u952E / \u6ED1\u52A8\u68CB\u76D8 \u79FB\u52A8 \u00B7 \u6D45\u8272\uFF1D\u8857\u9053\u53EF\u8D70 \u00B7 \u6DF1\u8272\uFF1D\u574A\u5899\u4E0D\u53EF\u8D70 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u91D1\u5149\u95E8\u80DC\u5229")}</span>
+          <span style={{ color: "#DC3545" }}>{t("\u88AB\u6293\uFF1A") + deaths}</span>
+          <button onClick={resetGame} style={egStyles.restartBtn}>{t("\u91CD\u65B0\u5F00\u59CB")}</button>
         </div>
 
         <div
@@ -2292,8 +2295,8 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
                     {gate}
                   </span>
                 )}
-                {isEnd && !arrow && <span style={{ fontSize: "clamp(7.2px, 0.625vw, 10.3px)", color: "#1B5E20", fontWeight: "bold" }}>{"\u51FA\u95E8"}</span>}
-                {isStart && !arrow && <span style={{ fontSize: "clamp(7.2px, 0.625vw, 10.3px)", color: "#E65100", fontWeight: "bold" }}>{"\u8D77\u70B9"}</span>}
+                {isEnd && !arrow && <span style={{ fontSize: "clamp(7.2px, 0.625vw, 10.3px)", color: "#1B5E20", fontWeight: "bold" }}>{t("\u51FA\u95E8")}</span>}
+                {isStart && !arrow && <span style={{ fontSize: "clamp(7.2px, 0.625vw, 10.3px)", color: "#E65100", fontWeight: "bold" }}>{t("\u8D77\u70B9")}</span>}
               </div>
             );
           })}
@@ -2366,10 +2369,10 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
         {won && (
           <>
             <div style={{ ...egStyles.win }}>
-              <strong>{"\u2713 \u51FA\u57CE\u6210\u529F\uFF01"}</strong>
+              <strong>{t("\u2713 \u51FA\u57CE\u6210\u529F\uFF01")}</strong>
               {phase.conclusion && <div style={{ marginTop: 6 }}>{phase.conclusion}</div>}
             </div>
-            <button style={egStyles.continueBtn} onClick={onComplete}>{"\u7EE7\u7EED \u2192"}</button>
+            <button style={egStyles.continueBtn} onClick={onComplete}>{t("\u7EE7\u7EED \u2192")}</button>
           </>
         )}
       </div>
@@ -4248,6 +4251,7 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
       return n;
     });
     setPicked(null);
+    playDrop();
   };
 
   // 「因为{s1}，{s2}，结果{s3}——所以{s4}。」→ 拆成文字段和槽位
@@ -4340,6 +4344,9 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
             </div>
           )}
         </div>
+
+        {/* 画作墙签：只有 src/data/artworks.json 里登记过的图才出现 */}
+        <ArtworkLabel src={phase.background} />
       </div>
     </div>
   );
@@ -4460,8 +4467,8 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
             <div key={s.id} style={cbStyles.row}>
               <div
                 onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (partById(id)?.slot === s.id) setFill((f) => ({ ...f, [s.id]: id })); }}
-                onClick={() => { if (picked && partById(picked)?.slot === s.id) { setFill((f) => ({ ...f, [s.id]: picked })); setPicked(null); } }}
+                onDrop={(e) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (partById(id)?.slot === s.id) { setFill((f) => ({ ...f, [s.id]: id })); playDrop(); } }}
+                onClick={() => { if (picked && partById(picked)?.slot === s.id) { setFill((f) => ({ ...f, [s.id]: picked })); setPicked(null); playDrop(); } }}
                 style={{
                   ...cbStyles.slot,
                   borderColor: fill[s.id] ? "#C9A86A" : "rgba(201,168,106,0.3)",
@@ -4533,6 +4540,9 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
             </div>
           )}
         </div>
+
+        {/* 画作墙签：只有 src/data/artworks.json 里登记过的图才出现 */}
+        <ArtworkLabel src={phase.background} />
       </div>
     </div>
   );
@@ -4612,6 +4622,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
       n[aid] = bid; return n;
     });
     setPicked(null);
+    playDrop();
   };
 
   return (
@@ -4692,6 +4703,9 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
             </>
           )}
         </div>
+
+        {/* 画作墙签：只有 src/data/artworks.json 里登记过的图才出现 */}
+        <ArtworkLabel src={phase.background} />
       </div>
     </div>
   );
@@ -5080,6 +5094,7 @@ function EchoPortalPhase({ phase, onComplete }) {
 
   const drop = useCallback(() => {
     setStage((s) => (s === "reality" ? "crossing" : s));
+    playDrop();
   }, []);
 
   useEffect(() => {
@@ -5191,6 +5206,9 @@ function EchoPortalPhase({ phase, onComplete }) {
             </button>
           </div>
         )}
+
+        {/* 画作墙签：只有 src/data/artworks.json 里登记过的图才出现 */}
+        <ArtworkLabel src={phase.comedyBackground || phase.background} />
       </div>
     </div>
   );
@@ -5261,8 +5279,14 @@ const epStyles = {
 // ============================================================
 // INFERNO PLACEMENT — 「但丁把他们放在哪儿了？」
 // ============================================================
-// phase.circles [{ id, name, label, y? }]  由浅到深
-// phase.souls   [{ id, name, portrait, metIn, metLabel, answer, verdict, hint }]
+// phase.circles [{ id, name, label, y?, outside? }]  由浅到深
+//   outside:true 的那一档不画进漏斗，另起一条放在下面——
+//   「不在书里」不是三界之一，它在这套道德地理之外。画成第四条带子就等于
+//   告诉玩家「还有第四界」，那是错的。
+// phase.note    题面下的一行前提（例：故事发生在 1300 年复活节那一周）。
+//   有了它「圭多不在书里」才是能推的，不是要玩家硬记。
+// phase.souls   [{ id, name, portrait, metIn, metLabel, relLabel, answer, verdict, hint }]
+//   metLabel 玩家真的见过他的那一幕；没见过的人用 relLabel 写他跟谁什么关系
 // 关键约束：souls 必须是玩家在前面现实场景里真的对过话的人（metLabel 会显示出来）。
 //
 // commit → contrast：提交之后不打 ✓✗。玩家自己的答案留在原地变成 ghost，
@@ -5272,6 +5296,8 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
   const cast = castFor(eventId);
   const [bioOf, setBioOf] = useState(null); // 正在看生平的 soul id
   const circles = phase.circles || [];
+  const realms = circles.filter((c) => !c.outside);   // 画进漏斗的三界
+  const outside = circles.filter((c) => c.outside);   // 「不在书里」这类，另起一条
   const souls = phase.souls || [];
   const [placed, setPlaced] = useState({});     // soulId → circleId
   const [picked, setPicked] = useState(null);   // 触屏：拿起的 soul
@@ -5282,6 +5308,7 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
     if (submitted || !soulId) return;
     setPlaced((p) => ({ ...p, [soulId]: circleId }));
     setPicked(null);
+    playDrop();
   }, [submitted]);
 
   const allPlaced = souls.length > 0 && souls.every((s) => placed[s.id]);
@@ -5301,6 +5328,8 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.45)" }} />
 
         <div style={ipStyles.question}>{nb(phase.question || t("他们被放在了哪一层？"))}</div>
+        {/* 题面下的前提。「圭多不在书里」全靠这一行才推得出来，不是要玩家硬记 */}
+        {phase.note && <div style={ipStyles.note}>{nb(phase.note)}</div>}
 
         {/* 左：待安放的亡魂（都是刚刚见过的人） */}
         <div style={ipStyles.tray}>
@@ -5319,7 +5348,9 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
               {s.portrait && <div style={{ ...ipStyles.soulFace, backgroundImage: `url(${asset(s.portrait)})` }} />}
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={ipStyles.soulName}>{nb(s.name)}</div>
-                {s.metLabel && <div style={ipStyles.soulMet}>{t("见过 · ") + s.metLabel}</div>}
+                {s.metLabel
+                  ? <div style={ipStyles.soulMet}>{t("见过 · ") + s.metLabel}</div>
+                  : s.relLabel && <div style={ipStyles.soulMet}>{nb(s.relLabel)}</div>}
               </div>
               {/* 拖之前先查生平。放在卡片右侧，不抢「点一下=拿起」这个手势 */}
               {(cast[s.id] || s.bio) && (
@@ -5338,8 +5369,8 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
 
         {/* 右：地狱漏斗 */}
         <div style={ipStyles.funnel}>
-          {circles.map((c, i) => {
-            const w = 96 - (circles.length > 1 ? (i * 46) / (circles.length - 1) : 0);
+          {realms.map((c, i) => {
+            const w = 96 - (realms.length > 1 ? (i * 46) / (realms.length - 1) : 0);
             const here = soulsIn(c.id);
             return (
               <div
@@ -5391,6 +5422,56 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
           })}
         </div>
 
+        {/* 「不在书里」：不在漏斗里，另起一条贴在下面。
+            画成第四条带子就等于告诉玩家「还有第四界」——那是错的。 */}
+        {outside.map((c) => {
+          const here = soulsIn(c.id);
+          return (
+            <div
+              key={c.id}
+              role="button"
+              tabIndex={submitted ? -1 : 0}
+              aria-label={c.name}
+              onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && picked) { e.preventDefault(); place(picked, c.id); } }}
+              onDragOver={(e) => { e.preventDefault(); setOverCircle(c.id); }}
+              onDragLeave={() => setOverCircle(null)}
+              onDrop={(e) => { e.preventDefault(); setOverCircle(null); place(e.dataTransfer.getData("text/plain"), c.id); }}
+              onClick={() => picked && place(picked, c.id)}
+              style={{
+                ...ipStyles.outsideBand,
+                backgroundColor: overCircle === c.id ? "rgba(201,168,106,0.20)"
+                  : (picked && !submitted ? "rgba(201,168,106,0.09)" : "rgba(8,6,4,0.55)"),
+                borderColor: overCircle === c.id ? "#C9A86A" : "rgba(201,168,106,0.3)",
+                cursor: picked && !submitted ? "pointer" : "default",
+              }}
+            >
+              <div style={ipStyles.bandLabel}>
+                <span style={ipStyles.bandName}>{nb(c.name)}</span>
+                {c.label && <span style={ipStyles.bandSin}>{nb(c.label)}</span>}
+              </div>
+              <div style={ipStyles.bandSouls}>
+                {here.map((s) => (
+                  <span
+                    key={"mine-" + s.id}
+                    onClick={(e) => { e.stopPropagation(); if (!submitted) setPlaced((p) => { const n = { ...p }; delete n[s.id]; return n; }); }}
+                    style={{ ...ipStyles.chip, ...(submitted ? ipStyles.chipGhost : null),
+                      cursor: submitted ? "default" : "pointer" }}
+                  >
+                    {submitted && <span style={ipStyles.chipWho}>{t("你")}</span>}
+                    {nb(s.name)}
+                  </span>
+                ))}
+                {submitted && souls.filter((s) => s.answer === c.id).map((s) => (
+                  <span key={"dante-" + s.id} style={{ ...ipStyles.chip, ...ipStyles.chipDante }}>
+                    <span style={{ ...ipStyles.chipWho, color: "#3A2E20", opacity: 0.65 }}>{t("但丁")}</span>
+                    {nb(s.name)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
         {/* 提交 / 判词 */}
         {!submitted && (
           <button
@@ -5439,7 +5520,7 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
         )}
 
         {!submitted && (
-          <div style={epStyles.tapHint}>
+          <div style={{ ...epStyles.tapHint, right: "26%", padding: "0 3%" }}>
             {t("点「生平」先了解这个人；拖到对应的一层，或先点人再点层（点已放的名字可取回）")}
           </div>
         )}
@@ -5461,6 +5542,9 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
             />
           );
         })()}
+
+        {/* 画作墙签：只有 src/data/artworks.json 里登记过的图才出现 */}
+        <ArtworkLabel src={phase.background} />
       </div>
     </div>
   );
@@ -5468,12 +5552,12 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
 
 const ipStyles = {
   question: {
-    position: "absolute", top: "5%", left: 0, right: 0, textAlign: "center",
+    position: "absolute", top: "4%", left: 0, right: 0, textAlign: "center",
     color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 3,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)", zIndex: 20,
   },
   tray: {
-    position: "absolute", left: "3%", top: "16%", width: "27%", maxHeight: "74%",
+    position: "absolute", left: "3%", top: "17%", width: "27%", maxHeight: "70%",
     overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, zIndex: 20,
   },
   soulCard: {
@@ -5496,9 +5580,23 @@ const ipStyles = {
   soulMet: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#8A7A5E", marginTop: 2, lineHeight: 1.4 },
   trayEmpty: { color: "rgba(245,230,211,0.6)", fontSize: "clamp(11.5px, 0.833vw, 13.8px)", letterSpacing: 2 },
   funnel: {
-    position: "absolute", right: "3%", top: "15%", width: "62%", height: "72%",
+    position: "absolute", right: "3%", top: "17%", width: "62%",
+    // 有「书外」那一条时收一点，把下面让出来
+    height: "56%",
     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between",
     zIndex: 20,
+  },
+  note: {
+    position: "absolute", top: "10.5%", left: 0, right: 0, textAlign: "center",
+    color: "#C9A86A", fontSize: "clamp(12px, 0.86vw, 14px)", letterSpacing: 1,
+    textShadow: "0 2px 8px rgba(0,0,0,0.9)", zIndex: 20,
+  },
+  // 「不在书里」：虚线、离漏斗有一段空白，看起来就不属于那套地理
+  outsideBand: {
+    position: "absolute", right: "3%", top: "76%", width: "62%", minHeight: 56,
+    border: "1px dashed", borderRadius: 4,
+    display: "flex", alignItems: "center", gap: 10, padding: "6px 12px", zIndex: 20,
+    transition: "background-color 200ms ease, border-color 200ms ease",
   },
   band: {
     minHeight: 0, flex: 1, margin: "3px 0",
@@ -5662,6 +5760,9 @@ function ComedyEncounterPhase({ phase, eventId, onComplete }) {
             </button>
           </div>
         )}
+
+        {/* 画作墙签：只有 src/data/artworks.json 里登记过的图才出现 */}
+        <ArtworkLabel src={phase.background} />
       </div>
     </div>
   );

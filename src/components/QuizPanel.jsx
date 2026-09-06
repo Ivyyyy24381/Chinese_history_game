@@ -82,10 +82,10 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
           </div>
           <p style={{ textAlign: "center", color: "#666", margin: "16px 0" }}>
             {passed
-              ? "\u4f60\u5df2\u638c\u63e1\u300c" +
+              ? t("\u4f60\u5df2\u638c\u63e1\u300c") +
                 stage.period +
-                "\u300d\u7684\u5386\u53f2\u77e5\u8bc6\uff01"
-              : "\u518d\u56de\u987e\u4e00\u4e0b\u8fd9\u6bb5\u5386\u53f2\u5427~"}
+                t("\u300d\u7684\u5386\u53f2\u77e5\u8bc6\uff01")
+              : t("\u518d\u56de\u987e\u4e00\u4e0b\u8fd9\u6bb5\u5386\u53f2\u5427~")}
           </p>
           <button
             style={{
@@ -98,7 +98,7 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
               onClose();
             }}
           >
-            {passed ? "\u7ee7\u7eed\u65c5\u7a0b \u2192" : "\u5173\u95ed"}
+            {passed ? t("\u7ee7\u7eed\u65c5\u7a0b \u2192") : t("\u5173\u95ed")}
           </button>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
               type="text"
               value={fillInput}
               onChange={(e) => setFillInput(e.target.value)}
-              placeholder={"\u8bf7\u8f93\u5165\u7b54\u6848..."}
+              placeholder={t("\u8bf7\u8f93\u5165\u7b54\u6848...")}
               style={{
                 ...styles.fillInput,
                 borderColor: showResult
@@ -182,12 +182,12 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
                 style={{ ...styles.submitBtn, backgroundColor: stage.color }}
                 onClick={handleFill}
               >
-                {"\u786e\u8ba4"}
+                {t("\u786e\u8ba4")}
               </button>
             )}
             {showResult && fillInput.trim() !== current.answer && (
               <p style={{ color: "#28A745", marginTop: 8 }}>
-                {"\u6b63\u786e\u7b54\u6848\uff1a" + current.answer}
+                {t("\u6b63\u786e\u7b54\u6848\uff1a") + current.answer}
               </p>
             )}
           </div>
@@ -202,8 +202,8 @@ export default function QuizPanel({ stage, awardScore, onComplete, onClose }) {
         {showResult && (
           <button style={{ ...styles.quizBtn, backgroundColor: stage.color }} onClick={nextQuestion}>
             {qIndex + 1 >= quizzes.length
-              ? "\u67e5\u770b\u6210\u7ee9 \u2192"
-              : "\u4e0b\u4e00\u9898 \u2192"}
+              ? t("\u67e5\u770b\u6210\u7ee9 \u2192")
+              : t("\u4e0b\u4e00\u9898 \u2192")}
           </button>
         )}
       </div>

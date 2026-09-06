@@ -73,9 +73,9 @@ export default function DialogueBox({ dialogues, onComplete }) {
           {/* Continue indicator */}
           <div style={styles.continueIndicator}>
             {currentIndex < dialogues.length - 1 ? (
-              <span style={styles.clickPrompt}>{"\u2193 \u70b9\u51fb\u7ee7\u7eed"}</span>
+              <span style={styles.clickPrompt}>{t("\u2193 \u70b9\u51fb\u7ee7\u7eed")}</span>
             ) : (
-              <span style={styles.clickPrompt}>{"\u2713 \u7ed3\u675f"}</span>
+              <span style={styles.clickPrompt}>{t("\u2713 \u7ed3\u675f")}</span>
             )}
           </div>
         </div>

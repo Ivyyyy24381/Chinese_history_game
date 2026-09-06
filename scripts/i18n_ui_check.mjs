@@ -18,11 +18,15 @@ const files = [join(ROOT, "src/App.jsx"),
   ...readdirSync(join(ROOT, "src/components")).filter((f) => f.endsWith(".jsx") && !SKIP.has(f))
     .map((f) => join(ROOT, "src/components", f))];
 
+// JS 字符串字面量 → 真实字符（\uXXXX / \n / \" 等）
+const unescapeLiteral = (raw) => { try { return JSON.parse(`"${raw}"`); } catch { return raw; } };
+
 const missing = new Map();
 for (const f of files) {
   const src = readFileSync(f, "utf8");
   for (const m of src.matchAll(/\bt\("((?:[^"\\]|\\.)*)"\)/g)) {
-    const arg = m.group ? m.group(1) : m[1];
+    // 源码里有不少中文写成 \uXXXX 转义，先还原成真正的字符再查
+    const arg = unescapeLiteral(m[1]);
     if (keys.has(arg) || byZh.has(arg)) continue;
     const line = src.slice(0, m.index).split("\n").length;
     if (!missing.has(arg)) missing.set(arg, []);
@@ -32,10 +36,13 @@ for (const f of files) {
 
 // 反过来：ui.zh.json 里登记了但没人用的（不是错，只是提醒）
 const used = new Set();
-for (const f of files) for (const m of readFileSync(f, "utf8").matchAll(/\bt\("((?:[^"\\]|\\.)*)"\)/g)) used.add(m[1]);
+for (const f of files) for (const m of readFileSync(f, "utf8").matchAll(/\bt\("((?:[^"\\]|\\.)*)"\)/g)) used.add(unescapeLiteral(m[1]));
 const unused = Object.entries(ZH).filter(([k, v]) => !used.has(k) && !used.has(v)).map(([k]) => k);
 
-const untranslated = Object.keys(ZH).filter((k) => !EN[k] || (CJK.test(EN[k]) && EN[k] === ZH[k]));
+// EN 里显式写成 "" 的是「英文这里不需要这个词」（如中文量词「题」），不算漏译
+const untranslated = Object.keys(ZH).filter(
+  (k) => EN[k] === undefined || (CJK.test(EN[k]) && EN[k] === ZH[k])
+);
 
 console.log(`ui.zh.json ${Object.keys(ZH).length} 条 · ui.en.json ${Object.keys(EN).length} 条`);
 console.log(`没登记（会一直显示中文）：${missing.size}`);

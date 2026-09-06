@@ -1,4 +1,6 @@
+import { useState as useStateAbout } from "react";
 import LangSwitch from "../i18n/LangSwitch";
+import AboutPanel from "./AboutPanel";
 import { useT } from "../i18n/ui";
 import { useState } from "react";
 import { asset } from "../utils/asset";
@@ -28,6 +30,7 @@ export default function CharacterSelect({
   onRecap,
 }) {
   const t = useT();
+  const [showAbout, setShowAbout] = useStateAbout(false);
   const [selectedId, setSelectedId] = useState(null);
   const [hoverId, setHoverId] = useState(null);
   // 名字书法图缺失时退回文字渲染
@@ -213,6 +216,13 @@ export default function CharacterSelect({
           )}
         </div>
 
+        {/* 关于 / 致谢 —— 不起眼，但必须有：
+            game-icons.net 是 CC BY 3.0，署名要对玩家可见，写在 CREDITS.md 里不算 */}
+        <button style={styles.aboutLink} onClick={() => setShowAbout(true)}>
+          {t("about.open")}
+        </button>
+        {showAbout && <AboutPanel onClose={() => setShowAbout(false)} />}
+
         {/* ── 成就栏 ── */}
         <div style={styles.achievementBar}>
           <span style={styles.achievementHeading}>
@@ -237,6 +247,12 @@ export default function CharacterSelect({
 }
 
 const styles = {
+  aboutLink: {
+    position: "absolute", right: 14, bottom: 10, zIndex: 30,
+    minHeight: 44, padding: "0 14px", borderRadius: 22,
+    border: "none", background: "transparent", cursor: "pointer", fontFamily: "inherit",
+    color: COLOR.faint, fontSize: "clamp(12px, 0.85vw, 13.5px)", letterSpacing: 1,
+  },
   screen: {
     position: "relative",
     minHeight: "var(--vh100)",

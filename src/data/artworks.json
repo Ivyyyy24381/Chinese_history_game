@@ -1,0 +1,32 @@
+{
+  "_note": "画作墙签。按资产路径查——任何 phase 用到这张图，签自动出现（见 src/components/ArtworkLabel.jsx）。以后换图只改这张表。元数据抄自 Wikimedia Commons 文件页，没在文件页上确认的字段（收藏机构、技法）宁可不写，也不凭印象填。",
+  "/assets/dante/comedy/backgrounds/moral_geography.webp": {
+    "title": "地狱图（La mappa dell'Inferno）",
+    "artist": "桑德罗·波提切利",
+    "year": "约 1480—1490 年",
+    "holder": "梵蒂冈宗座图书馆",
+    "source": "Wikimedia Commons",
+    "license": "公有领域"
+  },
+  "/assets/dante/comedy/backgrounds/inferno_xv_sand.webp": {
+    "title": "《地狱》第十五歌 · 布鲁内托",
+    "artist": "古斯塔夫·多雷",
+    "year": "1861 年（《地狱》插图初版）",
+    "source": "Wikimedia Commons",
+    "license": "公有领域"
+  },
+  "/assets/dante/comedy/backgrounds/inferno_gate.webp": {
+    "title": "《地狱》第三歌 · 地狱之门",
+    "artist": "古斯塔夫·多雷",
+    "year": "1861 年（《地狱》插图初版）",
+    "source": "Wikimedia Commons",
+    "license": "公有领域"
+  },
+  "/assets/dante/comedy/backgrounds/selva_canto1.webp": {
+    "title": "《地狱》第一歌 · 幽暗森林",
+    "artist": "古斯塔夫·多雷",
+    "year": "1861 年（《地狱》插图初版）",
+    "source": "Wikimedia Commons",
+    "license": "公有领域"
+  }
+}
