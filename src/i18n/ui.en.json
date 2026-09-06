@@ -366,5 +366,10 @@
   "phase.matching": "Matching",
   "wip.dialogueBranch": "(Dialogue branching is still being built — the conversation tree will show up here.)",
   "wip.minigame": "(Mini-game still being built…)",
-  "wip.narration": "(No narration yet)"
+  "wip.narration": "(No narration yet)",
+  "map.nextStop": "Next stop: ",
+  "clicks.morePrefix": "Find ",
+  "clicks.moreMid": " more, and ",
+  "clicks.moreTail": " will slowly appear…",
+  "escape.title": "🚪 Out of the city: dodge the guards"
 }

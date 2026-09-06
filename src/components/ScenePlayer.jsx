@@ -665,7 +665,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           {/* Exam panel on the right */}
           <div style={styles.examPanelRight}>
             <div style={styles.examProgress}>
-              {t("\u7B2C ")}{examIndex + 1}{t(" \u9898 / \u5171 ")}{currentPhase.questions.length}{t(" \u9898")}
+              {t("trust.roundPrefix")}{examIndex + 1}{t("quiz.qOfTotal")}{currentPhase.questions.length}{t("quiz.qUnit")}
             </div>
 
             <h3 style={styles.examQuestion}>{q.question}</h3>
@@ -1073,7 +1073,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     ? currentPhase.instruction
                     : walkingTo !== null
                       ? `\u8D76\u8DEF\u4E2D\u2026\u2026`
-                      : `\u4E0B\u4E00\u7AD9\uFF1A${waypoints[currentTargetIdx]?.name || ""}`}
+                      : `${t("map.nextStop")}${t(waypoints[currentTargetIdx]?.name || "")}`}
                 </span>
                 <span style={styles.talkCount}>{t("\u884C\u7A0B ") + visitedWaypoints.size + "/" + waypoints.length}</span>
               </div>
@@ -1181,7 +1181,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                       boxShadow: "0 2px 8px rgba(70,55,35,0.25)",
                       pointerEvents: "none",
                     }}>
-                      {(wp.name || "") + (visitedWaypoints.size === 0 && idx === 0 ? t(" \u00B7 \u70B9\u51FB\u51FA\u53D1") : "")}
+                      {t(wp.name || "") + (visitedWaypoints.size === 0 && idx === 0 ? t("scene.departHint") : "")}
                     </div>
                   )}
                 </div>
@@ -1743,7 +1743,7 @@ function ClickPointsPhase({ phase, onScore, onComplete }) {
         ) : (
           <div style={cpStyles.hint}>
             {clicked.size < threshold
-              ? `\u518D\u70B9 ${threshold - clicked.size} \u5904\uFF0C${phase.poemTitle || t("\u300A\u6625\u671B\u300B")}\u5C06\u7F13\u7F13\u6D6E\u73B0\u2026`
+              ? `${t("clicks.morePrefix")}${threshold - clicked.size}${t("clicks.moreMid")}${t(phase.poemTitle || t("poem.chunwang"))}${t("clicks.moreTail")}`
               : t("\u7EE7\u7EED\u70B9\u51FB\u672A\u53D1\u73B0\u7684\u4F4D\u7F6E\u2026")}
           </div>
         )}
@@ -2191,7 +2191,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
   return (
     <div style={egStyles.overlay}>
       <div style={egStyles.popup}>
-        <h2 style={egStyles.title}>{"\u{1F6AA} \u51FA\u57CE\uFF1A\u907F\u5F00\u5B88\u536B"}</h2>
+        <h2 style={egStyles.title}>{t("escape.title")}</h2>
         {phase.narrative && <p style={egStyles.narrative}>{phase.narrative}</p>}
         <div style={egStyles.statusRow}>
           <span>{t("\u65B9\u5411\u952E / WASD / \u5C4F\u5E55\u6309\u952E / \u6ED1\u52A8\u68CB\u76D8 \u79FB\u52A8 \u00B7 \u6D45\u8272\uFF1D\u8857\u9053\u53EF\u8D70 \u00B7 \u6DF1\u8272\uFF1D\u574A\u5899\u4E0D\u53EF\u8D70 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u91D1\u5149\u95E8\u80DC\u5229")}</span>

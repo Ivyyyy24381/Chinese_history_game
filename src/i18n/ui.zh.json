@@ -366,5 +366,10 @@
   "phase.matching": "连线题",
   "wip.dialogueBranch": "（对话分支功能开发中……多轮对话树将在此展示）",
   "wip.minigame": "（小游戏功能开发中……）",
-  "wip.narration": "（暂无叙事内容）"
+  "wip.narration": "（暂无叙事内容）",
+  "map.nextStop": "下一站：",
+  "clicks.morePrefix": "再点 ",
+  "clicks.moreMid": " 处，",
+  "clicks.moreTail": "将缓缓浮现…",
+  "escape.title": "🚪 出城：避开守卫"
 }
