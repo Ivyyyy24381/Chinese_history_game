@@ -1262,7 +1262,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F4AC} \u5BF9\u8BDD: " + (currentPhase.branchCharacter || "")}</h2>
             {currentPhase.narrative && <p style={styles.choiceNarrative}>{currentPhase.narrative}</p>}
-            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09")}</p>
+            <p style={{ color: "#CFC6B4", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09")}</p>
             {(currentPhase.dialogueTree || []).map((node, i) => (
               <div key={i} style={{ ...styles.explanationBox, marginBottom: 8 }}>
                 <strong>{node.speaker || t("\u65C1\u767D")}: </strong>{node.text}
@@ -1290,7 +1290,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
         <div style={styles.transitionOverlay}>
           <div style={{ maxWidth: 600, width: "90%", maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto" }}>
             {slides.length === 0 ? (
-              <p style={{ color: "#AAA", textAlign: "center" }}>{t("\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09")}</p>
+              <p style={{ color: "rgba(240,230,214,0.9)", textAlign: "center" }}>{t("\uFF08\u6682\u65E0\u53D9\u4E8B\u5185\u5BB9\uFF09")}</p>
             ) : slides.map((slide, i) => (
               <div
                 key={i}
@@ -1423,7 +1423,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F3AE} " + (typeLabel[currentPhase.minigameType] || t("\u5C0F\u6E38\u620F"))}</h2>
             {currentPhase.minigameInstruction && <p style={styles.choiceNarrative}>{currentPhase.minigameInstruction}</p>}
-            <p style={{ color: "#999", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09")}</p>
+            <p style={{ color: "#CFC6B4", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09")}</p>
             {items.length > 0 && (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
                 {items.map((item, i) => (
@@ -1553,7 +1553,7 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
         <h2 style={{ margin: "0 0 4px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>
           {t("scene.puzzleTitleFull")}<span style={{ color: "#888", fontSize: "clamp(12.5px, 0.972vw, 16.1px)" }}>{`(${pIdx + 1}/${puzzles.length})`}</span>
         </h2>
-        {currentP.label && <p style={{ color: "#666", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", margin: "4px 0 12px" }}>{currentP.label}</p>}
+        {currentP.label && <p style={{ color: "#3A2E20", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", margin: "4px 0 12px" }}>{currentP.label}</p>}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <span style={{ fontSize: "clamp(12px, 0.903vw, 14.9px)", color: timeLeft <= 30 ? "#DC3545" : "#666" }}>
             {t("⏱ 剩余 ")}{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
@@ -1592,7 +1592,7 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
         {timeLeft === 0 && !solved && (
           <div style={{ ...styles.explanationBox, backgroundColor: "#FFF3CD", textAlign: "center" }}>
             <strong>{t("⏱ 时间到")}</strong>
-            <div style={{ marginTop: 6, fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#666" }}>{t("原句：") + currentP.solution}</div>
+            <div style={{ marginTop: 6, fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#3A2E20" }}>{t("原句：") + currentP.solution}</div>
           </div>
         )}
         {(solved || timeLeft === 0) && (
@@ -1953,7 +1953,7 @@ const cpStyles = {
     border: "2px solid #D4A574",
     cursor: "default",
   },
-  bubbleLabel: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#999", marginBottom: 8, letterSpacing: 1 },
+  bubbleLabel: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#CFC6B4", marginBottom: 8, letterSpacing: 1 },
   bubbleText: {
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)", color: "#3E2723", lineHeight: 1.8, letterSpacing: 1,
     fontFamily: "var(--font-body)",
@@ -2291,7 +2291,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
                   </span>
                 )}
                 {gate && (
-                  <span style={{ position: "absolute", top: 1, left: 2, fontSize: "clamp(12px, 0.625vw, 12px)", color: "#666", whiteSpace: "nowrap" }}>
+                  <span style={{ position: "absolute", top: 1, left: 2, fontSize: "clamp(12px, 0.625vw, 12px)", color: "#3A2E20", whiteSpace: "nowrap" }}>
                     {gate}
                   </span>
                 )}
@@ -2427,7 +2427,7 @@ const egStyles = {
   title: { margin: "0 0 4px", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", color: "#3E2723", letterSpacing: 2 },
   narrative: { margin: "0 0 8px", fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#6B5340" },
   statusRow: {
-    fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#666", marginBottom: 10,
+    fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#3A2E20", marginBottom: 10,
     display: "flex", gap: 16, justifyContent: "center", alignItems: "center",
     flexWrap: "wrap",
   },
@@ -4421,7 +4421,7 @@ const ebStyles = {
     maxWidth: 880, fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 2.6, color: "#D8C8A8",
     letterSpacing: 1, textAlign: "left",
   },
-  glue: { color: "#A8998A" },
+  glue: { color: "#D8CDB8" },
   slot: {
     display: "inline-block", minWidth: 128, padding: "3px 12px", margin: "0 4px",
     border: "1px dashed", borderRadius: 6, cursor: "pointer",
@@ -4627,7 +4627,7 @@ const cbStyles = {
     flex: "0 0 auto", minWidth: 210, padding: "8px 14px", border: "1.5px dashed", borderRadius: 8,
     textAlign: "left", cursor: "pointer", transition: "border-color 180ms ease, background-color 180ms ease",
   },
-  slotLabel: { color: "#8A7A5E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 3 },
+  slotLabel: { color: "#C4B492", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 3 },
   slotText: { color: "#F5E6D3", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.6, marginTop: 3 },
   parts: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1, minWidth: 220, justifyContent: "flex-start" },
   part: {
@@ -5280,7 +5280,7 @@ const epStyles = {
   },
   manuscriptHint: {
     position: "absolute", left: 0, right: 0, bottom: 8, textAlign: "center",
-    color: "#6B5340", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 4,
+    color: "#4A3826", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 4,
   },
   token: {
     position: "absolute", left: "6%", bottom: "12%",
@@ -5298,7 +5298,7 @@ const epStyles = {
     color: "#FCF8EE", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 0,
   },
   tokenBody: { minWidth: 0 },
-  tokenKind: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#9A8B72", letterSpacing: 3 },
+  tokenKind: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#7A6B52", letterSpacing: 3 },
   tokenName: { fontSize: "clamp(15px, 1.32vw, 22px)", color: "#2B2118", letterSpacing: 2 },
   tokenDetail: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#7A6A50", marginTop: 3, lineHeight: 1.5 },
   tapHint: {
@@ -5619,10 +5619,10 @@ const ipStyles = {
   bioBtn: {
     flexShrink: 0, alignSelf: "center", padding: "4px 9px", borderRadius: 12,
     border: "1px solid rgba(138,109,59,0.45)", backgroundColor: "rgba(201,168,106,0.16)",
-    color: "#6B5340", cursor: "pointer", fontFamily: "inherit",
+    color: "#5A4632", cursor: "pointer", fontFamily: "inherit",
     fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 1, lineHeight: 1.4,
   },
-  soulMet: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#8A7A5E", marginTop: 2, lineHeight: 1.4 },
+  soulMet: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#6A5B41", marginTop: 2, lineHeight: 1.4 },
   trayEmpty: { color: "rgba(245,230,211,0.6)", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 2 },
   funnel: {
     position: "absolute", right: "3%", top: "17%", width: "62%",
@@ -5651,7 +5651,7 @@ const ipStyles = {
   },
   bandLabel: { flexShrink: 0, display: "flex", flexDirection: "column", minWidth: "30%" },
   bandName: { color: "#E8D9BE", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2 },
-  bandSin: { color: "#A89968", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1 },
+  bandSin: { color: "#CBBC9E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1 },
   bandSouls: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1 },
   chip: {
     padding: "3px 10px", borderRadius: 12,
@@ -6141,19 +6141,27 @@ const styles = {
   // Transition
   transitionOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-    // Lighter mask so the scene background stays visible during transitions.
-    backgroundColor: "rgba(0,0,0,0.45)",
+    // 0.45 太薄：金字压在亮底图上实测 2.2:1（要求 3:1）。压到 0.58，
+    // 底图仍然透得出来，但文字站得住。
+    backgroundColor: "rgba(0,0,0,0.58)",
   },
   transitionCard: {
-    textAlign: "center", cursor: "pointer", padding: 40,
+    textAlign: "center", cursor: "pointer", padding: "48px 56px",
     maxWidth: 760,
+    // 不给文字套框——用一团 radial 暖光把它从底图里托出来，
+    // 光收得比内边距紧，碰到方角之前就淡尽（theme.js 的 halo 手法）。
+    background: "radial-gradient(ellipse at center, rgba(10,7,4,0.62) 0%, rgba(10,7,4,0.42) 52%, transparent 78%)",
   },
   transitionText: {
     color: "#F4D03F", fontSize: "clamp(16.0px, 1.389vw, 23.0px)", letterSpacing: 3, lineHeight: 2,
     marginBottom: 16,
     textShadow: "0 1px 6px rgba(0,0,0,0.9)", // keep readable over the lighter mask
   },
-  clickHint: { color: "#AAA", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginTop: 12 },
+  // #AAA 在这层蒙版上只有 1.8:1，等于看不见。换成浅米色 + 阴影。
+  clickHint: {
+    color: "rgba(240,230,214,0.92)", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginTop: 12,
+    textShadow: "0 1px 5px rgba(0,0,0,0.9)",
+  },
   // Examiner intro
   examIntroCard: {
     display: "flex", flexDirection: "column", alignItems: "center",
@@ -6272,7 +6280,7 @@ const styles = {
     borderRadius: 6, marginBottom: 16, display: "inline-block", fontSize: "clamp(12px, 0.903vw, 14.9px)",
   },
   examinerName: { fontWeight: "bold" },
-  examProgress: { fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#999", marginBottom: 16 },
+  examProgress: { fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#CFC6B4", marginBottom: 16 },
   examQuestion: { fontSize: "clamp(13.6px, 1.181vw, 19.5px)", lineHeight: 1.6, marginBottom: 20, whiteSpace: "pre-wrap" },
   examOptions: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 },
   examOption: {
@@ -6291,7 +6299,7 @@ const styles = {
     border: "none", borderRadius: 6, cursor: "pointer", fontWeight: "bold",
   },
   fillPassage: {
-    fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 2.2, color: "#333",
+    fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 2.2, color: "#231C12",
     marginBottom: 16, whiteSpace: "pre-wrap",
     fontFamily: "var(--font-body)",
   },
@@ -6308,7 +6316,7 @@ const styles = {
   fillChip: {
     padding: "10px 20px", minHeight: 42, backgroundColor: "#FDF8F0",
     border: "2px solid #D4A574", borderRadius: 8,
-    fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold", color: "#5D4E37",
+    fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold", color: "#3E3323",
     cursor: "grab", userSelect: "none",
     fontFamily: "var(--font-body)",
     transition: "all 0.2s",
@@ -6326,8 +6334,8 @@ const styles = {
   examResultTitle: { marginBottom: 16 },
   examScoreDisplay: { marginBottom: 16 },
   examScoreBig: { fontSize: "clamp(38.4px, 3.333vw, 55.2px)", fontWeight: "bold", color: "#333" },
-  examScoreTotal: { fontSize: "clamp(19.2px, 1.667vw, 27.6px)", color: "#999" },
-  examResultNote: { color: "#999", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginBottom: 20 },
+  examScoreTotal: { fontSize: "clamp(19.2px, 1.667vw, 27.6px)", color: "#CFC6B4" },
+  examResultNote: { color: "#CFC6B4", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginBottom: 20 },
   // Forced choice
   choiceOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
@@ -6335,7 +6343,7 @@ const styles = {
   },
   tapHint: {
     fontSize: "clamp(12px, 0.833vw, 13.8px)",
-    color: "#999",
+    color: "#CFC6B4",
     marginTop: 6,
     textAlign: "center",
   },
@@ -6376,7 +6384,7 @@ const styles = {
   },
   poemTitle: { margin: "0 0 12px", color: "#8B6914", fontSize: "clamp(12.0px, 1.042vw, 17.2px)" },
   poemContent: {
-    margin: 0, fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 2, color: "#5D4E37",
+    margin: 0, fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 2, color: "#3E3323",
     fontFamily: "var(--font-body)",
     whiteSpace: "pre-wrap", textAlign: "center",
   },
