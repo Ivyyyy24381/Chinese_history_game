@@ -147,33 +147,39 @@
       "options": [
         {
           "id": "latin",
-          "text": "拉丁文——学者的语言，最体面",
+          "text": "学者的语言，最体面",
           "correct": false,
           "response": {
             "speaker": "brunetto",
             "speakerName": "布鲁内托",
             "text": "体面。可你母亲读不了，你邻居读不了。你要写给谁看？"
-          }
+          },
+          "icon": "codex",
+          "caption": "拉丁文"
         },
         {
           "id": "french",
-          "text": "法文——像老师那样，传得远",
+          "text": "像老师那样，传得远",
           "correct": false,
           "response": {
             "speaker": "brunetto",
             "speakerName": "布鲁内托",
             "text": "我就是这么选的。读的人确实多。\n……只是，那不是我出生时说的话。"
-          }
+          },
+          "icon": "letters",
+          "caption": "法文"
         },
         {
           "id": "volgare",
-          "text": "俗语——我在佛罗伦萨街上学会的那种话",
+          "text": "我在佛罗伦萨街上学会的那种话",
           "correct": true,
           "response": {
             "speaker": "dante",
             "speakerName": "但丁",
             "text": "如果一样东西要活得比我久，它得用活着的语言写。\n拉丁文是死的，法文不是我的。\n我要用我母亲教我的那种话，写一本谁都能读的书。"
-          }
+          },
+          "icon": "manuscript",
+          "caption": "俗语"
         }
       ],
       "conclusion": {

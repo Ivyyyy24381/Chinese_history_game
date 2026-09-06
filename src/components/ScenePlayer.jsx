@@ -797,19 +797,34 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
             )}
             <h3 style={styles.choiceQuestion}>{currentPhase.question}</h3>
 
-            {!choiceCorrect && (
-              <div style={styles.choiceOptions}>
-                {currentPhase.options.map((opt) => (
-                  <button
-                    key={opt.id}
-                    style={styles.choiceBtn}
-                    onClick={() => handleChoice(opt)}
-                  >
-                    {nb(opt.text)}
-                  </button>
-                ))}
-              </div>
-            )}
+            {!choiceCorrect && (() => {
+              // 有图标的选项渲染成「画面卡」：大图标 + 短标题 + 小字正文。
+              // 「能画就别写」——但不生成图片：图标是 icons.js 里 game-icons.net
+              // 的 SVG path，一个约 1KB，随 CSS 改色（署名见「关于/致谢」）。
+              // 一组里只要有一个选项带 icon，整组就走卡片版式，免得半图半字。
+              const asCards = currentPhase.options.some((o) => o.icon);
+              return (
+                <div style={asCards ? styles.choiceCards : styles.choiceOptions}>
+                  {currentPhase.options.map((opt) => (
+                    <button
+                      key={opt.id}
+                      style={asCards ? styles.choiceCard : styles.choiceBtn}
+                      onClick={() => handleChoice(opt)}
+                    >
+                      {asCards && (
+                        <span style={styles.choiceCardArt} aria-hidden="true">
+                          {opt.icon ? <Icon name={opt.icon} size={56} color="#7A5C2E" /> : null}
+                        </span>
+                      )}
+                      {asCards && opt.caption && (
+                        <span style={styles.choiceCardCaption}>{nb(opt.caption)}</span>
+                      )}
+                      <span style={asCards ? styles.choiceCardText : undefined}>{nb(opt.text)}</span>
+                    </button>
+                  ))}
+                </div>
+              );
+            })()}
 
             {choiceResponse && (
               <div style={{
@@ -6362,6 +6377,26 @@ const styles = {
   },
   choiceNarrative: { fontSize: "clamp(12.5px, 0.972vw, 16.1px)", lineHeight: 1.8, color: "#555", marginBottom: 16 },
   choiceQuestion: { fontSize: "clamp(14.4px, 1.25vw, 20.7px)", marginBottom: 20 },
+  // 图片选项版式（option.icon / option.caption 有值时启用）
+  choiceCards: {
+    display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center", marginTop: 14,
+  },
+  choiceCard: {
+    flex: "1 1 150px", maxWidth: 260, minHeight: 44,
+    display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+    padding: "18px 16px", cursor: "pointer",
+    backgroundColor: "rgba(252,248,238,0.94)",
+    border: "2px solid rgba(201,168,106,0.55)", borderRadius: 10,
+    fontFamily: "var(--font-body)", textAlign: "center",
+    transition: "border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease",
+  },
+  choiceCardArt: { display: "flex", alignItems: "center", justifyContent: "center", minHeight: 56 },
+  choiceCardCaption: {
+    color: "#2B2118", fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 2, fontWeight: "bold",
+  },
+  choiceCardText: {
+    color: "#5A4A38", fontSize: "clamp(12px, 0.9vw, 14.9px)", lineHeight: 1.7,
+  },
   choiceOptions: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 },
   choiceBtn: {
     padding: "12px 16px", backgroundColor: "#F8F9FA",
