@@ -34,7 +34,10 @@
           "id": "brunetto",
           "name": "布鲁内托·拉蒂尼",
           "portrait": "/assets/dante/npcs/brunetto.webp",
-          "position": { "x": 63, "y": 66 },
+          "position": {
+            "x": 63,
+            "y": 66
+          },
           "scale": 2.1,
           "isClue": true,
           "dialogues": [
@@ -59,7 +62,10 @@
           "id": "tesoro_codex",
           "name": "《宝库》",
           "portrait": "/assets/dante/props/lectern_codex.webp",
-          "position": { "x": 40, "y": 62 },
+          "position": {
+            "x": 40,
+            "y": 62
+          },
           "scale": 0.85,
           "isClue": true,
           "dialogues": [
@@ -84,7 +90,10 @@
           "id": "tesoretto",
           "name": "《小宝库》",
           "portrait": "",
-          "position": { "x": 27, "y": 71 },
+          "position": {
+            "x": 27,
+            "y": 71
+          },
           "isClue": true,
           "dialogues": [
             {
@@ -103,7 +112,10 @@
           "id": "apprentice_scribe",
           "name": "抄书学徒",
           "portrait": "/assets/dante/npcs/scribe.webp",
-          "position": { "x": 84, "y": 74 },
+          "position": {
+            "x": 84,
+            "y": 74
+          },
           "scale": 1.9,
           "flip": true,
           "isClue": true,
@@ -219,6 +231,48 @@
       ],
       "requiredAsks": 2,
       "closing": "他教但丁：人如何让自己不朽。\n但丁做到了——然后把老师一起带了进去。\n\n现实里的一位老师，成了《地狱》第十五歌里的一个亡魂。\n《神曲》就是这么盖起来的：他把自己认识的人，一个一个放了进去。",
+      "nextPhase": "prophecy_brunetto"
+    },
+    {
+      "id": "prophecy_brunetto",
+      "type": "prophecy_paradox",
+      "background": "/assets/dante/comedy/backgrounds/inferno_xv_sand.webp",
+      "speaker": "布鲁内托 · 《地狱》第十五歌",
+      "quote": "「你若跟着你的星走，必定能抵达光荣的港口……\n可那一群忘恩负义的恶毒之民，将要因为你做的好事与你为敌。\n躲开他们。」",
+      "instruction": "先别急着往下读。把这三块时间，各归各位。",
+      "axis": [
+        {
+          "id": "spoken",
+          "label": "布鲁内托说这句话\n（故事里的时间）"
+        },
+        {
+          "id": "happened",
+          "label": "这件事真的发生\n（历史上的时间）"
+        },
+        {
+          "id": "written",
+          "label": "但丁写下这一段\n（作者的时间）"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "b_1300",
+          "text": "1300 年春天",
+          "slot": "spoken"
+        },
+        {
+          "id": "b_1302",
+          "text": "1302 年 1 月\n缺席审判，终身放逐",
+          "slot": "happened"
+        },
+        {
+          "id": "b_1310s",
+          "text": "约 1310 年代\n流亡途中，寄人篱下",
+          "slot": "written"
+        }
+      ],
+      "question": "那这到底是预言，还是回忆？",
+      "conclusion": "布鲁内托以为自己在说未来。\n但丁写这段的时候，那个「未来」已经过去十几年了。\n\n他让书里的人「预言」他早就吃过的苦。\n所以《神曲》里每一次预言，都是双份的：\n人物在往前看，作者在往回看，两道目光在 1300 年这一点上对撞。",
       "nextPhase": "echo"
     },
     {

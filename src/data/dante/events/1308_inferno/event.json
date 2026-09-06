@@ -157,26 +157,76 @@
       "conclusion": {
         "narrative": "1304 年拉斯特拉惨败后，但丁与流亡白党彻底决裂，从此「自成一党」。他失去了最后一个阵营——也第一次真正自由了。没有党派可以代言的人，只能对全人类说话。"
       },
-      "nextPhase": "volgare"
+      "nextPhase": "contrapasso_diviners"
     },
     {
-      "id": "volgare",
-      "type": "sliding_puzzle",
-      "background": "/assets/dante/events/1308_inferno/backgrounds/study_candle.webp",
-      "title": "锻造俗语 · 数字华容道",
-      "narrative": "烛下。要写一部大书了——用什么语言写？拉丁文是学者的体面，可他心里的句子是另一种。把它们拼出来。",
-      "puzzles": [
+      "id": "contrapasso_diviners",
+      "type": "contrapasso",
+      "mode": "build",
+      "background": "/assets/dante/comedy/backgrounds/inferno_gate.webp",
+      "sin": {
+        "name": "占卜者",
+        "did": "他们生前收钱替人看未来：谁会赢，谁该死，哪一天该出兵。\n有人真信，有人骗人。但丁要把他们放进地狱——罚，得由他来定。"
+      },
+      "question": "如果由你来写这一段，你要把他们改成什么样？",
+      "slots": [
         {
-          "label": "《论俗语》· 为谁而写",
-          "solution": "让面包坊的女工们也能读懂的语言",
-          "timeoutSec": 300
+          "id": "body",
+          "label": "身体被改成什么样"
         },
         {
-          "label": "《飨宴》· 流亡自述",
-          "solution": "我是一条无帆无舵漂泊四方的小船",
-          "timeoutSec": 300
+          "id": "result",
+          "label": "于是他们永远只能"
         }
       ],
+      "parts": [
+        {
+          "id": "p_head",
+          "text": "头被拧向后面",
+          "slot": "body"
+        },
+        {
+          "id": "p_eyes",
+          "text": "眼睛被缝上",
+          "slot": "body"
+        },
+        {
+          "id": "p_upside",
+          "text": "头下脚上倒插进石缝",
+          "slot": "body"
+        },
+        {
+          "id": "p_stone",
+          "text": "变成一尊不会动的石像",
+          "slot": "body"
+        },
+        {
+          "id": "p_back",
+          "text": "只看得见自己身后",
+          "slot": "result"
+        },
+        {
+          "id": "p_blind",
+          "text": "什么也看不见",
+          "slot": "result"
+        },
+        {
+          "id": "p_loop",
+          "text": "把同一段路走一万遍",
+          "slot": "result"
+        },
+        {
+          "id": "p_mute",
+          "text": "说不出一个字",
+          "slot": "result"
+        }
+      ],
+      "danteVersion": "他们的头被拧向后面，脸朝着脊背。想往前走，就只能倒着走——因为他们再也看不见前面。\n眼泪顺着后背往下淌。（《地狱》第二十歌）",
+      "mirror": {
+        "sin": "生前：硬要看见前面",
+        "punishment": "死后：永远只看得见后面"
+      },
+      "rule": "罪的形状，翻过来，就是罚的形状。\n但丁给这个规矩起了名字：contrapasso。\n\n看懂这条规矩，你就能自己推剩下的八圈了——这也正是接下来要做的事。",
       "nextPhase": "gate"
     },
     {

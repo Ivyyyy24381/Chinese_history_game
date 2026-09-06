@@ -1314,6 +1314,21 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
+  // --- EXPLAIN BY BUILDING (用零件搭出一句解释) ---
+  if (currentPhase.type === "explain_by_building") {
+    return <ExplainByBuildingPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
+  // --- CONTRAPASSO (罪的形状反过来就是罚的形状；四档难度同一组件) ---
+  if (currentPhase.type === "contrapasso") {
+    return <ContrapassoPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
+  // --- PROPHECY PARADOX (「预言」一件已经发生的事) ---
+  if (currentPhase.type === "prophecy_paradox") {
+    return <ProphecyParadoxPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
   // --- PREDICT REVEAL (先猜，再对照。没有对错) ---
   if (currentPhase.type === "predict_reveal") {
     return <PredictRevealPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
@@ -2548,7 +2563,7 @@ const prStyles = {
     borderTop: "1px solid rgba(201,168,106,0.3)", paddingTop: 12,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
   },
-  go: { ...{}, padding: "10px 26px", borderRadius: 22, border: "1px solid #C9A86A",
+  go: { alignSelf: "center", padding: "10px 26px", borderRadius: 22, border: "1px solid #C9A86A",
     backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     fontSize: "clamp(12px, 1.04vw, 17.2px)", letterSpacing: 2, marginTop: 4 },
@@ -2689,6 +2704,528 @@ const esStyles = {
   closing: {
     color: "#C9A86A", fontSize: "clamp(12px, 0.97vw, 16px)", lineHeight: 1.9, letterSpacing: 1,
     maxWidth: 760, textAlign: "center", textShadow: "0 1px 8px rgba(0,0,0,0.9)",
+  },
+};
+
+// ============================================================
+// EXPLAIN BY BUILDING — 用零件搭出一句解释
+// ============================================================
+// 不让孩子打字写解释：解释 = 摆弄关系。
+// phase.slots[{id,label}] / tokens[{id,text,slot}] / sentence("因为{s1}，{s2}……")
+//       canonical(史家版本) / note
+// 底部那条句子随着玩家摆放实时长出来——他看着自己的解释成形，这才是 self-explanation。
+// 提交后不打 ✗：把「你写的」和「史家写的」并排放着。
+function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
+  const slots = phase.slots || [];
+  const tokens = phase.tokens || [];
+  const [fill, setFill] = useState({});   // slotId → tokenId
+  const [picked, setPicked] = useState(null);
+  const [over, setOver] = useState(null);
+  const [done, setDone] = useState(false);
+
+  const tokById = (id) => tokens.find((t) => t.id === id);
+  const usedIds = new Set(Object.values(fill).filter(Boolean));
+  const tray = tokens.filter((t) => !usedIds.has(t.id));
+  const allFilled = slots.length > 0 && slots.every((s) => fill[s.id]);
+
+  const put = (slotId, tokenId) => {
+    if (done || !tokenId) return;
+    setFill((f) => {
+      const n = { ...f };
+      for (const k of Object.keys(n)) if (n[k] === tokenId) delete n[k];
+      n[slotId] = tokenId;
+      return n;
+    });
+    setPicked(null);
+  };
+
+  // 「因为{s1}，{s2}，结果{s3}——所以{s4}。」→ 拆成文字段和槽位
+  const render = (map) => {
+    const tpl = phase.sentence || slots.map((s) => `{${s.id}}`).join("，");
+    const parts = tpl.split(/(\{[^}]+\})/g).filter(Boolean);
+    return parts.map((seg, i) => {
+      const m = seg.match(/^\{([^}]+)\}$/);
+      if (!m) return <span key={i} style={ebStyles.glue}>{nb(seg)}</span>;
+      const sid = m[1];
+      const slot = slots.find((s) => s.id === sid);
+      const tok = map ? tokById(map[sid]) : null;
+      if (done) {
+        return <span key={i} style={ebStyles.finalSlot}>{nb(tok ? tok.text : "……")}</span>;
+      }
+      return (
+        <span
+          key={i}
+          onDragOver={(e) => { e.preventDefault(); setOver(sid); }}
+          onDragLeave={() => setOver(null)}
+          onDrop={(e) => { e.preventDefault(); setOver(null); put(sid, e.dataTransfer.getData("text/plain")); }}
+          onClick={() => { if (picked) put(sid, picked); else if (fill[sid]) setFill((f) => { const n = { ...f }; delete n[sid]; return n; }); }}
+          style={{
+            ...ebStyles.slot,
+            borderColor: over === sid ? "#C9A86A" : (picked ? "rgba(201,168,106,0.65)" : "rgba(201,168,106,0.32)"),
+            backgroundColor: tok ? "rgba(201,168,106,0.2)" : (picked ? "rgba(201,168,106,0.08)" : "transparent"),
+            color: tok ? "#F5E6D3" : "#8A7A5E",
+          }}
+        >
+          {tok ? nb(tok.text) : (slot ? slot.label : "……")}
+        </span>
+      );
+    });
+  };
+
+  const right = slots.reduce((n, s) => n + (tokById(fill[s.id])?.slot === s.id ? 1 : 0), 0);
+  const submit = () => { setDone(true); if (onScore) onScore("explain", right * POINTS.explain); };
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.72)" }} />
+        <div style={ebStyles.wrap}>
+          <div style={ebStyles.prompt}>{nb(phase.prompt || "把这几块摆成一句话。")}</div>
+
+          {!done && (
+            <>
+              <div style={ebStyles.sentence}>{render(fill)}</div>
+              <div style={ebStyles.tray}>
+                {tray.map((t) => (
+                  <div
+                    key={t.id}
+                    draggable
+                    onDragStart={(e) => { e.dataTransfer.setData("text/plain", t.id); setPicked(t.id); }}
+                    onClick={() => setPicked((p) => (p === t.id ? null : t.id))}
+                    style={{
+                      ...ebStyles.tok,
+                      borderColor: picked === t.id ? "#C9A86A" : "rgba(201,168,106,0.35)",
+                      boxShadow: picked === t.id ? "0 0 0 4px rgba(201,168,106,0.2)" : "none",
+                    }}
+                  >
+                    {nb(t.text)}
+                  </div>
+                ))}
+                {tray.length === 0 && <div style={ebStyles.trayEmpty}>{"零件用完了。读一遍你写的这句话。"}</div>}
+              </div>
+              <div style={ebStyles.hint}>{"拖进空格，或先点零件再点空格（点已填的可取回）。有几块是用不上的。"}</div>
+              <button
+                style={{ ...prStyles.go, opacity: allFilled ? 1 : 0.45, cursor: allFilled ? "pointer" : "not-allowed" }}
+                disabled={!allFilled}
+                onClick={submit}
+              >
+                {"这就是我的解释 →"}
+              </button>
+            </>
+          )}
+
+          {done && (
+            <div style={ebStyles.compare}>
+              <div style={ebStyles.block}>
+                <div style={ebStyles.blockLabel}>{"你写的"}</div>
+                <div style={ebStyles.blockText}>{render(fill)}</div>
+              </div>
+              <div style={{ ...ebStyles.block, borderLeftColor: "#C9A86A" }}>
+                <div style={{ ...ebStyles.blockLabel, color: "#C9A86A" }}>{"史家写的"}</div>
+                <div style={ebStyles.blockText}>{nb(phase.canonical || "")}</div>
+              </div>
+              {phase.note && <div style={ebStyles.note}>{nb(phase.note)}</div>}
+              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ebStyles = {
+  wrap: {
+    position: "absolute", inset: 0, zIndex: 20, overflowY: "auto",
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "4% 7%", gap: 16, textAlign: "center",
+  },
+  prompt: {
+    color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 3, maxWidth: 820,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  sentence: {
+    maxWidth: 880, fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 2.6, color: "#D8C8A8",
+    letterSpacing: 1, textAlign: "left",
+  },
+  glue: { color: "#A8998A" },
+  slot: {
+    display: "inline-block", minWidth: 128, padding: "3px 12px", margin: "0 4px",
+    border: "1px dashed", borderRadius: 6, cursor: "pointer",
+    transition: "border-color 180ms ease, background-color 180ms ease",
+  },
+  finalSlot: { color: "#F5E6D3", borderBottom: "1px solid rgba(201,168,106,0.5)", padding: "0 3px" },
+  tray: { display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", maxWidth: 880 },
+  tok: {
+    padding: "8px 14px", borderRadius: 8, border: "1.5px solid",
+    backgroundColor: "rgba(252,248,238,0.93)", color: "#2B2118", cursor: "grab",
+    fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 1, lineHeight: 1.6,
+    userSelect: "none", WebkitUserSelect: "none",
+    transition: "box-shadow 200ms ease, border-color 200ms ease",
+  },
+  trayEmpty: { color: "#8A7A5E", fontSize: "clamp(11.5px, 0.87vw, 14.4px)", letterSpacing: 2 },
+  hint: { color: "rgba(245,230,211,0.55)", fontSize: "clamp(10.5px, 0.76vw, 12.6px)", letterSpacing: 1 },
+  compare: { display: "flex", flexDirection: "column", gap: 14, maxWidth: 860, width: "100%", textAlign: "left" },
+  block: { borderLeft: "3px solid rgba(201,168,106,0.4)", paddingLeft: 14 },
+  blockLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 6 },
+  blockText: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.04vw, 17.2px)", lineHeight: 2.0, letterSpacing: 1 },
+  note: {
+    color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", lineHeight: 1.9, letterSpacing: 1,
+    borderTop: "1px solid rgba(201,168,106,0.25)", paddingTop: 12,
+  },
+};
+
+// ============================================================
+// CONTRAPASSO — 罪的形状，反过来就是罚的形状
+// ============================================================
+// 同一个组件，四档难度（fading scaffolding）：
+//   match    给罪和罚，连线                （最扶）
+//   choose   给一个罪，三个罚，挑一个
+//   reverse  给一个罚，反推这是什么罪
+//   build    给罪 + 惩罚零件，玩家自己设计，再看但丁怎么写（最放手）
+// 现已实现 reverse / build；match / choose 走同一套数据契约，后续补。
+//
+// phase.mode / sin{name,did} / slots[] / parts[] / danteVersion / rule
+// build 档没有唯一正解——但丁的写法只是众多可能里的一种。所以提交后
+// 是「你设计的 / 但丁写的」并列，不是判分。
+function ContrapassoPhase({ phase, onScore, onComplete }) {
+  const mode = phase.mode || "build";
+  const [fill, setFill] = useState({});
+  const [picked, setPicked] = useState(null);
+  const [guess, setGuess] = useState(null);
+  const [done, setDone] = useState(false);
+
+  const slots = phase.slots || [];
+  const parts = phase.parts || [];
+  const options = phase.options || [];
+  const partById = (id) => parts.find((p) => p.id === id);
+  const used = new Set(Object.values(fill).filter(Boolean));
+  const trayFor = (sid) => parts.filter((p) => p.slot === sid && !used.has(p.id));
+  const allFilled = slots.length > 0 && slots.every((s) => fill[s.id]);
+
+  const mine = slots.map((s) => partById(fill[s.id])).filter(Boolean);
+  const submit = () => {
+    setDone(true);
+    if (!onScore) return;
+    if (mode === "reverse") onScore("contrapasso", guess === phase.answer ? POINTS.contrapasso : 0);
+    else onScore("contrapasso", POINTS.contrapasso); // build 档：给「敢设计」这个动作
+  };
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.74)" }} />
+        <div style={cbStyles.wrap}>
+
+          {/* 题面 */}
+          {mode === "reverse" ? (
+            <>
+              <div style={cbStyles.eyebrow}>{"《神曲》里有这样一群人"}</div>
+              <div style={cbStyles.punishment}>{nb(phase.punishment || "")}</div>
+              <div style={cbStyles.ask}>{nb(phase.question || "他们生前犯的是什么罪？")}</div>
+            </>
+          ) : (
+            <>
+              <div style={cbStyles.eyebrow}>{nb(phase.sin?.name || "")}</div>
+              <div style={cbStyles.punishment}>{nb(phase.sin?.did || "")}</div>
+              <div style={cbStyles.ask}>{nb(phase.question || "如果由你来定他们的罚——你会怎么写？")}</div>
+            </>
+          )}
+
+          {/* reverse：三选一 */}
+          {mode === "reverse" && !done && (
+            <div style={cbStyles.opts}>
+              {options.map((o) => (
+                <button key={o.id} style={{ ...cbStyles.opt, borderColor: guess === o.id ? "#C9A86A" : "rgba(201,168,106,0.35)" }}
+                  onClick={() => setGuess(o.id)}>
+                  {nb(o.text)}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* build：每个槽一排零件 */}
+          {mode !== "reverse" && !done && slots.map((s) => (
+            <div key={s.id} style={cbStyles.row}>
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (partById(id)?.slot === s.id) setFill((f) => ({ ...f, [s.id]: id })); }}
+                onClick={() => { if (picked && partById(picked)?.slot === s.id) { setFill((f) => ({ ...f, [s.id]: picked })); setPicked(null); } }}
+                style={{
+                  ...cbStyles.slot,
+                  borderColor: fill[s.id] ? "#C9A86A" : "rgba(201,168,106,0.3)",
+                  backgroundColor: fill[s.id] ? "rgba(201,168,106,0.18)" : "transparent",
+                }}
+              >
+                <div style={cbStyles.slotLabel}>{s.label}</div>
+                <div style={cbStyles.slotText}>
+                  {fill[s.id] ? nb(partById(fill[s.id]).text) : "……"}
+                </div>
+              </div>
+              <div style={cbStyles.parts}>
+                {trayFor(s.id).map((p) => (
+                  <div key={p.id} draggable
+                    onDragStart={(e) => { e.dataTransfer.setData("text/plain", p.id); setPicked(p.id); }}
+                    onClick={() => setPicked((x) => (x === p.id ? null : p.id))}
+                    style={{ ...cbStyles.part, borderColor: picked === p.id ? "#C9A86A" : "rgba(201,168,106,0.3)" }}>
+                    {nb(p.text)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {!done && (
+            <button
+              style={{ ...prStyles.go,
+                opacity: (mode === "reverse" ? guess : allFilled) ? 1 : 0.45,
+                cursor: (mode === "reverse" ? guess : allFilled) ? "pointer" : "not-allowed" }}
+              disabled={!(mode === "reverse" ? guess : allFilled)}
+              onClick={submit}
+            >
+              {mode === "reverse" ? "就是它 →" : "定了，看但丁怎么写的 →"}
+            </button>
+          )}
+
+          {/* 揭晓：你 / 但丁 并列 */}
+          {done && (
+            <div style={cbStyles.reveal}>
+              {mode !== "reverse" && (
+                <div style={cbStyles.block}>
+                  <div style={cbStyles.blockLabel}>{"你设计的"}</div>
+                  <div style={cbStyles.blockText}>{mine.map((p) => p.text).join("，") + "。"}</div>
+                </div>
+              )}
+              {mode === "reverse" && (
+                <div style={cbStyles.block}>
+                  <div style={cbStyles.blockLabel}>{"你的推断"}</div>
+                  <div style={cbStyles.blockText}>
+                    {nb(options.find((o) => o.id === guess)?.text || "")}
+                  </div>
+                </div>
+              )}
+              <div style={{ ...cbStyles.block, borderLeftColor: "#C9A86A" }}>
+                <div style={{ ...cbStyles.blockLabel, color: "#C9A86A" }}>{"但丁写的"}</div>
+                <div style={cbStyles.blockText}>{nb(phase.danteVersion || "")}</div>
+              </div>
+
+              {/* 罪 ↔ 罚 的对折 */}
+              {phase.mirror && (
+                <div style={cbStyles.mirror}>
+                  <span style={cbStyles.mirrorSide}>{nb(phase.mirror.sin)}</span>
+                  <span style={cbStyles.mirrorArrow}>{"↕"}</span>
+                  <span style={cbStyles.mirrorSide}>{nb(phase.mirror.punishment)}</span>
+                </div>
+              )}
+              {phase.rule && <div style={cbStyles.rule}>{nb(phase.rule)}</div>}
+              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const cbStyles = {
+  wrap: {
+    position: "absolute", inset: 0, zIndex: 20, overflowY: "auto",
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "4% 7%", gap: 13, textAlign: "center",
+  },
+  eyebrow: { color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 6 },
+  punishment: {
+    color: "#EFE3CC", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.9, maxWidth: 720,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  ask: { color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 3, marginTop: 4 },
+  opts: { display: "flex", flexDirection: "column", gap: 9, width: "100%", maxWidth: 560 },
+  opt: {
+    padding: "12px 18px", borderRadius: 9, border: "1.5px solid",
+    backgroundColor: "rgba(252,248,238,0.93)", color: "#2B2118", cursor: "pointer",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontSize: "clamp(12.5px, 1.04vw, 17.2px)", lineHeight: 1.7, letterSpacing: 1,
+  },
+  row: { display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", justifyContent: "center", maxWidth: 900, width: "100%" },
+  slot: {
+    flex: "0 0 auto", minWidth: 210, padding: "8px 14px", border: "1.5px dashed", borderRadius: 8,
+    textAlign: "left", cursor: "pointer", transition: "border-color 180ms ease, background-color 180ms ease",
+  },
+  slotLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 3 },
+  slotText: { color: "#F5E6D3", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.6, marginTop: 3 },
+  parts: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1, minWidth: 220, justifyContent: "flex-start" },
+  part: {
+    padding: "6px 12px", borderRadius: 14, border: "1px solid",
+    backgroundColor: "rgba(252,248,238,0.9)", color: "#2B2118", cursor: "grab",
+    fontSize: "clamp(11.5px, 0.9vw, 14.9px)", letterSpacing: 1,
+    userSelect: "none", WebkitUserSelect: "none",
+  },
+  reveal: { display: "flex", flexDirection: "column", gap: 13, maxWidth: 800, width: "100%", textAlign: "left" },
+  block: { borderLeft: "3px solid rgba(201,168,106,0.4)", paddingLeft: 14 },
+  blockLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 5 },
+  blockText: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.04vw, 17.2px)", lineHeight: 1.95 },
+  mirror: {
+    display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+    padding: "12px 0", borderTop: "1px dashed rgba(201,168,106,0.3)", borderBottom: "1px dashed rgba(201,168,106,0.3)",
+  },
+  mirrorSide: { color: "#E8D9BE", fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2 },
+  mirrorArrow: { color: "#C9A86A", fontSize: "clamp(15px, 1.25vw, 20.7px)" },
+  rule: { color: "#C9A86A", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.9, letterSpacing: 2, textAlign: "center" },
+};
+
+// ============================================================
+// PROPHECY PARADOX — 「预言」一件已经发生的事
+// ============================================================
+// 《神曲》最独特的机关：人物在 1300 年预言未来，而作者写的时候早就知道了。
+// 玩家把三块时间摆到轴上，自己发现这件事——而不是被一段过场告知。
+// phase.quote / speaker / axis[{id,label}] / blocks[{id,text,slot}] / conclusion / question
+function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
+  const axis = phase.axis || [];
+  const blocks = phase.blocks || [];
+  const [fill, setFill] = useState({});
+  const [picked, setPicked] = useState(null);
+  const [over, setOver] = useState(null);
+  const [done, setDone] = useState(false);
+
+  const byId = (id) => blocks.find((b) => b.id === id);
+  const used = new Set(Object.values(fill).filter(Boolean));
+  const tray = blocks.filter((b) => !used.has(b.id));
+  const allFilled = axis.length > 0 && axis.every((a) => fill[a.id]);
+  const right = axis.reduce((n, a) => n + (byId(fill[a.id])?.slot === a.id ? 1 : 0), 0);
+
+  const put = (aid, bid) => {
+    if (done || !bid) return;
+    setFill((f) => {
+      const n = { ...f };
+      for (const k of Object.keys(n)) if (n[k] === bid) delete n[k];
+      n[aid] = bid; return n;
+    });
+    setPicked(null);
+  };
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.76)" }} />
+        <div style={ppStyles.wrap}>
+          <div style={ppStyles.quoteBox}>
+            <div style={ppStyles.speaker}>{nb(phase.speaker || "")}</div>
+            <div style={ppStyles.quote}>{nb(phase.quote || "")}</div>
+          </div>
+
+          {!done && <div style={ppStyles.ask}>{nb(phase.instruction || "把这三块时间，各归各位。")}</div>}
+
+          <div style={ppStyles.axis}>
+            <div style={ppStyles.rail} />
+            {axis.map((a) => {
+              const b = byId(fill[a.id]);
+              return (
+                <div
+                  key={a.id}
+                  style={{ ...ppStyles.station, cursor: done ? "default" : "pointer" }}
+                  onDragOver={(e) => { e.preventDefault(); setOver(a.id); }}
+                  onDragLeave={() => setOver(null)}
+                  onDrop={(e) => { e.preventDefault(); setOver(null); put(a.id, e.dataTransfer.getData("text/plain")); }}
+                  onClick={() => { if (done) return; if (picked) put(a.id, picked); else if (fill[a.id]) setFill((f) => { const n = { ...f }; delete n[a.id]; return n; }); }}
+                >
+                  <div style={ppStyles.stationLabel}>{nb(a.label)}</div>
+                  <div style={ppStyles.tick} />
+                  <div
+                    style={{
+                      ...ppStyles.drop,
+                      borderColor: over === a.id ? "#C9A86A" : (b ? "rgba(201,168,106,0.7)" : "rgba(201,168,106,0.28)"),
+                      backgroundColor: b ? "rgba(201,168,106,0.16)" : (picked ? "rgba(201,168,106,0.07)" : "transparent"),
+                    }}
+                  >
+                    {b ? nb(b.text) : "……"}
+                    {done && byId(fill[a.id])?.slot !== a.id && (
+                      <div style={ppStyles.truth}>
+                        {"这一格实际是：" + (blocks.find((x) => x.slot === a.id)?.text || "").replace(/\n/g, " ")}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {!done && (
+            <>
+              <div style={ppStyles.tray}>
+                {tray.map((b) => (
+                  <div key={b.id} draggable
+                    onDragStart={(e) => { e.dataTransfer.setData("text/plain", b.id); setPicked(b.id); }}
+                    onClick={() => setPicked((p) => (p === b.id ? null : b.id))}
+                    style={{ ...ppStyles.block, borderColor: picked === b.id ? "#C9A86A" : "rgba(201,168,106,0.35)" }}>
+                    {nb(b.text)}
+                  </div>
+                ))}
+              </div>
+              <button
+                style={{ ...prStyles.go, opacity: allFilled ? 1 : 0.45, cursor: allFilled ? "pointer" : "not-allowed" }}
+                disabled={!allFilled}
+                onClick={() => { setDone(true); if (onScore) onScore("prophecy", right * POINTS.prophecy); }}
+              >
+                {"摆好了 →"}
+              </button>
+            </>
+          )}
+
+          {done && (
+            <>
+              {phase.question && <div style={ppStyles.bigQ}>{nb(phase.question)}</div>}
+              {phase.conclusion && (
+                <RevealLines text={phase.conclusion} style={ppStyles.conclusion} unitDelay={760} />
+              )}
+              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ppStyles = {
+  wrap: {
+    position: "absolute", inset: 0, zIndex: 20, overflowY: "auto",
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "4% 7%", gap: 16, textAlign: "center",
+  },
+  quoteBox: { maxWidth: 760, borderLeft: "3px solid #C9A86A", paddingLeft: 16, textAlign: "left" },
+  speaker: { color: "#C9A86A", fontSize: "clamp(11px, 0.83vw, 13.8px)", letterSpacing: 4, marginBottom: 5 },
+  quote: {
+    color: "#F5E6D3", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.95, letterSpacing: 1,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  ask: { color: "#D8C8A8", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", letterSpacing: 2 },
+  axis: { position: "relative", display: "flex", justifyContent: "space-between", gap: 12, width: "100%", maxWidth: 880, padding: "6px 0 0" },
+  rail: { position: "absolute", left: "6%", right: "6%", top: 44, height: 1, backgroundColor: "rgba(201,168,106,0.35)" },
+  station: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 0 },
+  stationLabel: { color: "#A8998A", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2,
+    minHeight: 34, lineHeight: 1.5, whiteSpace: "pre-line" },
+  tick: { width: 9, height: 9, borderRadius: "50%", backgroundColor: "#C9A86A", zIndex: 1 },
+  drop: {
+    width: "100%", minHeight: 54, padding: "9px 10px", border: "1.5px dashed", borderRadius: 8,
+    color: "#F5E6D3", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", lineHeight: 1.6,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5,
+    transition: "border-color 180ms ease, background-color 180ms ease",
+  },
+  truth: {
+    color: "#C9A86A", fontSize: "clamp(10.5px, 0.79vw, 13px)", lineHeight: 1.5,
+    borderTop: "1px dashed rgba(201,168,106,0.35)", paddingTop: 5, width: "100%",
+  },
+  tray: { display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", maxWidth: 880 },
+  block: {
+    padding: "8px 14px", borderRadius: 8, border: "1.5px solid",
+    backgroundColor: "rgba(252,248,238,0.93)", color: "#2B2118", cursor: "grab",
+    fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 1,
+    userSelect: "none", WebkitUserSelect: "none",
+  },
+  bigQ: { color: "#C9A86A", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 4, textShadow: "0 2px 10px rgba(0,0,0,0.9)" },
+  conclusion: {
+    color: "#F5E6D3", fontSize: "clamp(12.5px, 1.11vw, 18.4px)", lineHeight: 2.05, letterSpacing: 1,
+    maxWidth: 760, textShadow: "0 2px 10px rgba(0,0,0,0.9)",
   },
 };
 

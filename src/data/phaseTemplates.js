@@ -1,7 +1,7 @@
 // 交互模板库 —— 场景编辑器「插入交互模板」面板的数据源。
 //
 // 每个模板：
-//   type    phase 类型（与 ScenePlayer 支持的 18 种一一对应）
+//   type    phase 类型（与 ScenePlayer 支持的 21 种一一对应）
 //   name    卡片标题
 //   desc    一句话说明（玩家看到什么、要做什么）
 //   ref     取材的现有事件（该用法已在游戏里跑通）
@@ -524,6 +524,92 @@ export const PHASE_TEMPLATES = [
           why: "（承认它的分量，再说清它为什么不支持——好的推理要认得出哪些事实对自己不利。）" },
       ],
       closing: "（把挑对的两条串成一句话，点破这个判断是怎么立住的。）",
+    }),
+  },
+  {
+    type: "explain_by_building",
+    name: "搭出一句解释",
+    desc: "不让孩子打字写解释——给因果零件，让他摆进槽位，底部那句话随着摆放实时长出来。提交后「你写的／史家写的」并列。多给 1–2 块用不上的（真实但不在这条因果线上）。",
+    ref: "dante · 1300_priore「他为什么从幽暗森林开始写」",
+    sketch: "pairs",
+    make: () => ({
+      id: "explain_" + uid(),
+      type: "explain_by_building",
+      background: "",
+      prompt: "（要玩家解释的那个问题。）",
+      sentence: "因为{s1}，{s2}——{s3}。所以{s4}。",
+      slots: [
+        { id: "s1", label: "起因" },
+        { id: "s2", label: "他做了什么" },
+        { id: "s3", label: "代价" },
+        { id: "s4", label: "结果" },
+      ],
+      tokens: [
+        { id: "t1", text: "（起因那一块）", slot: "s1" },
+        { id: "t2", text: "（行动那一块）", slot: "s2" },
+        { id: "t3", text: "（代价那一块）", slot: "s3" },
+        { id: "t4", text: "（结果那一块）", slot: "s4" },
+        { id: "t5", text: "（干扰：真实、重要，但不在这条因果线上）" },
+      ],
+      canonical: "（史家会怎么把这句话说完整。）",
+      note: "（点破：用不上的那几块为什么用不上；这条链真正的分量在哪。）",
+    }),
+  },
+  {
+    type: "contrapasso",
+    name: "定一个罚（contrapasso）",
+    desc: "但丁线的招牌机制。同一组件四档难度：match / choose / reverse / build（已实现后两档）。build 档给罪 + 惩罚零件，玩家自己设计，再看但丁怎么写——没有唯一正解。",
+    ref: "dante · 1308_inferno「占卜者」",
+    sketch: "pairs",
+    make: () => ({
+      id: "contrapasso_" + uid(),
+      type: "contrapasso",
+      mode: "build",
+      background: "",
+      sin: { name: "（罪名）", did: "（他们生前做了什么。写具体，别写抽象名词。）" },
+      question: "如果由你来写这一段，你要把他们改成什么样？",
+      slots: [
+        { id: "body", label: "身体被改成什么样" },
+        { id: "result", label: "于是他们永远只能" },
+      ],
+      parts: [
+        { id: "b1", text: "（身体零件一 · 但丁用的那个）", slot: "body" },
+        { id: "b2", text: "（身体零件二）", slot: "body" },
+        { id: "b3", text: "（身体零件三）", slot: "body" },
+        { id: "r1", text: "（后果零件一 · 但丁用的那个）", slot: "result" },
+        { id: "r2", text: "（后果零件二）", slot: "result" },
+        { id: "r3", text: "（后果零件三）", slot: "result" },
+      ],
+      danteVersion: "（原文怎么写的，带歌数。）",
+      mirror: { sin: "生前：（罪的形状）", punishment: "死后：（罚的形状，正好翻过来）" },
+      rule: "罪的形状，翻过来，就是罚的形状。但丁给这个规矩起了名字：contrapasso。",
+    }),
+  },
+  {
+    type: "prophecy_paradox",
+    name: "「预言」已经发生的事",
+    desc: "《神曲》最独特的机关：人物在 1300 年预言未来，作者写的时候早就知道了。玩家把三块时间摆上轴，自己发现——而不是被一段过场告知。几乎零美术成本。",
+    ref: "dante · 1292_brunetto「这到底是预言，还是回忆？」",
+    sketch: "pairs",
+    make: () => ({
+      id: "prophecy_" + uid(),
+      type: "prophecy_paradox",
+      background: "",
+      speaker: "（谁说的 · 哪一歌）",
+      quote: "「（那句预言的原文。）」",
+      instruction: "先别急着往下读。把这三块时间，各归各位。",
+      axis: [
+        { id: "spoken", label: "他说这句话\n（故事里的时间）" },
+        { id: "happened", label: "这件事真的发生\n（历史上的时间）" },
+        { id: "written", label: "但丁写下这一段\n（作者的时间）" },
+      ],
+      blocks: [
+        { id: "b1", text: "1300 年", slot: "spoken" },
+        { id: "b2", text: "（事情发生的年份和事）", slot: "happened" },
+        { id: "b3", text: "（写作的年份和处境）", slot: "written" },
+      ],
+      question: "那这到底是预言，还是回忆？",
+      conclusion: "（点破那个双重目光：人物在往前看，作者在往回看。）",
     }),
   },
 ];

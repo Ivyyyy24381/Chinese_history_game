@@ -27,10 +27,12 @@ const DATA = "src/data";
 const PASSIVE = new Set(["transition", "narration", "comic_reveal"]);          // 点一下，读一段
 const BROWSE  = new Set(["explore", "map_travel"]);                            // 找一找，读一段
 const GENERATE = new Set(["predict_reveal", "poem_compose", "explain_by_building",
-                          "contrapasso_build", "forced_choice"]);              // 先产出一个判断
+                          "contrapasso", "forced_choice"]);                    // 先产出一个判断
 const EVIDENCE = new Set(["evidence_select", "click_points", "exam"]);         // 在材料里做区分
 const REVISE   = new Set(["inferno_placement", "comedy_encounter", "commit_then_reveal",
                           "prophecy_paradox"]);                                // 拿自己的答案去对照
+// 注：contrapasso(build) 和 explain_by_building 提交后也做「你 / 但丁」并列对照，
+// 但它们的主动作是「先造出一个东西」，所以归 generate，不重复计入 revise。
 const DEXTERITY = new Set(["sliding_puzzle", "escape_game", "minigame", "dialogue_branch"]); // 手速/包装
 // 过桥：要玩家动手，但不要求判断（仪式性转场）。不计入认知动作占比——
 // 它好看，但它不教东西，别让它把分数刷上去。

@@ -17,6 +17,7 @@ lint 首次跑出来的基线：
 |---|---:|---:|---:|
 | 杜甫 | 34% | 44% | **18%** |
 | 但丁（改造前） | 35% | 25% | **22%** |
+| 但丁（第二批之后） | 39% | 28% | **28%** |
 
 八成时间玩家在做同一件事：**点一下，读一段。**
 
@@ -46,9 +47,9 @@ Do first → see consequence → explain / compare → name the idea
 |---|:--:|---|---|
 | 读屏 | `·` | 点一下，读一段 | transition, narration, comic_reveal |
 | 浏览 | `○` | 找一找，读一段 | explore, map_travel |
-| 先判断 | `▲` | 在知道答案前先产出一个判断 | **predict_reveal**, poem_compose, forced_choice |
+| 先判断 | `▲` | 在知道答案前先产出一个判断 | **predict_reveal**, **explain_by_building**, **contrapasso**, poem_compose, forced_choice |
 | 辨证据 | `◆` | 在材料里做区分 | **evidence_select**, click_points, exam |
-| 改模型 | `★` | 拿自己的答案去撞史实/文本 | inferno_placement, comedy_encounter |
+| 改模型 | `★` | 拿自己的答案去撞史实/文本 | inferno_placement, comedy_encounter, **prophecy_paradox** |
 | 过桥 | `◈` | 要动手，但不要求判断（仪式性转场） | echo_portal |
 | 手速 | `◇` | 跟理解无关的包装 | sliding_puzzle, escape_game, minigame |
 
@@ -89,14 +90,36 @@ npm run lint:phases -- dante  # 单线
 判词从「放对 N/4」改成「你和但丁，N/4 处放到了一起」，
 并对每个人显示「你放「炼狱」　但丁放「地狱」」。
 
+### `explain_by_building` — 用零件搭出一句解释
+解释 = 摆弄关系，不是打字。玩家把因果块摆进槽位，**底部那句话随着摆放实时长出来**——
+他看着自己的解释成形，这才是 self-explanation。多给 1–2 块「真实、重要，但不在这条因果线上」
+的零件（教皇、金币），逼他判断什么算因果、什么只是同时发生。
+提交后「你写的 / 史家写的」并列。
+> 落点：1300 执政官——他做对了公事却毁掉挚友，两年后同一套规矩毁掉他自己；
+> 所以《神曲》第一页是一个人在森林里迷路。素材成本：纯文本。
+
+### `contrapasso` — 定一个罚（但丁线招牌机制）
+同一组件四档 fading scaffolding：`match`（给罪和罚连线）→ `choose`（三选一）→
+`reverse`（给罚反推罪）→ `build`（给零件自己设计）。**已实现 reverse / build。**
+build 档没有唯一正解——但丁的写法只是众多可能里的一种，所以提交后是
+「你设计的 / 但丁写的」并列，再给罪罚对折图，最后才说出 contrapasso 这个词。
+> 顺序是 mechanic → realization → terminology，不是先讲名词再举例。
+> 落点：1308 异乡的面包（替掉原来的数字华容道——那个是手速，不教东西）。
+
+### `prophecy_paradox` — 「预言」一件已经发生的事
+玩家把三块时间摆到轴上：人物说话的 1300、事情发生的 1302、作者写下的 1310 年代。
+摆完自己发现：人物在往前看，作者在往回看，两道目光在 1300 年这一点上对撞。
+> 这件事原本是用一段过场文字**告诉**玩家的。现在他自己摆出来。
+> 落点：1292 布鲁内托重逢之后（《地狱》XV 里布鲁内托当场预言但丁的流放）。几乎零美术成本。
+
 ## 下一批（按 ROI）
 
 | 优先 | phase | 做什么 |
 |:--:|---|---|
-| 1 | `explain_by_building` | 不让孩子打字写解释，用 token 搭出「事件→动机→行动→后果」，系统把他搭的结构转成一句自然语言 |
-| 2 | `contrapasso_build` | 给罪，让玩家从惩罚零件里设计一个，再 reveal 但丁怎么写的。同一组件四种难度（match / choose / reverse / build）= fading scaffolding |
-| 3 | `prophecy_paradox` | 摆时间块：人物在 1300 年「预言」1302 年的事，而作者写作时早已知道。几乎零美术成本 |
-| 4 | `cause_chain` | 连因果，连错不消失——让剧情产生矛盾再提示重连 |
+| 1 | `contrapasso` 的 match / choose 两档 | 补齐四档，才能在地狱线上做出真正的 fading——现在只有两档 |
+| 2 | retrieval 搬进世界 | 「把这些人放回你记得的那一边」——复用 inferno_placement 的拖放，换成现实场景 |
+| 3 | `cause_chain` | 连因果，连错不消失——让剧情产生矛盾再提示重连 |
+| 4 | 杜甫线迁移 | 现在认知动作占比只有 18%，`predict_reveal` 和 `evidence_select` 是纯文本成本，可以直接铺 |
 
 **暂缓的**（记录理由，免得来回讨论）
 - 「三界 = 三种 interaction grammar」：方向漂亮，但它预设玩家在《神曲》里待很久；

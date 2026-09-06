@@ -343,8 +343,66 @@
           ]
         }
       ],
-      "nextPhase": "echo",
+      "nextPhase": "explain_selva",
       "instruction": ""
+    },
+    {
+      "id": "explain_selva",
+      "type": "explain_by_building",
+      "background": "/assets/dante/events/1300_priore/backgrounds/dark_forest.webp",
+      "prompt": "《神曲》第一句，是一个人在森林里迷了路。\n用下面的零件，摆出这一句：他为什么从这儿开始写？",
+      "sentence": "因为{s1}，{s2}——{s3}。所以他把这本书的第一页，写成了{s4}。",
+      "slots": [
+        {
+          "id": "s1",
+          "label": "起因"
+        },
+        {
+          "id": "s2",
+          "label": "他做了什么"
+        },
+        {
+          "id": "s3",
+          "label": "代价"
+        },
+        {
+          "id": "s4",
+          "label": "第一页的样子"
+        }
+      ],
+      "tokens": [
+        {
+          "id": "t_split",
+          "text": "城被两党撕成了两半",
+          "slot": "s1"
+        },
+        {
+          "id": "t_sign",
+          "text": "他当上执政官，按规矩两党头面人物一起放逐",
+          "slot": "s2"
+        },
+        {
+          "id": "t_guido",
+          "text": "名单上有挚友圭多，他还是签了；圭多在流放地染病，回城不久就死了",
+          "slot": "s3"
+        },
+        {
+          "id": "t_selva",
+          "text": "一个人在幽暗森林里，找不到正路",
+          "slot": "s4"
+        },
+        {
+          "id": "t_pope",
+          "text": "他在禧年的罗马见到了教皇"
+        },
+        {
+          "id": "t_florin",
+          "text": "佛罗伦萨的弗罗林金币通行全欧洲"
+        }
+      ],
+      "canonical": "因为城被两党撕成了两半，他当上执政官、按规矩把两党头面人物一起放逐——名单上有挚友圭多，他还是签了；圭多在流放地染病，回城不久就死了。所以他把这本书的第一页，写成了一个人在幽暗森林里，找不到正路。",
+      "note": "两块用不上：教皇和金币都是真的，也都重要，但它们不在这条因果线上。\n\n「迷路」不是修辞。他做对了公事，毁掉了朋友；两年后，同一套规矩又用来毁掉他自己。一个人到这个地步，才会说自己在森林中央、找不到正路。",
+      "nextPhase": "echo"
     },
     {
       "id": "echo",

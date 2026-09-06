@@ -1068,6 +1068,9 @@ export default function SceneEditor({ initialEventId, initialLine, onExit }) {
             <option value="escape_game">{"\u{1F6AA} 出城 (escape_game)"}</option>
                 <option value="click_points">{"\u{1F441} 找茬 (click_points)"}</option>
                 <option value="comic_reveal">{"\uD83D\uDCD6 \u8FDE\u73AF\u753B (comic_reveal)"}</option>
+                <option value="explain_by_building">{"\u2699 \u642D\u89E3\u91CA (explain_by_building)"}</option>
+                <option value="contrapasso">{"\u2696 \u5B9A\u7F5A (contrapasso)"}</option>
+                <option value="prophecy_paradox">{"\u23F3 \u6446\u65F6\u95F4 (prophecy_paradox)"}</option>
                 <option value="predict_reveal">{"\u25B2 \u5148\u731C (predict_reveal)"}</option>
                 <option value="evidence_select">{"\u25C6 \u6311\u8BC1\u636E (evidence_select)"}</option>
                 <option value="echo_portal">{"\u{1F4DC} \u8F6C\u573A\u00B7\u795E\u66F2 (echo_portal)"}</option>

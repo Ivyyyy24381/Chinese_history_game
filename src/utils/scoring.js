@@ -16,6 +16,9 @@ export const POINTS = {
   clickPointsMax: 50,
   predict: 15,        // 「敢下判断」本身给分——猜对猜错一样多，否则玩家会退回揣摩标准答案
   evidence: 20,       // 挑对一条支持性证据
+  explain: 20,        // 因果链每摆对一格
+  contrapasso: 25,    // build 档没有唯一正解——给「敢设计」这个动作
+  prophecy: 20,       // 时间块每摆对一格
   infernoPlace: 20,   // 「但丁把他们放在哪儿了」每放对一个
 };
 
