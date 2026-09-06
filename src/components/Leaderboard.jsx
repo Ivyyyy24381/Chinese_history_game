@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchLeaderboard, fetchMyBest, isCloud } from "../services/backend";
+import { t } from "../i18n/ui";
 
 /**
  * Leaderboard — 总分排行榜弹窗。
@@ -25,11 +26,11 @@ export default function Leaderboard({ highlightScore = null, onClose }) {
         setRows([]);
         const msg = String(e?.message || e);
         if (/permission|denied/i.test(msg)) {
-          setLoadError("无法连接云端：请检查控制台「安全域名」是否已加入本站域名");
+          setLoadError(t("无法连接云端：请检查控制台「安全域名」是否已加入本站域名"));
         } else if (/collection|not exist|不存在/i.test(msg)) {
-          setLoadError("云端缺少 scores 集合：请在控制台「数据库」创建");
+          setLoadError(t("云端缺少 scores 集合：请在控制台「数据库」创建"));
         } else {
-          setLoadError("排行榜加载失败：" + msg);
+          setLoadError(t("排行榜加载失败：") + msg);
         }
       });
     return () => { alive = false; };
@@ -40,27 +41,27 @@ export default function Leaderboard({ highlightScore = null, onClose }) {
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.panel} onClick={(e) => e.stopPropagation()}>
-        <h2 style={styles.title}>{"🏆 排行榜"}</h2>
-        <p style={styles.scope}>{isCloud() ? "全网玩家总分榜" : "本机记录（未配置云端服务）"}</p>
+        <h2 style={styles.title}>{t("🏆 排行榜")}</h2>
+        <p style={styles.scope}>{isCloud() ? t("全网玩家总分榜") : t("本机记录（未配置云端服务）")}</p>
 
         {highlightScore != null && (
           <div style={styles.myScore}>
-            {"本局得分："}<strong style={{ fontSize: "clamp(17.6px, 1.528vw, 25.3px)" }}>{highlightScore}</strong>
+            {t("本局得分：")}<strong style={{ fontSize: "clamp(17.6px, 1.528vw, 25.3px)" }}>{highlightScore}</strong>
           </div>
         )}
         {myBest && (
           <div style={styles.myScore}>
-            {"我的最好成绩："}<strong>{myBest.best}</strong>{" 分 · 当前第 "}
-            <strong>{myBest.rank}</strong>{" 名"}
+            {t("我的最好成绩：")}<strong>{myBest.best}</strong>{t(" 分 · 当前第 ")}
+            <strong>{myBest.rank}</strong>{t(" 名")}
           </div>
         )}
 
         {rows === null ? (
-          <p style={styles.empty}>{"加载中…"}</p>
+          <p style={styles.empty}>{t("加载中…")}</p>
         ) : loadError ? (
           <p style={{ ...styles.empty, color: "#C0392B" }}>{loadError}</p>
         ) : rows.length === 0 ? (
-          <p style={styles.empty}>{"暂无记录，快来拿下第一名！"}</p>
+          <p style={styles.empty}>{t("暂无记录，快来拿下第一名！")}</p>
         ) : (
           <div style={styles.list}>
             {rows.map((r, i) => (
@@ -71,13 +72,13 @@ export default function Leaderboard({ highlightScore = null, onClose }) {
               }}>
                 <span style={styles.rank}>{medal(i)}</span>
                 <span style={styles.nick}>{r.nickname}</span>
-                <span style={styles.pts}>{r.score}{" 分"}</span>
+                <span style={styles.pts}>{r.score}{t(" 分")}</span>
               </div>
             ))}
           </div>
         )}
 
-        <button style={styles.closeBtn2} onClick={onClose}>{"关闭"}</button>
+        <button style={styles.closeBtn2} onClick={onClose}>{t("关闭")}</button>
         <button style={styles.closeBtn} onClick={onClose}>{"×"}</button>
       </div>
     </div>

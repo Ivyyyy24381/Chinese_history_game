@@ -16,7 +16,7 @@ import { FONT, COLOR, TRACKING, SHADOW, BUTTON, paperBtn, halo, scrim } from "./
 import { nb } from "./utils/cjkText";
 import { localize } from "./i18n/localize";
 import { useLang } from "./i18n/lang";
-import { useT } from "./i18n/ui";
+import { t, useT } from "./i18n/ui";
 
 // 编辑器只在本地 dev 存在（保存走 vite 中间件）。生产构建里彻底排除：
 // SceneEditor 的素材自动发现 glob 会把 /public/assets 的全部图片重复打包进 dist。
@@ -327,7 +327,7 @@ export default function App() {
       }
     } catch {
       // 网络加载失败：明确提示，而不是错误地掉进旧版面板
-      window.alert("场景加载失败，可能是网络不稳定，请再点一次「探索此事件」。");
+      window.alert(t("app.sceneLoadFailed"));
     }
   };
 
@@ -396,7 +396,7 @@ export default function App() {
     if (!EditorShell) {
       return (
         <div style={styles.placeholderScreen}>
-          <p>{"编辑器仅在本地开发模式（npm run dev）下可用。"}</p>
+          <p>{t("编辑器仅在本地开发模式（npm run dev）下可用。")}</p>
         </div>
       );
     }
@@ -429,19 +429,19 @@ export default function App() {
                 style={styles.cornerBtn}
                 onClick={() => { logout().then(() => setUser(null)); }}
               >
-                {"退出"}
+                {t("退出")}
               </button>
             </>
           ) : (
             <button style={styles.cornerBtn} onClick={() => setShowAuth(true)}>
-              {"登录 / 注册"}
+              {t("登录 / 注册")}
             </button>
           )}
           <button
             style={styles.cornerBtn}
             onClick={() => { setBoardHighlight(null); setShowBoard(true); }}
           >
-            {"🏆 排行榜"}
+            {t("🏆 排行榜")}
           </button>
         </div>
         {showAuth && (
@@ -469,11 +469,11 @@ export default function App() {
     return (
       <div style={styles.placeholderScreen}>
         <p style={styles.placeholderTitle}>
-          {`${character?.name || "这条故事线"}的旅程正在建设中`}
+          {`${t(character?.name) || t("这条故事线")}${t("app.lineUnderConstruction")}`}
         </p>
-        <p style={styles.placeholderHint}>{"剧本与地图还在绘制，敬请期待。"}</p>
+        <p style={styles.placeholderHint}>{t("剧本与地图还在绘制，敬请期待。")}</p>
         <button style={styles.placeholderBtn} onClick={backToHome}>
-          {"← 返回主页"}
+          {t("← 返回主页")}
         </button>
       </div>
     );
@@ -491,7 +491,7 @@ export default function App() {
           fontSize: "clamp(14.4px, 1.25vw, 20.7px)",
         }}
       >
-        {"加载中..."}
+        {t("加载中...")}
       </div>
     );
   }
@@ -531,7 +531,7 @@ export default function App() {
               aria-hidden="true"
               style={{ ...styles.stageDot, backgroundColor: currentStage.color }}
             />
-            {`${currentEvent.year} 年 · ${currentStage.period}`}
+            {`${currentEvent.year}${t("app.yearSuffix")} · ${t(currentStage.period)}`}
           </div>
           <p style={styles.eventSummary}>
             {nb(currentEvent.summary || currentStage.summary)}
@@ -544,7 +544,7 @@ export default function App() {
             onClick={handleExplore}
             disabled={!currentEvent.hasScene}
           >
-            {currentEvent.hasScene ? "📖 探索此事件" : "📖 暂无场景"}
+            {currentEvent.hasScene ? t("📖 探索此事件") : t("📖 暂无场景")}
           </button>
         </div>
         {/* 时间轴：细带挂在地图底部（hover/focus 展开），底是 scrim 渐变非实色 */}
@@ -562,7 +562,7 @@ export default function App() {
       </div>
       <button
         style={styles.musicBtn}
-        title={musicOn ? "关闭背景音乐" : "开启背景音乐"}
+        title={musicOn ? t("关闭背景音乐") : t("开启背景音乐")}
         onClick={toggleMusic}
       >
         {musicOn ? "🎵" : "🔇"}
@@ -571,7 +571,7 @@ export default function App() {
         style={styles.backBtn}
         onClick={backToHome}
       >
-        {"← 返回选择"}
+        {t("← 返回选择")}
       </button>
       {showEvent && !showQuiz && (
         <EventPanel
@@ -606,9 +606,9 @@ export default function App() {
               返回选择在地图页左下角，场景里不重复放。 */}
           <button
             style={styles.sceneExitBtn}
-            title="退出场景，返回地图"
+            title={t("退出场景，返回地图")}
             onClick={() => {
-              if (window.confirm("退出本场景返回地图？已获得的积分会保留，但本场景要从头再玩。")) {
+              if (window.confirm(t("退出本场景返回地图？已获得的积分会保留，但本场景要从头再玩。"))) {
                 setShowScene(false);
                 setSceneData(null);
               }
@@ -622,37 +622,37 @@ export default function App() {
         <div style={styles.congratsOverlay}>
           <div style={styles.congratsCard}>
             <div style={{ fontSize: "clamp(44.8px, 3.889vw, 64.4px)", marginBottom: 8 }}>{"🏆"}</div>
-            <h2 style={styles.congratsTitle}>{"历史成就达成"}</h2>
+            <h2 style={styles.congratsTitle}>{t("历史成就达成")}</h2>
             <div style={styles.congratsBadge}>
-              {ACHIEVEMENT_TITLES[character?.id] || "人物传完成"}
+              {t(ACHIEVEMENT_TITLES[character?.id]) || t("人物传完成")}
             </div>
             <p style={styles.congratsText}>
-              {nb(`你走完了${character?.name || ""}的一生——${COMPLETION_LINES[character?.id] || "一段历史长河中的人生。"}`)}
+              {nb(`${t("app.completionPrefix")}${t(character?.name) || ""}${t("app.completionMid")}${t(COMPLETION_LINES[character?.id]) || t("一段历史长河中的人生。")}`)}
             </p>
             <div style={styles.congratsScore}>
-              {"本局总分 "}<strong style={{ fontSize: "clamp(20.8px, 1.806vw, 29.9px)" }}>{runScore}</strong>{" 分"}
-              {user ? `（${user.nickname}）` : "（未登录，仅本次显示）"}
+              {t("本局总分 ")}<strong style={{ fontSize: "clamp(20.8px, 1.806vw, 29.9px)" }}>{runScore}</strong>{t(" 分")}
+              {user ? `（${user.nickname}）` : t("（未登录，仅本次显示）")}
             </div>
-            <p style={styles.congratsUnlock}>{"✨ 已解锁：人物回顾"}</p>
-            <p style={styles.congratsNext}>{"下一位人物：李白（即将推出，敬请期待）"}</p>
+            <p style={styles.congratsUnlock}>{t("✨ 已解锁：人物回顾")}</p>
+            <p style={styles.congratsNext}>{t("下一位人物：李白（即将推出，敬请期待）")}</p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20, flexWrap: "wrap" }}>
               <button
                 style={{ ...styles.congratsBtn, backgroundColor: "#B8860B", color: "#FFF" }}
                 onClick={() => { setBoardHighlight(runScoreRef.current); setShowBoard(true); }}>
-                {"🏆 查看排行榜"}
+                {t("🏆 查看排行榜")}
               </button>
               <button
                 style={{ ...styles.congratsBtn, backgroundColor: "#8B7355", color: "#FFF" }}
                 onClick={() => { setShowCongrats(false); openRecap(); }}>
-                {"📜 查看人物回顾"}
+                {t("📜 查看人物回顾")}
               </button>
               <button
                 style={styles.congratsBtn}
                 onClick={() => { setShowCongrats(false); backToHome(); }}>
-                {"返回主页"}
+                {t("返回主页")}
               </button>
               <button style={styles.congratsBtn} onClick={() => setShowCongrats(false)}>
-                {"继续游览"}
+                {t("继续游览")}
               </button>
             </div>
           </div>
@@ -693,10 +693,10 @@ function OrientationHint() {
   return (
     <div style={orientStyles.overlay}>
       <div style={{ fontSize: "clamp(51.2px, 4.444vw, 73.6px)", animation: "rotateHint 1.6s ease-in-out infinite" }}>{"📱"}</div>
-      <div style={orientStyles.text}>{"请将手机横过来游玩"}</div>
-      <div style={orientStyles.sub}>{"地图与场景为横屏设计，横屏体验最佳"}</div>
+      <div style={orientStyles.text}>{t("请将手机横过来游玩")}</div>
+      <div style={orientStyles.sub}>{t("地图与场景为横屏设计，横屏体验最佳")}</div>
       <button style={orientStyles.dismissBtn} onClick={() => setDismissed(true)}>
-        {"仍要竖屏继续"}
+        {t("仍要竖屏继续")}
       </button>
     </div>
   );

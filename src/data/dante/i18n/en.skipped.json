@@ -5,56 +5,6 @@
       "key": "cast/_note",
       "reason": "写给作者看的注释，玩家看不见",
       "value": "人物登记表。一个人只在这里写一次，现实场景和《神曲》场景都从这里取生平。规则：life 和 withDante 只写「活着的时候」——他后来被但丁放进哪一界，属于答案，不许写在这里。"
-    },
-    {
-      "key": "quiz/1265_firenze/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "强"
-    },
-    {
-      "key": "quiz/1283_beatrice/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "贝雅特丽切"
-    },
-    {
-      "key": "quiz/1292_brunetto/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "不朽"
-    },
-    {
-      "key": "quiz/1295_arte/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "火星"
-    },
-    {
-      "key": "quiz/1300_priore/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "幽暗"
-    },
-    {
-      "key": "quiz/1302_esilio/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "咸"
-    },
-    {
-      "key": "quiz/1308_inferno/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "希望"
-    },
-    {
-      "key": "quiz/1313_impero/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "王冠"
-    },
-    {
-      "key": "quiz/1315_amnistia/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "桂冠"
-    },
-    {
-      "key": "quiz/1321_ravenna/quizzes/2/answer",
-      "reason": "填空题答案，要和 blanks/distractors 里的词逐字相等",
-      "value": "群星"
     }
   ]
 }

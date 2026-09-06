@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { isCloud, register, login } from "../services/backend";
+import { t } from "../i18n/ui";
 
 /**
  * AuthPanel — 登录/注册弹窗。
@@ -22,9 +23,9 @@ export default function AuthPanel({ onAuthed, onClose }) {
   const submit = async () => {
     setError("");
     if (cloud) {
-      if (!email.trim() || !password) { setError("请填写邮箱和密码"); return; }
+      if (!email.trim() || !password) { setError(t("请填写邮箱和密码")); return; }
     } else if (!nickname.trim() && !email.trim()) {
-      setError("请填写昵称"); return;
+      setError(t("请填写昵称")); return;
     }
     setBusy(true);
     try {
@@ -47,7 +48,7 @@ export default function AuthPanel({ onAuthed, onClose }) {
   };
 
   const submitCode = async () => {
-    if (!code.trim()) { setError("请输入邮箱收到的验证码"); return; }
+    if (!code.trim()) { setError(t("请输入邮箱收到的验证码")); return; }
     setError("");
     setBusy(true);
     try {
@@ -65,13 +66,13 @@ export default function AuthPanel({ onAuthed, onClose }) {
     return (
       <div style={styles.overlay} onClick={onClose}>
         <div style={styles.panel} onClick={(e) => e.stopPropagation()}>
-          <h2 style={styles.title}>{"输入验证码"}</h2>
+          <h2 style={styles.title}>{t("输入验证码")}</h2>
           <p style={styles.localNote}>
-            {"验证码已发送到 "}{email}{"，请查收（含垃圾箱）。"}
+            {t("验证码已发送到 ")}{email}{t("，请查收（含垃圾箱）。")}
           </p>
           <input
             style={styles.input}
-            placeholder="邮箱验证码"
+            placeholder={t("邮箱验证码")}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submitCode()}
@@ -79,10 +80,10 @@ export default function AuthPanel({ onAuthed, onClose }) {
           />
           {error && <div style={styles.error}>{error}</div>}
           <button style={styles.primaryBtn} disabled={busy} onClick={submitCode}>
-            {busy ? "请稍候…" : "完成注册"}
+            {busy ? t("请稍候…") : t("完成注册")}
           </button>
           <button style={styles.switchBtn} onClick={() => { setPendingVerify(null); setCode(""); setError(""); }}>
-            {"← 返回重填"}
+            {t("← 返回重填")}
           </button>
           <button style={styles.closeBtn} onClick={onClose}>{"×"}</button>
         </div>
@@ -94,12 +95,12 @@ export default function AuthPanel({ onAuthed, onClose }) {
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.panel} onClick={(e) => e.stopPropagation()}>
         <h2 style={styles.title}>
-          {cloud ? (mode === "register" ? "注册账号" : "登录") : "本地账号"}
+          {cloud ? (mode === "register" ? t("注册账号") : t("登录")) : t("本地账号")}
         </h2>
 
         {!cloud && (
           <p style={styles.localNote}>
-            {"未配置云端服务，账号与积分仅保存在本机浏览器。填个昵称即可开始。"}
+            {t("未配置云端服务，账号与积分仅保存在本机浏览器。填个昵称即可开始。")}
           </p>
         )}
 
@@ -108,14 +109,14 @@ export default function AuthPanel({ onAuthed, onClose }) {
             <input
               style={styles.input}
               type="email"
-              placeholder="邮箱"
+              placeholder={t("邮箱")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               style={styles.input}
               type="password"
-              placeholder="密码（至少 6 位）"
+              placeholder={t("密码（至少 6 位）")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && submit()}
@@ -123,7 +124,7 @@ export default function AuthPanel({ onAuthed, onClose }) {
             {mode === "register" && (
               <input
                 style={styles.input}
-                placeholder="昵称（显示在排行榜上）"
+                placeholder={t("昵称（显示在排行榜上）")}
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && submit()}
@@ -133,7 +134,7 @@ export default function AuthPanel({ onAuthed, onClose }) {
         ) : (
           <input
             style={styles.input}
-            placeholder="昵称（显示在排行榜上）"
+            placeholder={t("昵称（显示在排行榜上）")}
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submit()}
@@ -143,7 +144,7 @@ export default function AuthPanel({ onAuthed, onClose }) {
         {error && <div style={styles.error}>{error}</div>}
 
         <button style={styles.primaryBtn} disabled={busy} onClick={submit}>
-          {busy ? "请稍候…" : cloud ? (mode === "register" ? "注册" : "登录") : "开始游玩"}
+          {busy ? t("请稍候…") : cloud ? (mode === "register" ? t("注册") : t("登录")) : t("开始游玩")}
         </button>
 
         {cloud && (
@@ -151,7 +152,7 @@ export default function AuthPanel({ onAuthed, onClose }) {
             style={styles.switchBtn}
             onClick={() => { setMode(mode === "register" ? "login" : "register"); setError(""); }}
           >
-            {mode === "register" ? "已有账号？去登录" : "没有账号？去注册"}
+            {mode === "register" ? t("已有账号？去登录") : t("没有账号？去注册")}
           </button>
         )}
 
@@ -163,12 +164,12 @@ export default function AuthPanel({ onAuthed, onClose }) {
 
 function translateError(e) {
   const msg = String(e?.message || e);
-  if (/already|已存在|已注册|exist/i.test(msg)) return "该邮箱已注册，请直接登录";
-  if (/not.?found|不存在|no user/i.test(msg)) return "账号不存在，请先注册";
-  if (/password|密码|credential/i.test(msg)) return "邮箱或密码不正确";
-  if (/token|verify|验证码|otp|code/i.test(msg)) return "验证码不正确或已过期";
-  if (/permission_denied|permission/i.test(msg)) return "服务未就绪：请在云开发控制台把本站域名加入安全域名";
-  if (/network|fetch|timeout/i.test(msg)) return "网络错误，请稍后重试";
+  if (/already|已存在|已注册|exist/i.test(msg)) return t("该邮箱已注册，请直接登录");
+  if (/not.?found|不存在|no user/i.test(msg)) return t("账号不存在，请先注册");
+  if (/password|密码|credential/i.test(msg)) return t("邮箱或密码不正确");
+  if (/token|verify|验证码|otp|code/i.test(msg)) return t("验证码不正确或已过期");
+  if (/permission_denied|permission/i.test(msg)) return t("服务未就绪：请在云开发控制台把本站域名加入安全域名");
+  if (/network|fetch|timeout/i.test(msg)) return t("网络错误，请稍后重试");
   return msg;
 }
 

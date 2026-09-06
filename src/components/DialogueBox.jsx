@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { asset } from "../utils/asset";
 import { nb } from "../utils/cjkText";
+import { t } from "../i18n/ui";
 
 export default function DialogueBox({ dialogues, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);

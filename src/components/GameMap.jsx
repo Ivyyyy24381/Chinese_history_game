@@ -25,6 +25,7 @@ import { dantePortraitPath } from "../data/dantePoses";
 import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
 import { FONT, COLOR, TRACKING, SHADOW, paper, paperBtn, alpha } from "../styles/theme";
 import { getCharacter } from "../data/characters";
+import { t } from "../i18n/ui";
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 4;
@@ -128,7 +129,7 @@ function MapSymbol({ kind, state, theme, size = 26 }) {
             {/* 已至的小印章 */}
             <g transform="rotate(-8 18.5 23.5)">
               <rect x="15" y="20" width="7" height="7" rx="1.2" fill={seal} />
-              <text x="18.5" y="25.4" textAnchor="middle" fontSize="5.4" fontWeight="bold" fill={paper(0.95)}>{"至"}</text>
+              <text x="18.5" y="25.4" textAnchor="middle" fontSize="5.4" fontWeight="bold" fill={paper(0.95)}>{t("至")}</text>
             </g>
           </>
         ) : (
@@ -645,7 +646,7 @@ export default function GameMap({
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
-                title={`${event.year} 年 · ${event.name}`}
+                title={`${event.year}${t("app.yearSuffix")} · ${t(event.name)}`}
               >
                 {/* 文字标签已去掉——底图自带地名/事件字，叠加会重影；悬停有 title 提示。
                     当前事件不画符号，由旅人立绘 + 呼吸高亮代替。 */}
@@ -690,9 +691,9 @@ export default function GameMap({
 
       {/* 缩放控制 */}
       <div style={styles.zoomControls}>
-        <button style={styles.zoomBtn} title="放大" onClick={() => zoomBy(1.4)}>{"＋"}</button>
-        <button style={styles.zoomBtn} title="缩小" onClick={() => zoomBy(1 / 1.4)}>{"－"}</button>
-        <button style={styles.zoomBtn} title="复位（双击地图也可复位）" onClick={resetView}>{"⟲"}</button>
+        <button style={styles.zoomBtn} title={t("放大")} onClick={() => zoomBy(1.4)}>{t("＋")}</button>
+        <button style={styles.zoomBtn} title={t("缩小")} onClick={() => zoomBy(1 / 1.4)}>{t("－")}</button>
+        <button style={styles.zoomBtn} title={t("复位（双击地图也可复位）")} onClick={resetView}>{"⟲"}</button>
       </div>
 
       {/* 事件前进/后退 */}
@@ -707,14 +708,14 @@ export default function GameMap({
               disabled={!prev}
               onClick={() => prev && onEventClick(prev)}
             >
-              {"◀ " + (prev ? `${prev.year} ${prev.name}` : "已是起点")}
+              {"◀ " + (prev ? `${prev.year} ${prev.name}` : t("已是起点"))}
             </button>
             <button
               style={{ ...styles.stepBtn, opacity: next ? 1 : 0.4, cursor: next ? "pointer" : "default" }}
               disabled={!next}
               onClick={() => next && onEventClick(next)}
             >
-              {(next ? `${next.year} ${next.name}` : "已是终点") + " ▶"}
+              {(next ? `${next.year} ${next.name}` : t("已是终点")) + " ▶"}
             </button>
           </div>
         );

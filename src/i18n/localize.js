@@ -14,9 +14,22 @@ import { getLang } from "./lang";
 // castFor() 是同步函数，拿不到 Promise。将来字典大了再改懒加载。
 const DICTS = import.meta.glob("../data/*/i18n/*.json", { eager: true });
 
-// 有意不译的键：值同时充当「身份」，译了对不上（理由见 i18n_extract.mjs）。
-// 运行时也挡一道——手改字典手滑加进来，不至于把填空题玩坏。
-const DENY = new Set(["answer", "blanks", "distractors", "solution", "_note"]);
+// 只有作者注释不译。填空题的 answer / blanks / distractors 是**一起译**的：
+// 它们是同一组字符串，整组换语言就还对得上。译漏了半组会被
+// scripts/i18n_extract.mjs 的 checkFillIntegrity 拦下来；万一还是漏进来了，
+// 下面 guardFill() 会把那一道题整个退回中文，宁可一道题不换语言，也不能出死题。
+const DENY = new Set(["_note"]);
+
+// 兜底：answer 找不到对应词库项时，把这道题的 answer/blanks/distractors 退回原文。
+function guardFill(out, src) {
+  // 只管 poem_compose 这种「答案必须是 blanks 里的一项」的形状。
+  // exam 的 poem_fill 是 [answer, ...distractors]，答案天然在池子里，不会坏。
+  if (typeof out.answer !== "string" || !Array.isArray(out.blanks) || !out.blanks.length) return;
+  if (out.blanks.includes(out.answer)) return;
+  out.answer = src.answer;
+  if (src.blanks) out.blanks = src.blanks;
+  if (src.distractors) out.distractors = src.distractors;
+}
 
 function dictFor(line, lang) {
   if (!line || lang === "zh") return null;
@@ -35,6 +48,7 @@ function walk(node, path, dict, key) {
   if (node && typeof node === "object") {
     const out = {};
     for (const k of Object.keys(node)) out[k] = walk(node[k], `${path}/${k}`, dict, k);
+    guardFill(out, node);
     return out;
   }
   return node;

@@ -31,14 +31,11 @@ const DATA = join(ROOT, "src", "data");
 // CJK 统一表意文字 + 中文标点。含其一即视为待译文本。
 const CJK = /[㐀-鿿　-〿＀-￯]/;
 
-// —— 不抽的键：值同时充当「身份」，译了会把游戏玩坏 ——
-// 填空题的答案要和词库里被拖动的那个词逐字相等；一边译一边不译，就永远对不上。
-// 诗句本身译不译是内容判断，不是管道问题——留在中文，回落机制会照常显示。
+// —— 不抽的键 ——
+// 只剩作者注释。填空题的答案/词库**要一起译**：答案和词库是同一组字符串，
+// 整组一起换语言就还是对得上；只译一半才会坏。extract 末尾有一道校验专门盯这个
+// （checkFillIntegrity），runtime 那边 localize.js 还有一道兜底。
 const DENY = {
-  answer: "填空题答案，要和 blanks/distractors 里的词逐字相等",
-  blanks: "诗句填空的正确词，同时是拖动块的身份",
-  distractors: "诗句填空的干扰词，同时是拖动块的身份",
-  solution: "对句题的标准答案，要和玩家拼出的字串逐字相等",
   _note: "写给作者看的注释，玩家看不见",
 };
 
@@ -65,6 +62,30 @@ function collect(node, path, out, skipped, key) {
     }
     collect(v, p, out, skipped, k);
   }
+}
+
+// 填空题完整性：answer 必须能在同一道题的 blanks/distractors 里逐字找到。
+// 中文原文本来就满足；译文如果只译了一半，这里会当场报出来。
+function checkFillIntegrity(node, path, dict, problems) {
+  if (Array.isArray(node)) {
+    node.forEach((v, i) => checkFillIntegrity(v, `${path}/${i}`, dict, problems));
+    return;
+  }
+  if (!isPlainObject(node)) return;
+  const tr = (p, v) => (typeof dict[p] === "string" && dict[p] ? dict[p] : v);
+  if (typeof node.answer === "string") {
+    // 两种词库形状：poem_compose 用 blanks（答案就在 blanks 里）；
+    // exam 的 poem_fill 用 [answer, ...distractors]（答案不在 distractors 里）。
+    const hasBlanks = Array.isArray(node.blanks) && node.blanks.length > 0;
+    if (hasBlanks) {
+      const answer = tr(`${path}/answer`, node.answer);
+      const poolTr = node.blanks.map((v, i) => tr(`${path}/blanks/${i}`, v));
+      if (!poolTr.includes(answer)) {
+        problems.push(`${path}: answer ${JSON.stringify(answer)} 不在词库里 ${JSON.stringify(poolTr)}`);
+      }
+    }
+  }
+  for (const [k, v] of Object.entries(node)) checkFillIntegrity(v, `${path}/${k}`, dict, problems);
 }
 
 function readJSON(p) {
@@ -119,6 +140,17 @@ function extractLine(line, lang) {
     join(outDir, `${lang}.skipped.json`),
     JSON.stringify({ _why: "这些键有意不抽——值同时充当身份，译了会把游戏玩坏", items: skipped }, null, 2) + "\n"
   );
+
+  // 已有译文的完整性校验（没有译文时跑的是中文原文，恒过）
+  const problems = [];
+  for (const src of sourcesFor(line)) {
+    checkFillIntegrity(readJSON(src.path), src.prefix, existing, problems);
+  }
+  if (problems.length) {
+    console.error(`\n${line}/${lang} 填空题对不上（译了答案没译词库，或反过来）：`);
+    for (const p of problems) console.error(`  ${p}`);
+    process.exitCode = 1;
+  }
 
   const chars = [...zh.values()].reduce((n, s) => n + s.length, 0);
   console.log(

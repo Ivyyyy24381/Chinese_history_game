@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint:phases": "node scripts/lint_phases.mjs",
     "i18n:extract": "node scripts/i18n_extract.mjs",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "i18n:ui": "node scripts/i18n_ui_check.mjs"
   },
   "dependencies": {
     "@cloudbase/js-sdk": "^3.6.2",

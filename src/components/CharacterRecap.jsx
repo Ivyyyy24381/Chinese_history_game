@@ -4,19 +4,20 @@
  */
 import { asset } from "../utils/asset";
 import { nb } from "../utils/cjkText";
+import { t } from "../i18n/ui";
 
 export default function CharacterRecap({ character, stages, onClose }) {
   return (
     <div style={styles.overlay}>
       <div style={styles.page}>
-        <button style={styles.closeBtn} onClick={onClose}>{"✕ 关闭"}</button>
+        <button style={styles.closeBtn} onClick={onClose}>{t("✕ 关闭")}</button>
 
         <div style={styles.header}>
           {character.portrait && (
             <img src={asset(character.portrait)} alt={character.name} style={styles.portrait} />
           )}
           <div>
-            <h1 style={styles.name}>{character.name}{"·一生回顾"}</h1>
+            <h1 style={styles.name}>{character.name}{t("·一生回顾")}</h1>
             <div style={styles.meta}>
               {character.title}{" · "}{character.dynasty}{" · "}{character.years}
             </div>
@@ -25,7 +26,7 @@ export default function CharacterRecap({ character, stages, onClose }) {
         </div>
 
         <div style={styles.badgeRow}>
-          <span style={styles.badge}>{"🏆 历史成就 · 诗圣之路"}</span>
+          <span style={styles.badge}>{t("🏆 历史成就 · 诗圣之路")}</span>
         </div>
 
         {stages.map((stage) => (
@@ -52,7 +53,7 @@ export default function CharacterRecap({ character, stages, onClose }) {
         ))}
 
         <div style={styles.epilogue}>
-          {"「李杜文章在，光焰万丈长。」——韩愈"}
+          {t("「李杜文章在，光焰万丈长。」——韩愈")}
         </div>
       </div>
     </div>

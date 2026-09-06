@@ -1,6 +1,7 @@
 import { asset } from "../utils/asset";
 import { getCharacter } from "../data/characters";
 import { COLOR, TRACKING, SHADOW, halo } from "../styles/theme";
+import { t } from "../i18n/ui";
 
 /**
  * 地图页左上角的人物信息条 —— 用主页名牌的排版：
@@ -28,10 +29,10 @@ export default function ScoreBar({ character, progress, totalStages, score = 0 }
         <span style={styles.readableTitle}>{character.title}</span>
       </p>
       <p style={styles.meta}>
-        {"积分 "}
+        {t("积分 ")}
         <strong style={styles.scoreValue}>{score}</strong>
         <span style={styles.metaSep}>{" · "}</span>
-        {`进度 ${progress} / ${totalStages}`}
+        {`${t("score.progress")}${progress} / ${totalStages}`}
       </p>
     </div>
   );

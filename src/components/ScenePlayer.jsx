@@ -656,7 +656,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
               <img src={asset(examinerPortrait)} alt={currentPhase.examiner?.name || ""} style={styles.examPortraitImg} />
             ) : (
               <div style={{ width: "100%", height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#888", fontSize: "clamp(12.5px, 0.972vw, 16.1px)" }}>
-                {"（无考官立绘）"}
+                {t("（无考官立绘）")}
               </div>
             )}
           </div>
@@ -733,7 +733,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                           </div>
                         ))}
                       </div>
-                      <div style={styles.tapHint}>{"点击词块即可填入（电脑上也可拖拽）"}</div>
+                      <div style={styles.tapHint}>{t("点击词块即可填入（电脑上也可拖拽）")}</div>
                     </>
                   )}
                   {examShowResult && !isCorrect && (
@@ -932,7 +932,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                     </div>
                   ))}
                 </div>
-                <div style={styles.tapHint}>{"点击词块依次填入空格，点已填的字可取出（电脑上也可拖拽）"}</div>
+                <div style={styles.tapHint}>{t("点击词块依次填入空格，点已填的字可取出（电脑上也可拖拽）")}</div>
                 <button
                   style={{ ...styles.proceedBtn, opacity: allFilled ? 1 : 0.5, cursor: allFilled ? "pointer" : "not-allowed" }}
                   disabled={!allFilled}
@@ -1532,8 +1532,8 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
     return (
       <div style={styles.choiceOverlay}>
         <div style={styles.choicePanel}>
-          <p>{"暂无题目"}</p>
-          <button style={styles.proceedBtn} onClick={onComplete}>{"继续 →"}</button>
+          <p>{t("暂无题目")}</p>
+          <button style={styles.proceedBtn} onClick={onComplete}>{t("继续 →")}</button>
         </div>
       </div>
     );
@@ -1544,15 +1544,15 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
     <div style={styles.choiceOverlay}>
       <div style={{ ...styles.choicePanel, maxWidth: 560 }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>
-          {"\u{1F4DC} 数字华容道  "}<span style={{ color: "#888", fontSize: "clamp(12.5px, 0.972vw, 16.1px)" }}>{`(${pIdx + 1}/${puzzles.length})`}</span>
+          {t("scene.puzzleTitleFull")}<span style={{ color: "#888", fontSize: "clamp(12.5px, 0.972vw, 16.1px)" }}>{`(${pIdx + 1}/${puzzles.length})`}</span>
         </h2>
         {currentP.label && <p style={{ color: "#666", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", margin: "4px 0 12px" }}>{currentP.label}</p>}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <span style={{ fontSize: "clamp(12px, 0.903vw, 14.9px)", color: timeLeft <= 30 ? "#DC3545" : "#666" }}>
-            {"⏱ 剩余 "}{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
+            {t("⏱ 剩余 ")}{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
           </span>
           <button style={{ ...styles.choiceBtn, fontSize: "clamp(11.5px, 0.833vw, 13.8px)", padding: "4px 12px", margin: 0, width: "auto" }} onClick={skipPuzzle}>
-            {"跳过"}
+            {t("跳过")}
           </button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 4, aspectRatio: "1", marginBottom: 16 }}>
@@ -1578,19 +1578,19 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
         </div>
         {solved && (
           <div style={{ ...styles.explanationBox, backgroundColor: "#D4EDDA", textAlign: "center" }}>
-            <strong>{"✓ 拼出原句："}</strong>
+            <strong>{t("✓ 拼出原句：")}</strong>
             <div style={{ marginTop: 6, fontSize: "clamp(12.8px, 1.111vw, 18.4px)" }}>{currentP.solution}</div>
           </div>
         )}
         {timeLeft === 0 && !solved && (
           <div style={{ ...styles.explanationBox, backgroundColor: "#FFF3CD", textAlign: "center" }}>
-            <strong>{"⏱ 时间到"}</strong>
-            <div style={{ marginTop: 6, fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#666" }}>{"原句：" + currentP.solution}</div>
+            <strong>{t("⏱ 时间到")}</strong>
+            <div style={{ marginTop: 6, fontSize: "clamp(12.5px, 0.972vw, 16.1px)", color: "#666" }}>{t("原句：") + currentP.solution}</div>
           </div>
         )}
         {(solved || timeLeft === 0) && (
           <button style={styles.proceedBtn} onClick={skipPuzzle}>
-            {pIdx + 1 < puzzles.length ? "下一题 →" : "继续 →"}
+            {pIdx + 1 < puzzles.length ? t("下一题 →") : t("继续 →")}
           </button>
         )}
       </div>
@@ -1839,7 +1839,7 @@ function ComicRevealPhase({ phase, onComplete }) {
             <div style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, fontFamily: "var(--font-body)" }}>
               {nb(activeLine.text)}
             </div>
-            <div style={{ color: "#A89968", fontSize: "clamp(11px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{"▼ 点击继续"}</div>
+            <div style={{ color: "#A89968", fontSize: "clamp(11px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{t("▼ 点击继续")}</div>
           </div>
         )}
 
@@ -1848,7 +1848,7 @@ function ComicRevealPhase({ phase, onComplete }) {
           <button
             style={styles.floatingProceed}
             onClick={(e) => { e.stopPropagation(); onComplete(); }}>
-            {"继续 →"}
+            {t("继续 →")}
           </button>
         )}
       </div>
@@ -2495,7 +2495,7 @@ function BioPanel({ person, metLabel, onClose, actions }) {
   return (
     <div style={bioStyles.overlay} onClick={onClose}>
       <div style={bioStyles.panel} onClick={(e) => e.stopPropagation()}>
-        <button style={bioStyles.close} onClick={onClose} aria-label="关闭">{"×"}</button>
+        <button style={bioStyles.close} onClick={onClose} aria-label={t("关闭")}>{"×"}</button>
 
         <div style={bioStyles.head}>
           {person.portrait && (
@@ -2507,14 +2507,14 @@ function BioPanel({ person, metLabel, onClose, actions }) {
             <div style={bioStyles.meta}>
               {[person.years, person.role].filter(Boolean).join("　·　")}
             </div>
-            {metLabel && <div style={bioStyles.met}>{"你见过他 · " + metLabel}</div>}
+            {metLabel && <div style={bioStyles.met}>{t("你见过他 · ") + metLabel}</div>}
           </div>
         </div>
 
         <div style={bioStyles.body}>
           {person.life?.length > 0 && (
             <section>
-              <div style={bioStyles.sectionLabel}>{"生平"}</div>
+              <div style={bioStyles.sectionLabel}>{t("生平")}</div>
               {person.life.map((t, i) => (
                 <p key={i} style={bioStyles.para}>{nb(t)}</p>
               ))}
@@ -2522,7 +2522,7 @@ function BioPanel({ person, metLabel, onClose, actions }) {
           )}
           {person.withDante?.length > 0 && (
             <section style={{ marginTop: 14 }}>
-              <div style={{ ...bioStyles.sectionLabel, color: "#8A6D3B" }}>{"和但丁的交集"}</div>
+              <div style={{ ...bioStyles.sectionLabel, color: "#8A6D3B" }}>{t("和但丁的交集")}</div>
               {person.withDante.map((t, i) => (
                 <p key={i} style={{ ...bioStyles.para, color: "#4A3C2A" }}>{nb(t)}</p>
               ))}
@@ -2532,7 +2532,7 @@ function BioPanel({ person, metLabel, onClose, actions }) {
 
         {actions?.length > 0 && (
           <div style={bioStyles.actions}>
-            <div style={bioStyles.actionsLabel}>{"读完了。你把他放进——"}</div>
+            <div style={bioStyles.actionsLabel}>{t("读完了。你把他放进——")}</div>
             <div style={bioStyles.actionsRow}>
               {actions.map((a) => (
                 <button key={a.id} style={bioStyles.actionBtn} onClick={() => a.onPick(a.id)}>
@@ -2720,8 +2720,8 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
         {!zoom && (
           <>
             <div style={csStyles.head}>
-              <div style={csStyles.title}>{nb(phase.title || "九重天")}</div>
-              <div style={csStyles.rule}>{nb(phase.rule || "越往外，转得越快——因为离神越近。")}</div>
+              <div style={csStyles.title}>{nb(phase.title || t("九重天"))}</div>
+              <div style={csStyles.rule}>{nb(phase.rule || t("越往外，转得越快——因为离神越近。"))}</div>
             </div>
             <div style={csStyles.counter}>{litCount + " / " + n}</div>
           </>
@@ -2806,12 +2806,12 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
                 </span>
                 {s.who && cast[s.who] && (
                   <button style={csStyles.chipBio}
-                    onClick={(e) => { e.stopPropagation(); setBioOf(s.who); }}>{"生平"}</button>
+                    onClick={(e) => { e.stopPropagation(); setBioOf(s.who); }}>{t("生平")}</button>
                 )}
               </div>
             ))}
             {tray.length === 0 && !complete && (
-              <div style={csStyles.trayEmpty}>{"都排上了，可还有几重是暗的。点暗的那个取回来，换一重试试。"}</div>
+              <div style={csStyles.trayEmpty}>{t("都排上了，可还有几重是暗的。点暗的那个取回来，换一重试试。")}</div>
             )}
           </div>
         )}
@@ -2840,7 +2840,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
               duration={1200}
             />
             {phase.finale?.coda && <div style={csStyles.coda}>{nb(phase.finale.coda)}</div>}
-            <button style={{ ...prStyles.go, marginTop: 22 }} onClick={onComplete}>{"走完了 →"}</button>
+            <button style={{ ...prStyles.go, marginTop: 22 }} onClick={onComplete}>{t("走完了 →")}</button>
           </div>
         )}
 
@@ -2974,7 +2974,9 @@ const TRUST_STRATS = [
 // 相邻对的色觉分辨度是按这个顺序验过的）。
 const TRUST_COLORS = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300"];
 const colorOf = (sid) => TRUST_COLORS[TRUST_STRATS.findIndex((s) => s.id === sid)] || "#888";
-const stratName = (sid) => TRUST_STRATS.find((s) => s.id === sid)?.name || sid;
+// 策略名/规矩留中文写在 TRUST_STRATS 里，到这里再 t()——
+// 模块级常量只在 import 时求值一次，写在定义处会把语言冻住。
+const stratName = (sid) => t(TRUST_STRATS.find((s) => s.id === sid)?.name || sid);
 
 // 一步棋。mine / theirs 是到目前为止双方「实际打出」的手（含误传后的结果）。
 function trustMove(sid, mine, theirs) {
@@ -3098,11 +3100,11 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
   const Matrix = () => (
     <table style={tgStyles.matrix}>
       <tbody>
-        <tr><td style={tgStyles.mCorner} /><th style={tgStyles.mHead}>{"对面宽赦"}</th><th style={tgStyles.mHead}>{"对面放逐"}</th></tr>
-        <tr><th style={tgStyles.mHead}>{"你宽赦"}</th>
+        <tr><td style={tgStyles.mCorner} /><th style={tgStyles.mHead}>{t("对面宽赦")}</th><th style={tgStyles.mHead}>{t("对面放逐")}</th></tr>
+        <tr><th style={tgStyles.mHead}>{t("你宽赦")}</th>
           <td style={tgStyles.mCell}><b style={{ color: "#8FD0A8" }}>{"+2"}</b>{" / +2"}</td>
           <td style={tgStyles.mCell}><b style={{ color: "#E08A7A" }}>{"−1"}</b>{" / +3"}</td></tr>
-        <tr><th style={tgStyles.mHead}>{"你放逐"}</th>
+        <tr><th style={tgStyles.mHead}>{t("你放逐")}</th>
           <td style={tgStyles.mCell}><b style={{ color: "#E8D9BE" }}>{"+3"}</b>{" / −1"}</td>
           <td style={tgStyles.mCell}><b>{"0"}</b>{" / 0"}</td></tr>
       </tbody>
@@ -3117,18 +3119,18 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
         {/* ── 交手 ── */}
         {stage === "play" && (
           <div style={tgStyles.wrap}>
-            <div style={tgStyles.title}>{nb(phase.title || "放逐，还是宽赦")}</div>
+            <div style={tgStyles.title}>{nb(phase.title || t("放逐，还是宽赦"))}</div>
             <div style={tgStyles.lede}>{nb(phase.lede || "")}</div>
 
             <div style={tgStyles.playRow}>
               <div style={tgStyles.side}>
                 <Matrix />
                 <div style={tgStyles.scores}>
-                  <span>{"你 "}<b style={tgStyles.num}>{me}</b></span>
-                  <span>{"对面 "}<b style={tgStyles.num}>{them}</b></span>
+                  <span>{t("你 ")}<b style={tgStyles.num}>{me}</b></span>
+                  <span>{t("对面 ")}<b style={tgStyles.num}>{them}</b></span>
                 </div>
                 <div style={tgStyles.cityBar}>
-                  <div style={tgStyles.cityLabel}>{"城的元气"}</div>
+                  <div style={tgStyles.cityLabel}>{t("城的元气")}</div>
                   <div style={tgStyles.cityTrack}>
                     <div style={{
                       ...tgStyles.cityFill,
@@ -3141,28 +3143,28 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
 
               <div style={tgStyles.board}>
                 <div style={tgStyles.histRow}>
-                  <span style={tgStyles.histWho}>{"你"}</span>
+                  <span style={tgStyles.histWho}>{t("你")}</span>
                   {Array.from({ length: totalRounds }).map((_, i) => (
                     <span key={i} style={{ ...tgStyles.dot, ...(mine[i] ? (mine[i] === SPARE ? tgStyles.dotSpare : tgStyles.dotExile) : tgStyles.dotEmpty) }}>
-                      {mine[i] ? (mine[i] === SPARE ? "赦" : "逐") : ""}
+                      {mine[i] ? (mine[i] === SPARE ? t("赦") : t("逐")) : ""}
                     </span>
                   ))}
                 </div>
                 <div style={tgStyles.histRow}>
-                  <span style={tgStyles.histWho}>{"对面"}</span>
+                  <span style={tgStyles.histWho}>{t("对面")}</span>
                   {Array.from({ length: totalRounds }).map((_, i) => (
                     <span key={i} style={{ ...tgStyles.dot, ...(theirs[i] ? (theirs[i] === SPARE ? tgStyles.dotSpare : tgStyles.dotExile) : tgStyles.dotEmpty) }}>
-                      {theirs[i] ? (theirs[i] === SPARE ? "赦" : "逐") : ""}
+                      {theirs[i] ? (theirs[i] === SPARE ? t("赦") : t("逐")) : ""}
                     </span>
                   ))}
                 </div>
-                <div style={tgStyles.roundNo}>{`第 ${Math.min(mine.length + 1, totalRounds)} 轮 / 共 ${totalRounds} 轮`}</div>
+                <div style={tgStyles.roundNo}>{`${t("trust.roundPrefix")}${Math.min(mine.length + 1, totalRounds)}${t("trust.roundMid")}${totalRounds}${t("trust.roundTail")}`}</div>
                 <div style={tgStyles.moves}>
                   <button style={{ ...tgStyles.move, borderColor: "#199e70" }} onClick={() => play(SPARE)}>
-                    {"宽　赦"}<span style={tgStyles.moveSub}>{"让他们留在城里"}</span>
+                    {t("宽　赦")}<span style={tgStyles.moveSub}>{t("让他们留在城里")}</span>
                   </button>
                   <button style={{ ...tgStyles.move, borderColor: "#d95926" }} onClick={() => play(EXILE)}>
-                    {"放　逐"}<span style={tgStyles.moveSub}>{"把他们赶出佛罗伦萨"}</span>
+                    {t("放　逐")}<span style={tgStyles.moveSub}>{t("把他们赶出佛罗伦萨")}</span>
                   </button>
                 </div>
               </div>
@@ -3173,15 +3175,15 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
         {/* ── 猜他的规矩 ── */}
         {stage === "guess" && (
           <div style={tgStyles.wrap}>
-            <div style={tgStyles.title}>{"对面那一家，是按什么规矩出手的？"}</div>
-            <div style={tgStyles.lede}>{"先猜。猜完才告诉你。"}</div>
+            <div style={tgStyles.title}>{t("对面那一家，是按什么规矩出手的？")}</div>
+            <div style={tgStyles.lede}>{t("先猜。猜完才告诉你。")}</div>
             <div style={tgStyles.guessList}>
               {TRUST_STRATS.map((s) => (
                 <button key={s.id}
                   onClick={() => { setGuess(s.id); setTimeout(() => setStage("types"), 500); if (onScore) onScore("trust_guess", POINTS.predict); }}
                   style={{ ...tgStyles.guessBtn, borderColor: guess === s.id ? "#C9A86A" : "rgba(201,168,106,0.3)" }}>
                   <b style={tgStyles.guessName}>{s.name}</b>
-                  <span style={tgStyles.guessRule}>{nb(s.rule)}</span>
+                  <span style={tgStyles.guessRule}>{nb(t(s.rule))}</span>
                 </button>
               ))}
             </div>
@@ -3192,52 +3194,52 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
         {stage === "types" && (
           <div style={tgStyles.wrap}>
             <div style={tgStyles.title}>
-              {"对面用的是「" + stratName(oppId) + "」"}
-              <span style={tgStyles.guessMark}>{guess === oppId ? "　你猜对了" : "　你猜的是「" + stratName(guess) + "」"}</span>
+              {t("对面用的是「") + stratName(oppId) + "」"}
+              <span style={tgStyles.guessMark}>{guess === oppId ? t("　你猜对了") : t("　你猜的是「") + stratName(guess) + "」"}</span>
             </div>
-            <div style={tgStyles.lede}>{"城里不止这一家。这六种人，佛罗伦萨都有。"}</div>
+            <div style={tgStyles.lede}>{t("城里不止这一家。这六种人，佛罗伦萨都有。")}</div>
             <div style={tgStyles.typeGrid}>
               {TRUST_STRATS.map((s) => (
                 <div key={s.id} style={{ ...tgStyles.typeCard, borderLeftColor: colorOf(s.id) }}>
                   <b style={tgStyles.typeName}>{s.name}</b>
-                  <span style={tgStyles.typeRule}>{nb(s.rule)}</span>
+                  <span style={tgStyles.typeRule}>{nb(t(s.rule))}</span>
                 </div>
               ))}
             </div>
-            <button style={prStyles.go} onClick={() => setStage("city")}>{"让满城的人一起打 →"}</button>
+            <button style={prStyles.go} onClick={() => setStage("city")}>{t("让满城的人一起打 →")}</button>
           </div>
         )}
 
         {/* ── 满城 ── */}
         {stage === "city" && (
           <div style={tgStyles.wrap}>
-            <div style={tgStyles.title}>{"让满城的人一起打"}</div>
+            <div style={tgStyles.title}>{t("让满城的人一起打")}</div>
             <div style={tgStyles.lede}>
-              {"六种人各五家。所有人两两交手，每一代过后，垫底的五家改学头五家的做法。"}
+              {t("六种人各五家。所有人两两交手，每一代过后，垫底的五家改学头五家的做法。")}
             </div>
 
             <div style={tgStyles.controls}>
               <label style={tgStyles.ctrl}>
-                <span style={tgStyles.ctrlLabel}>{"能不能回来"}</span>
+                <span style={tgStyles.ctrlLabel}>{t("能不能回来")}</span>
                 <input type="range" min="1" max="10" value={rounds} style={tgStyles.range}
                   onChange={(e) => { setRounds(+e.target.value); setHist(null); }} />
-                <span style={tgStyles.ctrlVal}>{rounds === 1 ? "一次定生死" : `还要再打 ${rounds} 回`}</span>
+                <span style={tgStyles.ctrlVal}>{rounds === 1 ? t("一次定生死") : `${t("trust.roundsMany")}${rounds}${t("trust.roundsManyTail")}`}</span>
               </label>
               <label style={tgStyles.ctrl}>
-                <span style={tgStyles.ctrlLabel}>{"猜疑（命令被误传）"}</span>
+                <span style={tgStyles.ctrlLabel}>{t("猜疑（命令被误传）")}</span>
                 <input type="range" min="0" max="50" step="5" value={noise} style={tgStyles.range}
                   onChange={(e) => { setNoise(+e.target.value); setHist(null); }} />
                 <span style={tgStyles.ctrlVal}>{noise + "%"}</span>
               </label>
               <button style={{ ...prStyles.go, marginTop: 0 }} onClick={runSim}>
-                {hist ? "再跑一遍" : "跑起来"}
+                {hist ? t("再跑一遍") : t("跑起来")}
               </button>
             </div>
 
             {/* 堆叠柱：每一代一列，六种人各一段 */}
             <div style={tgStyles.chartBox}
               onMouseLeave={() => setHover(null)}>
-              {!hist && <div style={tgStyles.chartHint}>{"拉一下两个滑块，再按「跑起来」。"}</div>}
+              {!hist && <div style={tgStyles.chartHint}>{t("拉一下两个滑块，再按「跑起来」。")}</div>}
               {hist && (() => {
                 const G = hist.length, W = 640, H = 190, PADL = 30, PADB = 20;
                 const cw = (W - PADL) / G;
@@ -3252,8 +3254,8 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
                     <line x1={PADL} y1={H} x2={W} y2={H} stroke="rgba(232,217,190,0.22)" strokeWidth="1" />
                     <text x={PADL - 6} y={12} fill="#8A8068" fontSize="9" textAnchor="end">{"30"}</text>
                     <text x={PADL - 6} y={H} fill="#8A8068" fontSize="9" textAnchor="end">{"0"}</text>
-                    <text x={PADL} y={H + 14} fill="#8A8068" fontSize="9">{"第 1 代"}</text>
-                    <text x={W} y={H + 14} fill="#8A8068" fontSize="9" textAnchor="end">{"第 " + G + " 代"}</text>
+                    <text x={PADL} y={H + 14} fill="#8A8068" fontSize="9">{t("第 1 代")}</text>
+                    <text x={W} y={H + 14} fill="#8A8068" fontSize="9" textAnchor="end">{t("第 ") + G + t(" 代")}</text>
                     {hist.slice(0, shown + 1).map((mix, gi) => {
                       let acc = 0;
                       return (
@@ -3295,23 +3297,23 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
             {hist && gen >= hist.length - 1 && winner && (
               <div style={tgStyles.verdict}>
                 {rounds === 1
-                  ? "只打一轮、赢了就没有下次——「赶尽杀绝」吃掉整座城。谁都没有手软的理由。"
+                  ? t("只打一轮、赢了就没有下次——「赶尽杀绝」吃掉整座城。谁都没有手软的理由。")
                   : noise >= 25
-                    ? "猜疑太重，谁也分不清对方是存心还是传错话。善意撑不住，「赶尽杀绝」重新占上风。"
+                    ? t("猜疑太重，谁也分不清对方是存心还是传错话。善意撑不住，「赶尽杀绝」重新占上风。")
                     : noise >= 20
-                      ? "到这个份上，城里乱成一团：肯宽赦的和记仇的谁也吃不掉谁。这是最难受的区间。"
+                      ? t("到这个份上，城里乱成一团：肯宽赦的和记仇的谁也吃不掉谁。这是最难受的区间。")
                       : noise > 0
-                        ? "有一点误会的时候，肯给两次机会的人反而活得最好——一次传错话，不至于毁掉一切。"
-                        : "只要还要再见面，「以牙还牙」就压得住「赶尽杀绝」：先善意，被咬了才咬回去。"}
+                        ? t("有一点误会的时候，肯给两次机会的人反而活得最好——一次传错话，不至于毁掉一切。")
+                        : t("只要还要再见面，「以牙还牙」就压得住「赶尽杀绝」：先善意，被咬了才咬回去。")}
                 <div style={tgStyles.verdictWho}>
-                  {"这一代最多的是：" }<b style={{ color: colorOf(winner[0]) }}>{stratName(winner[0])}</b>
+                  {t("这一代最多的是：") }<b style={{ color: colorOf(winner[0]) }}>{stratName(winner[0])}</b>
                 </div>
               </div>
             )}
 
             {hist && gen >= hist.length - 1 && (
               <button style={prStyles.go} onClick={() => { setStage("coda"); if (onScore) onScore("trust", POINTS.trust); }}>
-                {"那但丁呢 →"}
+                {t("那但丁呢 →")}
               </button>
             )}
           </div>
@@ -3322,7 +3324,7 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
           <div style={tgStyles.codaWrap}>
             <RevealLines text={(phase.coda?.lines || []).join("\n")} style={tgStyles.codaText} unitDelay={900} duration={1100} />
             {phase.coda?.turn && <div style={tgStyles.codaTurn}>{nb(phase.coda.turn)}</div>}
-            <button style={{ ...prStyles.go, marginTop: 22 }} onClick={onComplete}>{"继续 →"}</button>
+            <button style={{ ...prStyles.go, marginTop: 22 }} onClick={onComplete}>{t("继续 →")}</button>
           </div>
         )}
       </div>
@@ -3504,7 +3506,7 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
             <div style={ffStyles.top}>
               <div style={ffStyles.head}>{nb(phase.prompt || "")}</div>
               <div style={{ ...ffStyles.clock, color: urgent ? "#E07A5A" : "#C9A86A" }}>
-                {left > 0 ? left + "″" : "他们等不下去了"}
+                {left > 0 ? left + "″" : t("他们等不下去了")}
               </div>
             </div>
 
@@ -3539,7 +3541,7 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
                          cursor: bag.length === LIMIT ? "pointer" : "not-allowed" }}
                 disabled={bag.length !== LIMIT}
                 onClick={() => setStage("walk")}>
-                {"走 →"}
+                {t("走 →")}
               </button>
             </div>
           </>
@@ -3549,9 +3551,9 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
         {stage === "walk" && (
           <>
             <div style={ffStyles.top}>
-              <div style={ffStyles.head}>{nb(phase.walkPrompt || "去城门。")}</div>
+              <div style={ffStyles.head}>{nb(phase.walkPrompt || t("去城门。"))}</div>
               <div style={{ ...ffStyles.clock, color: urgent ? "#E07A5A" : "#C9A86A" }}>
-                {left > 0 ? left + "″" : "迟了"}
+                {left > 0 ? left + "″" : t("迟了")}
               </div>
             </div>
             <img src={asset(phase.hero)} alt="" style={{
@@ -3565,7 +3567,7 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
               <div style={ffStyles.track}>
                 <div style={{ ...ffStyles.trackFill, width: (step / STEPS) * 100 + "%" }} />
               </div>
-              <button style={ffStyles.stride} onClick={stride}>{"快　走"}</button>
+              <button style={ffStyles.stride} onClick={stride}>{t("快　走")}</button>
             </div>
           </>
         )}
@@ -3620,10 +3622,10 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
               )}
             </div>
             <div style={ffStyles.keptCaption}>
-              {dropped ? "路上丢了一件。剩下的，是他从佛罗伦萨带走的全部。"
-                       : "这是他从佛罗伦萨带走的全部。"}
+              {dropped ? t("路上丢了一件。剩下的，是他从佛罗伦萨带走的全部。")
+                       : t("这是他从佛罗伦萨带走的全部。")}
             </div>
-            <button style={{ ...prStyles.go, marginTop: 26 }} onClick={onComplete}>{"继续 →"}</button>
+            <button style={{ ...prStyles.go, marginTop: 26 }} onClick={onComplete}>{t("继续 →")}</button>
           </div>
         )}
       </div>
@@ -3748,7 +3750,7 @@ function PetitionPhase({ phase, onScore, onComplete }) {
 
         {/* 安定条 —— 全关唯一的仪表，玩家的眼睛会盯着它 */}
         <div style={ptStyles.meterWrap}>
-          <div style={ptStyles.meterLabel}>{phase.meterLabel || "佛罗伦萨 · 安定"}</div>
+          <div style={ptStyles.meterLabel}>{phase.meterLabel || t("佛罗伦萨 · 安定")}</div>
           <div style={ptStyles.meterTrack}>
             <div style={{ ...ptStyles.meterFill, width: stab + "%", backgroundColor: band }} />
           </div>
@@ -3765,18 +3767,18 @@ function PetitionPhase({ phase, onScore, onComplete }) {
 
             {!reply ? (
               <div style={ptStyles.btnRow}>
-                <button style={{ ...ptStyles.btn, borderColor: "#199e70" }} onClick={() => choose(true)}>{"答　应"}</button>
-                <button style={{ ...ptStyles.btn, borderColor: "#d95926" }} onClick={() => choose(false)}>{"不答应"}</button>
+                <button style={{ ...ptStyles.btn, borderColor: "#199e70" }} onClick={() => choose(true)}>{t("答　应")}</button>
+                <button style={{ ...ptStyles.btn, borderColor: "#d95926" }} onClick={() => choose(false)}>{t("不答应")}</button>
               </div>
             ) : (
               <div style={ptStyles.reaction}>
                 <div style={ptStyles.reactWho}>{nb(reply.who)}</div>
                 <div style={ptStyles.reactText}>{nb(reply.text)}</div>
                 <div style={{ ...ptStyles.delta, color: band }}>
-                  {"安定 " + (reply.stability > 0 ? "+" : "") + reply.stability}
+                  {t("安定 ") + (reply.stability > 0 ? "+" : "") + reply.stability}
                 </div>
                 <button style={{ ...prStyles.go, marginTop: 14 }} onClick={next}>
-                  {i + 1 < list.length ? "下一个 →" : "散了 →"}
+                  {i + 1 < list.length ? t("下一个 →") : t("散了 →")}
                 </button>
               </div>
             )}
@@ -3785,8 +3787,8 @@ function PetitionPhase({ phase, onScore, onComplete }) {
 
         {done && (
           <div style={ptStyles.endWrap}>
-            <div style={ptStyles.endLine}>{nb(phase.closing || "你怎么选，都有人不满意。")}</div>
-            <button style={{ ...prStyles.go, marginTop: 24 }} onClick={onComplete}>{"继续 →"}</button>
+            <div style={ptStyles.endLine}>{nb(phase.closing || t("你怎么选，都有人不满意。"))}</div>
+            <button style={{ ...prStyles.go, marginTop: 24 }} onClick={onComplete}>{t("继续 →")}</button>
           </div>
         )}
       </div>
@@ -3887,7 +3889,7 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
 
         <div style={prStyles.wrap}>
           {phase.situation && <div style={prStyles.situation}>{nb(phase.situation)}</div>}
-          <div style={prStyles.question}>{nb(phase.question || "他会怎么做？")}</div>
+          <div style={prStyles.question}>{nb(phase.question || t("他会怎么做？"))}</div>
 
           {step === 0 && (
             <>
@@ -3922,7 +3924,7 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
                   ))}
                 </div>
               )}
-              <div style={prStyles.hint}>{"先猜一个。猜错没有惩罚——猜过之后再看，才记得住。"}</div>
+              <div style={prStyles.hint}>{t("先猜一个。猜错没有惩罚——猜过之后再看，才记得住。")}</div>
             </>
           )}
 
@@ -3945,19 +3947,19 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
               )}
               <div style={prStyles.duo}>
                 <div style={{ ...prStyles.card, borderColor: "rgba(201,168,106,0.4)" }}>
-                  <div style={prStyles.cardLabel}>{"你猜"}</div>
+                  <div style={prStyles.cardLabel}>{t("你猜")}</div>
                   <div style={prStyles.cardText}>{nb(chosen ? chosen.text : "")}</div>
                 </div>
                 <div style={{ ...prStyles.card, borderColor: "#C9A86A", backgroundColor: "rgba(246,236,214,0.96)" }}>
-                  <div style={{ ...prStyles.cardLabel, color: "#C9A86A" }}>{phase.himLabel || "他做的"}</div>
+                  <div style={{ ...prStyles.cardLabel, color: "#C9A86A" }}>{phase.himLabel || t("他做的")}</div>
                   <div style={prStyles.cardText}>{nb(actual.text)}</div>
                 </div>
               </div>
 
               <div style={prStyles.note}>
                 {nb(same
-                  ? (phase.sameNote || "你猜对了。但要紧的不是猜对——是他为什么这么选。")
-                  : (phase.diffNote || "你和他选了不一样的。看看他的理由——"))}
+                  ? (phase.sameNote || t("你猜对了。但要紧的不是猜对——是他为什么这么选。"))
+                  : (phase.diffNote || t("你和他选了不一样的。看看他的理由——")))}
               </div>
 
               {step === 1 && (
@@ -3966,7 +3968,7 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
                     <RevealLines text={phase.reveal} style={prStyles.reveal} unitDelay={700}
                       skip={reduced} onDone={() => {}} />
                   )}
-                  <button style={prStyles.go} onClick={() => setStep(2)}>{"后来呢 →"}</button>
+                  <button style={prStyles.go} onClick={() => setStep(2)}>{t("后来呢 →")}</button>
                 </>
               )}
 
@@ -3976,7 +3978,7 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
                   {phase.consequence && (
                     <div style={prStyles.consequence}>{nb(phase.consequence)}</div>
                   )}
-                  <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+                  <button style={prStyles.go} onClick={onComplete}>{t("继续 →")}</button>
                 </>
               )}
             </>
@@ -4097,12 +4099,12 @@ function EvidenceSelectPhase({ phase, onScore, onComplete }) {
 
         <div style={esStyles.wrap}>
           <div style={esStyles.claimBox}>
-            <div style={esStyles.claimLabel}>{"这个判断"}</div>
+            <div style={esStyles.claimLabel}>{t("这个判断")}</div>
             <div style={esStyles.claim}>{nb(phase.claim || "")}</div>
           </div>
 
           <div style={esStyles.instruction}>
-            {nb(phase.instruction || `挑出 ${need} 条能支持它的材料。`)}
+            {nb(phase.instruction || `${t("evidence.pickPrefix")}${need}${t("evidence.pickSuffix")}`)}
             {!done && <span style={esStyles.counter}>{` ${picked.length} / ${need}`}</span>}
           </div>
 
@@ -4132,7 +4134,7 @@ function EvidenceSelectPhase({ phase, onScore, onComplete }) {
                     <span style={esStyles.itemText}>{nb(it.text)}</span>
                     {done && (
                       <span style={{ ...esStyles.verdictTag, color: it.supports ? "#C9A86A" : "#8A7A5E" }}>
-                        {it.supports ? "支持" : "不支持"}
+                        {it.supports ? t("支持") : t("不支持")}
                       </span>
                     )}
                   </div>
@@ -4149,12 +4151,12 @@ function EvidenceSelectPhase({ phase, onScore, onComplete }) {
               disabled={picked.length !== need}
               onClick={submit}
             >
-              {"就这些 →"}
+              {t("就这些 →")}
             </button>
           ) : (
             <>
               {phase.closing && <div style={esStyles.closing}>{nb(phase.closing)}</div>}
-              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+              <button style={prStyles.go} onClick={onComplete}>{t("继续 →")}</button>
             </>
           )}
         </div>
@@ -4277,7 +4279,7 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
       <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.72)" }} />
         <div style={ebStyles.wrap}>
-          <div style={ebStyles.prompt}>{nb(phase.prompt || "把这几块摆成一句话。")}</div>
+          <div style={ebStyles.prompt}>{nb(phase.prompt || t("把这几块摆成一句话。"))}</div>
 
           {!done && (
             <>
@@ -4298,15 +4300,15 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
                     {nb(t.text)}
                   </div>
                 ))}
-                {tray.length === 0 && <div style={ebStyles.trayEmpty}>{"零件用完了。读一遍你写的这句话。"}</div>}
+                {tray.length === 0 && <div style={ebStyles.trayEmpty}>{t("零件用完了。读一遍你写的这句话。")}</div>}
               </div>
-              <div style={ebStyles.hint}>{"拖进空格，或先点零件再点空格（点已填的可取回）。有几块是用不上的。"}</div>
+              <div style={ebStyles.hint}>{t("拖进空格，或先点零件再点空格（点已填的可取回）。有几块是用不上的。")}</div>
               <button
                 style={{ ...prStyles.go, opacity: allFilled ? 1 : 0.45, cursor: allFilled ? "pointer" : "not-allowed" }}
                 disabled={!allFilled}
                 onClick={submit}
               >
-                {"这就是我的解释 →"}
+                {t("这就是我的解释 →")}
               </button>
             </>
           )}
@@ -4314,15 +4316,15 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
           {done && (
             <div style={ebStyles.compare}>
               <div style={ebStyles.block}>
-                <div style={ebStyles.blockLabel}>{"你写的"}</div>
+                <div style={ebStyles.blockLabel}>{t("你写的")}</div>
                 <div style={ebStyles.blockText}>{render(fill)}</div>
               </div>
               <div style={{ ...ebStyles.block, borderLeftColor: "#C9A86A" }}>
-                <div style={{ ...ebStyles.blockLabel, color: "#C9A86A" }}>{"史家写的"}</div>
+                <div style={{ ...ebStyles.blockLabel, color: "#C9A86A" }}>{t("史家写的")}</div>
                 <div style={ebStyles.blockText}>{nb(phase.canonical || "")}</div>
               </div>
               {phase.note && <div style={ebStyles.note}>{nb(phase.note)}</div>}
-              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+              <button style={prStyles.go} onClick={onComplete}>{t("继续 →")}</button>
             </div>
           )}
         </div>
@@ -4417,15 +4419,15 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
           {/* 题面 */}
           {mode === "reverse" ? (
             <>
-              <div style={cbStyles.eyebrow}>{"《神曲》里有这样一群人"}</div>
+              <div style={cbStyles.eyebrow}>{t("《神曲》里有这样一群人")}</div>
               <div style={cbStyles.punishment}>{nb(phase.punishment || "")}</div>
-              <div style={cbStyles.ask}>{nb(phase.question || "他们生前犯的是什么罪？")}</div>
+              <div style={cbStyles.ask}>{nb(phase.question || t("他们生前犯的是什么罪？"))}</div>
             </>
           ) : (
             <>
               <div style={cbStyles.eyebrow}>{nb(phase.sin?.name || "")}</div>
               <div style={cbStyles.punishment}>{nb(phase.sin?.did || "")}</div>
-              <div style={cbStyles.ask}>{nb(phase.question || "如果由你来定他们的罚——你会怎么写？")}</div>
+              <div style={cbStyles.ask}>{nb(phase.question || t("如果由你来定他们的罚——你会怎么写？"))}</div>
             </>
           )}
 
@@ -4480,7 +4482,7 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
               disabled={!(mode === "reverse" ? guess : allFilled)}
               onClick={submit}
             >
-              {mode === "reverse" ? "就是它 →" : "定了，看但丁怎么写的 →"}
+              {mode === "reverse" ? t("就是它 →") : t("定了，看但丁怎么写的 →")}
             </button>
           )}
 
@@ -4489,20 +4491,20 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
             <div style={cbStyles.reveal}>
               {mode !== "reverse" && (
                 <div style={cbStyles.block}>
-                  <div style={cbStyles.blockLabel}>{"你设计的"}</div>
+                  <div style={cbStyles.blockLabel}>{t("你设计的")}</div>
                   <div style={cbStyles.blockText}>{mine.map((p) => p.text).join("，") + "。"}</div>
                 </div>
               )}
               {mode === "reverse" && (
                 <div style={cbStyles.block}>
-                  <div style={cbStyles.blockLabel}>{"你的推断"}</div>
+                  <div style={cbStyles.blockLabel}>{t("你的推断")}</div>
                   <div style={cbStyles.blockText}>
                     {nb(options.find((o) => o.id === guess)?.text || "")}
                   </div>
                 </div>
               )}
               <div style={{ ...cbStyles.block, borderLeftColor: "#C9A86A" }}>
-                <div style={{ ...cbStyles.blockLabel, color: "#C9A86A" }}>{"但丁写的"}</div>
+                <div style={{ ...cbStyles.blockLabel, color: "#C9A86A" }}>{t("但丁写的")}</div>
                 <div style={cbStyles.blockText}>{nb(phase.danteVersion || "")}</div>
               </div>
 
@@ -4515,7 +4517,7 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
                 </div>
               )}
               {phase.rule && <div style={cbStyles.rule}>{nb(phase.rule)}</div>}
-              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+              <button style={prStyles.go} onClick={onComplete}>{t("继续 →")}</button>
             </div>
           )}
         </div>
@@ -4610,7 +4612,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
             <div style={ppStyles.quote}>{nb(phase.quote || "")}</div>
           </div>
 
-          {!done && <div style={ppStyles.ask}>{nb(phase.instruction || "把这三块时间，各归各位。")}</div>}
+          {!done && <div style={ppStyles.ask}>{nb(phase.instruction || t("把这三块时间，各归各位。"))}</div>}
 
           <div style={ppStyles.axis}>
             <div style={ppStyles.rail} />
@@ -4637,7 +4639,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
                     {b ? nb(b.text) : "……"}
                     {done && byId(fill[a.id])?.slot !== a.id && (
                       <div style={ppStyles.truth}>
-                        {"这一格实际是：" + (blocks.find((x) => x.slot === a.id)?.text || "").replace(/\n/g, " ")}
+                        {t("这一格实际是：") + (blocks.find((x) => x.slot === a.id)?.text || "").replace(/\n/g, " ")}
                       </div>
                     )}
                   </div>
@@ -4663,7 +4665,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
                 disabled={!allFilled}
                 onClick={() => { setDone(true); if (onScore) onScore("prophecy", right * POINTS.prophecy); }}
               >
-                {"摆好了 →"}
+                {t("摆好了 →")}
               </button>
             </>
           )}
@@ -4674,7 +4676,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
               {phase.conclusion && (
                 <RevealLines text={phase.conclusion} style={ppStyles.conclusion} unitDelay={760} />
               )}
-              <button style={prStyles.go} onClick={onComplete}>{"继续 →"}</button>
+              <button style={prStyles.go} onClick={onComplete}>{t("继续 →")}</button>
             </>
           )}
         </div>
@@ -4808,7 +4810,7 @@ function EchoPortalPhase({ phase, onComplete }) {
         {/* —— 现实：拖 token 进手稿 —— */}
         {stage === "reality" && (
           <>
-            <div style={epStyles.prompt}>{nb(phase.prompt || "把它放进但丁的手稿")}</div>
+            <div style={epStyles.prompt}>{nb(phase.prompt || t("把它放进但丁的手稿"))}</div>
 
             {/* 手稿 = 投放区 */}
             <div
@@ -4828,7 +4830,7 @@ function EchoPortalPhase({ phase, onComplete }) {
             >
               {!phase.manuscript && <div style={epStyles.manuscriptRules} />}
               <div style={epStyles.manuscriptHint}>
-                {armed ? "点这里放下" : "手稿"}
+                {armed ? t("点这里放下") : t("手稿")}
               </div>
             </div>
 
@@ -4846,16 +4848,16 @@ function EchoPortalPhase({ phase, onComplete }) {
                   : "0 6px 18px rgba(0,0,0,0.35)",
               }}
             >
-              <div style={{ ...epStyles.tokenSeal, backgroundColor: kind.color }}>{kind.seal}</div>
+              <div style={{ ...epStyles.tokenSeal, backgroundColor: kind.color }}>{t(kind.seal)}</div>
               <div style={epStyles.tokenBody}>
-                <div style={epStyles.tokenKind}>{kind.label}</div>
+                <div style={epStyles.tokenKind}>{t(kind.label)}</div>
                 <div style={epStyles.tokenName}>{nb(token.name || "")}</div>
                 {token.detail && <div style={epStyles.tokenDetail}>{nb(token.detail)}</div>}
               </div>
             </div>
 
             <div style={epStyles.tapHint}>
-              {"拖到手稿上，或先点印章再点手稿"}
+              {t("拖到手稿上，或先点印章再点手稿")}
             </div>
           </>
         )}
@@ -4868,7 +4870,7 @@ function EchoPortalPhase({ phase, onComplete }) {
               <RevealLines text={phase.afterText} style={epStyles.afterText} unitDelay={700} />
             )}
             <button style={{ ...styles.floatingProceed, position: "static", marginTop: 26 }} onClick={onComplete}>
-              {"继续 →"}
+              {t("继续 →")}
             </button>
           </div>
         )}
@@ -4981,7 +4983,7 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
       <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
         <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(12,8,5,0.45)" }} />
 
-        <div style={ipStyles.question}>{nb(phase.question || "他们被放在了哪一层？")}</div>
+        <div style={ipStyles.question}>{nb(phase.question || t("他们被放在了哪一层？"))}</div>
 
         {/* 左：待安放的亡魂（都是刚刚见过的人） */}
         <div style={ipStyles.tray}>
@@ -5000,21 +5002,21 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
               {s.portrait && <div style={{ ...ipStyles.soulFace, backgroundImage: `url(${asset(s.portrait)})` }} />}
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={ipStyles.soulName}>{nb(s.name)}</div>
-                {s.metLabel && <div style={ipStyles.soulMet}>{"见过 · " + s.metLabel}</div>}
+                {s.metLabel && <div style={ipStyles.soulMet}>{t("见过 · ") + s.metLabel}</div>}
               </div>
               {/* 拖之前先查生平。放在卡片右侧，不抢「点一下=拿起」这个手势 */}
               {(cast[s.id] || s.bio) && (
                 <button
                   style={ipStyles.bioBtn}
                   onClick={(e) => { e.stopPropagation(); setBioOf(s.id); }}
-                  title="看他的生平"
+                  title={t("看他的生平")}
                 >
-                  {"生平"}
+                  {t("生平")}
                 </button>
               )}
             </div>
           ))}
-          {tray.length === 0 && <div style={ipStyles.trayEmpty}>{"都安排完了。"}</div>}
+          {tray.length === 0 && <div style={ipStyles.trayEmpty}>{t("都安排完了。")}</div>}
         </div>
 
         {/* 右：地狱漏斗 */}
@@ -5056,13 +5058,13 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
                         cursor: submitted ? "default" : "pointer",
                       }}
                     >
-                      {submitted && <span style={ipStyles.chipWho}>{"你"}</span>}
+                      {submitted && <span style={ipStyles.chipWho}>{t("你")}</span>}
                       {nb(s.name)}
                     </span>
                   ))}
                   {submitted && souls.filter((s) => s.answer === c.id).map((s) => (
                     <span key={"dante-" + s.id} style={{ ...ipStyles.chip, ...ipStyles.chipDante }}>
-                      <span style={{ ...ipStyles.chipWho, color: "#3A2E20", opacity: 0.65 }}>{"但丁"}</span>
+                      <span style={{ ...ipStyles.chipWho, color: "#3A2E20", opacity: 0.65 }}>{t("但丁")}</span>
                       {nb(s.name)}
                     </span>
                   ))}
@@ -5079,7 +5081,7 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
             disabled={!allPlaced}
             onClick={submit}
           >
-            {"定了，看但丁怎么排的 →"}
+            {t("定了，看但丁怎么排的 →")}
           </button>
         )}
 
@@ -5087,11 +5089,11 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
           <div style={ipStyles.verdictOverlay}>
             <div style={ipStyles.verdictPanel}>
               <div style={ipStyles.verdictScore}>
-                {"你和但丁，"}<strong>{correctCount}</strong>{" / " + souls.length + " 处放到了一起"}
+                {t("你和但丁，")}<strong>{correctCount}</strong>{" / " + souls.length + t(" 处放到了一起")}
                 <div style={ipStyles.verdictSub}>
                   {correctCount === souls.length
-                    ? "全都一样。那就往下问一句：他凭什么这么排？"
-                    : "不一样的那几个，才是这一关真正要读的地方。"}
+                    ? t("全都一样。那就往下问一句：他凭什么这么排？")
+                    : t("不一样的那几个，才是这一关真正要读的地方。")}
                 </div>
               </div>
               {souls.map((s) => (
@@ -5105,8 +5107,8 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
                       return (
                         <span style={ipStyles.verdictWhere}>
                           {agree
-                            ? "　你和但丁都放在「" + (hisC?.name || "") + "」"
-                            : "　你放「" + (mineC?.name || "—") + "」　但丁放「" + (hisC?.name || "") + "」"}
+                            ? t("　你和但丁都放在「") + (hisC?.name || "") + "」"
+                            : t("　你放「") + (mineC?.name || "—") + t("」　但丁放「") + (hisC?.name || "") + "」"}
                         </span>
                       );
                     })()}
@@ -5114,14 +5116,14 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
                   <div style={ipStyles.verdictText}>{nb(s.verdict || "")}</div>
                 </div>
               ))}
-              <button style={styles.proceedBtn} onClick={onComplete}>{"继续 →"}</button>
+              <button style={styles.proceedBtn} onClick={onComplete}>{t("继续 →")}</button>
             </div>
           </div>
         )}
 
         {!submitted && (
           <div style={epStyles.tapHint}>
-            {"点「生平」先了解这个人；拖到对应的一层，或先点人再点层（点已放的名字可取回）"}
+            {t("点「生平」先了解这个人；拖到对应的一层，或先点人再点层（点已放的名字可取回）")}
           </div>
         )}
 
@@ -5279,9 +5281,9 @@ function ComedyEncounterPhase({ phase, eventId, onComplete }) {
           <div style={ceStyles.name}>{nb(soul.name || "")}</div>
           {soul.metLabel && (
             <div style={{ ...ceStyles.met, opacity: revealed ? 1 : 0, transition: "opacity 900ms ease 600ms" }}>
-              {"你在这里见过 · " + soul.metLabel}
+              {t("你在这里见过 · ") + soul.metLabel}
               {cast[soul.id] && (
-                <button style={ceStyles.bioBtn} onClick={() => setShowBio(true)}>{"他是谁"}</button>
+                <button style={ceStyles.bioBtn} onClick={() => setShowBio(true)}>{t("他是谁")}</button>
               )}
             </div>
           )}
@@ -5309,7 +5311,7 @@ function ComedyEncounterPhase({ phase, eventId, onComplete }) {
             ))}
             {canClose && (
               <button style={{ ...ceStyles.askBtn, ...ceStyles.closeBtn }} onClick={() => setClosing(true)}>
-                {"—— 走开 →"}
+                {t("—— 走开 →")}
               </button>
             )}
           </div>
@@ -5318,10 +5320,10 @@ function ComedyEncounterPhase({ phase, eventId, onComplete }) {
         {/* 但丁的回答 */}
         {active != null && (
           <div style={ceStyles.answerBar} onClick={() => setActive(null)}>
-            <div style={ceStyles.answerWho}>{"但丁"}</div>
+            <div style={ceStyles.answerWho}>{t("但丁")}</div>
             <div style={ceStyles.answerText}>{nb(asks[active].a)}</div>
             <div style={ceStyles.answerHint}>
-              {canClose ? "▼ 点击返回" : "▼ 点击返回（至少再问 " + (need - asked.length) + " 个）"}
+              {canClose ? t("▼ 点击返回") : t("▼ 点击返回（至少再问 ") + (need - asked.length) + t(" 个）")}
             </div>
           </div>
         )}
@@ -5339,7 +5341,7 @@ function ComedyEncounterPhase({ phase, eventId, onComplete }) {
           <div style={ceStyles.closingWrap}>
             <RevealLines text={phase.closing || ""} style={ceStyles.closingText} unitDelay={760} />
             <button style={{ ...styles.floatingProceed, position: "static", marginTop: 24 }} onClick={onComplete}>
-              {"继续 →"}
+              {t("继续 →")}
             </button>
           </div>
         )}

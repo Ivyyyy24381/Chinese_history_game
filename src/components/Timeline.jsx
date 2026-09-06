@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { COLOR, TRACKING, EASE, paper, paperBtn, scrim } from "../styles/theme";
 import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
+import { t } from "../i18n/ui";
 
 /**
  * Continuous draggable timeline slider spanning the character's lifespan.
@@ -184,7 +185,7 @@ export default function Timeline({
                   e.stopPropagation();
                   onEventSelect && onEventSelect(event);
                 }}
-                title={`${event.year} 年 · ${event.name}`}
+                title={`${event.year}${t("app.yearSuffix")} · ${t(event.name)}`}
               >
                 {/* 触控命中垫：10px 墨点手指点不中，外扩到 36px 圆域（点击冒泡到本容器） */}
                 <span style={{ position: "absolute", left: -18, top: -18, width: 36, height: 36, borderRadius: "50%" }} />

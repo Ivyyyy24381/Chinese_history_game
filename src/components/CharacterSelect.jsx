@@ -73,7 +73,7 @@ export default function CharacterSelect({
         {/* 标题区自带暖光，和名牌同一套做法（鲁米那张宫殿背景顶部很满）*/}
         <div style={styles.header}>
           <h1 style={styles.titleWrap}>
-            <img src={asset(TITLE_IMG)} alt="历史长河" style={styles.titleImg} />
+            <img src={asset(TITLE_IMG)} alt={t("历史长河")} style={styles.titleImg} />
           </h1>
           <p style={styles.subtitle}>{t("select.subtitle")}</p>
           <LangSwitch style={{ marginTop: 10 }} />
@@ -90,7 +90,7 @@ export default function CharacterSelect({
                 role="button"
                 tabIndex={0}
                 aria-pressed={isSelected}
-                aria-label={`${char.name} · ${char.title}`}
+                aria-label={`${t(char.name)} · ${t(char.title)}`}
                 style={styles.item}
                 onClick={() => handleClick(char)}
                 onKeyDown={(e) => {
@@ -127,7 +127,7 @@ export default function CharacterSelect({
                   {achievements[char.id] && (
                     <span
                       style={styles.achBadge}
-                      title={t("select.achievements") + (achievementTitles[char.id] || char.name)}
+                      title={t("select.achievements") + t(achievementTitles[char.id] || char.name)}
                     >
                       {"🏆"}
                     </span>
@@ -146,18 +146,18 @@ export default function CharacterSelect({
                       }
                     />
                   ) : (
-                    <span style={styles.nameText}>{char.name}</span>
+                    <span style={styles.nameText}>{t(char.name)}</span>
                   )}
                   {/* 书法图/花体字未必读得出来，中文名单独写一行 */}
                   <p style={styles.readableName}>
                     {char.name}
                     <span style={styles.metaSep}>{" · "}</span>
-                    <span style={styles.readableTitle}>{char.title}</span>
+                    <span style={styles.readableTitle}>{t(char.title)}</span>
                   </p>
                   <p style={styles.meta}>
                     {char.years}
                     <span style={styles.metaSep}>{" · "}</span>
-                    {char.dynasty}
+                    {t(char.dynasty)}
                   </p>
                   <p
                     style={{
@@ -167,7 +167,7 @@ export default function CharacterSelect({
                       marginTop: isSelected ? 8 : 0,
                     }}
                   >
-                    {nb(char.description)}
+                    {nb(t(char.description))}
                   </p>
                 </div>
               </div>
@@ -179,7 +179,7 @@ export default function CharacterSelect({
         <div style={styles.actionBar}>
           {selected && selected.locked && (
             <span style={styles.comingSoon}>
-              {`\u{1F512} ${selected.name}${t("select.locked")}`}
+              {`\u{1F512} ${t(selected.name)}${t("select.locked")}`}
             </span>
           )}
           {selected && !selected.locked && (
@@ -190,7 +190,7 @@ export default function CharacterSelect({
               >
                 {resumeForSelected
                   ? `${t("select.resume")}${resumeForSelected.runScore || 0}${t("select.resumePoints")}`
-                  : `${t("select.start")}${selected.name}${t("select.startSuffix")}`}
+                  : `${t("select.start")}${t(selected.name)}${t("select.startSuffix")}`}
               </button>
               {resumeForSelected && (
                 <button
@@ -227,7 +227,7 @@ export default function CharacterSelect({
               }}
             >
               {(achievements[c.id] ? "✓ " : "… ") +
-                (achievementTitles[c.id] || c.name)}
+                t(achievementTitles[c.id] || c.name)}
             </span>
           ))}
         </div>

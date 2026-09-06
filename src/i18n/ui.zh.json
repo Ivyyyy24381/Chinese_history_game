@@ -30,7 +30,6 @@
   "app.rotateSub": "地图与场景为横屏设计，横屏体验最佳",
   "app.rotateIgnore": "仍要竖屏继续",
   "app.yearSuffix": " 年",
-
   "select.title": "历史长河",
   "select.subtitle": "选择你的主人公",
   "select.achievements": "历史成就 · ",
@@ -44,25 +43,20 @@
   "select.recap": "📜 人物回顾",
   "select.achievementCount": "🏆 历史成就 ",
   "select.language": "语言",
-
   "map.zoomIn": "放大",
   "map.zoomOut": "缩小",
   "map.reset": "复位（双击地图也可复位）",
   "map.atStart": "已是起点",
   "map.atEnd": "已是终点",
   "map.to": "至",
-
   "score.label": "积分 ",
   "score.progress": "进度 ",
-
   "event.viewDialogue": "🗣 查看对话",
   "event.startQuiz": "🎉 开始答题",
-
   "recap.close": "✕ 关闭",
   "recap.lifeReview": "·一生回顾",
   "recap.achievements": "🏆 历史成就 · 诗圣之路",
   "recap.epigraph": "「李杜文章在，光焰万丈长。」——韩愈",
-
   "board.title": "🏆 排行榜",
   "board.subtitleCloud": "全网玩家总分榜",
   "board.subtitleLocal": "本机记录（未配置云端服务）",
@@ -77,7 +71,6 @@
   "board.errDomain": "无法连接云端：请检查控制台「安全域名」是否已加入本站域名",
   "board.errCollection": "云端缺少 scores 集合：请在控制台「数据库」创建",
   "board.errGeneric": "排行榜加载失败：",
-
   "auth.needEmailPwd": "请填写邮箱和密码",
   "auth.needNick": "请填写昵称",
   "auth.needCode": "请输入邮箱收到的验证码",
@@ -112,7 +105,6 @@
   "auth.player": "玩家",
   "auth.anonymous": "匿名玩家",
   "auth.myScore": "我的成绩",
-
   "scene.continue": "继续 →",
   "scene.next": "下一题 →",
   "scene.skip": "跳过",
@@ -129,19 +121,16 @@
   "scene.timeUp": "⏱ 时间到",
   "scene.solvedLine": "✓ 拼出原句：",
   "scene.originalLine": "原句：",
-
   "bio.close": "关闭",
   "bio.metAt": "你见过他 · ",
   "bio.life": "生平",
   "bio.withDante": "和但丁的交集",
   "bio.readyToPlace": "读完了。你把他放进——",
   "bio.viewLife": "看他的生平",
-
   "spheres.title": "九重天",
   "spheres.rule": "越往外，转得越快——因为离神越近。",
   "spheres.retryHint": "都排上了，可还有几重是暗的。点暗的那个取回来，换一重试试。",
   "spheres.done": "走完了 →",
-
   "trust.titf": "以牙还牙",
   "trust.titfDesc": "先宽赦。之后你上一轮怎么待他，他就怎么待你。",
   "trust.allD": "赶尽杀绝",
@@ -195,7 +184,6 @@
   "trust.genSuffix": " 代",
   "trust.mostCommon": "这一代最多的是：",
   "trust.toDante": "那但丁呢 →",
-
   "flee.theyWont": "他们等不下去了",
   "flee.go": "走 →",
   "flee.toGate": "去城门。",
@@ -203,7 +191,6 @@
   "flee.hurry": "快　走",
   "flee.lostOne": "路上丢了一件。剩下的，是他从佛罗伦萨带走的全部。",
   "flee.keptAll": "这是他从佛罗伦萨带走的全部。",
-
   "petition.meter": "佛罗伦萨 · 安定",
   "petition.yes": "答　应",
   "petition.no": "不答应",
@@ -211,7 +198,6 @@
   "petition.nextOne": "下一个 →",
   "petition.dismissed": "散了 →",
   "petition.closing": "你怎么选，都有人不满意。",
-
   "predict.q": "他会怎么做？",
   "predict.hint": "先猜一个。猜错没有惩罚——猜过之后再看，才记得住。",
   "predict.yours": "你猜",
@@ -219,21 +205,18 @@
   "predict.same": "你猜对了。但要紧的不是猜对——是他为什么这么选。",
   "predict.diff": "你和他选了不一样的。看看他的理由——",
   "predict.andThen": "后来呢 →",
-
   "evidence.claimLabel": "这个判断",
   "evidence.pickPrefix": "挑出 ",
   "evidence.pickSuffix": " 条能支持它的材料。",
   "evidence.supports": "支持",
   "evidence.notSupports": "不支持",
   "evidence.done": "就这些 →",
-
   "build.prompt": "把这几块摆成一句话。",
   "build.allUsed": "零件用完了。读一遍你写的这句话。",
   "build.hint": "拖进空格，或先点零件再点空格（点已填的可取回）。有几块是用不上的。",
   "build.submit": "这就是我的解释 →",
   "build.yours": "你写的",
   "build.historians": "史家写的",
-
   "contrapasso.thereAre": "《神曲》里有这样一群人",
   "contrapasso.whatSin": "他们生前犯的是什么罪？",
   "contrapasso.yourPunishment": "如果由你来定他们的罚——你会怎么写？",
@@ -242,11 +225,9 @@
   "contrapasso.yours": "你设计的",
   "contrapasso.yourGuess": "你的推断",
   "contrapasso.dantes": "但丁写的",
-
   "prophecy.prompt": "把这三块时间，各归各位。",
   "prophecy.actually": "这一格实际是：",
   "prophecy.done": "摆好了 →",
-
   "token.person": "人",
   "token.personLabel": "人物",
   "token.memory": "忆",
@@ -255,12 +236,10 @@
   "token.ideaLabel": "思想",
   "token.conflict": "结",
   "token.conflictLabel": "矛盾",
-
   "portal.prompt": "把它放进但丁的手稿",
   "portal.dropHere": "点这里放下",
   "portal.manuscript": "手稿",
   "portal.hint": "拖到手稿上，或先点印章再点手稿",
-
   "place.question": "他们被放在了哪一层？",
   "place.metAt": "见过 · ",
   "place.allPlaced": "都安排完了。",
@@ -276,12 +255,10 @@
   "place.dantePut": "」　但丁放「",
   "place.closeQuote": "」",
   "place.hint": "点「生平」先了解这个人；拖到对应的一层，或先点人再点层（点已放的名字可取回）",
-
   "encounter.metAt": "你在这里见过 · ",
   "encounter.whoIsHe": "他是谁",
   "encounter.walkAway": "—— 走开 →",
   "encounter.dante": "但丁",
-
   "char.dufu.name": "杜甫",
   "char.dufu.title": "诗圣",
   "char.dufu.dynasty": "唐 · 中国",
@@ -297,5 +274,17 @@
   "char.rumi.title": "旋舞的诗人",
   "char.rumi.dynasty": "呼罗珊 · 科尼亚",
   "char.rumi.desc": "在旋舞与诗行之间追寻神圣之爱",
-  "char.rumi.path": "旋舞之路"
+  "char.rumi.path": "旋舞之路",
+  "app.storylineFallback": "这条故事线",
+  "app.completionPrefix": "你走完了",
+  "app.completionMid": "的一生——",
+  "app.completionFallback": "一段历史长河中的人生。",
+  "map.zoomInGlyph": "＋",
+  "map.zoomOutGlyph": "－",
+  "scene.puzzleTitleFull": "📜 数字华容道  ",
+  "trust.verdict1Round": "只打一轮、赢了就没有下次——「赶尽杀绝」吃掉整座城。谁都没有手软的理由。",
+  "trust.verdictHighNoise": "猜疑太重，谁也分不清对方是存心还是传错话。善意撑不住，「赶尽杀绝」重新占上风。",
+  "trust.verdictMidNoise": "到这个份上，城里乱成一团：肯宽赦的和记仇的谁也吃不掉谁。这是最难受的区间。",
+  "trust.verdictLowNoise": "有一点误会的时候，肯给两次机会的人反而活得最好——一次传错话，不至于毁掉一切。",
+  "trust.verdictNoNoise": "只要还要再见面，「以牙还牙」就压得住「赶尽杀绝」：先善意，被咬了才咬回去。"
 }
