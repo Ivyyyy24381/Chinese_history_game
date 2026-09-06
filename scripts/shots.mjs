@@ -74,6 +74,7 @@ const PROBE = () => {
       const rec = {
         tag: el.tagName.toLowerCase(), fontSize: +fs.toFixed(2), color: cs.color,
         text: own.slice(0, 40),
+        cls: el.getAttribute("data-k") || "",
         box: [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)],
       };
       text.push(rec);
@@ -83,7 +84,18 @@ const PROBE = () => {
     }
     const clickable = el.tagName === "BUTTON" || el.getAttribute("role") === "button" ||
       el.draggable === true || cs.cursor === "pointer" || el.tabIndex >= 0;
-    if (clickable) {
+    // 只数「最外层」的可点元素。整屏点击继续的过场里，每一行字都继承了
+    // cursor:pointer，但真正的点击目标是整屏那个容器，不是那一行字——
+    // 不排掉的话 414 处里有三百多是这种假阳性。
+    const nested = clickable && (() => {
+      for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+        const acs = getComputedStyle(a);
+        if (a.tagName === "BUTTON" || a.getAttribute("role") === "button" ||
+            a.draggable === true || acs.cursor === "pointer" || a.tabIndex >= 0) return true;
+      }
+      return false;
+    })();
+    if (clickable && !nested) {
       const label = (el.getAttribute("aria-label") || el.getAttribute("title") || own ||
         el.textContent.trim()).slice(0, 40);
       if (r.width < 44 || r.height < 44) {

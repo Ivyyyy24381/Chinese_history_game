@@ -10,7 +10,8 @@
     "lint:phases": "node scripts/lint_phases.mjs",
     "i18n:extract": "node scripts/i18n_extract.mjs",
     "shots": "node scripts/shots.mjs",
-    "i18n:ui": "node scripts/i18n_ui_check.mjs"
+    "i18n:ui": "node scripts/i18n_ui_check.mjs",
+    "contrast": "node scripts/contrast.mjs"
   },
   "dependencies": {
     "@cloudbase/js-sdk": "^3.6.2",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "playwright": "^1.63.0",
+    "pngjs": "^7.0.0",
     "vite": "^6.0.0"
   }
 }

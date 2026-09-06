@@ -2617,7 +2617,12 @@ const bioStyles = {
 // 但丁的规矩写在题面上，玩家据此推理而不是硬记：越往外，转得越快，因为离神越近。
 //
 // phase.spheres[{id,glyph,name,holds,who,canto,note}]  由内向外的正确顺序
+// phase.decoys[{id,glyph,holds}]  不属于九重天的干扰项（地狱、炼狱山）。
+//       放进去也不会亮——它们不在天上。玩家自己发现，然后取回来。
 //       tray 打乱顺序呈现；phase.finale{title,lines,coda}
+//
+// **卡片上不写天名。** 只给星象符号 + 那句画面；天名点亮之后才在特写里揭晓。
+// 环上也不印 1..9 —— 印了就等于把答案写在题面上，那一关就变成数数了。
 
 // 音阶：多利亚调式往上走九级，最后一级跳到八度五度上。
 // 用 WebAudio 现合成，不依赖任何音频文件。
@@ -2648,6 +2653,16 @@ function playTone(freq, { dur = 2.4, gain = 0.14 } = {}) {
   } catch { /* 静音失败不影响玩 */ }
 }
 
+// 确定性打乱：同一组格子每次都乱成同一个样子，
+// 不然截图自查、回归测试、和小孩「我刚才明明排过」全对不上。
+function shuffleStable(items) {
+  const key = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  return items
+    .map((it, i) => ({ it, k: key((it.id || "") + ":" + i) }))
+    .sort((a, b) => a.k - b.k)
+    .map(({ it }) => it);
+}
+
 // 落定一枚棋子的声音。**中性**——不表示对错，只表示「放下了」。
 // 对错一律留给提交之后的并列对照（见 DESIGN_VERBS「不打 ✓✗」）：
 // 拖的时候就响出对错，等于把答案漏给玩家。
@@ -2658,6 +2673,9 @@ function playDrop() {
 
 function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
   const spheres = phase.spheres || [];
+  // 干扰项：地狱、炼狱山不在九重天里，放进任何一环都不会亮。
+  const decoys = phase.decoys || [];
+  const pool = spheres.concat(decoys);
   const n = spheres.length;
   const cast = castFor(eventId);
   const reduced = usePrefersReducedMotion();
@@ -2669,11 +2687,14 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
   const [flash, setFlash] = useState(null);   // 刚点亮的那一重，用来放特写
   const [zoom, setZoom] = useState(false);
 
-  const byId = (id) => spheres.find((s) => s.id === id);
+  const byId = (id) => pool.find((s) => s.id === id);
   const isLit = (i) => placed[i] === spheres[i]?.id;
   const litCount = spheres.reduce((k, _, i) => k + (isLit(i) ? 1 : 0), 0);
   const used = new Set(Object.values(placed).filter(Boolean));
-  const tray = spheres.filter((s) => !used.has(s.id));
+  // 打乱。原来直接照 spheres 的顺序排，而那正是正确答案——
+  // 从上往下挨个拖就能通关，等于没有这一关。用确定性洗牌，刷新不变。
+  const shuffled = useMemo(() => shuffleStable(pool), [phase]);
+  const tray = shuffled.filter((s) => !used.has(s.id));
   const complete = litCount === n;
 
   const put = useCallback((ring, id) => {
@@ -2791,7 +2812,8 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
                     color: lit ? "#F6E7C4" : here ? "rgba(200,190,170,0.55)" : "rgba(201,168,106,0.4)",
                     animation: lit && !reduced ? `sphereSpin ${period(i)}s linear infinite reverse` : "none",
                   }}>
-                    {here ? here.glyph : i + 1}
+                    {/* 空环上什么都不写。原来印着 1..9，等于把答案写在题面上 */}
+                    {here ? here.glyph : "·"}
                   </span>
                 </div>
               </div>
@@ -2816,7 +2838,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
               >
                 <span style={csStyles.chipGlyph}>{s.glyph}</span>
                 <span style={{ minWidth: 0, flex: 1 }}>
-                  <span style={csStyles.chipName}>{nb(s.name)}</span>
+                  {/* 天名不写在卡片上——点亮之后在特写里才揭晓 */}
                   <span style={csStyles.chipHolds}>{nb(s.holds)}</span>
                 </span>
                 {s.who && cast[s.who] && (
@@ -4807,16 +4829,6 @@ function fitInside(aspect, boxAspect) {
   return aspect >= boxAspect
     ? { width: "100%", height: "auto", aspectRatio: String(aspect) }
     : { height: "100%", width: "auto", aspectRatio: String(aspect) };
-}
-
-// 确定性打乱：同一组格子每次都乱成同一个样子，
-// 不然截图自查、回归测试、和小孩「我刚才明明排过」全对不上。
-function shuffleStable(items) {
-  const key = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
-  return items
-    .map((it, i) => ({ it, k: key((it.id || "") + ":" + i) }))
-    .sort((a, b) => a.k - b.k)
-    .map(({ it }) => it);
 }
 
 function ComicSortPhase({ phase, onScore, onComplete }) {

@@ -365,7 +365,19 @@
         ],
         "coda": "全诗的最后一行写的是：\n是爱，在推动太阳和其他的星辰。"
       },
-      "nextPhase": "finale"
+      "nextPhase": "finale",
+      "decoys": [
+        {
+          "id": "inferno_funnel",
+          "glyph": "▽",
+          "holds": "一个倒着的漏斗，越往下越窄"
+        },
+        {
+          "id": "purgatorio_mount",
+          "glyph": "△",
+          "holds": "海里一座山，一圈一圈绕上去"
+        }
+      ]
     },
     {
       "id": "finale",
