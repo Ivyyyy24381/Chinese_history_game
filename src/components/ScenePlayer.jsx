@@ -4400,7 +4400,7 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
             ...ebStyles.slot,
             borderColor: over === sid ? "#C9A86A" : (picked ? "rgba(201,168,106,0.65)" : "rgba(201,168,106,0.32)"),
             backgroundColor: tok ? "rgba(201,168,106,0.2)" : (picked ? "rgba(201,168,106,0.08)" : "transparent"),
-            color: tok ? "#F5E6D3" : "#8A7A5E",
+            color: tok ? "#F5E6D3" : "#C4B492",
           }}
         >
           {tok ? nb(tok.text) : (slot ? slot.label : "……")}
