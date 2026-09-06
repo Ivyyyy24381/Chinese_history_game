@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { COLOR, TRACKING, EASE, paper, paperBtn, scrim } from "../styles/theme";
 import usePrefersReducedMotion from "../utils/usePrefersReducedMotion";
 import { t } from "../i18n/ui";
@@ -20,6 +20,7 @@ export default function Timeline({
   progressYear,
   onYearChange,
   onEventSelect,
+  onExpandedChange,
 }) {
   // 时间轴从第一个事件年份开始（留 2 年边距防标签被裁），
   // 而不是从出生年开始——前段没有事件，纯浪费宽度。
@@ -37,6 +38,72 @@ export default function Timeline({
   const [hoverYear, setHoverYear] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
+
+  useEffect(() => { onExpandedChange && onExpandedChange(expanded); }, [expanded, onExpandedChange]);
+
+  // 标签互相压住时藏掉哪些（英文的事件名比中文长两三倍，1300/1302、1313/1315
+  // 这种挨得近的年份必然重叠）。不写死规则，展开后量一遍真实盒子再决定。
+  const labelRefs = useRef(new Map());
+  const [hiddenLabels, setHiddenLabels] = useState(() => new Set());
+  // 贴着两端的标签会被裁掉（首尾事件在 0% / 100%，标签有一半悬在容器外），
+  // 量出来差多少就往里推多少。首尾两个标签会和自己的墨点略微错开，
+  // 这是时间轴的惯例做法，比被切一半好。
+  const [nudge, setNudge] = useState(() => new Map());
+
+  const cullLabels = useCallback(() => {
+    if (!expanded) return;
+    const GUTTER = 10;
+    const host = trackRef.current?.getBoundingClientRect();
+    const rows = { above: [], below: [] };
+    const push = new Map();
+    for (const [id, el] of labelRefs.current) {
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width) continue;
+      let dx = 0;
+      if (host) {
+        // 右边给音乐键留出的空隙由 App 那边把按钮挪走解决，这里只管容器边界
+        if (r.left < host.left) dx = host.left - r.left;
+        else if (r.right > host.right) dx = host.right - r.right;
+      }
+      if (dx) push.set(id, Math.round(dx));
+      rows[el.dataset.row].push({
+        id, left: r.left + dx, right: r.right + dx, current: id === currentEventId,
+      });
+    }
+    setNudge((prev) => {
+      if (prev.size === push.size && [...push].every(([k, v]) => prev.get(k) === v)) return prev;
+      return push;
+    });
+    // 摆放优先级：当前事件 > 首尾两个事件 > 其余从左到右。
+    // 首尾要保住是因为它们锚定整条轴（生年、卒年）；先来先占位的话，
+    // 「1313 帝国之梦」会把「1321 拉文纳」挤掉——而那是他死的地方。
+    const firstId = events?.[0]?.id;
+    const lastId = events?.[events.length - 1]?.id;
+    const rank = (x) => (x.current ? 0 : x.id === lastId ? 1 : x.id === firstId ? 2 : 3);
+    const hide = new Set();
+    for (const row of Object.values(rows)) {
+      const order = [...row].sort((a, b) => rank(a) - rank(b) || a.left - b.left);
+      const kept = [];
+      for (const x of order) {
+        const clash = kept.some((k) => x.left < k.right + GUTTER && x.right + GUTTER > k.left);
+        if (clash) hide.add(x.id);
+        else kept.push(x);
+      }
+    }
+    setHiddenLabels((prev) => {
+      if (prev.size === hide.size && [...hide].every((x) => prev.has(x))) return prev;
+      return hide;
+    });
+  }, [expanded, currentEventId]);
+
+  // 展开、换事件、改窗宽都要重新量
+  useLayoutEffect(() => { cullLabels(); }, [cullLabels, events]);
+  useEffect(() => {
+    if (!expanded) return;
+    window.addEventListener("resize", cullLabels);
+    return () => window.removeEventListener("resize", cullLabels);
+  }, [expanded, cullLabels]);
 
   // Stage containing the current year (for accent color / label).
   const currentStage =
@@ -112,10 +179,12 @@ export default function Timeline({
       }}
     >
       <div style={styles.headerRow}>
-        <span style={styles.yearDisplay}>{`${currentYear} 年`}</span>
+        <span style={styles.yearDisplay}>{`${currentYear}${t("app.yearSuffix")}`}</span>
         <span style={styles.currentBadge}>
           <span style={{ ...styles.currentDot, backgroundColor: currentStage.color }} />
-          {currentEvent ? `${currentEvent.name} · ${currentStage.period}` : currentStage.period}
+          <span style={styles.currentBadgeText}>
+            {currentEvent ? `${t(currentEvent.name)} · ${t(currentStage.period)}` : t(currentStage.period)}
+          </span>
           <span style={styles.lifespan}>{`（${lifeStart}–${yearEnd}）`}</span>
         </span>
       </div>
@@ -123,7 +192,7 @@ export default function Timeline({
       <div
         style={{
           ...styles.trackArea,
-          padding: expanded ? "44px 14px 46px" : "10px 14px 16px",
+          padding: expanded ? "58px 14px 60px" : "10px 14px 16px",
           transition: trans(["padding"]),
         }}
       >
@@ -219,18 +288,27 @@ export default function Timeline({
                   }}
                 />
                 <div
+                  ref={(el) => {
+                    if (el) labelRefs.current.set(event.id, el);
+                    else labelRefs.current.delete(event.id);
+                  }}
+                  data-row={above ? "above" : "below"}
                   style={{
                     ...styles.eventLabel,
                     ...(above ? styles.eventLabelAbove : styles.eventLabelBelow),
+                    marginLeft: nudge.get(event.id) || 0,
                     color: isCurrent ? COLOR.inkStrong : COLOR.secondary,
                     fontWeight: isCurrent ? 600 : "normal",
-                    opacity: expanded ? 1 : 0,
+                    // 被压住的标签藏掉，但**保留在 DOM 里**——下一轮还要量它。
+                    // 当前事件的标签永远不藏。
+                    opacity: expanded && (isCurrent || !hiddenLabels.has(event.id)) ? 1 : 0,
                     visibility: expanded ? "visible" : "hidden",
+                    pointerEvents: expanded && !hiddenLabels.has(event.id) ? "auto" : "none",
                     transition: trans(["opacity"]),
                   }}
                 >
                   <div style={styles.eventYear}>{event.year}</div>
-                  <div style={styles.eventName}>{event.name}</div>
+                  <div style={styles.eventName}>{t(event.name)}</div>
                 </div>
               </div>
             );
@@ -273,14 +351,17 @@ const styles = {
   },
   headerRow: {
     display: "flex",
-    justifyContent: "space-between",
+    // 原来是 space-between，徽章贴右边——右上角那张事件卡也贴右边，
+    // 英文下徽章一长就和它撞上。改成紧跟在年份后面，永远不去右边。
+    justifyContent: "flex-start",
     alignItems: "baseline",
-    gap: 10,
+    gap: 12,
     marginBottom: 2,
     fontSize: "clamp(12px, 0.833vw, 13.8px)",
     color: COLOR.secondary,
   },
   yearDisplay: {
+    flexShrink: 0,
     fontSize: "clamp(15px, 1.35vw, 22px)",
     fontWeight: 600,
     letterSpacing: TRACKING.normal,
@@ -294,9 +375,15 @@ const styles = {
     fontWeight: "normal",
     letterSpacing: 0,
   },
+  // 英文的事件名 + 时期名连起来能到 40 多个字符，会把左边的年份挤掉。
+  // 限宽 + 单行省略，年份永远读得到。
+  currentBadgeText: {
+    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "40vw",
+  },
   currentBadge: {
     display: "inline-flex",
     alignItems: "center",
+    minWidth: 0,
     gap: 6,
     color: COLOR.ink,
     fontSize: "clamp(12px, 0.903vw, 14.9px)",
@@ -377,17 +464,22 @@ const styles = {
     left: 0,
     transform: "translateX(-50%)",
     textAlign: "center",
-    whiteSpace: "nowrap",
+    // 原来是 nowrap。英文事件名比中文长两三倍（"Beatrice and the Vita Nuova"
+    // 一行 200px，而相邻事件才隔 150px），必须允许折行 + 限宽，
+    // 剩下的重叠交给 cullLabels 量着藏。
+    width: 118,
+    whiteSpace: "normal",
+    overflowWrap: "anywhere",
     fontSize: "clamp(12px, 0.764vw, 12.6px)",
     lineHeight: 1.3,
     letterSpacing: TRACKING.tight,
     textShadow: "0 1px 2px rgba(255,255,255,0.6)",
   },
   eventLabelAbove: {
-    bottom: 20,
+    bottom: 18,
   },
   eventLabelBelow: {
-    top: 20,
+    top: 18,
   },
   eventConnector: {
     position: "absolute",
@@ -402,6 +494,8 @@ const styles = {
     opacity: 0.7,
   },
   eventName: {
+    display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+    overflow: "hidden",
     fontSize: "clamp(12px, 0.903vw, 14.9px)",
     color: "inherit",
     marginTop: 1,

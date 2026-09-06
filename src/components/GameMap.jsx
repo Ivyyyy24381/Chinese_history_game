@@ -157,6 +157,7 @@ function MapSymbol({ kind, state, theme, size = 26 }) {
 }
 
 export default function GameMap({
+  timelineExpanded = false,
   allEvents,
   currentYear,
   currentEventId,
@@ -164,6 +165,15 @@ export default function GameMap({
   onEventClick,
   character,
 }) {
+  // 窄屏要把「上一个/下一个」缩成只有年份（见下面的 compactSteps）
+  const [viewportW, setViewportW] = useState(() =>
+    typeof window === "undefined" ? 1440 : window.innerWidth);
+  useEffect(() => {
+    const onResize = () => setViewportW(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // 总图与宽高比从 timeline.json 的 character 块读取（每条故事线一张图）
   const mapUrl = character?.generalMap || DEFAULT_MAP;
   const imgRatio = character?.mapRatio || DEFAULT_RATIO;
@@ -698,24 +708,37 @@ export default function GameMap({
 
       {/* 事件前进/后退 */}
       {(() => {
+        // 事件卡贴在右边，1280 以下这一对胶囊就会顶到它身上。
+        // 窄屏只留年份，全名收进 title。
+        const compactSteps = viewportW < 1280;
         const idx = events.findIndex((e) => e.id === currentEventId);
         const prev = idx > 0 ? events[idx - 1] : null;
         const next = idx >= 0 && idx < events.length - 1 ? events[idx + 1] : null;
         return (
-          <div style={styles.stepControls}>
+          <div style={{
+            ...styles.stepControls,
+            // 时间轴一展开，上排事件标签就升到 74px 这个高度来——让开
+            bottom: timelineExpanded ? 186 : 74,
+          }}>
             <button
               style={{ ...styles.stepBtn, opacity: prev ? 1 : 0.4, cursor: prev ? "pointer" : "default" }}
               disabled={!prev}
+              title={prev ? `${prev.year} ${t(prev.name)}` : undefined}
               onClick={() => prev && onEventClick(prev)}
             >
-              {"◀ " + (prev ? `${prev.year} ${prev.name}` : t("已是起点"))}
+              {"\u25C0 " + (prev
+                ? (compactSteps ? String(prev.year) : `${prev.year} ${t(prev.name)}`)
+                : t("已是起点"))}
             </button>
             <button
               style={{ ...styles.stepBtn, opacity: next ? 1 : 0.4, cursor: next ? "pointer" : "default" }}
               disabled={!next}
+              title={next ? `${next.year} ${t(next.name)}` : undefined}
               onClick={() => next && onEventClick(next)}
             >
-              {(next ? `${next.year} ${next.name}` : t("已是终点")) + " ▶"}
+              {(next
+                ? (compactSteps ? String(next.year) : `${next.year} ${t(next.name)}`)
+                : t("已是终点")) + " \u25B6"}
             </button>
           </div>
         );
@@ -827,16 +850,23 @@ const styles = {
   },
   stepControls: {
     position: "absolute",
-    left: "50%",
+    // 原来是 left:50% + translateX(-50%)，在窄屏上会顶到右边那张事件卡。
+    // 事件卡是**定宽**的（实测各分辨率下都占右侧约 378px），
+    // 所以这里不居中于整屏，而是居中于「卡片左边剩下的那块」——
+    // 任何宽度下都不会撞上，也不用为它单开断点。
+    left: 0,
+    right: 400,
     // 让开挂在地图底部的时间轴细带
     bottom: 74,
-    transform: "translateX(-50%)",
     display: "flex",
+    justifyContent: "center",
     gap: 10,
     zIndex: 20,
   },
   stepBtn: {
     padding: "8px 16px",
+    maxWidth: 300,
+    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
     borderRadius: 18,
     border: `1px solid ${COLOR.goldLineSoft}`,
     backgroundColor: paperBtn(0.92),

@@ -92,6 +92,8 @@ export default function App() {
   const [currentYear, setCurrentYear] = useState(null);
   // Highest year the player has unlocked (set when an event scene is completed).
   const [progressYear, setProgressYear] = useState(null);
+  // 时间轴展开时，地图上的「上一个/下一个」要往上让
+  const [timelineExpanded, setTimelineExpanded] = useState(false);
   const [showEvent, setShowEvent] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   // 单局积分：runScore 为本局总分；scoredKeys 保证每一关/每道题单局只计一次分。
@@ -505,6 +507,7 @@ export default function App() {
       <OrientationHint />
       <div style={styles.mapContainer}>
         <GameMap
+          timelineExpanded={timelineExpanded}
           allEvents={allEvents}
           currentYear={currentYear}
           currentEventId={currentEvent.id}
@@ -557,6 +560,7 @@ export default function App() {
             progressYear={progressYear}
             onYearChange={setCurrentYear}
             onEventSelect={(ev) => setCurrentYear(ev.year)}
+            onExpandedChange={setTimelineExpanded}
           />
         </div>
       </div>
@@ -888,7 +892,9 @@ const styles = {
   },
   musicBtn: {
     position: "fixed",
-    bottom: "calc(20px + env(safe-area-inset-bottom, 0px))",
+    // 原来是 bottom:20，正压在时间轴最右那个事件标签上（英文标签更宽，撞得更狠）。
+    // 抬到时间轴细带之上。
+    bottom: "calc(84px + env(safe-area-inset-bottom, 0px))",
     right: "calc(20px + env(safe-area-inset-right, 0px))",
     width: 44, height: 44,
     backgroundColor: paperBtn(0.92),
