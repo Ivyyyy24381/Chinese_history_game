@@ -90,6 +90,64 @@
       "nextPhase": "shihao_village"
     },
     {
+      "id": "shihao_order",
+      "type": "comic_sort",
+      "image": "/assets/dufu/events/759_qinzhou/backgrounds/shihao_night.webp",
+      "mode": "hinted",
+      "prompt": "这一夜的六格画，被打乱了。按发生的先后排回去。",
+      "panels": [
+        {
+          "id": "p1_writing",
+          "x": 0,
+          "y": 5.2,
+          "w": 50.1,
+          "h": 57.1,
+          "caption": "烛下，笔没有停"
+        },
+        {
+          "id": "p2_wall",
+          "x": 50,
+          "y": 5.2,
+          "w": 50.1,
+          "h": 28.0,
+          "caption": "一个人翻过矮墙"
+        },
+        {
+          "id": "p3_door",
+          "x": 50,
+          "y": 38.2,
+          "w": 49.9,
+          "h": 24.5,
+          "caption": "老妇开门，低声问"
+        },
+        {
+          "id": "p4_torch",
+          "x": 0,
+          "y": 67.5,
+          "w": 33.3,
+          "h": 32.5,
+          "caption": "巷口的火把亮起来"
+        },
+        {
+          "id": "p5_search",
+          "x": 33.3,
+          "y": 67.5,
+          "w": 27.5,
+          "h": 32.5,
+          "caption": "他们挨家敲门"
+        },
+        {
+          "id": "p6_silent",
+          "x": 60.8,
+          "y": 67.5,
+          "w": 39.2,
+          "h": 32.5,
+          "caption": "窗关上了，他在听"
+        }
+      ],
+      "revealNote": "老翁先翻墙，老妇才去开门——这一家早就演练过。\n杜甫在第一格写字，在最后一格听着。那一夜他没有出门。"
+    },
+    {
       "id": "shihao_village",
       "type": "comic_reveal",
       "background": "/assets/dufu/events/759_qinzhou/backgrounds/shihao_night.webp",

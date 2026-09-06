@@ -9,6 +9,9 @@
 //   H1  不允许连续 3 个纯读屏 phase
 //   H2  一个事件不允许「只有读屏 + 点人读字」——至少要有一个需要玩家先产出判断的 phase
 //
+// 认知动作八类里，generate/evidence/revise/synth/sequence 计入占比；
+// bridge（过桥）和 dexterity（手速）不计——它们好看，但不教东西。
+//
 // 软规则（只警告，是待办清单不是错误）：
 //   S1  每个事件应含 generation（先给出判断）
 //   S2  每个事件应含 evidence（在材料里做区分）
@@ -40,10 +43,15 @@ const BRIDGE = new Set(["echo_portal"]);
 // 连接/综合：把散落的东西装成一个系统。天堂那一关的语法——
 // 地狱是归类（你是什么），炼狱是变化（你能怎么改），天堂是连接（万物怎么接起来）。
 const SYNTH = new Set(["celestial_spheres", "trust_game"]);
+// 顺序与变化：什么先，什么后？——炼狱的动词。
+// 三界的语法本来缺这一块：地狱是归类（你是什么），天堂是连接（万物怎么接起来），
+// 炼狱一直空着。comic_sort 干的正是排顺序，登记在这里。
+const SEQUENCE = new Set(["comic_sort"]);
 
 const CAT = (t) =>
   PASSIVE.has(t) ? "passive" : BROWSE.has(t) ? "browse" : GENERATE.has(t) ? "generate"
-  : EVIDENCE.has(t) ? "evidence" : REVISE.has(t) ? "revise" : SYNTH.has(t) ? "synth" : BRIDGE.has(t) ? "bridge"
+  : EVIDENCE.has(t) ? "evidence" : REVISE.has(t) ? "revise" : SYNTH.has(t) ? "synth"
+  : SEQUENCE.has(t) ? "sequence" : BRIDGE.has(t) ? "bridge"
   : DEXTERITY.has(t) ? "dexterity" : "unknown";
 
 const lines = fs.existsSync(DATA)
@@ -89,7 +97,7 @@ for (const line of targets) {
     else if (runMax === 2) { problems.push(["S4", "有连续 2 个读屏 phase"]); soft++; }
 
     // H2 全是读屏 + 浏览
-    if (!has("generate") && !has("evidence") && !has("revise") && !has("synth")) {
+    if (!has("generate") && !has("evidence") && !has("revise") && !has("synth") && !has("sequence")) {
       problems.push(["H2", "整关没有任何需要玩家先产出判断的 phase"]); hard++;
     } else {
       if (!has("generate")) { problems.push(["S1", "缺 generation（让玩家先给出判断）"]); soft++; }
@@ -99,25 +107,25 @@ for (const line of targets) {
 
     const icon = problems.some(([k]) => k[0] === "H") ? "\x1b[31m✗\x1b[0m"
                : problems.length ? "\x1b[33m!\x1b[0m" : "\x1b[32m✓\x1b[0m";
-    const mark = { passive: "·", browse: "○", generate: "▲", evidence: "◆", revise: "★", synth: "✧", bridge: "◈", dexterity: "◇", unknown: "?" };
+    const mark = { passive: "·", browse: "○", generate: "▲", evidence: "◆", revise: "★", synth: "✧", sequence: "⇅", bridge: "◈", dexterity: "◇", unknown: "?" };
     console.log(`${icon} ${id.padEnd(18)} ${cats.map((c) => mark[c]).join("")}  (${phases.length})`);
     for (const [k, m] of problems) console.log(`    ${k}  ${m}`);
   }
 
   console.log("─".repeat(72));
-  const order = ["passive", "browse", "generate", "evidence", "revise", "synth", "bridge", "dexterity", "unknown"];
-  const cn = { passive: "读屏", browse: "浏览", generate: "先判断", evidence: "辨证据", revise: "改模型", synth: "连成系统", bridge: "过桥", dexterity: "手速", unknown: "未知" };
+  const order = ["passive", "browse", "generate", "evidence", "revise", "synth", "sequence", "bridge", "dexterity", "unknown"];
+  const cn = { passive: "读屏", browse: "浏览", generate: "先判断", evidence: "辨证据", revise: "改模型", synth: "连成系统", sequence: "排顺序", bridge: "过桥", dexterity: "手速", unknown: "未知" };
   for (const c of order) {
     const n = tally[c] || 0;
     if (!n && c === "unknown") continue;
     const pct = totalPhases ? Math.round((n / totalPhases) * 100) : 0;
     console.log(`  ${cn[c].padEnd(4)} ${bar(n, totalPhases)} ${String(n).padStart(3)}  ${String(pct).padStart(3)}%`);
   }
-  const cognitive = (tally.generate || 0) + (tally.evidence || 0) + (tally.revise || 0) + (tally.synth || 0);
+  const cognitive = (tally.generate || 0) + (tally.evidence || 0) + (tally.revise || 0) + (tally.synth || 0) + (tally.sequence || 0);
   const pct = totalPhases ? Math.round((cognitive / totalPhases) * 100) : 0;
   console.log(`  \x1b[1m认知动作占比 ${pct}%\x1b[0m  （目标 ≥ 40%）`);
 }
 
-console.log(`\n图例  · 读屏  ○ 浏览  ▲ 先判断  ◆ 辨证据  ★ 改模型  ✧ 连成系统  ◈ 过桥  ◇ 手速`);
+console.log(`\n图例  · 读屏  ○ 浏览  ▲ 先判断  ◆ 辨证据  ★ 改模型  ✧ 连成系统  ⇅ 排顺序  ◈ 过桥  ◇ 手速`);
 console.log(`结果  硬规则失败 ${hard}   软规则待办 ${soft}`);
 process.exit(hard > 0 ? 1 : 0);

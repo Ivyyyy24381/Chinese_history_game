@@ -286,5 +286,15 @@
   "trust.verdictHighNoise": "猜疑太重，谁也分不清对方是存心还是传错话。善意撑不住，「赶尽杀绝」重新占上风。",
   "trust.verdictMidNoise": "到这个份上，城里乱成一团：肯宽赦的和记仇的谁也吃不掉谁。这是最难受的区间。",
   "trust.verdictLowNoise": "有一点误会的时候，肯给两次机会的人反而活得最好——一次传错话，不至于毁掉一切。",
-  "trust.verdictNoNoise": "只要还要再见面，「以牙还牙」就压得住「赶尽杀绝」：先善意，被咬了才咬回去。"
+  "trust.verdictNoNoise": "只要还要再见面，「以牙还牙」就压得住「赶尽杀绝」：先善意，被咬了才咬回去。",
+  "comicsort.prompt": "把这几格排回故事的顺序。",
+  "comicsort.dropHere": "放这里",
+  "comicsort.trayEmpty": "都排上了。",
+  "comicsort.hint": "拖进格子，或先点一格再点空位（点已放的可取回）。",
+  "comicsort.submit": "就这个顺序 →",
+  "comicsort.dantesOrder": "本来的顺序",
+  "comicsort.scorePrefix": "你排的顺序里，有 ",
+  "comicsort.scoreSuffix": " 格和原来一样",
+  "comicsort.slotLabel": "第几格：",
+  "comicsort.tileLabel": "一格连环画"
 }

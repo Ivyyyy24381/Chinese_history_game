@@ -168,6 +168,56 @@
       "nextPhase": "cacciaguida"
     },
     {
+      "id": "cacciaguida_order",
+      "type": "comic_sort",
+      "image": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.webp",
+      "mode": "hinted",
+      "prompt": "高祖讲的是他自己的一生。按先后排回去。",
+      "panels": [
+        {
+          "id": "p1_bell",
+          "x": 1.5,
+          "y": 2.0,
+          "w": 30.5,
+          "h": 46.5,
+          "caption": "古城墙里，钟声报时"
+        },
+        {
+          "id": "p2_spindle",
+          "x": 34.0,
+          "y": 2.0,
+          "w": 31.8,
+          "h": 46.5,
+          "caption": "主妇守着纺锤讲故事"
+        },
+        {
+          "id": "p3_marriage",
+          "x": 68.0,
+          "y": 2.0,
+          "w": 31.0,
+          "h": 46.5,
+          "caption": "妻子从波河谷来"
+        },
+        {
+          "id": "p4_crusade",
+          "x": 1.5,
+          "y": 51.8,
+          "w": 30.5,
+          "h": 46.5,
+          "caption": "他跟着十字旗出征"
+        },
+        {
+          "id": "p5_baptism",
+          "x": 68.0,
+          "y": 51.8,
+          "w": 31.0,
+          "h": 46.5,
+          "caption": "婴儿在洗礼堂受洗"
+        }
+      ],
+      "revealNote": "一座城、一个家、一场婚姻、一次远征——最后落在一个婴儿身上。\n他讲的不是历史，是在讲这个孩子从哪里来。"
+    },
+    {
       "id": "cacciaguida",
       "type": "comic_reveal",
       "background": "/assets/dante/events/1265_firenze/backgrounds/comic_cacciaguida.webp",

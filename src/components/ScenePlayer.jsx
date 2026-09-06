@@ -1334,6 +1334,10 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
   }
 
   // --- PETITION (他们轮流来提要求；怎么选都有人不满意) ---
+  if (currentPhase.type === "comic_sort") {
+    return <ComicSortPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
   if (currentPhase.type === "petition") {
     return <PetitionPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
   }
@@ -2641,6 +2645,14 @@ function playTone(freq, { dur = 2.4, gain = 0.14 } = {}) {
   } catch { /* 静音失败不影响玩 */ }
 }
 
+// 落定一枚棋子的声音。**中性**——不表示对错，只表示「放下了」。
+// 对错一律留给提交之后的并列对照（见 DESIGN_VERBS「不打 ✓✗」）：
+// 拖的时候就响出对错，等于把答案漏给玩家。
+// 例外是九重天：那一关的语法本来就是「亮不亮」，反馈即机制，所以它另有一套音。
+function playDrop() {
+  playTone(196, { dur: 0.26, gain: 0.055 });
+}
+
 function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
   const spheres = phase.spheres || [];
   const n = spheres.length;
@@ -3194,8 +3206,8 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
         {stage === "types" && (
           <div style={tgStyles.wrap}>
             <div style={tgStyles.title}>
-              {t("对面用的是「") + stratName(oppId) + "」"}
-              <span style={tgStyles.guessMark}>{guess === oppId ? t("　你猜对了") : t("　你猜的是「") + stratName(guess) + "」"}</span>
+              {t("对面用的是「") + stratName(oppId) + t("place.closeQuote")}
+              <span style={tgStyles.guessMark}>{guess === oppId ? t("　你猜对了") : t("　你猜的是「") + stratName(guess) + t("place.closeQuote")}</span>
             </div>
             <div style={tgStyles.lede}>{t("城里不止这一家。这六种人，佛罗伦萨都有。")}</div>
             <div style={tgStyles.typeGrid}>
@@ -4729,6 +4741,311 @@ const ppStyles = {
 };
 
 // ============================================================
+// COMIC SORT — 把连环画排回故事顺序（炼狱的动词：顺序与变化）
+// ============================================================
+// 三界各有各的语法：
+//   地狱  归类  你是什么？      → inferno_placement / contrapasso
+//   炼狱  顺序  什么先，什么后？ → comic_sort          ← 这一个
+//   天堂  连接  万物怎么接起来？ → celestial_spheres
+//
+// phase.image        整条长图（直接复用同一事件 comic_reveal 那张，不切图）
+// phase.panels[]     { id, x, y, w, h, caption }  —— 数组顺序即正确顺序
+// phase.prompt       题面
+// phase.revealNote   排完之后点破这条因果链的关节在哪
+// phase.mode         hinted（默认，空槽下给 caption）| bare（不给）| decoy（掺入不属于本story的格）
+// phase.decoys[]     mode:"decoy" 时的干扰格，形状同 panels，可来自别的长图（带自己的 image）
+//
+// **不切图**：每一格都是同一张长图，靠 background-size / background-position
+// 从里面「取」出来。零新文件；长图以后重新分格，改数据就跟着变。
+function panelStyle(panel, image) {
+  // 标准的百分比 sprite 公式。w/h 是该格占整图的百分比。
+  const w = Math.min(99.999, Math.max(0.001, panel.w));
+  const h = Math.min(99.999, Math.max(0.001, panel.h));
+  return {
+    backgroundImage: `url(${asset(panel.image || image)})`,
+    backgroundSize: `${(100 / w) * 100}% ${(100 / h) * 100}%`,
+    backgroundPosition: `${(panel.x / (100 - w)) * 100}% ${(panel.y / (100 - h)) * 100}%`,
+    backgroundRepeat: "no-repeat",
+  };
+}
+
+// 这一格在屏幕上的真实宽高比。
+// x/y/w/h 是「占整图的百分比」，所以像素比要再乘一次整图自己的宽高比——
+// 漏了这一步，每一格都会被拉扁或抻长。
+const panelAspect = (panel, imgAspect) => (panel.w * imgAspect) / panel.h;
+
+// 整图的宽高比。不写进数据：直接问浏览器，换图不用改 json。
+function useImageAspect(src) {
+  const [a, setA] = useState(16 / 9);
+  useEffect(() => {
+    if (!src) return;
+    const im = new Image();
+    im.onload = () => { if (im.naturalHeight) setA(im.naturalWidth / im.naturalHeight); };
+    im.src = asset(src);
+    return () => { im.onload = null; };
+  }, [src]);
+  return a;
+}
+
+// 一格放进一个固定形状的槽里：外框统一（空槽不能靠形状认出该放哪一格——
+// 那等于把答案印在题面上），里面这一层才带这一格真正的宽高比。
+function fitInside(aspect, boxAspect) {
+  return aspect >= boxAspect
+    ? { width: "100%", height: "auto", aspectRatio: String(aspect) }
+    : { height: "100%", width: "auto", aspectRatio: String(aspect) };
+}
+
+// 确定性打乱：同一组格子每次都乱成同一个样子，
+// 不然截图自查、回归测试、和小孩「我刚才明明排过」全对不上。
+function shuffleStable(items) {
+  const key = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  return items
+    .map((it, i) => ({ it, k: key((it.id || "") + ":" + i) }))
+    .sort((a, b) => a.k - b.k)
+    .map(({ it }) => it);
+}
+
+function ComicSortPhase({ phase, onScore, onComplete }) {
+  const image = phase.image || phase.background;
+  const answer = phase.panels || [];
+  const mode = phase.mode || "hinted";
+  const decoys = mode === "decoy" ? (phase.decoys || []) : [];
+  const pool = useMemo(() => shuffleStable([...answer, ...decoys]), [phase]);
+  const imgAspect = useImageAspect(image);
+  const reduced = usePrefersReducedMotion();
+
+  const [slots, setSlots] = useState(() => answer.map(() => null)); // 槽位 index → panelId
+  const [picked, setPicked] = useState(null);
+  const [over, setOver] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const byId = (id) => pool.find((p) => p.id === id);
+  const placedIds = new Set(slots.filter(Boolean));
+  const tray = pool.filter((p) => !placedIds.has(p.id));
+  const full = slots.every(Boolean);
+
+  const put = useCallback((slotIdx, panelId) => {
+    if (submitted || !panelId) return;
+    setSlots((prev) => {
+      const next = prev.slice();
+      const from = next.indexOf(panelId);
+      if (from >= 0) next[from] = null;          // 同一格换槽：先从原槽取出
+      const displaced = next[slotIdx];
+      next[slotIdx] = panelId;
+      if (from >= 0 && displaced) next[from] = displaced; // 两格对调
+      return next;
+    });
+    setPicked(null);
+    playDrop();
+  }, [submitted]);
+
+  const takeBack = (slotIdx) => {
+    if (submitted) return;
+    setSlots((prev) => { const n = prev.slice(); n[slotIdx] = null; return n; });
+  };
+
+  const rightCount = slots.reduce((n, id, i) => n + (id === answer[i]?.id ? 1 : 0), 0);
+
+  const submit = () => {
+    setSubmitted(true);
+    if (onScore) onScore("comic_sort", rightCount * POINTS.comicSort);
+    if (musicOn()) {
+      // 排完了给一个短的上行，和九重天那套同族但更轻
+      [0, 2, 4].forEach((k, i) => setTimeout(() => playTone(293.66 * Math.pow(2, k / 12), { dur: 1.2, gain: 0.07 }), i * 180));
+    }
+  };
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundColor: "#161009" }}>
+        <div style={csoStyles.prompt}>{nb(phase.prompt || t("comicsort.prompt"))}</div>
+
+        {/* ── 上：空槽（正确顺序从左到右） ── */}
+        <div style={csoStyles.slotRow}>
+          {slots.map((pid, i) => {
+            const p = pid ? byId(pid) : null;
+            const wrong = submitted && pid !== answer[i]?.id;
+            return (
+              <div key={i} style={csoStyles.slotCell}>
+                <div style={csoStyles.slotNo}>{i + 1}</div>
+                <div
+                  role="button"
+                  tabIndex={submitted ? -1 : 0}
+                  aria-label={`${t("comicsort.slotLabel")}${i + 1}`}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Enter" && e.key !== " ") return;
+                    e.preventDefault();
+                    picked ? put(i, picked) : pid && takeBack(i);
+                  }}
+                  onDragOver={(e) => { e.preventDefault(); setOver(i); }}
+                  onDragLeave={() => setOver(null)}
+                  onDrop={(e) => { e.preventDefault(); setOver(null); put(i, e.dataTransfer.getData("text/plain")); }}
+                  onClick={() => (picked ? put(i, picked) : pid && takeBack(i))}
+                  style={{
+                    ...csoStyles.slot,
+                    borderColor: submitted ? (wrong ? "#D2694A" : "#8FBF7F")
+                      : over === i ? "#C9A86A" : (picked ? "rgba(201,168,106,0.6)" : "rgba(201,168,106,0.3)"),
+                    borderStyle: p ? "solid" : "dashed",
+                    // 排错的描红、排对的描绿——这不是打 ✗，是让「差在哪」看得见；
+                    // 正确答案就并排在下面一行，两行一比就知道差在哪一格
+                    borderWidth: submitted ? 3 : 2,
+                    boxShadow: over === i ? "0 0 0 4px rgba(201,168,106,0.22)"
+                      : (submitted && wrong ? "0 0 0 3px rgba(210,105,74,0.25)" : "none"),
+                    cursor: submitted ? "default" : (picked || pid ? "pointer" : "default"),
+                  }}
+                >
+                  {p
+                    ? <div style={{ ...panelStyle(p, image), ...fitInside(panelAspect(p, imgAspect), SLOT_ASPECT) }} />
+                    : <span style={csoStyles.slotEmpty}>{picked ? t("comicsort.dropHere") : ""}</span>}
+                </div>
+                {mode === "hinted" && answer[i]?.caption && (
+                  <div style={csoStyles.caption}>{nb(answer[i].caption)}</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── 下：打散的格子（提交后收起，位置让给「本来的顺序」那一行） ── */}
+        <div style={{ ...csoStyles.trayRow, display: submitted ? "none" : "flex" }}>
+          {tray.map((p) => (
+            <div
+              key={p.id}
+              role="button"
+              tabIndex={submitted ? -1 : 0}
+              aria-pressed={picked === p.id}
+              aria-label={t("comicsort.tileLabel")}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter" && e.key !== " ") return;
+                e.preventDefault();
+                setPicked((c) => (c === p.id ? null : p.id));
+              }}
+              draggable={!submitted}
+              onDragStart={(e) => { e.dataTransfer.setData("text/plain", p.id); setPicked(p.id); }}
+              onClick={() => setPicked((c) => (c === p.id ? null : p.id))}
+              style={{
+                ...csoStyles.tile,
+                ...panelStyle(p, image),
+                aspectRatio: String(panelAspect(p, imgAspect)),
+                borderColor: picked === p.id ? "#C9A86A" : "rgba(201,168,106,0.3)",
+                boxShadow: picked === p.id ? "0 0 0 4px rgba(201,168,106,0.28)" : "0 4px 14px rgba(0,0,0,0.45)",
+                transform: picked === p.id && !reduced ? "translateY(-5px)" : "none",
+              }}
+            />
+          ))}
+          {tray.length === 0 && <div style={csoStyles.trayEmpty}>{t("comicsort.trayEmpty")}</div>}
+        </div>
+
+        {!submitted && (
+          <>
+            <div style={csoStyles.hint}>{t("comicsort.hint")}</div>
+            <button
+              style={{ ...styles.floatingProceed, opacity: full ? 1 : 0.45, cursor: full ? "pointer" : "not-allowed" }}
+              disabled={!full}
+              onClick={submit}
+            >
+              {t("comicsort.submit")}
+            </button>
+          </>
+        )}
+
+        {/* ── 提交后：不打 ✗。玩家排的那一行留在上面原地不动，
+               正确的一行紧挨着排在下面，不一样的格子描红 ── */}
+        {submitted && (
+          <div style={csoStyles.contrastWrap}>
+            <div style={csoStyles.contrastLabel}>{t("comicsort.dantesOrder")}</div>
+            <div style={csoStyles.contrastRow}>
+              {answer.map((p, i) => (
+                <div key={p.id} style={csoStyles.contrastCell}>
+                  <div style={{ ...csoStyles.contrastTile, ...panelStyle(p, image),
+                    ...fitInside(panelAspect(p, imgAspect), SLOT_ASPECT) }} />
+                </div>
+              ))}
+            </div>
+            <div style={csoStyles.score}>
+              {t("comicsort.scorePrefix")}<strong>{rightCount}</strong>{" / " + answer.length}
+              {t("comicsort.scoreSuffix")}
+            </div>
+            {phase.revealNote && <div style={csoStyles.note}>{nb(phase.revealNote)}</div>}
+            <button style={{ ...styles.floatingProceed, position: "static", marginTop: 4 }} onClick={onComplete}>
+              {t("scene.continue")}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const SLOT_ASPECT = 4 / 3;
+
+const csoStyles = {
+  prompt: {
+    position: "absolute", top: "4%", left: 0, right: 0, textAlign: "center",
+    color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 2,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)", zIndex: 20, padding: "0 6%",
+  },
+  slotRow: {
+    position: "absolute", top: "14%", left: "4%", right: "4%",
+    display: "flex", gap: 12, alignItems: "flex-start", justifyContent: "center", zIndex: 20,
+  },
+  slotCell: { flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 },
+  slotNo: { color: "#A89968", fontSize: "clamp(12px, 0.9vw, 14px)", letterSpacing: 2 },
+  slot: {
+    width: "100%", aspectRatio: String(SLOT_ASPECT), borderRadius: 5, border: "2px dashed",
+    backgroundColor: "rgba(20,14,8,0.55)", overflow: "hidden",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    transition: "border-color 180ms ease, box-shadow 180ms ease",
+    minHeight: 46, padding: 2,
+  },
+  slotEmpty: { color: "rgba(201,168,106,0.8)", fontSize: "clamp(12.5px, 0.85vw, 14px)", letterSpacing: 1 },
+  // 「继续」按钮固定在右下角，提示文字给它让开一块，不然两行叠在一起
+  hint: {
+    position: "absolute", left: 0, right: "26%", bottom: "4%", textAlign: "center",
+    color: "rgba(245,230,211,0.78)", fontSize: "clamp(12px, 0.8vw, 13.5px)", letterSpacing: 1,
+    textShadow: "0 1px 4px #000", zIndex: 20, padding: "0 4%",
+  },
+  caption: {
+    color: "#D8CDB8", fontSize: "clamp(12px, 0.86vw, 14px)", lineHeight: 1.45,
+    textAlign: "center", letterSpacing: 0.5, textShadow: "0 1px 5px rgba(0,0,0,0.9)",
+  },
+  trayRow: {
+    // 顶到槽位底下，别让中间空一大块——空着会读成「这里还有东西没加载出来」
+    position: "absolute", top: "46%", bottom: "16%", left: "4%", right: "4%",
+    display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", justifyContent: "center", zIndex: 20,
+  },
+  tile: {
+    // 最小 44×44 是硬指标；这里给到 110×74，手指点得住，画面也看得清
+    width: "17%", minWidth: 110, minHeight: 74, maxHeight: "100%", borderRadius: 5, border: "2px solid",
+    cursor: "grab", userSelect: "none", WebkitUserSelect: "none",
+    transition: "transform 200ms cubic-bezier(.2,.7,.3,1), box-shadow 200ms ease",
+  },
+  trayEmpty: { color: "rgba(245,230,211,0.65)", fontSize: "clamp(12.5px, 0.86vw, 14px)", letterSpacing: 2 },
+  contrastWrap: {
+    position: "absolute", top: "45%", left: "3%", right: "3%", bottom: "2%", zIndex: 30,
+    backgroundColor: "rgba(10,7,4,0.96)", borderRadius: 8,
+    border: "1px solid rgba(201,168,106,0.25)",
+    // flex-start 而不是 center：内容比框高的时候 center 会把上下两头都切掉，
+    // 标题和「继续」按钮正好是被切掉的那两头
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start",
+    padding: "10px 3% 12px", gap: 7, textAlign: "center", overflowY: "auto",
+  },
+  contrastLabel: { color: "#C9A86A", fontSize: "clamp(12.5px, 1vw, 16px)", letterSpacing: 4 },
+  contrastRow: { display: "flex", gap: 8, width: "100%", justifyContent: "center", alignItems: "center" },
+  contrastCell: {
+    flex: "1 1 0", minWidth: 0, maxWidth: 128, aspectRatio: String(SLOT_ASPECT),
+    display: "flex", alignItems: "center", justifyContent: "center",
+    border: "2px solid #C9A86A", borderRadius: 5, overflow: "hidden", padding: 2,
+  },
+  contrastTile: { borderRadius: 3 },
+  score: { color: "#F5E6D3", fontSize: "clamp(13.5px, 1.1vw, 18px)", letterSpacing: 1 },
+  note: {
+    color: "#E8D9BE", fontSize: "clamp(13px, 1vw, 16.5px)", lineHeight: 1.75,
+    maxWidth: 660, letterSpacing: 0.5, whiteSpace: "pre-line",
+  },
+};
+
+// ============================================================
 // 第 5 层 · REALITY → DIVINE COMEDY
 // ============================================================
 // 三个 phase 类型合力回答同一个问题：「这段经历后来去了哪？」
@@ -5107,8 +5424,8 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
                       return (
                         <span style={ipStyles.verdictWhere}>
                           {agree
-                            ? t("　你和但丁都放在「") + (hisC?.name || "") + "」"
-                            : t("　你放「") + (mineC?.name || "—") + t("」　但丁放「") + (hisC?.name || "") + "」"}
+                            ? t("　你和但丁都放在「") + (hisC?.name || "") + t("place.closeQuote")
+                            : t("　你放「") + (mineC?.name || "—") + t("」　但丁放「") + (hisC?.name || "") + t("place.closeQuote")}
                         </span>
                       );
                     })()}
