@@ -82,8 +82,11 @@ const PROBE = () => {
       // 英文模式下还在渲染中文 = 有一处没接上 i18n。硬指标，不靠肉眼看。
       if (CJK_RE.test(own)) cjk.push(rec);
     }
-    const clickable = el.tagName === "BUTTON" || el.getAttribute("role") === "button" ||
-      el.draggable === true || cs.cursor === "pointer" || el.tabIndex >= 0;
+    // pointer-events:none 的东西是画上去的装饰（NPC 头上的「?」气泡、✓ 角标），
+    // 点它其实是点到了下面的立绘，不是独立的点击目标
+    const clickable = cs.pointerEvents !== "none" &&
+      (el.tagName === "BUTTON" || el.getAttribute("role") === "button" ||
+       el.draggable === true || cs.cursor === "pointer" || el.tabIndex >= 0);
     // 只数「最外层」的可点元素。整屏点击继续的过场里，每一行字都继承了
     // cursor:pointer，但真正的点击目标是整屏那个容器，不是那一行字——
     // 不排掉的话 414 处里有三百多是这种假阳性。

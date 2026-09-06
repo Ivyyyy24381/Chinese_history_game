@@ -189,12 +189,12 @@ const styles = {
     display: "flex", flexDirection: "column", gap: 12,
   },
   title: { margin: 0, fontSize: "clamp(17.6px, 1.528vw, 25.3px)", color: "#3B2510", letterSpacing: 4, textAlign: "center" },
-  localNote: { margin: 0, fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#8B7355", lineHeight: 1.6 },
+  localNote: { margin: 0, fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#8B7355", lineHeight: 1.6 },
   input: {
     padding: "10px 12px", fontSize: "clamp(16px, 0.972vw, 16.1px)", fontFamily: "inherit",
     border: "1px solid #C9B08A", borderRadius: 8, backgroundColor: "#FFF",
   },
-  error: { color: "#C0392B", fontSize: "clamp(10.4px, 0.903vw, 14.9px)" },
+  error: { color: "#C0392B", fontSize: "clamp(12px, 0.903vw, 14.9px)" },
   primaryBtn: {
     padding: "10px 18px", border: "none", borderRadius: 8,
     backgroundColor: "#8B7355", color: "#FFF",
@@ -202,7 +202,7 @@ const styles = {
   },
   switchBtn: {
     padding: 4, border: "none", background: "none",
-    color: "#8B7355", cursor: "pointer", fontSize: "clamp(10.4px, 0.903vw, 14.9px)", fontFamily: "inherit",
+    color: "#8B7355", cursor: "pointer", fontSize: "clamp(12px, 0.903vw, 14.9px)", fontFamily: "inherit",
     textDecoration: "underline",
   },
   closeBtn: {

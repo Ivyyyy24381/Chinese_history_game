@@ -711,11 +711,11 @@ const orientStyles = {
     fontFamily: "var(--font-body)",
   },
   text: { color: "#F5E6D3", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 4 },
-  sub: { color: "#B8A88C", fontSize: "clamp(11.2px, 0.972vw, 16.1px)" },
+  sub: { color: "#B8A88C", fontSize: "clamp(12px, 0.972vw, 16.1px)" },
   dismissBtn: {
     marginTop: 10, padding: "9px 22px", borderRadius: 18,
     border: "1px solid #8B7355", backgroundColor: "transparent",
-    color: "#C9B08A", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit", cursor: "pointer",
+    color: "#C9B08A", fontSize: "clamp(12px, 0.972vw, 16.1px)", fontFamily: "inherit", cursor: "pointer",
   },
 };
 
@@ -834,7 +834,7 @@ const styles = {
   },
   eventMeta: {
     marginTop: 4,
-    fontSize: "clamp(11.5px, 0.83vw, 13.2px)",
+    fontSize: "clamp(12px, 0.83vw, 13.2px)",
     color: COLOR.secondary,
     letterSpacing: TRACKING.normal,
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
@@ -859,7 +859,7 @@ const styles = {
     ...BUTTON.pill,
     marginTop: 12,
     padding: "9px 26px",
-    fontSize: "clamp(11.2px, 0.972vw, 15px)",
+    fontSize: "clamp(12px, 0.972vw, 15px)",
   },
   exploreBtnDisabled: {
     border: `1px solid ${COLOR.goldLineDisabled}`,
@@ -929,7 +929,7 @@ const styles = {
     fontFamily: "var(--font-body)",
   },
   userChip: {
-    color: "#8A6D3B", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", letterSpacing: 1,
+    color: "#8A6D3B", fontSize: "clamp(12px, 0.972vw, 16.1px)", letterSpacing: 1,
     padding: "6px 14px", borderRadius: 18,
     backgroundColor: "rgba(252,248,238,0.9)",
     border: "1px solid #C9A86A",
@@ -952,7 +952,7 @@ const styles = {
   congratsNext: { color: "#8B7355", fontSize: "clamp(12px, 0.903vw, 14.9px)", margin: "4px 0 0" },
   congratsBtn: {
     padding: "10px 18px", border: "1px solid #C9B08A", borderRadius: 8,
-    backgroundColor: "#FFF", cursor: "pointer", fontSize: "clamp(11.2px, 0.972vw, 16.1px)", fontFamily: "inherit",
+    backgroundColor: "#FFF", cursor: "pointer", fontSize: "clamp(12px, 0.972vw, 16.1px)", fontFamily: "inherit",
   },
   backBtn: {
     position: "fixed",
@@ -967,7 +967,7 @@ const styles = {
     color: COLOR.btnTextSub,
     letterSpacing: TRACKING.tight,
     cursor: "pointer",
-    fontSize: "clamp(11.2px, 0.972vw, 16.1px)",
+    fontSize: "clamp(12px, 0.972vw, 16.1px)",
     fontFamily: "inherit",
     boxShadow: SHADOW.chip,
     transition: "all 0.2s",

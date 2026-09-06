@@ -254,7 +254,7 @@ const styles = {
     color: "white",
     padding: "6px 12px",
     borderRadius: 20,
-    fontSize: "clamp(9.6px, 0.833vw, 13.8px)",
+    fontSize: "clamp(12px, 0.833vw, 13.8px)",
     fontWeight: "bold",
   },
   quizProgress: {

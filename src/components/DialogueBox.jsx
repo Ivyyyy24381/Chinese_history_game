@@ -172,7 +172,7 @@ const styles = {
   },
   clickPrompt: {
     color: "#A89968",
-    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
+    fontSize: "clamp(12px, 0.833vw, 13.8px)",
     animation: "pulse 1.5s ease-in-out infinite",
   },
   progressBar: {

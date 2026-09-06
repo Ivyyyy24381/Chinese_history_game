@@ -291,7 +291,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
       <div style={bgStyle}>
         <div style={styles.transitionOverlay}>
           {!transitionDone ? (
-            <div style={styles.transitionCard} onClick={handleTransitionClick}>
+            <div style={styles.transitionCard} {...pressable(handleTransitionClick, { label: t("scene.tapContinue") })}>
               <RevealLines
                 text={currentPhase.transitionText}
                 style={styles.transitionText}
@@ -1175,7 +1175,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                       backgroundColor: "rgba(250,246,238,0.88)",
                       border: "1px solid #C9B08A",
                       color: INK,
-                      fontSize: "clamp(11px, 0.9vw, 14px)",
+                      fontSize: "clamp(12px, 0.9vw, 14px)",
                       letterSpacing: 1,
                       whiteSpace: "nowrap",
                       boxShadow: "0 2px 8px rgba(70,55,35,0.25)",
@@ -1429,7 +1429,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 {items.map((item, i) => (
                   <div key={i} style={{ ...styles.explanationBox, margin: 0, textAlign: "center" }}>
                     <div style={{ fontWeight: "bold" }}>{item.left}</div>
-                    <div style={{ color: "#888", fontSize: "clamp(11.5px, 0.833vw, 13.8px)" }}>{"\u2194 " + item.right}</div>
+                    <div style={{ color: "#888", fontSize: "clamp(12px, 0.833vw, 13.8px)" }}>{"\u2194 " + item.right}</div>
                   </div>
                 ))}
               </div>
@@ -1558,7 +1558,7 @@ function SlidingPuzzlePhase({ phase, onScore, onComplete }) {
           <span style={{ fontSize: "clamp(12px, 0.903vw, 14.9px)", color: timeLeft <= 30 ? "#DC3545" : "#666" }}>
             {t("⏱ 剩余 ")}{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
           </span>
-          <button style={{ ...styles.choiceBtn, fontSize: "clamp(11.5px, 0.833vw, 13.8px)", padding: "4px 12px", margin: 0, width: "auto" }} onClick={skipPuzzle}>
+          <button style={{ ...styles.choiceBtn, fontSize: "clamp(12px, 0.833vw, 13.8px)", padding: "4px 12px", margin: 0, width: "auto" }} onClick={skipPuzzle}>
             {t("跳过")}
           </button>
         </div>
@@ -1801,7 +1801,7 @@ function ComicRevealPhase({ phase, onComplete }) {
   // Fullscreen, immersive — same 16:9 locked stage as explore scenes.
   // The comic IS the background; covers fade out in place. No card, no chrome.
   return (
-    <div style={styles.sceneOuter} onClick={allDone ? undefined : advance}>
+    <div style={styles.sceneOuter} {...pressable(advance, { disabled: allDone, label: t("scene.tapContinue") })}>
       <div style={{
         ...styles.sceneStageInner,
         backgroundImage: `url(${asset(imageSrc)})`,
@@ -1846,7 +1846,7 @@ function ComicRevealPhase({ phase, onComplete }) {
             <div style={{ color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.8, fontFamily: "var(--font-body)" }}>
               {nb(activeLine.text)}
             </div>
-            <div style={{ color: "#A89968", fontSize: "clamp(11px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{t("▼ 点击继续")}</div>
+            <div style={{ color: "#A89968", fontSize: "clamp(12px, 0.764vw, 12.6px)", marginTop: 6, textAlign: "right" }}>{t("▼ 点击继续")}</div>
           </div>
         )}
 
@@ -1953,7 +1953,7 @@ const cpStyles = {
     border: "2px solid #D4A574",
     cursor: "default",
   },
-  bubbleLabel: { fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#999", marginBottom: 8, letterSpacing: 1 },
+  bubbleLabel: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#999", marginBottom: 8, letterSpacing: 1 },
   bubbleText: {
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)", color: "#3E2723", lineHeight: 1.8, letterSpacing: 1,
     fontFamily: "var(--font-body)",
@@ -2283,7 +2283,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
                 backgroundColor: bg,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 position: "relative",
-                fontSize: "clamp(8.0px, 0.694vw, 11.5px)", color: "#888",
+                fontSize: "clamp(12px, 0.694vw, 12px)", color: "#888",
               }}>
                 {arrow && (
                   <span style={{ color: "#3498DB", fontSize: "min(2vw, 22px)", fontWeight: "bold", opacity: 0.7 }}>
@@ -2291,12 +2291,12 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
                   </span>
                 )}
                 {gate && (
-                  <span style={{ position: "absolute", top: 1, left: 2, fontSize: "clamp(7.2px, 0.625vw, 10.3px)", color: "#666", whiteSpace: "nowrap" }}>
+                  <span style={{ position: "absolute", top: 1, left: 2, fontSize: "clamp(12px, 0.625vw, 12px)", color: "#666", whiteSpace: "nowrap" }}>
                     {gate}
                   </span>
                 )}
-                {isEnd && !arrow && <span style={{ fontSize: "clamp(7.2px, 0.625vw, 10.3px)", color: "#1B5E20", fontWeight: "bold" }}>{t("\u51FA\u95E8")}</span>}
-                {isStart && !arrow && <span style={{ fontSize: "clamp(7.2px, 0.625vw, 10.3px)", color: "#E65100", fontWeight: "bold" }}>{t("\u8D77\u70B9")}</span>}
+                {isEnd && !arrow && <span style={{ fontSize: "clamp(12px, 0.625vw, 12px)", color: "#1B5E20", fontWeight: "bold" }}>{t("\u51FA\u95E8")}</span>}
+                {isStart && !arrow && <span style={{ fontSize: "clamp(12px, 0.625vw, 12px)", color: "#E65100", fontWeight: "bold" }}>{t("\u8D77\u70B9")}</span>}
               </div>
             );
           })}
@@ -2427,7 +2427,7 @@ const egStyles = {
   title: { margin: "0 0 4px", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", color: "#3E2723", letterSpacing: 2 },
   narrative: { margin: "0 0 8px", fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#6B5340" },
   statusRow: {
-    fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#666", marginBottom: 10,
+    fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#666", marginBottom: 10,
     display: "flex", gap: 16, justifyContent: "center", alignItems: "center",
     flexWrap: "wrap",
   },
@@ -2569,10 +2569,12 @@ const bioStyles = {
     border: "1px solid #C9A86A",
   },
   close: {
-    position: "absolute", top: 8, right: 10, zIndex: 2,
-    width: 28, height: 28, borderRadius: "50%", border: "none",
+    // 视觉上还是一个小 ✕，但命中区撑到 44×44 —— 手指点得住
+    position: "absolute", top: 2, right: 4, zIndex: 2,
+    width: 44, height: 44, borderRadius: "50%", border: "none",
     background: "transparent", color: "#8A7A5E", cursor: "pointer",
     fontSize: 22, lineHeight: 1, fontFamily: "inherit",
+    display: "flex", alignItems: "center", justifyContent: "center",
   },
   head: {
     display: "flex", gap: 14, alignItems: "center",
@@ -2583,12 +2585,12 @@ const bioStyles = {
     backgroundSize: "cover", backgroundPosition: "top center", backgroundColor: "#E2D8C2",
   },
   name: { fontSize: "clamp(16px, 1.39vw, 23px)", color: "#2B2118", letterSpacing: 2 },
-  latin: { fontSize: "clamp(10.5px, 0.79vw, 13px)", color: "#9A8B72", letterSpacing: 0.5, marginTop: 2 },
-  meta: { fontSize: "clamp(11.5px, 0.87vw, 14.4px)", color: "#7A6A50", marginTop: 4 },
-  met: { fontSize: "clamp(11px, 0.83vw, 13.8px)", color: "#8A6D3B", marginTop: 5 },
+  latin: { fontSize: "clamp(12px, 0.79vw, 13px)", color: "#9A8B72", letterSpacing: 0.5, marginTop: 2 },
+  meta: { fontSize: "clamp(12px, 0.87vw, 14.4px)", color: "#7A6A50", marginTop: 4 },
+  met: { fontSize: "clamp(12px, 0.83vw, 13.8px)", color: "#8A6D3B", marginTop: 5 },
   body: { padding: "14px 20px 16px", overflowY: "auto", flex: 1 },
   sectionLabel: {
-    fontSize: "clamp(10px, 0.72vw, 12px)", color: "#9A8B72", letterSpacing: 5, marginBottom: 7,
+    fontSize: "clamp(12px, 0.72vw, 12px)", color: "#9A8B72", letterSpacing: 5, marginBottom: 7,
   },
   para: {
     margin: "0 0 8px", fontSize: "clamp(12px, 0.94vw, 15.5px)", lineHeight: 1.95, color: "#5A4A38",
@@ -2596,7 +2598,7 @@ const bioStyles = {
   actions: {
     padding: "12px 20px 16px", borderTop: "1px solid #E2D8C2", flexShrink: 0,
   },
-  actionsLabel: { fontSize: "clamp(11px, 0.83vw, 13.8px)", color: "#7A6A50", marginBottom: 8, letterSpacing: 1 },
+  actionsLabel: { fontSize: "clamp(12px, 0.83vw, 13.8px)", color: "#7A6A50", marginBottom: 8, letterSpacing: 1 },
   actionsRow: { display: "flex", gap: 8, flexWrap: "wrap" },
   actionBtn: {
     flex: "1 1 auto", padding: "9px 16px", borderRadius: 8,
@@ -2661,6 +2663,24 @@ function shuffleStable(items) {
     .map((it, i) => ({ it, k: key((it.id || "") + ":" + i) }))
     .sort((a, b) => a.k - b.k)
     .map(({ it }) => it);
+}
+
+// 键盘可达。全站的按钮几乎都是自绘的 <div onClick>，不补 role/tabIndex 的话
+// Tab 根本走不到，屏幕阅读器也读不出「这是个可以按的东西」。
+// 用法：<div {...pressable(() => doThing(), { pressed: on })} style={...}>
+function pressable(onActivate, { disabled = false, label, pressed } = {}) {
+  return {
+    role: "button",
+    tabIndex: disabled ? -1 : 0,
+    "aria-label": label,
+    "aria-pressed": pressed,
+    onClick: disabled ? undefined : onActivate,
+    onKeyDown: (e) => {
+      if (disabled || (e.key !== "Enter" && e.key !== " ")) return;
+      e.preventDefault();
+      onActivate(e);
+    },
+  };
 }
 
 // 落定一枚棋子的声音。**中性**——不表示对错，只表示「放下了」。
@@ -2796,7 +2816,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
                   onDragOver={(e) => { e.preventDefault(); setOver(i); }}
                   onDragLeave={() => setOver(null)}
                   onDrop={(e) => { e.preventDefault(); setOver(null); put(i, e.dataTransfer.getData("text/plain")); }}
-                  onClick={() => { if (picked) put(i, picked); else if (here && !zoom) setPlaced((q) => { const r = { ...q }; delete r[i]; return r; }); }}
+                  {...pressable(() => { if (picked) put(i, picked); else if (here && !zoom) setPlaced((q) => { const r = { ...q }; delete r[i]; return r; }); }, { disabled: zoom, label: t("comicsort.slotLabel") + (i + 1) })}
                   style={{
                     ...csStyles.socket,
                     left: `calc(50% + ${p.x}px)`, top: `calc(50% + ${p.y}px)`,
@@ -2829,7 +2849,7 @@ function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
                 key={s.id}
                 draggable
                 onDragStart={(e) => { e.dataTransfer.setData("text/plain", s.id); setPicked(s.id); }}
-                onClick={() => setPicked((p) => (p === s.id ? null : s.id))}
+                {...pressable(() => setPicked((p) => (p === s.id ? null : s.id)), { pressed: picked === s.id })}
                 style={{
                   ...csStyles.chip,
                   borderColor: picked === s.id ? "#C9A86A" : "rgba(201,168,106,0.24)",
@@ -2911,7 +2931,7 @@ const csStyles = {
   },
   head: { position: "absolute", top: "5%", left: 0, right: 0, textAlign: "center", zIndex: 20 },
   title: { color: "#F0E4C8", fontSize: "clamp(15px, 1.39vw, 23px)", letterSpacing: 8, textShadow: "0 2px 16px rgba(0,0,0,0.9)" },
-  rule: { color: "#A99A78", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 2, marginTop: 7 },
+  rule: { color: "#A99A78", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 2, marginTop: 7 },
   counter: {
     position: "absolute", top: "5.5%", right: "4%", zIndex: 20,
     color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 3,
@@ -2943,15 +2963,15 @@ const csStyles = {
     transition: "border-color 200ms ease, background-color 200ms ease",
   },
   chipGlyph: { fontSize: 17, color: "#E8D9BE", width: 20, textAlign: "center", flexShrink: 0 },
-  chipName: { display: "block", color: "#EFE3CC", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 1 },
-  chipHolds: { display: "block", color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", marginTop: 2, lineHeight: 1.4 },
+  chipName: { display: "block", color: "#EFE3CC", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 1 },
+  chipHolds: { display: "block", color: "#8A8068", fontSize: "clamp(12px, 0.76vw, 12.6px)", marginTop: 2, lineHeight: 1.4 },
   chipBio: {
     flexShrink: 0, padding: "3px 8px", borderRadius: 11,
     border: "1px solid rgba(201,168,106,0.4)", backgroundColor: "rgba(201,168,106,0.12)",
     color: "#C9A86A", cursor: "pointer", fontFamily: "inherit",
-    fontSize: "clamp(9.5px, 0.72vw, 12px)", letterSpacing: 1,
+    fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1,
   },
-  trayEmpty: { color: "#8A8068", fontSize: "clamp(11px, 0.83vw, 13.8px)", lineHeight: 1.8, letterSpacing: 1 },
+  trayEmpty: { color: "#8A8068", fontSize: "clamp(12px, 0.83vw, 13.8px)", lineHeight: 1.8, letterSpacing: 1 },
   flash: {
     position: "absolute", left: "3%", bottom: "6%", maxWidth: "30%", zIndex: 22,
     borderLeft: "2px solid #C9A86A", paddingLeft: 12,
@@ -2959,16 +2979,16 @@ const csStyles = {
     animation: "flashIn 700ms cubic-bezier(.2,.7,.3,1) both",
   },
   flashName: { color: "#F6E7C4", fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3 },
-  flashHolds: { color: "#C9A86A", fontSize: "clamp(11px, 0.87vw, 14.4px)", marginTop: 4, letterSpacing: 1 },
-  flashNote: { color: "#B5A98C", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", marginTop: 6, lineHeight: 1.75 },
-  flashCanto: { color: "#7E7460", fontSize: "clamp(10px, 0.76vw, 12.6px)", marginTop: 5, letterSpacing: 1 },
+  flashHolds: { color: "#C9A86A", fontSize: "clamp(12px, 0.87vw, 14.4px)", marginTop: 4, letterSpacing: 1 },
+  flashNote: { color: "#B5A98C", fontSize: "clamp(12px, 0.83vw, 13.8px)", marginTop: 6, lineHeight: 1.75 },
+  flashCanto: { color: "#7E7460", fontSize: "clamp(12px, 0.76vw, 12.6px)", marginTop: 5, letterSpacing: 1 },
   finaleWrap: {
     position: "absolute", inset: 0, zIndex: 30,
     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
     padding: "0 9%", textAlign: "center",
     background: "radial-gradient(ellipse 62% 58% at 50% 46%, rgba(6,7,14,0.9) 0%, rgba(6,7,14,0.72) 55%, rgba(6,7,14,0) 100%)",
   },
-  finaleTitle: { color: "#C9A86A", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", letterSpacing: 8, marginBottom: 22 },
+  finaleTitle: { color: "#C9A86A", fontSize: "clamp(12px, 0.9vw, 14.9px)", letterSpacing: 8, marginBottom: 22 },
   finaleText: {
     color: "#F6E7C4", fontSize: "clamp(14px, 1.32vw, 22px)", lineHeight: 2.15, letterSpacing: 2,
     textShadow: "0 2px 18px rgba(0,0,0,0.95)", maxWidth: 800,
@@ -3377,31 +3397,31 @@ const tgStyles = {
     padding: "3.5% 6% 4%", gap: 11, textAlign: "center",
   },
   title: { color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 3 },
-  guessMark: { color: "#C9A86A", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 1 },
-  lede: { color: "#B5A98C", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", lineHeight: 1.8, maxWidth: 660 },
+  guessMark: { color: "#C9A86A", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 1 },
+  lede: { color: "#B5A98C", fontSize: "clamp(12px, 0.9vw, 14.9px)", lineHeight: 1.8, maxWidth: 660 },
   playRow: { display: "flex", gap: 22, alignItems: "flex-start", width: "100%", maxWidth: 840, justifyContent: "center", flexWrap: "wrap" },
   side: { flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 10, minWidth: 210 },
-  matrix: { borderCollapse: "collapse", fontSize: "clamp(10px, 0.79vw, 13px)", color: "#D8C8A8" },
+  matrix: { borderCollapse: "collapse", fontSize: "clamp(12px, 0.79vw, 13px)", color: "#D8C8A8" },
   mCorner: { border: "none" },
   mHead: { padding: "4px 8px", color: "#8A8068", fontWeight: "normal", letterSpacing: 1, whiteSpace: "nowrap" },
   mCell: { padding: "5px 10px", border: "1px solid rgba(201,168,106,0.2)", textAlign: "center", whiteSpace: "nowrap" },
-  scores: { display: "flex", gap: 18, justifyContent: "center", color: "#B5A98C", fontSize: "clamp(11px, 0.87vw, 14.4px)" },
+  scores: { display: "flex", gap: 18, justifyContent: "center", color: "#B5A98C", fontSize: "clamp(12px, 0.87vw, 14.4px)" },
   num: { color: "#F5E6D3", fontSize: "clamp(14px, 1.11vw, 18.4px)", fontVariantNumeric: "tabular-nums" },
   cityBar: { textAlign: "left" },
-  cityLabel: { color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2, marginBottom: 4 },
+  cityLabel: { color: "#8A8068", fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 2, marginBottom: 4 },
   cityTrack: { height: 7, borderRadius: 4, backgroundColor: "rgba(232,217,190,0.14)", overflow: "hidden" },
   cityFill: { height: "100%", transition: "width 400ms ease, background-color 400ms ease" },
   board: { flex: "1 1 380px", minWidth: 320, display: "flex", flexDirection: "column", gap: 8 },
   histRow: { display: "flex", alignItems: "center", gap: 4, justifyContent: "center" },
-  histWho: { width: 32, textAlign: "right", color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", marginRight: 4 },
+  histWho: { width: 32, textAlign: "right", color: "#8A8068", fontSize: "clamp(12px, 0.76vw, 12.6px)", marginRight: 4 },
   dot: {
     width: 26, height: 26, borderRadius: 5, display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: "clamp(10.5px, 0.83vw, 13.8px)", transition: "all 260ms ease",
+    fontSize: "clamp(12px, 0.83vw, 13.8px)", transition: "all 260ms ease",
   },
   dotEmpty: { border: "1px dashed rgba(201,168,106,0.22)", color: "transparent" },
   dotSpare: { backgroundColor: "rgba(25,158,112,0.85)", color: "#F2FBF6" },
   dotExile: { backgroundColor: "rgba(217,89,38,0.85)", color: "#FFF3EC" },
-  roundNo: { color: "#8A8068", fontSize: "clamp(10.5px, 0.79vw, 13px)", letterSpacing: 2, marginTop: 2 },
+  roundNo: { color: "#8A8068", fontSize: "clamp(12px, 0.79vw, 13px)", letterSpacing: 2, marginTop: 2 },
   moves: { display: "flex", gap: 10, justifyContent: "center", marginTop: 4 },
   move: {
     flex: "1 1 0", padding: "11px 14px", borderRadius: 9, border: "1.5px solid",
@@ -3410,41 +3430,41 @@ const tgStyles = {
     fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3,
     display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
   },
-  moveSub: { fontSize: "clamp(10px, 0.76vw, 12.6px)", color: "#7A6A50", letterSpacing: 0 },
+  moveSub: { fontSize: "clamp(12px, 0.76vw, 12.6px)", color: "#7A6A50", letterSpacing: 0 },
   guessList: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxWidth: 760, width: "100%" },
   guessBtn: {
     textAlign: "left", padding: "9px 13px", borderRadius: 8, border: "1.5px solid",
     backgroundColor: "rgba(20,16,12,0.72)", cursor: "pointer", fontFamily: "inherit",
   },
   guessName: { display: "block", color: "#EFE3CC", fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2 },
-  guessRule: { display: "block", color: "#8A8068", fontSize: "clamp(10px, 0.79vw, 13px)", lineHeight: 1.6, marginTop: 3 },
+  guessRule: { display: "block", color: "#8A8068", fontSize: "clamp(12px, 0.79vw, 13px)", lineHeight: 1.6, marginTop: 3 },
   typeGrid: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, maxWidth: 860, width: "100%" },
   typeCard: {
     textAlign: "left", padding: "8px 11px", borderLeft: "3px solid",
     backgroundColor: "rgba(20,16,12,0.6)", borderRadius: "0 6px 6px 0",
   },
-  typeName: { display: "block", color: "#EFE3CC", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 2 },
-  typeRule: { display: "block", color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", lineHeight: 1.65, marginTop: 3 },
+  typeName: { display: "block", color: "#EFE3CC", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2 },
+  typeRule: { display: "block", color: "#8A8068", fontSize: "clamp(12px, 0.76vw, 12.6px)", lineHeight: 1.65, marginTop: 3 },
   controls: { display: "flex", gap: 20, alignItems: "flex-end", flexWrap: "wrap", justifyContent: "center" },
   ctrl: { display: "flex", flexDirection: "column", gap: 4, minWidth: 190 },
-  ctrlLabel: { color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2 },
+  ctrlLabel: { color: "#8A8068", fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 2 },
   range: { accentColor: "#C9A86A", width: "100%" },
-  ctrlVal: { color: "#D8C8A8", fontSize: "clamp(10.5px, 0.79vw, 13px)" },
+  ctrlVal: { color: "#D8C8A8", fontSize: "clamp(12px, 0.79vw, 13px)" },
   chartBox: {
     width: "100%", maxWidth: 700, backgroundColor: "#171310", borderRadius: 8,
     padding: "10px 12px 6px", border: "1px solid rgba(201,168,106,0.16)",
   },
-  chartHint: { color: "#8A8068", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", padding: "58px 0", letterSpacing: 1 },
+  chartHint: { color: "#8A8068", fontSize: "clamp(12px, 0.83vw, 13.8px)", padding: "58px 0", letterSpacing: 1 },
   svg: { width: "100%", height: "auto", display: "block" },
   legend: { display: "flex", flexWrap: "wrap", gap: "5px 14px", justifyContent: "center", maxWidth: 700 },
-  legendItem: { display: "inline-flex", alignItems: "center", gap: 5, color: "#B5A98C", fontSize: "clamp(10px, 0.79vw, 13px)" },
+  legendItem: { display: "inline-flex", alignItems: "center", gap: 5, color: "#B5A98C", fontSize: "clamp(12px, 0.79vw, 13px)" },
   swatch: { width: 9, height: 9, borderRadius: 2, display: "inline-block" },
   legendVal: { color: "#EFE3CC", fontVariantNumeric: "tabular-nums", marginLeft: 2 },
   verdict: {
-    maxWidth: 660, color: "#E4CF9E", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", lineHeight: 1.9,
+    maxWidth: 660, color: "#E4CF9E", fontSize: "clamp(12px, 0.94vw, 15.5px)", lineHeight: 1.9,
     borderTop: "1px solid rgba(201,168,106,0.25)", paddingTop: 10,
   },
-  verdictWho: { color: "#8A8068", fontSize: "clamp(10.5px, 0.79vw, 13px)", marginTop: 5 },
+  verdictWho: { color: "#8A8068", fontSize: "clamp(12px, 0.79vw, 13px)", marginTop: 5 },
   codaWrap: {
     position: "absolute", inset: 0, zIndex: 25,
     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
@@ -3688,7 +3708,7 @@ const ffStyles = {
     cursor: "pointer", fontFamily: "inherit",
     transition: "border-color 200ms ease, background-color 200ms ease, opacity 200ms ease",
   },
-  itemName: { color: "#E8D9BE", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", letterSpacing: 1 },
+  itemName: { color: "#E8D9BE", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 1 },
   bagRow: {
     position: "absolute", left: 0, right: 0, bottom: "6%", zIndex: 25,
     display: "flex", gap: 10, alignItems: "center", justifyContent: "center",
@@ -3727,7 +3747,7 @@ const ffStyles = {
     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14,
     animation: "flashIn 600ms ease both",
   },
-  vDate: { color: "#8A7A5E", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 6 },
+  vDate: { color: "#8A7A5E", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 6 },
   vText: {
     color: "#E07A5A", fontSize: "clamp(16px, 1.6vw, 27px)", letterSpacing: 4, lineHeight: 2,
     textAlign: "center", whiteSpace: "pre-line",
@@ -3744,8 +3764,8 @@ const ffStyles = {
   },
   keptRow: { display: "flex", gap: 22, marginTop: 34, flexWrap: "wrap", justifyContent: "center" },
   keptItem: { display: "flex", flexDirection: "column", alignItems: "center", gap: 5 },
-  keptName: { color: "#8A7A5E", fontSize: "clamp(10px, 0.79vw, 13px)", letterSpacing: 1 },
-  keptCaption: { color: "#6B5340", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", letterSpacing: 2, marginTop: 14 },
+  keptName: { color: "#8A7A5E", fontSize: "clamp(12px, 0.79vw, 13px)", letterSpacing: 1 },
+  keptCaption: { color: "#6B5340", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 2, marginTop: 14 },
 };
 
 // ============================================================
@@ -3838,13 +3858,13 @@ const ptStyles = {
     position: "absolute", top: "6%", left: "50%", transform: "translateX(-50%)",
     width: "44%", zIndex: 25, textAlign: "center",
   },
-  meterLabel: { color: "#B5A98C", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 4, marginBottom: 7 },
+  meterLabel: { color: "#B5A98C", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 4, marginBottom: 7 },
   meterTrack: {
     height: 13, borderRadius: 7, backgroundColor: "rgba(232,217,190,0.13)",
     border: "1px solid rgba(201,168,106,0.3)", overflow: "hidden",
   },
   meterFill: { height: "100%", transition: "width 900ms cubic-bezier(.3,.7,.4,1), background-color 900ms ease" },
-  meterCount: { color: "#7A6A50", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2, marginTop: 6 },
+  meterCount: { color: "#7A6A50", fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 2, marginTop: 6 },
   who: {
     position: "absolute", left: "16%", bottom: 0, height: "62%",
     objectFit: "contain", objectPosition: "bottom", zIndex: 12,
@@ -3854,7 +3874,7 @@ const ptStyles = {
     position: "absolute", left: "38%", top: "34%", maxWidth: "48%", zIndex: 20,
     borderLeft: "3px solid #C9A86A", paddingLeft: 16,
   },
-  name: { color: "#C9A86A", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 3, marginBottom: 8 },
+  name: { color: "#C9A86A", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 3, marginBottom: 8 },
   ask: {
     color: "#F5E6D3", fontSize: "clamp(16px, 1.53vw, 26px)", lineHeight: 1.75, letterSpacing: 2,
     textShadow: "0 2px 14px rgba(0,0,0,0.95)",
@@ -3867,7 +3887,7 @@ const ptStyles = {
     fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 4,
   },
   reaction: { position: "absolute", left: "38%", top: "56%", maxWidth: "48%", zIndex: 25 },
-  reactWho: { color: "#8A7A5E", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", letterSpacing: 3 },
+  reactWho: { color: "#8A7A5E", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 3 },
   reactText: {
     color: "#E8D9BE", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.8, marginTop: 6,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
@@ -4078,14 +4098,14 @@ const prStyles = {
     transition: "border-color 200ms ease, transform 200ms ease",
   },
   pic: { width: "100%", aspectRatio: "8 / 5", borderRadius: 6, backgroundSize: "cover", backgroundPosition: "center" },
-  picCap: { color: "#E8D9BE", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 2, paddingBottom: 3 },
-  hint: { color: "rgba(245,230,211,0.62)", fontSize: "clamp(11px, 0.79vw, 13px)", letterSpacing: 2 },
+  picCap: { color: "#E8D9BE", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2, paddingBottom: 3 },
+  hint: { color: "rgba(245,230,211,0.62)", fontSize: "clamp(12px, 0.79vw, 13px)", letterSpacing: 2 },
   duo: { display: "flex", gap: 14, width: "100%", maxWidth: 720, justifyContent: "center", flexWrap: "wrap" },
   card: {
     flex: "1 1 260px", minWidth: 220, padding: "12px 16px",
     backgroundColor: "rgba(252,248,238,0.9)", border: "2px solid", borderRadius: 10, textAlign: "left",
   },
-  cardLabel: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#8A7A5E", letterSpacing: 4, marginBottom: 5 },
+  cardLabel: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#8A7A5E", letterSpacing: 4, marginBottom: 5 },
   cardText: { fontSize: "clamp(12.5px, 1.04vw, 17.2px)", color: "#2B2118", lineHeight: 1.7 },
   note: { color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2, textShadow: "0 1px 8px rgba(0,0,0,0.9)" },
   reveal: {
@@ -4151,7 +4171,7 @@ function EvidenceSelectPhase({ phase, onScore, onComplete }) {
               return (
                 <div
                   key={it.id}
-                  onClick={() => toggle(it.id)}
+                  {...pressable(() => toggle(it.id), { disabled: done, pressed: on })}
                   style={{
                     ...esStyles.item,
                     cursor: done ? "default" : "pointer",
@@ -4212,13 +4232,13 @@ const esStyles = {
   claimBox: {
     borderLeft: "3px solid #C9A86A", paddingLeft: 14, maxWidth: 760, width: "100%",
   },
-  claimLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 4 },
+  claimLabel: { color: "#8A7A5E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 4 },
   claim: {
     color: "#F5E6D3", fontSize: "clamp(14px, 1.25vw, 20.7px)", lineHeight: 1.75, letterSpacing: 2,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
   },
   instruction: {
-    color: "#D8C8A8", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", letterSpacing: 1, maxWidth: 760, width: "100%",
+    color: "#D8C8A8", fontSize: "clamp(12px, 0.9vw, 14.9px)", letterSpacing: 1, maxWidth: 760, width: "100%",
   },
   counter: { color: "#C9A86A", marginLeft: 8 },
   list: { display: "flex", flexDirection: "column", gap: 8, maxWidth: 760, width: "100%" },
@@ -4232,9 +4252,9 @@ const esStyles = {
     transition: "background-color 180ms ease",
   },
   itemText: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.7, flex: 1 },
-  verdictTag: { fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 2, flexShrink: 0, marginTop: 3 },
+  verdictTag: { fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 2, flexShrink: 0, marginTop: 3 },
   why: {
-    color: "#CBBC9E", fontSize: "clamp(11.5px, 0.87vw, 14.4px)", lineHeight: 1.85,
+    color: "#CBBC9E", fontSize: "clamp(12px, 0.87vw, 14.4px)", lineHeight: 1.85,
     marginTop: 8, paddingLeft: 25, borderTop: "1px dashed rgba(201,168,106,0.22)", paddingTop: 8,
   },
   closing: {
@@ -4295,7 +4315,7 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
           onDragOver={(e) => { e.preventDefault(); setOver(sid); }}
           onDragLeave={() => setOver(null)}
           onDrop={(e) => { e.preventDefault(); setOver(null); put(sid, e.dataTransfer.getData("text/plain")); }}
-          onClick={() => { if (picked) put(sid, picked); else if (fill[sid]) setFill((f) => { const n = { ...f }; delete n[sid]; return n; }); }}
+          {...pressable(() => { if (picked) put(sid, picked); else if (fill[sid]) setFill((f) => { const n = { ...f }; delete n[sid]; return n; }); }, { disabled: done })}
           style={{
             ...ebStyles.slot,
             borderColor: over === sid ? "#C9A86A" : (picked ? "rgba(201,168,106,0.65)" : "rgba(201,168,106,0.32)"),
@@ -4328,7 +4348,7 @@ function ExplainByBuildingPhase({ phase, onScore, onComplete }) {
                     key={t.id}
                     draggable
                     onDragStart={(e) => { e.dataTransfer.setData("text/plain", t.id); setPicked(t.id); }}
-                    onClick={() => setPicked((p) => (p === t.id ? null : t.id))}
+                    {...pressable(() => setPicked((p) => (p === t.id ? null : t.id)), { pressed: picked === t.id })}
                     style={{
                       ...ebStyles.tok,
                       borderColor: picked === t.id ? "#C9A86A" : "rgba(201,168,106,0.35)",
@@ -4403,11 +4423,11 @@ const ebStyles = {
     userSelect: "none", WebkitUserSelect: "none",
     transition: "box-shadow 200ms ease, border-color 200ms ease",
   },
-  trayEmpty: { color: "#8A7A5E", fontSize: "clamp(11.5px, 0.87vw, 14.4px)", letterSpacing: 2 },
-  hint: { color: "rgba(245,230,211,0.55)", fontSize: "clamp(10.5px, 0.76vw, 12.6px)", letterSpacing: 1 },
+  trayEmpty: { color: "#8A7A5E", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 2 },
+  hint: { color: "rgba(245,230,211,0.55)", fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 1 },
   compare: { display: "flex", flexDirection: "column", gap: 14, maxWidth: 860, width: "100%", textAlign: "left" },
   block: { borderLeft: "3px solid rgba(201,168,106,0.4)", paddingLeft: 14 },
-  blockLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 6 },
+  blockLabel: { color: "#8A7A5E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 6 },
   blockText: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.04vw, 17.2px)", lineHeight: 2.0, letterSpacing: 1 },
   note: {
     color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", lineHeight: 1.9, letterSpacing: 1,
@@ -4490,7 +4510,7 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (partById(id)?.slot === s.id) { setFill((f) => ({ ...f, [s.id]: id })); playDrop(); } }}
-                onClick={() => { if (picked && partById(picked)?.slot === s.id) { setFill((f) => ({ ...f, [s.id]: picked })); setPicked(null); playDrop(); } }}
+                {...pressable(() => { if (picked && partById(picked)?.slot === s.id) { setFill((f) => ({ ...f, [s.id]: picked })); setPicked(null); playDrop(); } })}
                 style={{
                   ...cbStyles.slot,
                   borderColor: fill[s.id] ? "#C9A86A" : "rgba(201,168,106,0.3)",
@@ -4506,7 +4526,7 @@ function ContrapassoPhase({ phase, onScore, onComplete }) {
                 {trayFor(s.id).map((p) => (
                   <div key={p.id} draggable
                     onDragStart={(e) => { e.dataTransfer.setData("text/plain", p.id); setPicked(p.id); }}
-                    onClick={() => setPicked((x) => (x === p.id ? null : p.id))}
+                    {...pressable(() => setPicked((x) => (x === p.id ? null : p.id)), { pressed: picked === p.id })}
                     style={{ ...cbStyles.part, borderColor: picked === p.id ? "#C9A86A" : "rgba(201,168,106,0.3)" }}>
                     {nb(p.text)}
                   </div>
@@ -4594,18 +4614,18 @@ const cbStyles = {
     flex: "0 0 auto", minWidth: 210, padding: "8px 14px", border: "1.5px dashed", borderRadius: 8,
     textAlign: "left", cursor: "pointer", transition: "border-color 180ms ease, background-color 180ms ease",
   },
-  slotLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 3 },
+  slotLabel: { color: "#8A7A5E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 3 },
   slotText: { color: "#F5E6D3", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.6, marginTop: 3 },
   parts: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1, minWidth: 220, justifyContent: "flex-start" },
   part: {
     padding: "6px 12px", borderRadius: 14, border: "1px solid",
     backgroundColor: "rgba(252,248,238,0.9)", color: "#2B2118", cursor: "grab",
-    fontSize: "clamp(11.5px, 0.9vw, 14.9px)", letterSpacing: 1,
+    fontSize: "clamp(12px, 0.9vw, 14.9px)", letterSpacing: 1,
     userSelect: "none", WebkitUserSelect: "none",
   },
   reveal: { display: "flex", flexDirection: "column", gap: 13, maxWidth: 800, width: "100%", textAlign: "left" },
   block: { borderLeft: "3px solid rgba(201,168,106,0.4)", paddingLeft: 14 },
-  blockLabel: { color: "#8A7A5E", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 5 },
+  blockLabel: { color: "#8A7A5E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 5 },
   blockText: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.04vw, 17.2px)", lineHeight: 1.95 },
   mirror: {
     display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
@@ -4670,7 +4690,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
                   onDragOver={(e) => { e.preventDefault(); setOver(a.id); }}
                   onDragLeave={() => setOver(null)}
                   onDrop={(e) => { e.preventDefault(); setOver(null); put(a.id, e.dataTransfer.getData("text/plain")); }}
-                  onClick={() => { if (done) return; if (picked) put(a.id, picked); else if (fill[a.id]) setFill((f) => { const n = { ...f }; delete n[a.id]; return n; }); }}
+                  {...pressable(() => { if (picked) put(a.id, picked); else if (fill[a.id]) setFill((f) => { const n = { ...f }; delete n[a.id]; return n; }); }, { disabled: done })}
                 >
                   <div style={ppStyles.stationLabel}>{nb(a.label)}</div>
                   <div style={ppStyles.tick} />
@@ -4699,7 +4719,7 @@ function ProphecyParadoxPhase({ phase, onScore, onComplete }) {
                 {tray.map((b) => (
                   <div key={b.id} draggable
                     onDragStart={(e) => { e.dataTransfer.setData("text/plain", b.id); setPicked(b.id); }}
-                    onClick={() => setPicked((p) => (p === b.id ? null : b.id))}
+                    {...pressable(() => setPicked((p) => (p === b.id ? null : b.id)), { pressed: picked === b.id })}
                     style={{ ...ppStyles.block, borderColor: picked === b.id ? "#C9A86A" : "rgba(201,168,106,0.35)" }}>
                     {nb(b.text)}
                   </div>
@@ -4740,7 +4760,7 @@ const ppStyles = {
     padding: "4% 7%", gap: 16, textAlign: "center",
   },
   quoteBox: { maxWidth: 760, borderLeft: "3px solid #C9A86A", paddingLeft: 16, textAlign: "left" },
-  speaker: { color: "#C9A86A", fontSize: "clamp(11px, 0.83vw, 13.8px)", letterSpacing: 4, marginBottom: 5 },
+  speaker: { color: "#C9A86A", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 4, marginBottom: 5 },
   quote: {
     color: "#F5E6D3", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.95, letterSpacing: 1,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
@@ -4749,24 +4769,24 @@ const ppStyles = {
   axis: { position: "relative", display: "flex", justifyContent: "space-between", gap: 12, width: "100%", maxWidth: 880, padding: "6px 0 0" },
   rail: { position: "absolute", left: "6%", right: "6%", top: 44, height: 1, backgroundColor: "rgba(201,168,106,0.35)" },
   station: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 0 },
-  stationLabel: { color: "#A8998A", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2,
+  stationLabel: { color: "#A8998A", fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 2,
     minHeight: 34, lineHeight: 1.5, whiteSpace: "pre-line" },
   tick: { width: 9, height: 9, borderRadius: "50%", backgroundColor: "#C9A86A", zIndex: 1 },
   drop: {
     width: "100%", minHeight: 54, padding: "9px 10px", border: "1.5px dashed", borderRadius: 8,
-    color: "#F5E6D3", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", lineHeight: 1.6,
+    color: "#F5E6D3", fontSize: "clamp(12px, 0.9vw, 14.9px)", lineHeight: 1.6,
     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5,
     transition: "border-color 180ms ease, background-color 180ms ease",
   },
   truth: {
-    color: "#C9A86A", fontSize: "clamp(10.5px, 0.79vw, 13px)", lineHeight: 1.5,
+    color: "#C9A86A", fontSize: "clamp(12px, 0.79vw, 13px)", lineHeight: 1.5,
     borderTop: "1px dashed rgba(201,168,106,0.35)", paddingTop: 5, width: "100%",
   },
   tray: { display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", maxWidth: 880 },
   block: {
     padding: "8px 14px", borderRadius: 8, border: "1.5px solid",
     backgroundColor: "rgba(252,248,238,0.93)", color: "#2B2118", cursor: "grab",
-    fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 1,
+    fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 1,
     userSelect: "none", WebkitUserSelect: "none",
   },
   bigQ: { color: "#C9A86A", fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 4, textShadow: "0 2px 10px rgba(0,0,0,0.9)" },
@@ -5161,7 +5181,7 @@ function EchoPortalPhase({ phase, onComplete }) {
               onDragOver={(e) => { e.preventDefault(); setOver(true); }}
               onDragLeave={() => setOver(false)}
               onDrop={(e) => { e.preventDefault(); setOver(false); drop(); }}
-              onClick={() => armed && drop()}
+              {...pressable(() => armed && drop(), { label: t("portal.manuscript") })}
               style={{
                 ...epStyles.manuscript,
                 backgroundImage: phase.manuscript ? `url(${asset(phase.manuscript)})` : undefined,
@@ -5182,7 +5202,7 @@ function EchoPortalPhase({ phase, onComplete }) {
             <div
               draggable
               onDragStart={(e) => { e.dataTransfer.setData("text/plain", token.id || "token"); setArmed(true); }}
-              onClick={() => setArmed((a) => !a)}
+              {...pressable(() => setArmed((a) => !a), { pressed: armed })}
               style={{
                 ...epStyles.token,
                 borderColor: kind.color,
@@ -5247,7 +5267,7 @@ const epStyles = {
   },
   manuscriptHint: {
     position: "absolute", left: 0, right: 0, bottom: 8, textAlign: "center",
-    color: "#6B5340", fontSize: "clamp(11px, 0.833vw, 13.8px)", letterSpacing: 4,
+    color: "#6B5340", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 4,
   },
   token: {
     position: "absolute", left: "6%", bottom: "12%",
@@ -5265,12 +5285,12 @@ const epStyles = {
     color: "#FCF8EE", fontSize: "clamp(17.6px, 1.528vw, 25.3px)", letterSpacing: 0,
   },
   tokenBody: { minWidth: 0 },
-  tokenKind: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#9A8B72", letterSpacing: 3 },
+  tokenKind: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#9A8B72", letterSpacing: 3 },
   tokenName: { fontSize: "clamp(15px, 1.32vw, 22px)", color: "#2B2118", letterSpacing: 2 },
-  tokenDetail: { fontSize: "clamp(11px, 0.833vw, 13.8px)", color: "#7A6A50", marginTop: 3, lineHeight: 1.5 },
+  tokenDetail: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#7A6A50", marginTop: 3, lineHeight: 1.5 },
   tapHint: {
     position: "absolute", left: 0, right: 0, bottom: "4%", textAlign: "center",
-    color: "rgba(245,230,211,0.72)", fontSize: "clamp(11px, 0.764vw, 12.6px)", letterSpacing: 2,
+    color: "rgba(245,230,211,0.72)", fontSize: "clamp(12px, 0.764vw, 12.6px)", letterSpacing: 2,
     textShadow: "0 1px 4px #000", zIndex: 20,
   },
   afterWrap: {
@@ -5350,7 +5370,7 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
               key={s.id}
               draggable={!submitted}
               onDragStart={(e) => { e.dataTransfer.setData("text/plain", s.id); setPicked(s.id); }}
-              onClick={() => setPicked((p) => (p === s.id ? null : s.id))}
+              {...pressable(() => setPicked((p) => (p === s.id ? null : s.id)), { disabled: submitted, pressed: picked === s.id, label: s.name })}
               style={{
                 ...ipStyles.soulCard,
                 borderColor: picked === s.id ? "#C9A86A" : "rgba(201,168,106,0.3)",
@@ -5390,7 +5410,7 @@ function InfernoPlacementPhase({ phase, eventId, onScore, onComplete }) {
                 onDragOver={(e) => { e.preventDefault(); setOverCircle(c.id); }}
                 onDragLeave={() => setOverCircle(null)}
                 onDrop={(e) => { e.preventDefault(); setOverCircle(null); place(e.dataTransfer.getData("text/plain"), c.id); }}
-                onClick={() => picked && place(picked, c.id)}
+                {...pressable(() => picked && place(picked, c.id), { disabled: submitted, label: c.name })}
                 style={{
                   ...ipStyles.band,
                   width: w + "%",
@@ -5587,10 +5607,10 @@ const ipStyles = {
     flexShrink: 0, alignSelf: "center", padding: "4px 9px", borderRadius: 12,
     border: "1px solid rgba(138,109,59,0.45)", backgroundColor: "rgba(201,168,106,0.16)",
     color: "#6B5340", cursor: "pointer", fontFamily: "inherit",
-    fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 1, lineHeight: 1.4,
+    fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 1, lineHeight: 1.4,
   },
-  soulMet: { fontSize: "clamp(10px, 0.72vw, 12px)", color: "#8A7A5E", marginTop: 2, lineHeight: 1.4 },
-  trayEmpty: { color: "rgba(245,230,211,0.6)", fontSize: "clamp(11.5px, 0.833vw, 13.8px)", letterSpacing: 2 },
+  soulMet: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#8A7A5E", marginTop: 2, lineHeight: 1.4 },
+  trayEmpty: { color: "rgba(245,230,211,0.6)", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 2 },
   funnel: {
     position: "absolute", right: "3%", top: "17%", width: "62%",
     // 有「书外」那一条时收一点，把下面让出来
@@ -5617,12 +5637,12 @@ const ipStyles = {
     transition: "background-color 200ms ease, border-color 200ms ease",
   },
   bandLabel: { flexShrink: 0, display: "flex", flexDirection: "column", minWidth: "30%" },
-  bandName: { color: "#E8D9BE", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 2 },
-  bandSin: { color: "#A89968", fontSize: "clamp(10px, 0.72vw, 12px)", letterSpacing: 1 },
+  bandName: { color: "#E8D9BE", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2 },
+  bandSin: { color: "#A89968", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1 },
   bandSouls: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1 },
   chip: {
     padding: "3px 10px", borderRadius: 12,
-    fontSize: "clamp(11px, 0.833vw, 13.8px)", letterSpacing: 1,
+    fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 1,
     backgroundColor: "rgba(252,248,238,0.92)", color: "#2B2118",
     display: "inline-flex", alignItems: "baseline", gap: 5,
   },
@@ -5631,7 +5651,7 @@ const ipStyles = {
     border: "1px dashed rgba(232,217,190,0.45)",
   },
   chipDante: { backgroundColor: "#C9A86A", color: "#241A10" },
-  chipWho: { fontSize: "clamp(9px, 0.62vw, 10.5px)", letterSpacing: 2, opacity: 0.7 },
+  chipWho: { fontSize: "clamp(12px, 0.62vw, 12px)", letterSpacing: 2, opacity: 0.7 },
   verdictOverlay: {
     position: "absolute", inset: 0, zIndex: 40,
     backgroundColor: "rgba(10,7,4,0.82)",
@@ -5646,10 +5666,10 @@ const ipStyles = {
     fontSize: "clamp(14px, 1.25vw, 20.7px)", color: "#3A2E20", letterSpacing: 2,
     borderBottom: "1px solid #D8CDB8", paddingBottom: 10, marginBottom: 12,
   },
-  verdictSub: { fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#7A6A50", marginTop: 5, letterSpacing: 1 },
+  verdictSub: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#7A6A50", marginTop: 5, letterSpacing: 1 },
   verdictRow: { marginBottom: 14 },
   verdictName: { fontSize: "clamp(12.8px, 1.042vw, 17.2px)", color: "#2B2118", letterSpacing: 1 },
-  verdictWhere: { color: "#8A6D3B", fontSize: "clamp(11.5px, 0.833vw, 13.8px)" },
+  verdictWhere: { color: "#8A6D3B", fontSize: "clamp(12px, 0.833vw, 13.8px)" },
   verdictText: { fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#5A4A38", lineHeight: 1.85, marginTop: 4 },
 };
 
@@ -5798,7 +5818,7 @@ const ceStyles = {
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
   },
   met: {
-    color: "#C9A86A", fontSize: "clamp(11px, 0.833vw, 13.8px)", letterSpacing: 2, marginTop: 6,
+    color: "#C9A86A", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 2, marginTop: 6,
     textShadow: "0 1px 6px rgba(0,0,0,0.9)",
   },
   recognition: {
@@ -5823,7 +5843,7 @@ const ceStyles = {
     marginLeft: 10, padding: "2px 9px", borderRadius: 11,
     border: "1px solid rgba(201,168,106,0.55)", backgroundColor: "rgba(201,168,106,0.14)",
     color: "#E8D9BE", cursor: "pointer", fontFamily: "inherit",
-    fontSize: "clamp(9.5px, 0.72vw, 12px)", letterSpacing: 1,
+    fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1,
   },
   answerBar: {
     position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 30,
@@ -5835,7 +5855,7 @@ const ceStyles = {
     color: "#F5E6D3", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", lineHeight: 1.95, letterSpacing: 1,
     whiteSpace: "pre-wrap",
   },
-  answerHint: { color: "#A89968", fontSize: "clamp(11px, 0.764vw, 12.6px)", marginTop: 8, textAlign: "right" },
+  answerHint: { color: "#A89968", fontSize: "clamp(12px, 0.764vw, 12.6px)", marginTop: 8, textAlign: "right" },
   closingWrap: {
     position: "absolute", inset: 0, zIndex: 40,
     backgroundColor: "rgba(10,7,4,0.8)",
@@ -5929,13 +5949,13 @@ const styles = {
     textShadow: "1px 1px 3px rgba(0,0,0,0.8)",
   },
   npcTextLabelHint: {
-    fontSize: "clamp(8.0px, 0.694vw, 11.5px)", color: "rgba(255,255,255,0.7)",
+    fontSize: "clamp(12px, 0.694vw, 12px)", color: "rgba(255,255,255,0.7)",
   },
   npcName: {
     // Absolutely positioned so the hover tooltip doesn't shift the portrait.
     position: "absolute", top: "100%", left: "50%",
     transform: "translateX(-50%)", marginTop: 4,
-    fontSize: "clamp(11.5px, 0.833vw, 13.8px)", color: "#FFF",
+    fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#FFF",
     backgroundColor: "rgba(0,0,0,0.6)", padding: "2px 8px",
     borderRadius: 4, whiteSpace: "nowrap", pointerEvents: "none",
   },
@@ -6065,7 +6085,7 @@ const styles = {
     fontFamily: "var(--font-body)",
   },
   bubbleSpeaker: {
-    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
+    fontSize: "clamp(12px, 0.833vw, 13.8px)",
     fontWeight: "bold",
     color: "#8B6914",
     letterSpacing: 2,
@@ -6079,7 +6099,7 @@ const styles = {
   },
   bubbleContinue: {
     textAlign: "right",
-    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
+    fontSize: "clamp(12px, 0.833vw, 13.8px)",
     color: "#A89968",
     marginTop: 6,
   },
@@ -6290,7 +6310,7 @@ const styles = {
     backgroundColor: "rgba(0,0,0,0.7)", padding: 20,
   },
   tapHint: {
-    fontSize: "clamp(11.5px, 0.833vw, 13.8px)",
+    fontSize: "clamp(12px, 0.833vw, 13.8px)",
     color: "#999",
     marginTop: 6,
     textAlign: "center",

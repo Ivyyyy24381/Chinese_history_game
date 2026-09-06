@@ -113,10 +113,10 @@ const styles = {
   eventBody: { flex: 1 },
   eventName: { fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold", color: "#3B2510" },
   eventState: {
-    marginLeft: 10, fontSize: "clamp(9.6px, 0.833vw, 13.8px)", fontWeight: "normal", color: "#8B7355",
+    marginLeft: 10, fontSize: "clamp(12px, 0.833vw, 13.8px)", fontWeight: "normal", color: "#8B7355",
     border: "1px solid #C9B08A", borderRadius: 4, padding: "1px 8px",
   },
-  eventLoc: { fontSize: "clamp(9.6px, 0.833vw, 13.8px)", color: "#999", margin: "3px 0" },
+  eventLoc: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#999", margin: "3px 0" },
   eventSummary: { fontSize: "clamp(12.5px, 0.903vw, 14.9px)", color: "#555", margin: "4px 0 0", lineHeight: 1.7 },
   epilogue: {
     marginTop: 32, textAlign: "center",

@@ -391,7 +391,7 @@ const styles = {
   },
   meta: {
     color: COLOR.secondary,
-    fontSize: "clamp(10px, 1.3vh, 14px)",
+    fontSize: "clamp(12px, 1.3vh, 14px)",
     letterSpacing: TRACKING.tight,
     margin: "3px 0 0",
     textShadow: "0 1px 2px rgba(255,255,255,0.55)",
@@ -423,7 +423,7 @@ const styles = {
   },
   ghostBtn: {
     ...BUTTON.ghost,
-    fontSize: "clamp(10.5px, 1.35vh, 13.5px)",
+    fontSize: "clamp(12px, 1.35vh, 13.5px)",
   },
   achievementBar: {
     marginTop: "clamp(6px, 1.6vh, 18px)",
@@ -443,7 +443,7 @@ const styles = {
   achievementChip: {
     padding: "4px 12px",
     borderRadius: 14,
-    fontSize: "clamp(11px, 1.15vh, 12.5px)",
+    fontSize: "clamp(12px, 1.15vh, 12.5px)",
     letterSpacing: TRACKING.tight,
     backgroundColor: gold(0.22),
     color: COLOR.goldBrown,

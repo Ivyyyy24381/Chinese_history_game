@@ -123,3 +123,18 @@ p {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* ── 键盘焦点 ──
+   全站的按钮/可点元素几乎都是自绘样式，浏览器默认的 outline 被
+   normalize 或者自定义背景吃掉了，Tab 过去看不出焦点在哪。
+   :focus-visible 只在键盘导航时出现，鼠标点击不会看到，不影响观感。
+   金色描边 + 一圈暗底，深色场景和浅色纸面上都看得见。 */
+:where(button, [role="button"], a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid #C9A86A;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* 深色场景里再加一圈暗底，金线压在亮底图上也分得出来 */
+.scene-stage :where(button, [role="button"], [tabindex]):focus-visible {
+  box-shadow: 0 0 0 6px rgba(10, 7, 4, 0.55);
+}
