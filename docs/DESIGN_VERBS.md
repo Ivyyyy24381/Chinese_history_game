@@ -50,6 +50,7 @@ Do first → see consequence → explain / compare → name the idea
 | 先判断 | `▲` | 在知道答案前先产出一个判断 | **predict_reveal**, **explain_by_building**, **contrapasso**, poem_compose, forced_choice |
 | 辨证据 | `◆` | 在材料里做区分 | **evidence_select**, click_points, exam |
 | 改模型 | `★` | 拿自己的答案去撞史实/文本 | inferno_placement, comedy_encounter, **prophecy_paradox** |
+| 连成系统 | `✧` | 把散落的东西装成一个系统 | **celestial_spheres** |
 | 过桥 | `◈` | 要动手，但不要求判断（仪式性转场） | echo_portal |
 | 手速 | `◇` | 跟理解无关的包装 | sliding_puzzle, escape_game, minigame |
 
@@ -111,6 +112,32 @@ build 档没有唯一正解——但丁的写法只是众多可能里的一种�
 摆完自己发现：人物在往前看，作者在往回看，两道目光在 1300 年这一点上对撞。
 > 这件事原本是用一段过场文字**告诉**玩家的。现在他自己摆出来。
 > 落点：1292 布鲁内托重逢之后（《地狱》XV 里布鲁内托当场预言但丁的流放）。几乎零美术成本。
+
+### `celestial_spheres` — 九重天（《天堂》专用语法）
+**这一关整个换了语法。** 三界各有各的动词：
+
+```
+地狱   归类   你是什么？        → inferno_placement, contrapasso
+炼狱   变化   你还能怎么改？     → （待做）
+天堂   连接   万物怎么接起来？   → celestial_spheres
+```
+
+所以这里**没有对错判定，只有亮不亮**。放对了那一重就点起来、开始转、响一个音，
+整个画面亮一档；放错了它只是暗着，随时取回来重放。排序的依据写在题面上——
+「越往外转得越快，因为离神越近」——玩家据此推理，不是硬记九个名字。
+
+音是 WebAudio 现合成的（多利亚调式九级上行），不依赖任何音频文件，
+并且尊重全站的 🎵 开关（`localStorage.lishiyou_music`）。九重全亮后拉远，
+收整条线的旅程。
+
+**关键在于这一关是回款，不是新内容。** 玩家在这里遇到的人都是他早就认识的：
+皮卡尔达在月亮天——她是科尔索和福雷塞的妹妹，那两个哥哥玩家刚在 1302 亲手放进
+地狱和炼狱；卡恰圭达在火星天——1265 见过他，1302 那句「别人的面包多咸」也是他说的。
+多纳蒂家三兄妹正好散在三界。这才是「journey completion」的实义：
+不是走完了九关，是发现这九重天里站的全是熟人。
+
+> 落点：1321 拉文纳，替掉原来的「三使徒之考」quiz——那场考试现在是第八重天。
+> 素材成本：零。全部是 CSS + SVG + WebAudio。
 
 ## 人物登记表 `src/data/<line>/cast.json`
 

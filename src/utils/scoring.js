@@ -19,6 +19,7 @@ export const POINTS = {
   explain: 20,        // 因果链每摆对一格
   contrapasso: 25,    // build 档没有唯一正解——给「敢设计」这个动作
   prophecy: 20,       // 时间块每摆对一格
+  sphere: 15,         // 九重天每点亮一重
   infernoPlace: 20,   // 「但丁把他们放在哪儿了」每放对一个
 };
 

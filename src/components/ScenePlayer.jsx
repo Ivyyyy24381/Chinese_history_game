@@ -1314,6 +1314,11 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
+  // --- CELESTIAL SPHERES (九重天：连接而非归类；无对错，只有亮不亮) ---
+  if (currentPhase.type === "celestial_spheres") {
+    return <CelestialSpheresPhase phase={currentPhase} eventId={eventId} onScore={award} onComplete={goToNextPhase} />;
+  }
+
   // --- EXPLAIN BY BUILDING (用零件搭出一句解释) ---
   if (currentPhase.type === "explain_by_building") {
     return <ExplainByBuildingPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
@@ -2411,6 +2416,14 @@ if (typeof document !== "undefined" && !document.getElementById("click-point-key
       0% { box-shadow: 0 0 0 0 rgba(231,76,60,0.6); }
       100% { box-shadow: 0 0 0 18px rgba(231,76,60,0); }
     }
+    @keyframes sphereSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes flashIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
+    }
     @keyframes spotPulse {
       0%   { box-shadow: 0 0 0 0   rgba(231,76,60,0.55); }
       70%  { box-shadow: 0 0 0 12px rgba(231,76,60,0);   }
@@ -2546,6 +2559,350 @@ const bioStyles = {
     border: "1px solid #C9A86A", backgroundColor: "rgba(201,168,106,0.14)", color: "#3A2E20",
     cursor: "pointer", fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2,
+  },
+};
+
+// ============================================================
+// CELESTIAL SPHERES — 九重天
+// ============================================================
+// 《天堂》不该继续做题。这一关的语法整个换掉：
+//   地狱 = 归类（你是什么）　炼狱 = 变化（你能怎么改）　天堂 = 连接（万物怎么接起来）
+// 所以这里没有对错判定，只有「亮不亮」。放对了，那一重天就点起来、开始转、
+// 响一个音，整个世界亮一档；放错了它只是暗着，随时可以取回来重放。
+//
+// 但丁的规矩写在题面上，玩家据此推理而不是硬记：越往外，转得越快，因为离神越近。
+//
+// phase.spheres[{id,glyph,name,holds,who,canto,note}]  由内向外的正确顺序
+//       tray 打乱顺序呈现；phase.finale{title,lines,coda}
+
+// 音阶：多利亚调式往上走九级，最后一级跳到八度五度上。
+// 用 WebAudio 现合成，不依赖任何音频文件。
+const SPHERE_TONES = [293.66, 329.63, 349.23, 392.0, 440.0, 493.88, 523.25, 587.33, 880.0];
+let _actx = null;
+function musicOn() {
+  try { return localStorage.getItem("lishiyou_music") !== "off"; } catch { return true; }
+}
+function playTone(freq, { dur = 2.4, gain = 0.14 } = {}) {
+  if (!musicOn()) return;
+  try {
+    if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = _actx;
+    if (ctx.state === "suspended") ctx.resume();
+    const t = ctx.currentTime;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.connect(ctx.destination);
+    // 主音 + 轻微失谐的泛音，避免电子提示音的味道
+    [[freq, 1], [freq * 2, 0.22], [freq * 1.002, 0.6]].forEach(([f, m]) => {
+      const o = ctx.createOscillator();
+      o.type = "sine"; o.frequency.value = f;
+      const gg = ctx.createGain(); gg.gain.value = m;
+      o.connect(gg); gg.connect(g); o.start(t); o.stop(t + dur + 0.1);
+    });
+  } catch { /* 静音失败不影响玩 */ }
+}
+
+function CelestialSpheresPhase({ phase, eventId, onScore, onComplete }) {
+  const spheres = phase.spheres || [];
+  const n = spheres.length;
+  const cast = castFor(eventId);
+  const reduced = usePrefersReducedMotion();
+
+  const [placed, setPlaced] = useState({});   // ringIndex → sphereId
+  const [picked, setPicked] = useState(null);
+  const [over, setOver] = useState(null);
+  const [bioOf, setBioOf] = useState(null);
+  const [flash, setFlash] = useState(null);   // 刚点亮的那一重，用来放特写
+  const [zoom, setZoom] = useState(false);
+
+  const byId = (id) => spheres.find((s) => s.id === id);
+  const isLit = (i) => placed[i] === spheres[i]?.id;
+  const litCount = spheres.reduce((k, _, i) => k + (isLit(i) ? 1 : 0), 0);
+  const used = new Set(Object.values(placed).filter(Boolean));
+  const tray = spheres.filter((s) => !used.has(s.id));
+  const complete = litCount === n;
+
+  const put = useCallback((ring, id) => {
+    if (!id || zoom) return;
+    setPlaced((p) => {
+      const q = { ...p };
+      for (const k of Object.keys(q)) if (q[k] === id) delete q[k];
+      q[ring] = id;
+      return q;
+    });
+    setPicked(null);
+    if (spheres[ring]?.id === id) {
+      playTone(SPHERE_TONES[Math.min(ring, SPHERE_TONES.length - 1)]);
+      setFlash(ring);
+    }
+  }, [spheres, zoom]);
+
+  // 全部点亮 → 停一拍 → 拉远
+  useEffect(() => {
+    if (!complete || zoom) return;
+    const t = setTimeout(() => {
+      setZoom(true);
+      if (onScore) onScore("spheres", n * POINTS.sphere);
+      if (musicOn()) [0, 3, 5, 8].forEach((i, k) =>
+        setTimeout(() => playTone(SPHERE_TONES[i], { dur: 4.5, gain: 0.1 }), k * 260));
+    }, reduced ? 300 : 1500);
+    return () => clearTimeout(t);
+  }, [complete, zoom, n, onScore, reduced]);
+
+  useEffect(() => {
+    if (flash == null) return;
+    const t = setTimeout(() => setFlash(null), 2600);
+    return () => clearTimeout(t);
+  }, [flash]);
+
+  // 几何：由内向外九个同心环，投放口沿环错开角度排布
+  const R0 = 46, STEP = 27;
+  const radius = (i) => R0 + i * STEP;
+  const angle = (i) => -104 + i * 27;                    // deg
+  const period = (i) => (reduced ? 0 : 34 - i * 2.6);    // 越往外转得越快
+  const pos = (i) => {
+    const a = (angle(i) * Math.PI) / 180;
+    return { x: Math.cos(a) * radius(i), y: Math.sin(a) * radius(i) };
+  };
+
+  const glow = Math.min(1, litCount / n);
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundColor: "#05060C", backgroundImage: "none" }}>
+        {/* 星野 + 随点亮程度增强的天光 */}
+        <div style={csStyles.starfield} />
+        <div style={{
+          ...csStyles.bloom,
+          opacity: 0.10 + glow * 0.72 + (zoom ? 0.22 : 0),
+          transform: `scale(${0.7 + glow * 0.55 + (zoom ? 0.5 : 0)})`,
+        }} />
+
+        {!zoom && (
+          <>
+            <div style={csStyles.head}>
+              <div style={csStyles.title}>{nb(phase.title || "九重天")}</div>
+              <div style={csStyles.rule}>{nb(phase.rule || "越往外，转得越快——因为离神越近。")}</div>
+            </div>
+            <div style={csStyles.counter}>{litCount + " / " + n}</div>
+          </>
+        )}
+
+        {/* 天体图 */}
+        <div style={{
+          ...csStyles.orrery,
+          transform: `translate(-50%,-50%) scale(${zoom ? (reduced ? 1 : 0.62) : 1})`,
+          left: zoom ? "50%" : "36%",
+          opacity: zoom ? 0.7 : 1,
+          transition: reduced ? "none" : "transform 2.4s cubic-bezier(.4,0,.2,1), left 2.4s cubic-bezier(.4,0,.2,1), opacity 2.4s ease",
+        }}>
+          {/* 已点亮的各重之间连一条上升的线 */}
+          <svg style={csStyles.svg} viewBox="-340 -340 680 680" aria-hidden="true">
+            <circle cx="0" cy="0" r="13" fill="#C9A86A" opacity={0.85} />
+            <polyline
+              points={spheres.map((_, i) => (isLit(i) ? `${pos(i).x},${pos(i).y}` : null)).filter(Boolean).join(" ")}
+              fill="none" stroke="#C9A86A" strokeWidth="1.2" opacity="0.5" strokeLinecap="round"
+            />
+          </svg>
+
+          {spheres.map((_, i) => {
+            const lit = isLit(i);
+            const here = placed[i] ? byId(placed[i]) : null;
+            const p = pos(i);
+            return (
+              <div key={i}>
+                <div style={{
+                  ...csStyles.ring,
+                  width: radius(i) * 2, height: radius(i) * 2,
+                  borderColor: lit ? `rgba(201,168,106,${0.28 + 0.42 * (i / n)})` : "rgba(201,168,106,0.10)",
+                  boxShadow: lit ? `0 0 ${14 + i * 3}px rgba(201,168,106,0.16)` : "none",
+                }} />
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setOver(i); }}
+                  onDragLeave={() => setOver(null)}
+                  onDrop={(e) => { e.preventDefault(); setOver(null); put(i, e.dataTransfer.getData("text/plain")); }}
+                  onClick={() => { if (picked) put(i, picked); else if (here && !zoom) setPlaced((q) => { const r = { ...q }; delete r[i]; return r; }); }}
+                  style={{
+                    ...csStyles.socket,
+                    left: `calc(50% + ${p.x}px)`, top: `calc(50% + ${p.y}px)`,
+                    borderColor: over === i ? "#F0DCA8" : lit ? "rgba(201,168,106,0.85)" : (picked ? "rgba(201,168,106,0.5)" : "rgba(201,168,106,0.22)"),
+                    backgroundColor: lit ? "rgba(201,168,106,0.22)" : (here ? "rgba(120,110,95,0.2)" : "rgba(8,10,18,0.7)"),
+                    boxShadow: lit ? "0 0 18px rgba(230,200,140,0.55)" : "none",
+                    animation: lit && !reduced ? `sphereSpin ${period(i)}s linear infinite` : "none",
+                    cursor: zoom ? "default" : "pointer",
+                  }}
+                >
+                  <span style={{
+                    ...csStyles.glyph,
+                    color: lit ? "#F6E7C4" : here ? "rgba(200,190,170,0.55)" : "rgba(201,168,106,0.4)",
+                    animation: lit && !reduced ? `sphereSpin ${period(i)}s linear infinite reverse` : "none",
+                  }}>
+                    {here ? here.glyph : i + 1}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 待入轨的天体 */}
+        {!zoom && (
+          <div style={csStyles.tray}>
+            {tray.map((s) => (
+              <div
+                key={s.id}
+                draggable
+                onDragStart={(e) => { e.dataTransfer.setData("text/plain", s.id); setPicked(s.id); }}
+                onClick={() => setPicked((p) => (p === s.id ? null : s.id))}
+                style={{
+                  ...csStyles.chip,
+                  borderColor: picked === s.id ? "#C9A86A" : "rgba(201,168,106,0.24)",
+                  backgroundColor: picked === s.id ? "rgba(201,168,106,0.16)" : "rgba(14,16,26,0.72)",
+                }}
+              >
+                <span style={csStyles.chipGlyph}>{s.glyph}</span>
+                <span style={{ minWidth: 0, flex: 1 }}>
+                  <span style={csStyles.chipName}>{nb(s.name)}</span>
+                  <span style={csStyles.chipHolds}>{nb(s.holds)}</span>
+                </span>
+                {s.who && cast[s.who] && (
+                  <button style={csStyles.chipBio}
+                    onClick={(e) => { e.stopPropagation(); setBioOf(s.who); }}>{"生平"}</button>
+                )}
+              </div>
+            ))}
+            {tray.length === 0 && !complete && (
+              <div style={csStyles.trayEmpty}>{"都排上了，可还有几重是暗的。点暗的那个取回来，换一重试试。"}</div>
+            )}
+          </div>
+        )}
+
+        {/* 刚点亮的那一重：特写 */}
+        {flash != null && !zoom && (() => {
+          const s = spheres[flash];
+          return (
+            <div style={csStyles.flash}>
+              <div style={csStyles.flashName}>{s.glyph + "　" + s.name}</div>
+              <div style={csStyles.flashHolds}>{nb(s.holds)}</div>
+              {s.note && <div style={csStyles.flashNote}>{nb(s.note)}</div>}
+              {s.canto && <div style={csStyles.flashCanto}>{nb(s.canto)}</div>}
+            </div>
+          );
+        })()}
+
+        {/* 拉远：整条路走完了 */}
+        {zoom && (
+          <div style={csStyles.finaleWrap}>
+            {phase.finale?.title && <div style={csStyles.finaleTitle}>{nb(phase.finale.title)}</div>}
+            <RevealLines
+              text={(phase.finale?.lines || []).join("\n")}
+              style={csStyles.finaleText}
+              unitDelay={900}
+              duration={1200}
+            />
+            {phase.finale?.coda && <div style={csStyles.coda}>{nb(phase.finale.coda)}</div>}
+            <button style={{ ...prStyles.go, marginTop: 22 }} onClick={onComplete}>{"走完了 →"}</button>
+          </div>
+        )}
+
+        {bioOf && (
+          <BioPanel person={cast[bioOf]} onClose={() => setBioOf(null)} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+const csStyles = {
+  starfield: {
+    position: "absolute", inset: 0,
+    backgroundImage:
+      "radial-gradient(1.2px 1.2px at 12% 22%, rgba(255,250,235,0.85), transparent)," +
+      "radial-gradient(1px 1px at 78% 14%, rgba(255,250,235,0.7), transparent)," +
+      "radial-gradient(1.4px 1.4px at 34% 74%, rgba(255,250,235,0.8), transparent)," +
+      "radial-gradient(1px 1px at 62% 62%, rgba(255,250,235,0.6), transparent)," +
+      "radial-gradient(1.1px 1.1px at 88% 82%, rgba(255,250,235,0.7), transparent)," +
+      "radial-gradient(1px 1px at 22% 48%, rgba(255,250,235,0.55), transparent)," +
+      "radial-gradient(1.3px 1.3px at 52% 30%, rgba(255,250,235,0.75), transparent)," +
+      "radial-gradient(1px 1px at 8% 88%, rgba(255,250,235,0.5), transparent)",
+  },
+  bloom: {
+    position: "absolute", left: "36%", top: "50%", width: "78%", height: "150%",
+    transform: "translate(-50%,-50%)",
+    background: "radial-gradient(circle, rgba(255,238,200,0.30) 0%, rgba(214,178,110,0.12) 34%, transparent 68%)",
+    transition: "opacity 1.6s ease, transform 1.6s ease",
+    pointerEvents: "none",
+  },
+  head: { position: "absolute", top: "5%", left: 0, right: 0, textAlign: "center", zIndex: 20 },
+  title: { color: "#F0E4C8", fontSize: "clamp(15px, 1.39vw, 23px)", letterSpacing: 8, textShadow: "0 2px 16px rgba(0,0,0,0.9)" },
+  rule: { color: "#A99A78", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 2, marginTop: 7 },
+  counter: {
+    position: "absolute", top: "5.5%", right: "4%", zIndex: 20,
+    color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 3,
+  },
+  orrery: { position: "absolute", top: "52%", width: 0, height: 0, zIndex: 15 },
+  svg: { position: "absolute", left: -340, top: -340, width: 680, height: 680, overflow: "visible", pointerEvents: "none" },
+  ring: {
+    position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)",
+    borderRadius: "50%", border: "1px solid",
+    transition: "border-color 900ms ease, box-shadow 900ms ease",
+    pointerEvents: "none",
+  },
+  socket: {
+    position: "absolute", width: 34, height: 34, marginLeft: -17, marginTop: -17,
+    borderRadius: "50%", border: "1.5px solid",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    transition: "border-color 220ms ease, background-color 600ms ease, box-shadow 900ms ease",
+    zIndex: 16,
+  },
+  glyph: { fontSize: 16, lineHeight: 1, transition: "color 700ms ease", userSelect: "none" },
+  tray: {
+    position: "absolute", right: "3%", top: "17%", width: "31%", maxHeight: "76%",
+    overflowY: "auto", display: "flex", flexDirection: "column", gap: 6, zIndex: 20,
+  },
+  chip: {
+    display: "flex", alignItems: "center", gap: 9, padding: "7px 10px",
+    border: "1px solid", borderRadius: 8, cursor: "grab",
+    userSelect: "none", WebkitUserSelect: "none",
+    transition: "border-color 200ms ease, background-color 200ms ease",
+  },
+  chipGlyph: { fontSize: 17, color: "#E8D9BE", width: 20, textAlign: "center", flexShrink: 0 },
+  chipName: { display: "block", color: "#EFE3CC", fontSize: "clamp(11.5px, 0.94vw, 15.5px)", letterSpacing: 1 },
+  chipHolds: { display: "block", color: "#8A8068", fontSize: "clamp(10px, 0.76vw, 12.6px)", marginTop: 2, lineHeight: 1.4 },
+  chipBio: {
+    flexShrink: 0, padding: "3px 8px", borderRadius: 11,
+    border: "1px solid rgba(201,168,106,0.4)", backgroundColor: "rgba(201,168,106,0.12)",
+    color: "#C9A86A", cursor: "pointer", fontFamily: "inherit",
+    fontSize: "clamp(9.5px, 0.72vw, 12px)", letterSpacing: 1,
+  },
+  trayEmpty: { color: "#8A8068", fontSize: "clamp(11px, 0.83vw, 13.8px)", lineHeight: 1.8, letterSpacing: 1 },
+  flash: {
+    position: "absolute", left: "3%", bottom: "6%", maxWidth: "30%", zIndex: 22,
+    borderLeft: "2px solid #C9A86A", paddingLeft: 12,
+    pointerEvents: "none",   // 纯信息面板：不许挡住底下天球的投放口
+    animation: "flashIn 700ms cubic-bezier(.2,.7,.3,1) both",
+  },
+  flashName: { color: "#F6E7C4", fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3 },
+  flashHolds: { color: "#C9A86A", fontSize: "clamp(11px, 0.87vw, 14.4px)", marginTop: 4, letterSpacing: 1 },
+  flashNote: { color: "#B5A98C", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", marginTop: 6, lineHeight: 1.75 },
+  flashCanto: { color: "#7E7460", fontSize: "clamp(10px, 0.76vw, 12.6px)", marginTop: 5, letterSpacing: 1 },
+  finaleWrap: {
+    position: "absolute", inset: 0, zIndex: 30,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "0 9%", textAlign: "center",
+    background: "radial-gradient(ellipse 62% 58% at 50% 46%, rgba(6,7,14,0.9) 0%, rgba(6,7,14,0.72) 55%, rgba(6,7,14,0) 100%)",
+  },
+  finaleTitle: { color: "#C9A86A", fontSize: "clamp(11.5px, 0.9vw, 14.9px)", letterSpacing: 8, marginBottom: 22 },
+  finaleText: {
+    color: "#F6E7C4", fontSize: "clamp(14px, 1.32vw, 22px)", lineHeight: 2.15, letterSpacing: 2,
+    textShadow: "0 2px 18px rgba(0,0,0,0.95)", maxWidth: 800,
+  },
+  coda: {
+    color: "#E4CF9E", fontSize: "clamp(13px, 1.18vw, 19.5px)", lineHeight: 2.0, letterSpacing: 4,
+    marginTop: 26, paddingTop: 18, borderTop: "1px solid rgba(201,168,106,0.3)", maxWidth: 660,
+    whiteSpace: "pre-line",
   },
 };
 

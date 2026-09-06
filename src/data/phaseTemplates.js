@@ -1,7 +1,7 @@
 // 交互模板库 —— 场景编辑器「插入交互模板」面板的数据源。
 //
 // 每个模板：
-//   type    phase 类型（与 ScenePlayer 支持的 21 种一一对应）
+//   type    phase 类型（与 ScenePlayer 支持的 22 种一一对应）
 //   name    卡片标题
 //   desc    一句话说明（玩家看到什么、要做什么）
 //   ref     取材的现有事件（该用法已在游戏里跑通）
@@ -610,6 +610,30 @@ export const PHASE_TEMPLATES = [
       ],
       question: "那这到底是预言，还是回忆？",
       conclusion: "（点破那个双重目光：人物在往前看，作者在往回看。）",
+    }),
+  },
+  {
+    type: "celestial_spheres",
+    name: "九重天（连接）",
+    desc: "《天堂》不做题。由内向外把天体排进轨道：对了就发光、起转、响一个音，世界亮一档；错了只是暗着，随时取回。全亮后拉远收全线旅程。没有 ✓✗，只有亮不亮。",
+    ref: "dante · 1321_ravenna「九重天」",
+    sketch: "pairs",
+    make: () => ({
+      id: "spheres_" + uid(),
+      type: "celestial_spheres",
+      title: "九重天",
+      rule: "越往外，转得越快——因为离神越近。（把排序的依据写在题面上，让玩家推理而不是硬记。）",
+      spheres: [
+        { id: "s1", glyph: "☾", name: "（第一重）", holds: "（这一重住着什么人）",
+          who: "（cast.json 里的人物 id，可留空）",
+          note: "（点亮时的特写：一个具体的人、一件具体的事。）", canto: "《天堂》第 X 歌" },
+        { id: "s2", glyph: "☿", name: "（第二重）", holds: "（……）", note: "（……）", canto: "" },
+      ],
+      finale: {
+        title: "（最外面那一重的名字）",
+        lines: ["（拉远之后的收尾，一行一句。）", "（最后一句要把整条线兜起来。）"],
+        coda: "（可选：一句压轴。用 \\n 换行。）",
+      },
     }),
   },
 ];
