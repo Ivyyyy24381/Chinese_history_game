@@ -937,7 +937,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
                 </div>
                 <div style={styles.tapHint}>{t("点击词块依次填入空格，点已填的字可取出（电脑上也可拖拽）")}</div>
                 <button
-                  style={{ ...styles.proceedBtn, opacity: allFilled ? 1 : 0.5, cursor: allFilled ? "pointer" : "not-allowed" }}
+                  style={{ ...styles.proceedBtn, ...disabledBtn(allFilled) }}
                   disabled={!allFilled}
                   onClick={() => {
                     setComposedSubmitted(true);
@@ -1262,7 +1262,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F4AC} \u5BF9\u8BDD: " + (currentPhase.branchCharacter || "")}</h2>
             {currentPhase.narrative && <p style={styles.choiceNarrative}>{currentPhase.narrative}</p>}
-            <p style={{ color: "#CFC6B4", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09")}</p>
+            <p style={{ color: "#6B5A44", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09")}</p>
             {(currentPhase.dialogueTree || []).map((node, i) => (
               <div key={i} style={{ ...styles.explanationBox, marginBottom: 8 }}>
                 <strong>{node.speaker || t("\u65C1\u767D")}: </strong>{node.text}
@@ -1423,7 +1423,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F3AE} " + (typeLabel[currentPhase.minigameType] || t("\u5C0F\u6E38\u620F"))}</h2>
             {currentPhase.minigameInstruction && <p style={styles.choiceNarrative}>{currentPhase.minigameInstruction}</p>}
-            <p style={{ color: "#CFC6B4", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09")}</p>
+            <p style={{ color: "#6B5A44", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09")}</p>
             {items.length > 0 && (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
                 {items.map((item, i) => (
@@ -1932,7 +1932,7 @@ const cpStyles = {
     flexShrink: 0,
     margin: "8px 24px 20px",
     padding: "12px 0", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold",
-    backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 6,
+    backgroundColor: "#6B5340", color: "#FFF", border: "none", borderRadius: 6,
     cursor: "pointer", fontFamily: "inherit",
   },
   hint: {
@@ -1953,14 +1953,14 @@ const cpStyles = {
     border: "2px solid #D4A574",
     cursor: "default",
   },
-  bubbleLabel: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#CFC6B4", marginBottom: 8, letterSpacing: 1 },
+  bubbleLabel: { fontSize: "clamp(12px, 0.833vw, 13.8px)", color: "#6B5A44", marginBottom: 8, letterSpacing: 1 },
   bubbleText: {
     fontSize: "clamp(14.4px, 1.25vw, 20.7px)", color: "#3E2723", lineHeight: 1.8, letterSpacing: 1,
     fontFamily: "var(--font-body)",
   },
   bubbleClose: {
     marginTop: 16, padding: "11px 26px", minHeight: 42, fontSize: "clamp(12.5px, 0.972vw, 16.1px)",
-    backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 4,
+    backgroundColor: "#6B5340", color: "#FFF", border: "none", borderRadius: 4,
     cursor: "pointer", float: "right", fontFamily: "inherit",
   },
 }
@@ -2442,7 +2442,7 @@ const egStyles = {
   },
   continueBtn: {
     marginTop: 12, padding: "12px 32px", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold",
-    backgroundColor: "#8B7355", color: "#FFF", border: "none", borderRadius: 6,
+    backgroundColor: "#6B5340", color: "#FFF", border: "none", borderRadius: 6,
     cursor: "pointer", fontFamily: "inherit",
   },
 };
@@ -2958,6 +2958,7 @@ const csStyles = {
     pointerEvents: "none",
   },
   socket: {
+    minWidth: 44, minHeight: 44,
     position: "absolute", width: 34, height: 34, marginLeft: -17, marginTop: -17,
     borderRadius: "50%", border: "1.5px solid",
     display: "flex", alignItems: "center", justifyContent: "center",
@@ -2970,21 +2971,22 @@ const csStyles = {
     overflowY: "auto", display: "flex", flexDirection: "column", gap: 6, zIndex: 20,
   },
   chip: {
+    minHeight: 44,
     display: "flex", alignItems: "center", gap: 9, padding: "7px 10px",
     border: "1px solid", borderRadius: 8, cursor: "grab",
     userSelect: "none", WebkitUserSelect: "none",
     transition: "border-color 200ms ease, background-color 200ms ease",
   },
-  chipGlyph: { fontSize: 17, color: "#E8D9BE", width: 20, textAlign: "center", flexShrink: 0 },
+  chipGlyph: { fontSize: 17, color: "#F5EEDF", width: 20, textAlign: "center", flexShrink: 0 },
   chipName: { display: "block", color: "#EFE3CC", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 1 },
-  chipHolds: { display: "block", color: "#8A8068", fontSize: "clamp(12px, 0.76vw, 12.6px)", marginTop: 2, lineHeight: 1.4 },
+  chipHolds: { display: "block", color: "#CFC6B4", fontSize: "clamp(12px, 0.76vw, 12.6px)", marginTop: 2, lineHeight: 1.4 },
   chipBio: {
     flexShrink: 0, padding: "3px 8px", borderRadius: 11,
     border: "1px solid rgba(201,168,106,0.4)", backgroundColor: "rgba(201,168,106,0.12)",
     color: "#C9A86A", cursor: "pointer", fontFamily: "inherit",
     fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1,
   },
-  trayEmpty: { color: "#8A8068", fontSize: "clamp(12px, 0.83vw, 13.8px)", lineHeight: 1.8, letterSpacing: 1 },
+  trayEmpty: { color: "#CFC6B4", fontSize: "clamp(12px, 0.83vw, 13.8px)", lineHeight: 1.8, letterSpacing: 1 },
   flash: {
     position: "absolute", left: "3%", bottom: "6%", maxWidth: "30%", zIndex: 22,
     borderLeft: "2px solid #C9A86A", paddingLeft: 12,
@@ -3175,7 +3177,7 @@ function TrustGamePhase({ phase, onScore, onComplete }) {
           <td style={tgStyles.mCell}><b style={{ color: "#8FD0A8" }}>{"+2"}</b>{" / +2"}</td>
           <td style={tgStyles.mCell}><b style={{ color: "#E08A7A" }}>{"−1"}</b>{" / +3"}</td></tr>
         <tr><th style={tgStyles.mHead}>{t("你放逐")}</th>
-          <td style={tgStyles.mCell}><b style={{ color: "#E8D9BE" }}>{"+3"}</b>{" / −1"}</td>
+          <td style={tgStyles.mCell}><b style={{ color: "#F5EEDF" }}>{"+3"}</b>{" / −1"}</td>
           <td style={tgStyles.mCell}><b>{"0"}</b>{" / 0"}</td></tr>
       </tbody>
     </table>
@@ -3416,7 +3418,7 @@ const tgStyles = {
   side: { flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 10, minWidth: 210 },
   matrix: { borderCollapse: "collapse", fontSize: "clamp(12px, 0.79vw, 13px)", color: "#D8C8A8" },
   mCorner: { border: "none" },
-  mHead: { padding: "4px 8px", color: "#8A8068", fontWeight: "normal", letterSpacing: 1, whiteSpace: "nowrap" },
+  mHead: { padding: "4px 8px", color: "#CFC6B4", fontWeight: "normal", letterSpacing: 1, whiteSpace: "nowrap" },
   mCell: { padding: "5px 10px", border: "1px solid rgba(201,168,106,0.2)", textAlign: "center", whiteSpace: "nowrap" },
   scores: { display: "flex", gap: 18, justifyContent: "center", color: "#B5A98C", fontSize: "clamp(12px, 0.87vw, 14.4px)" },
   num: { color: "#F5E6D3", fontSize: "clamp(14px, 1.11vw, 18.4px)", fontVariantNumeric: "tabular-nums" },
@@ -3721,7 +3723,7 @@ const ffStyles = {
     cursor: "pointer", fontFamily: "inherit",
     transition: "border-color 200ms ease, background-color 200ms ease, opacity 200ms ease",
   },
-  itemName: { color: "#E8D9BE", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 1 },
+  itemName: { color: "#F5EEDF", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 1 },
   bagRow: {
     position: "absolute", left: 0, right: 0, bottom: "6%", zIndex: 25,
     display: "flex", gap: 10, alignItems: "center", justifyContent: "center",
@@ -3902,7 +3904,7 @@ const ptStyles = {
   reaction: { position: "absolute", left: "38%", top: "56%", maxWidth: "48%", zIndex: 25 },
   reactWho: { color: "#8A7A5E", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 3 },
   reactText: {
-    color: "#E8D9BE", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.8, marginTop: 6,
+    color: "#F5EEDF", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.8, marginTop: 6,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
   },
   delta: { fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2, marginTop: 10, fontVariantNumeric: "tabular-nums" },
@@ -4111,8 +4113,8 @@ const prStyles = {
     transition: "border-color 200ms ease, transform 200ms ease",
   },
   pic: { width: "100%", aspectRatio: "8 / 5", borderRadius: 6, backgroundSize: "cover", backgroundPosition: "center" },
-  picCap: { color: "#E8D9BE", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2, paddingBottom: 3 },
-  hint: { color: "rgba(245,230,211,0.62)", fontSize: "clamp(12px, 0.79vw, 13px)", letterSpacing: 2 },
+  picCap: { color: "#F5EEDF", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2, paddingBottom: 3 },
+  hint: { color: "rgba(245,230,211,0.9)", fontSize: "clamp(12px, 0.79vw, 13px)", letterSpacing: 2 },
   duo: { display: "flex", gap: 14, width: "100%", maxWidth: 720, justifyContent: "center", flexWrap: "wrap" },
   card: {
     flex: "1 1 260px", minWidth: 220, padding: "12px 16px",
@@ -4132,7 +4134,8 @@ const prStyles = {
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
     whiteSpace: "pre-line",
   },
-  go: { alignSelf: "center", padding: "10px 26px", borderRadius: 22, border: "1px solid #C9A86A",
+  go: {
+    minHeight: 44, alignSelf: "center", padding: "10px 26px", borderRadius: 22, border: "1px solid #C9A86A",
     backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
     fontFamily: "var(--font-body)",
     fontSize: "clamp(12px, 1.04vw, 17.2px)", letterSpacing: 2, marginTop: 4 },
@@ -4436,11 +4439,12 @@ const ebStyles = {
     userSelect: "none", WebkitUserSelect: "none",
     transition: "box-shadow 200ms ease, border-color 200ms ease",
   },
-  trayEmpty: { color: "#8A7A5E", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 2 },
-  hint: { color: "rgba(245,230,211,0.55)", fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 1 },
+  trayEmpty: { color: "#C4B492", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 2 },
+  hint: { color: "rgba(245,230,211,0.9)", fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 1 },
   compare: { display: "flex", flexDirection: "column", gap: 14, maxWidth: 860, width: "100%", textAlign: "left" },
-  block: { borderLeft: "3px solid rgba(201,168,106,0.4)", paddingLeft: 14 },
-  blockLabel: { color: "#8A7A5E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 6 },
+  block: {
+    minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center", borderLeft: "3px solid rgba(201,168,106,0.4)", paddingLeft: 14 },
+  blockLabel: { color: "#C4B492", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 5, marginBottom: 6 },
   blockText: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.04vw, 17.2px)", lineHeight: 2.0, letterSpacing: 1 },
   note: {
     color: "#C9A86A", fontSize: "clamp(12px, 0.94vw, 15.5px)", lineHeight: 1.9, letterSpacing: 1,
@@ -4631,6 +4635,7 @@ const cbStyles = {
   slotText: { color: "#F5E6D3", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.6, marginTop: 3 },
   parts: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1, minWidth: 220, justifyContent: "flex-start" },
   part: {
+    minHeight: 44, display: "inline-flex", alignItems: "center",
     padding: "6px 12px", borderRadius: 14, border: "1px solid",
     backgroundColor: "rgba(252,248,238,0.9)", color: "#2B2118", cursor: "grab",
     fontSize: "clamp(12px, 0.9vw, 14.9px)", letterSpacing: 1,
@@ -4644,7 +4649,7 @@ const cbStyles = {
     display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
     padding: "12px 0", borderTop: "1px dashed rgba(201,168,106,0.3)", borderBottom: "1px dashed rgba(201,168,106,0.3)",
   },
-  mirrorSide: { color: "#E8D9BE", fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2 },
+  mirrorSide: { color: "#F5EEDF", fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2 },
   mirrorArrow: { color: "#C9A86A", fontSize: "clamp(15px, 1.25vw, 20.7px)" },
   rule: { color: "#C9A86A", fontSize: "clamp(12.5px, 1.0vw, 16.5px)", lineHeight: 1.9, letterSpacing: 2, textAlign: "center" },
 };
@@ -5065,7 +5070,7 @@ const csoStyles = {
     textShadow: "0 1px 4px #000", zIndex: 20, padding: "0 4%",
   },
   caption: {
-    color: "#D8CDB8", fontSize: "clamp(12px, 0.86vw, 14px)", lineHeight: 1.45,
+    color: "#EFE6D6", fontSize: "clamp(12px, 0.86vw, 14px)", lineHeight: 1.45,
     textAlign: "center", letterSpacing: 0.5, textShadow: "0 1px 5px rgba(0,0,0,0.9)",
   },
   trayRow: {
@@ -5099,7 +5104,7 @@ const csoStyles = {
   contrastTile: { borderRadius: 3 },
   score: { color: "#F5E6D3", fontSize: "clamp(13.5px, 1.1vw, 18px)", letterSpacing: 1 },
   note: {
-    color: "#E8D9BE", fontSize: "clamp(13px, 1vw, 16.5px)", lineHeight: 1.75,
+    color: "#F5EEDF", fontSize: "clamp(13px, 1vw, 16.5px)", lineHeight: 1.75,
     maxWidth: 660, letterSpacing: 0.5, whiteSpace: "pre-line",
   },
 };
@@ -5280,7 +5285,7 @@ const epStyles = {
   },
   manuscriptHint: {
     position: "absolute", left: 0, right: 0, bottom: 8, textAlign: "center",
-    color: "#4A3826", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 4,
+    color: "#F0E4CC", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 4,
   },
   token: {
     position: "absolute", left: "6%", bottom: "12%",
@@ -5619,7 +5624,7 @@ const ipStyles = {
   bioBtn: {
     flexShrink: 0, alignSelf: "center", padding: "4px 9px", borderRadius: 12,
     border: "1px solid rgba(138,109,59,0.45)", backgroundColor: "rgba(201,168,106,0.16)",
-    color: "#5A4632", cursor: "pointer", fontFamily: "inherit",
+    color: "#3E2F1E", cursor: "pointer", fontFamily: "inherit",
     fontSize: "clamp(12px, 0.76vw, 12.6px)", letterSpacing: 1, lineHeight: 1.4,
   },
   soulMet: { fontSize: "clamp(12px, 0.72vw, 12px)", color: "#6A5B41", marginTop: 2, lineHeight: 1.4 },
@@ -5650,7 +5655,7 @@ const ipStyles = {
     transition: "background-color 200ms ease, border-color 200ms ease",
   },
   bandLabel: { flexShrink: 0, display: "flex", flexDirection: "column", minWidth: "30%" },
-  bandName: { color: "#E8D9BE", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2 },
+  bandName: { color: "#F5EEDF", fontSize: "clamp(12px, 0.94vw, 15.5px)", letterSpacing: 2 },
   bandSin: { color: "#CBBC9E", fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1 },
   bandSouls: { display: "flex", flexWrap: "wrap", gap: 6, flex: 1 },
   chip: {
@@ -5851,11 +5856,11 @@ const ceStyles = {
     fontSize: "clamp(12px, 0.97vw, 16px)", lineHeight: 1.6, letterSpacing: 1,
     transition: "opacity 200ms ease",
   },
-  closeBtn: { backgroundColor: "rgba(30,20,12,0.85)", color: "#E8D9BE", borderColor: "rgba(201,168,106,0.5)" },
+  closeBtn: { backgroundColor: "rgba(30,20,12,0.85)", color: "#F5EEDF", borderColor: "rgba(201,168,106,0.5)" },
   bioBtn: {
     marginLeft: 10, padding: "2px 9px", borderRadius: 11,
     border: "1px solid rgba(201,168,106,0.55)", backgroundColor: "rgba(201,168,106,0.14)",
-    color: "#E8D9BE", cursor: "pointer", fontFamily: "inherit",
+    color: "#F5EEDF", cursor: "pointer", fontFamily: "inherit",
     fontSize: "clamp(12px, 0.72vw, 12px)", letterSpacing: 1,
   },
   answerBar: {
@@ -6150,7 +6155,7 @@ const styles = {
     maxWidth: 760,
     // 不给文字套框——用一团 radial 暖光把它从底图里托出来，
     // 光收得比内边距紧，碰到方角之前就淡尽（theme.js 的 halo 手法）。
-    background: "radial-gradient(ellipse at center, rgba(10,7,4,0.62) 0%, rgba(10,7,4,0.42) 52%, transparent 78%)",
+    background: "radial-gradient(ellipse at center, rgba(10,7,4,0.66) 0%, rgba(10,7,4,0.52) 58%, rgba(10,7,4,0.28) 80%, transparent 94%)",
   },
   transitionText: {
     color: "#F4D03F", fontSize: "clamp(16.0px, 1.389vw, 23.0px)", letterSpacing: 3, lineHeight: 2,
@@ -6276,11 +6281,11 @@ const styles = {
     maxWidth: 600, width: "90%", maxHeight: "calc(var(--vh100) - 32px)", overflowY: "auto",
   },
   examinerBar: {
-    backgroundColor: "#8B7355", color: "#FFF", padding: "6px 16px",
+    backgroundColor: "#6B5340", color: "#FFF", padding: "6px 16px",
     borderRadius: 6, marginBottom: 16, display: "inline-block", fontSize: "clamp(12px, 0.903vw, 14.9px)",
   },
   examinerName: { fontWeight: "bold" },
-  examProgress: { fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#CFC6B4", marginBottom: 16 },
+  examProgress: { fontSize: "clamp(12px, 0.903vw, 14.9px)", color: "#6B5A44", marginBottom: 16 },
   examQuestion: { fontSize: "clamp(13.6px, 1.181vw, 19.5px)", lineHeight: 1.6, marginBottom: 20, whiteSpace: "pre-wrap" },
   examOptions: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 },
   examOption: {
@@ -6295,7 +6300,7 @@ const styles = {
     fontSize: "clamp(16px, 1.111vw, 18.4px)", fontFamily: "inherit", textAlign: "center",
   },
   fillSubmit: {
-    padding: "10px 18px", backgroundColor: "#8B7355", color: "#FFF",
+    padding: "10px 18px", backgroundColor: "#6B5340", color: "#FFF",
     border: "none", borderRadius: 6, cursor: "pointer", fontWeight: "bold",
   },
   fillPassage: {
@@ -6304,6 +6309,7 @@ const styles = {
     fontFamily: "var(--font-body)",
   },
   fillDropZone: {
+    minHeight: 44, minWidth: 44, display: "inline-flex", alignItems: "center", justifyContent: "center",
     display: "inline-block", minWidth: 60, padding: "4px 12px",
     border: "2px dashed", borderRadius: 6,
     textAlign: "center", fontSize: "clamp(12.8px, 1.111vw, 18.4px)", fontWeight: "bold",
@@ -6321,6 +6327,7 @@ const styles = {
     fontFamily: "var(--font-body)",
     transition: "all 0.2s",
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center",
   },
   explanationBox: {
     backgroundColor: "#F0F8FF", border: "1px solid #B0D4FF",
@@ -6334,8 +6341,8 @@ const styles = {
   examResultTitle: { marginBottom: 16 },
   examScoreDisplay: { marginBottom: 16 },
   examScoreBig: { fontSize: "clamp(38.4px, 3.333vw, 55.2px)", fontWeight: "bold", color: "#333" },
-  examScoreTotal: { fontSize: "clamp(19.2px, 1.667vw, 27.6px)", color: "#CFC6B4" },
-  examResultNote: { color: "#CFC6B4", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginBottom: 20 },
+  examScoreTotal: { fontSize: "clamp(19.2px, 1.667vw, 27.6px)", color: "#6B5A44" },
+  examResultNote: { color: "#6B5A44", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginBottom: 20 },
   // Forced choice
   choiceOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
@@ -6343,7 +6350,7 @@ const styles = {
   },
   tapHint: {
     fontSize: "clamp(12px, 0.833vw, 13.8px)",
-    color: "#CFC6B4",
+    color: "#6B5A44",
     marginTop: 6,
     textAlign: "center",
   },
@@ -6391,7 +6398,7 @@ const styles = {
   // Shared
   proceedBtn: {
     display: "block", width: "100%", padding: "12px",
-    backgroundColor: "#8B7355", color: "#FFF", border: "none",
+    backgroundColor: "#6B5340", color: "#FFF", border: "none",
     borderRadius: 8, fontSize: "clamp(12.0px, 1.042vw, 17.2px)", fontWeight: "bold",
     cursor: "pointer", marginTop: 12,
   },
