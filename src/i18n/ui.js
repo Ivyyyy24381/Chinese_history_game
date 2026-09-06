@@ -30,7 +30,12 @@ export function t(keyOrZh, lang = getLang()) {
   const key = keyOrZh in ZH ? keyOrZh : BY_ZH.get(keyOrZh);
   if (!key) return keyOrZh;             // 没登记：原样显示（多半是中文）
   const table = TABLES[lang] || ZH;
-  return table[key] || ZH[key] || keyOrZh;
+  const hit = table[key];
+  // 注意用 !== undefined 而不是 ||：有些条目的译文**故意是空串**
+  // （中文量词「题」在英文里没有对应词），用 || 会把它当成「没译」而回落中文，
+  // 于是英文界面上冒出一个「Round 1 / 8 题」。
+  if (hit !== undefined) return hit;
+  return ZH[key] !== undefined ? ZH[key] : keyOrZh;
 }
 
 /** 组件里用这个：语言一变，用了它的组件跟着重渲染。 */

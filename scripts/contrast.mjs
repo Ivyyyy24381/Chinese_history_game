@@ -68,7 +68,10 @@ for (const phase of metrics) {
     // 背景像素太少 = 这个框几乎全是字（图标、单字标签），量不出背景，跳过
     if (ls.length < Math.max(12, W * H * 0.15)) { skipped.noBg++; continue; }
     ls.sort((a, b) => a - b);
-    const lo = ls[Math.floor(ls.length * 0.10)], hi = ls[Math.floor(ls.length * 0.90)];
+    // 取 25/75 分位而不是 10/90：一行字横跨的底图里常有个别极亮/极暗的点
+    // （灯焰、一小块高光），10/90 会被它们拖走，报出 1.1:1 这种和肉眼对不上的数。
+    // 25/75 描述的是「这行字大部分时候压在什么底上」，和读者的体感一致。
+    const lo = ls[Math.floor(ls.length * 0.25)], hi = ls[Math.floor(ls.length * 0.75)];
     const worst = Math.min(ratio(fg, lo), ratio(fg, hi));
     const need = t.fontSize >= 24 ? MIN_LARGE : MIN;
     scanned++;

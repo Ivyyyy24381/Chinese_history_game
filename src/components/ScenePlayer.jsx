@@ -1292,7 +1292,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F4AC} \u5BF9\u8BDD: " + (currentPhase.branchCharacter || "")}</h2>
             {currentPhase.narrative && <p style={styles.choiceNarrative}>{currentPhase.narrative}</p>}
-            <p style={{ color: "#6B5A44", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09")}</p>
+            <p style={{ color: "#3E3323", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5BF9\u8BDD\u5206\u652F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\u591A\u8F6E\u5BF9\u8BDD\u6811\u5C06\u5728\u6B64\u5C55\u793A\uFF09")}</p>
             {(currentPhase.dialogueTree || []).map((node, i) => (
               <div key={i} style={{ ...styles.explanationBox, marginBottom: 8 }}>
                 <strong>{node.speaker || t("\u65C1\u767D")}: </strong>{node.text}
@@ -1453,7 +1453,7 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
           <div style={styles.choicePanel}>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(16.0px, 1.389vw, 23.0px)" }}>{"\u{1F3AE} " + (typeLabel[currentPhase.minigameType] || t("\u5C0F\u6E38\u620F"))}</h2>
             {currentPhase.minigameInstruction && <p style={styles.choiceNarrative}>{currentPhase.minigameInstruction}</p>}
-            <p style={{ color: "#6B5A44", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09")}</p>
+            <p style={{ color: "#3E3323", fontSize: "clamp(12px, 0.903vw, 14.9px)", marginBottom: 16 }}>{t("\uFF08\u5C0F\u6E38\u620F\u529F\u80FD\u5F00\u53D1\u4E2D\u2026\u2026\uFF09")}</p>
             {items.length > 0 && (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
                 {items.map((item, i) => (
@@ -2256,7 +2256,7 @@ function EscapeGamePhase({ phase, defaultPlayerPortrait, onScore, onComplete }) 
         {phase.narrative && <p style={egStyles.narrative}>{phase.narrative}</p>}
         <div style={egStyles.statusRow}>
           <span>{t("\u65B9\u5411\u952E / WASD / \u5C4F\u5E55\u6309\u952E / \u6ED1\u52A8\u68CB\u76D8 \u79FB\u52A8 \u00B7 \u6D45\u8272\uFF1D\u8857\u9053\u53EF\u8D70 \u00B7 \u6DF1\u8272\uFF1D\u574A\u5899\u4E0D\u53EF\u8D70 \u00B7 \u9047\u5B88\u536B\u56DE\u8D77\u70B9 \u00B7 \u62B5\u8FBE\u91D1\u5149\u95E8\u80DC\u5229")}</span>
-          <span style={{ color: "#DC3545" }}>{t("\u88AB\u6293\uFF1A") + deaths}</span>
+          <span style={{ color: "#A32718" }}>{t("\u88AB\u6293\uFF1A") + deaths}</span>
           <button onClick={resetGame} style={egStyles.restartBtn}>{t("\u91CD\u65B0\u5F00\u59CB")}</button>
         </div>
 
@@ -2733,7 +2733,7 @@ function shuffleStable(items) {
 const disabledBtn = (ok) => (ok ? null : {
   opacity: 0.9,
   backgroundColor: "rgba(232,224,208,0.86)",
-  color: "#6B5A44",
+  color: "#3E3323",
   borderColor: "rgba(201,168,106,0.45)",
   boxShadow: "none",
   cursor: "not-allowed",
@@ -3506,7 +3506,7 @@ const tgStyles = {
     fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3,
     display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
   },
-  moveSub: { fontSize: "clamp(12px, 0.76vw, 12.6px)", color: "#7A6A50", letterSpacing: 0 },
+  moveSub: { fontSize: "clamp(12px, 0.76vw, 12.6px)", color: "#3E3323", letterSpacing: 0 },
   guessList: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, maxWidth: 760, width: "100%" },
   guessBtn: {
     textAlign: "left", padding: "9px 13px", borderRadius: 8, border: "1.5px solid",
@@ -3823,7 +3823,7 @@ const ffStyles = {
     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14,
     animation: "flashIn 600ms ease both",
   },
-  vDate: { color: "#8A7A5E", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 6 },
+  vDate: { color: "#C4B492", fontSize: "clamp(12px, 0.87vw, 14.4px)", letterSpacing: 6 },
   vText: {
     color: "#E07A5A", fontSize: "clamp(16px, 1.6vw, 27px)", letterSpacing: 4, lineHeight: 2,
     textAlign: "center", whiteSpace: "pre-line",
@@ -3840,7 +3840,7 @@ const ffStyles = {
   },
   keptRow: { display: "flex", gap: 22, marginTop: 34, flexWrap: "wrap", justifyContent: "center" },
   keptItem: { display: "flex", flexDirection: "column", alignItems: "center", gap: 5 },
-  keptName: { color: "#8A7A5E", fontSize: "clamp(12px, 0.79vw, 13px)", letterSpacing: 1 },
+  keptName: { color: "#D8CDB8", fontSize: "clamp(12px, 0.79vw, 13px)", letterSpacing: 1 },
   keptCaption: { color: "#6B5340", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 2, marginTop: 14 },
 };
 
@@ -3963,7 +3963,7 @@ const ptStyles = {
     fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 4,
   },
   reaction: { position: "absolute", left: "38%", top: "56%", maxWidth: "48%", zIndex: 25 },
-  reactWho: { color: "#8A7A5E", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 3 },
+  reactWho: { color: "#C4B492", fontSize: "clamp(12px, 0.83vw, 13.8px)", letterSpacing: 3 },
   reactText: {
     color: "#F5EEDF", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.8, marginTop: 6,
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
@@ -5350,7 +5350,11 @@ const epStyles = {
     background: "repeating-linear-gradient(180deg, rgba(90,70,45,0.22) 0 1px, transparent 1px 13px)",
   },
   manuscriptHint: {
-    position: "absolute", left: 0, right: 0, bottom: 8, textAlign: "center",
+    // 手稿底图是中间调（实测背景中位 L≈0.24），浅字深字都够不到 4.5:1。
+    // 给它一块自己的暗底，不再赌底图。
+    position: "absolute", left: "50%", transform: "translateX(-50%)", bottom: 8,
+    padding: "3px 12px", borderRadius: 10, backgroundColor: "rgba(12,8,4,0.82)",
+    textAlign: "center",
     color: "#F0E4CC", fontSize: "clamp(12px, 0.833vw, 13.8px)", letterSpacing: 4,
   },
   token: {
@@ -6410,7 +6414,7 @@ const styles = {
   examScoreDisplay: { marginBottom: 16 },
   examScoreBig: { fontSize: "clamp(38.4px, 3.333vw, 55.2px)", fontWeight: "bold", color: "#333" },
   examScoreTotal: { fontSize: "clamp(19.2px, 1.667vw, 27.6px)", color: "#6B5A44" },
-  examResultNote: { color: "#6B5A44", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginBottom: 20 },
+  examResultNote: { color: "#3E3323", fontSize: "clamp(12.5px, 0.972vw, 16.1px)", marginBottom: 20 },
   // Forced choice
   choiceOverlay: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
