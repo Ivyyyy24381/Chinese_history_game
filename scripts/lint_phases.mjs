@@ -27,7 +27,7 @@ const DATA = "src/data";
 const PASSIVE = new Set(["transition", "narration", "comic_reveal"]);          // 点一下，读一段
 const BROWSE  = new Set(["explore", "map_travel"]);                            // 找一找，读一段
 const GENERATE = new Set(["predict_reveal", "poem_compose", "explain_by_building",
-                          "contrapasso", "forced_choice", "flee_florence"]);                    // 先产出一个判断
+                          "contrapasso", "forced_choice", "flee_florence", "petition"]);                    // 先产出一个判断
 const EVIDENCE = new Set(["evidence_select", "click_points", "exam"]);         // 在材料里做区分
 const REVISE   = new Set(["inferno_placement", "comedy_encounter", "commit_then_reveal",
                           "prophecy_paradox"]);                                // 拿自己的答案去对照

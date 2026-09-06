@@ -118,17 +118,21 @@
       "id": "reply",
       "type": "predict_reveal",
       "background": "/assets/dante/events/1315_amnistia/backgrounds/lodging_courtyard.webp",
-      "situation": "佛罗伦萨开出了条件：缴一笔罚金，穿上悔罪的服色，由人押着游街，走到圣乔万尼洗礼堂——他受洗的那个地方——当众认罪。\n照做，就可以回家。妻儿在城里，他已经流亡十三年。\n笔和纸摆在院中的石桌上。修士在等，儿子彼得罗也在等。",
-      "question": "他会怎么回？",
+      "situation": "十三年后，佛罗伦萨来信：\n缴罚金、穿悔罪服、由人押着游街认罪——就放你回来。",
+      "question": "他往哪边走？",
       "himLabel": "但丁",
       "options": [
         {
           "id": "accept",
-          "text": "接受。缴罚金、游街、回家——妻儿团聚，落叶归根。"
+          "text": "接受。缴罚金、游街、回家——妻儿团聚，落叶归根。",
+          "image": "/assets/dante/events/1315_amnistia/choices/home.webp",
+          "caption": "回佛罗伦萨"
         },
         {
           "id": "refuse",
-          "text": "拒绝。宁可老死在别人的屋檐下。"
+          "text": "拒绝。宁可老死在别人的屋檐下。",
+          "image": "/assets/dante/events/1315_amnistia/choices/exile.webp",
+          "caption": "继续走下去"
         }
       ],
       "actual": "refuse",
@@ -136,7 +140,9 @@
       "diffNote": "他没有接。十三年了，唯一一次回家的机会，他没有接。",
       "reveal": "「这不是我返乡的路。\n若另有一条不损但丁名誉与尊严的路，我会毫不迟疑地走上去。\n若没有——那我永不踏进佛罗伦萨。\n\n难道我在别处，就看不见日月星辰吗？\n难道不先在故乡自辱一场，我就想不了最甜的道理吗？\n面包，哪里都不会缺。」\n——《书信》第十二",
       "consequence": "几个月后，佛罗伦萨改了判决：但丁及诸子，斩首。（此前是火刑。）\n\n他再没回去。1321 年死在拉文纳，葬在那里。\n此后六百年，佛罗伦萨一次又一次向拉文纳讨他的骨殖，一次也没讨到。\n圣十字教堂里给他修的那座墓，至今是空的。",
-      "nextPhase": "price"
+      "nextPhase": "price",
+      "mode": "gates",
+      "hero": "/assets/dante/hero/exile/cloak.webp"
     },
     {
       "id": "price",

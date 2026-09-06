@@ -1326,6 +1326,11 @@ export default function ScenePlayer({ sceneData, eventId, awardScore, onComplete
     return <ComicRevealPhase phase={currentPhase} onComplete={goToNextPhase} />;
   }
 
+  // --- PETITION (他们轮流来提要求；怎么选都有人不满意) ---
+  if (currentPhase.type === "petition") {
+    return <PetitionPhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
+  }
+
   // --- FLEE FLORENCE (只能带三样东西；全线字最少的一关) ---
   if (currentPhase.type === "flee_florence") {
     return <FleeFlorencePhase phase={currentPhase} onScore={award} onComplete={goToNextPhase} />;
@@ -3455,6 +3460,7 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
       // 时间用光才到城门：路上丢了一件
       if (left <= 0 && bag.length > 0) setDropped(bag[bag.length - 1]);
       setStage("gate");
+      playTone(87.31, { dur: 3.2, gain: 0.2 });   // 门砸上
       setTimeout(() => setStage("verdict"), reduced ? 400 : 2400);
       setTimeout(() => {
         setStage("line");
@@ -3554,15 +3560,23 @@ function FleeFlorencePhase({ phase, onScore, onComplete }) {
           </>
         )}
 
-        {/* ── 门关上 ── */}
-        {(stage === "gate" || stage === "verdict" || stage === "line") && (
-          <>
-            <div style={{ ...ffStyles.door, left: 0,
-              transform: `translateX(${stage === "gate" || stage === "verdict" || stage === "line" ? "0%" : "-100%"})` }} />
-            <div style={{ ...ffStyles.door, right: 0,
-              transform: `translateX(${stage === "gate" || stage === "verdict" || stage === "line" ? "0%" : "100%"})` }} />
-          </>
-        )}
+        {/* ── 城门：赶路时就随倒计时往中间合，走到了就在身后砸上 ── */}
+        {(stage === "walk" || stage === "gate" || stage === "verdict" || stage === "line") && (() => {
+          const shut = stage !== "walk";
+          // 倒计时走完 = 完全合拢；赶路时门缝随剩余时间变窄
+          const openPct = shut ? 0 : Math.max(0, Math.min(1, left / SECONDS));
+          const off = shut ? 0 : -100 + (1 - openPct) * 100;
+          return (
+            <>
+              <div style={{ ...ffStyles.door, left: 0,
+                transform: `translateX(${off}%)`,
+                transition: reduced ? "none" : (shut ? "transform 900ms cubic-bezier(.85,0,.3,1)" : "transform 900ms linear") }} />
+              <div style={{ ...ffStyles.door, right: 0,
+                transform: `translateX(${-off}%)`,
+                transition: reduced ? "none" : (shut ? "transform 900ms cubic-bezier(.85,0,.3,1)" : "transform 900ms linear") }} />
+            </>
+          );
+        })()}
 
         {/* ── 判决砸下来 ── */}
         {stage === "verdict" && (
@@ -3640,7 +3654,7 @@ const ffStyles = {
     backgroundColor: "rgba(252,248,238,0.92)", color: "#3A2E20", cursor: "pointer",
     fontFamily: "inherit", fontSize: "clamp(13px, 1.11vw, 18.4px)", letterSpacing: 3,
   },
-  hero: { position: "absolute", height: "46%", objectFit: "contain", zIndex: 18, filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.6))" },
+  hero: { position: "absolute", height: "46%", objectFit: "contain", zIndex: 23, filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.6))" },
   strideWrap: {
     position: "absolute", left: 0, right: 0, bottom: "6%", zIndex: 25,
     display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
@@ -3683,6 +3697,144 @@ const ffStyles = {
   keptItem: { display: "flex", flexDirection: "column", alignItems: "center", gap: 5 },
   keptName: { color: "#8A7A5E", fontSize: "clamp(10px, 0.79vw, 13px)", letterSpacing: 1 },
   keptCaption: { color: "#6B5340", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", letterSpacing: 2, marginTop: 14 },
+};
+
+// ============================================================
+// PETITION — 他们轮流来找你
+// ============================================================
+// 不教「贵尔夫/吉伯林/白党/黑党」这一堆名字。让人一个个走进来提要求，
+// 玩家只有「答应 / 不答应」两个键。三轮之后他自己会发现：
+// 怎么选都有人不满意 —— 这句话不用写出来，那条安定条会替你说。
+//
+// 每一次选择安定都往下掉，只是掉多掉少。走得最好也只能到某个位置：
+// 有本事可施，但赢不了。这正是 1300 年那个执政团的处境。
+function PetitionPhase({ phase, onScore, onComplete }) {
+  const list = phase.petitions || [];
+  const [i, setI] = useState(0);
+  const [reply, setReply] = useState(null);     // 刚做的选择
+  const [stab, setStab] = useState(phase.startStability ?? 70);
+  const [done, setDone] = useState(false);
+
+  const cur = list[i];
+  const choose = (yes) => {
+    if (reply || !cur) return;
+    const arm = yes ? cur.agree : cur.refuse;
+    setReply({ yes, ...arm });
+    setStab((v) => Math.max(0, v + (arm.stability || 0)));
+    playTone(yes ? 349.23 : 293.66, { dur: 0.8, gain: 0.07 });
+  };
+  const next = () => {
+    setReply(null);
+    if (i + 1 < list.length) setI(i + 1);
+    else { setDone(true); if (onScore) onScore("petition", POINTS.petition); }
+  };
+
+  const band = stab >= 55 ? "#199e70" : stab >= 30 ? "#c98500" : "#d95926";
+
+  return (
+    <div style={styles.sceneOuter}>
+      <div style={{ ...styles.sceneStageInner, backgroundImage: `url(${asset(phase.background)})` }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(10,7,4,0.62)" }} />
+
+        {/* 安定条 —— 全关唯一的仪表，玩家的眼睛会盯着它 */}
+        <div style={ptStyles.meterWrap}>
+          <div style={ptStyles.meterLabel}>{phase.meterLabel || "佛罗伦萨 · 安定"}</div>
+          <div style={ptStyles.meterTrack}>
+            <div style={{ ...ptStyles.meterFill, width: stab + "%", backgroundColor: band }} />
+          </div>
+          <div style={ptStyles.meterCount}>{done ? "" : `${i + (reply ? 1 : 0)} / ${list.length}`}</div>
+        </div>
+
+        {!done && cur && (
+          <>
+            <img src={asset(cur.portrait)} alt="" style={ptStyles.who} />
+            <div style={ptStyles.bubble}>
+              <div style={ptStyles.name}>{nb(cur.name)}</div>
+              <div style={ptStyles.ask}>{nb(cur.ask)}</div>
+            </div>
+
+            {!reply ? (
+              <div style={ptStyles.btnRow}>
+                <button style={{ ...ptStyles.btn, borderColor: "#199e70" }} onClick={() => choose(true)}>{"答　应"}</button>
+                <button style={{ ...ptStyles.btn, borderColor: "#d95926" }} onClick={() => choose(false)}>{"不答应"}</button>
+              </div>
+            ) : (
+              <div style={ptStyles.reaction}>
+                <div style={ptStyles.reactWho}>{nb(reply.who)}</div>
+                <div style={ptStyles.reactText}>{nb(reply.text)}</div>
+                <div style={{ ...ptStyles.delta, color: band }}>
+                  {"安定 " + (reply.stability > 0 ? "+" : "") + reply.stability}
+                </div>
+                <button style={{ ...prStyles.go, marginTop: 14 }} onClick={next}>
+                  {i + 1 < list.length ? "下一个 →" : "散了 →"}
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {done && (
+          <div style={ptStyles.endWrap}>
+            <div style={ptStyles.endLine}>{nb(phase.closing || "你怎么选，都有人不满意。")}</div>
+            <button style={{ ...prStyles.go, marginTop: 24 }} onClick={onComplete}>{"继续 →"}</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const ptStyles = {
+  meterWrap: {
+    position: "absolute", top: "6%", left: "50%", transform: "translateX(-50%)",
+    width: "44%", zIndex: 25, textAlign: "center",
+  },
+  meterLabel: { color: "#B5A98C", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 4, marginBottom: 7 },
+  meterTrack: {
+    height: 13, borderRadius: 7, backgroundColor: "rgba(232,217,190,0.13)",
+    border: "1px solid rgba(201,168,106,0.3)", overflow: "hidden",
+  },
+  meterFill: { height: "100%", transition: "width 900ms cubic-bezier(.3,.7,.4,1), background-color 900ms ease" },
+  meterCount: { color: "#7A6A50", fontSize: "clamp(10px, 0.76vw, 12.6px)", letterSpacing: 2, marginTop: 6 },
+  who: {
+    position: "absolute", left: "16%", bottom: 0, height: "62%",
+    objectFit: "contain", objectPosition: "bottom", zIndex: 12,
+    filter: "drop-shadow(0 10px 24px rgba(0,0,0,0.55))",
+  },
+  bubble: {
+    position: "absolute", left: "38%", top: "34%", maxWidth: "48%", zIndex: 20,
+    borderLeft: "3px solid #C9A86A", paddingLeft: 16,
+  },
+  name: { color: "#C9A86A", fontSize: "clamp(11px, 0.87vw, 14.4px)", letterSpacing: 3, marginBottom: 8 },
+  ask: {
+    color: "#F5E6D3", fontSize: "clamp(16px, 1.53vw, 26px)", lineHeight: 1.75, letterSpacing: 2,
+    textShadow: "0 2px 14px rgba(0,0,0,0.95)",
+  },
+  btnRow: { position: "absolute", left: "38%", top: "60%", display: "flex", gap: 14, zIndex: 25 },
+  btn: {
+    padding: "13px 34px", borderRadius: 10, border: "2px solid",
+    backgroundColor: "rgba(252,248,238,0.94)", color: "#2B2118", cursor: "pointer",
+    fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
+    fontSize: "clamp(14px, 1.25vw, 20.7px)", letterSpacing: 4,
+  },
+  reaction: { position: "absolute", left: "38%", top: "56%", maxWidth: "48%", zIndex: 25 },
+  reactWho: { color: "#8A7A5E", fontSize: "clamp(10.5px, 0.83vw, 13.8px)", letterSpacing: 3 },
+  reactText: {
+    color: "#E8D9BE", fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.8, marginTop: 6,
+    textShadow: "0 2px 10px rgba(0,0,0,0.9)",
+  },
+  delta: { fontSize: "clamp(12px, 0.97vw, 16px)", letterSpacing: 2, marginTop: 10, fontVariantNumeric: "tabular-nums" },
+  endWrap: {
+    position: "absolute", inset: 0, zIndex: 30,
+    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+    padding: "0 10%", textAlign: "center",
+    background: "radial-gradient(ellipse 62% 56% at 50% 50%, rgba(8,6,4,0.9) 0%, rgba(8,6,4,0.7) 58%, rgba(8,6,4,0) 100%)",
+  },
+  endLine: {
+    color: "#F6E7C4", fontSize: "clamp(16px, 1.6vw, 27px)", letterSpacing: 5, lineHeight: 1.95,
+    textShadow: "0 2px 18px rgba(0,0,0,0.95)",
+    animation: "flashIn 1200ms cubic-bezier(.2,.7,.3,1) both",
+  },
 };
 
 // ============================================================
@@ -3729,8 +3881,20 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
 
           {step === 0 && (
             <>
-              {/* 有配图就摆成三张画面：让玩家看图选，不是读三行字选 */}
-              {options.some((o) => o.image) ? (
+              {/* 两扇门：把但丁推向哪一边。他先站中间，选完真的走过去。 */}
+              {phase.mode === "gates" ? (
+                <div style={prStyles.gateRow}>
+                  {options.map((o, k) => (
+                    <button key={o.id} onClick={() => commit(o.id)} style={prStyles.gateSide}>
+                      <div style={{ ...prStyles.gatePic, backgroundImage: `url(${asset(o.image)})` }}>
+                        <span style={prStyles.gateArrow}>{k === 0 ? "←" : "→"}</span>
+                      </div>
+                      <span style={prStyles.gateCap}>{nb(o.caption || o.text)}</span>
+                    </button>
+                  ))}
+                  <img src={asset(phase.hero)} alt="" style={prStyles.gateHero} />
+                </div>
+              ) : options.some((o) => o.image) ? (
                 <div style={prStyles.picRow}>
                   {options.map((o) => (
                     <button key={o.id} style={prStyles.picOpt} onClick={() => commit(o.id)}>
@@ -3754,6 +3918,21 @@ function PredictRevealPhase({ phase, onScore, onComplete }) {
 
           {step >= 1 && (
             <>
+              {phase.mode === "gates" && (
+                <div style={prStyles.gateRow}>
+                  {options.map((o, k) => (
+                    <div key={o.id} style={{ ...prStyles.gateSide, opacity: o.id === phase.actual ? 1 : 0.35 }}>
+                      <div style={{ ...prStyles.gatePic, backgroundImage: `url(${asset(o.image)})` }} />
+                      <span style={prStyles.gateCap}>{nb(o.caption || o.text)}</span>
+                    </div>
+                  ))}
+                  <img src={asset(phase.hero)} alt="" style={{
+                    ...prStyles.gateHero,
+                    left: options.findIndex((o) => o.id === phase.actual) === 0 ? "22%" : "78%",
+                    transition: reduced ? "none" : "left 1.8s cubic-bezier(.4,0,.2,1)",
+                  }} />
+                </div>
+              )}
               <div style={prStyles.duo}>
                 <div style={{ ...prStyles.card, borderColor: "rgba(201,168,106,0.4)" }}>
                   <div style={prStyles.cardLabel}>{"你猜"}</div>
@@ -3822,6 +4001,24 @@ const prStyles = {
     border: "1px solid #C9A86A", cursor: "pointer",
     fontFamily: "'LXGW WenKai', 'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif",
     fontSize: "clamp(13px, 1.11vw, 18.4px)", lineHeight: 1.7, letterSpacing: 1,
+  },
+  gateRow: { position: "relative", display: "flex", gap: 26, justifyContent: "center", width: "100%", maxWidth: 820 },
+  gateSide: {
+    flex: "1 1 0", maxWidth: 330, padding: 0, border: "none", background: "none",
+    cursor: "pointer", fontFamily: "inherit", display: "flex", flexDirection: "column", gap: 9,
+  },
+  gatePic: {
+    position: "relative", width: "100%", aspectRatio: "6 / 5", borderRadius: 10,
+    backgroundSize: "cover", backgroundPosition: "center",
+    border: "1.5px solid rgba(201,168,106,0.4)",
+    display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 10,
+  },
+  gateArrow: { color: "#F6E7C4", fontSize: 30, textShadow: "0 2px 12px rgba(0,0,0,0.95)" },
+  gateCap: { color: "#EFE3CC", fontSize: "clamp(12.5px, 1.04vw, 17.2px)", letterSpacing: 3 },
+  gateHero: {
+    position: "absolute", left: "50%", bottom: -14, height: "58%",
+    transform: "translateX(-50%)", objectFit: "contain", zIndex: 5,
+    filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.6))", pointerEvents: "none",
   },
   picRow: { display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", width: "100%", maxWidth: 860 },
   picOpt: {
